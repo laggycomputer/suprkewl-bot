@@ -30,7 +30,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    
+
     print("Got message '" + message.content + "'")
     print("From " + str(message.author))
     print("In server " + str(message.guild))
@@ -69,7 +69,7 @@ async def playingstatus():
                      "meme-scrolling",
                      "and plotting pranks",
                      "with the Discord API"]
-    status = "{0} | lurking in {1} servers and watching over {2} users👀...".format(random.choice(playing_statuses), str(len(client.guilds)), str(len(client.users)))
+    status = "{0} | lurking in {1} servers and watching over {2} users...".format(random.choice(playing_statuses), str(len(client.guilds)), str(len(client.users)))
     await client.change_presence(activity = discord.Game(name = status))
     await asyncio.sleep(120)
 client.bg_task = client.loop.create_task(playingstatus())
