@@ -9,8 +9,6 @@ from discord.ext.commands import Bot
 from discord.ext import commands
 import platform
 import random
-import datetime
-import time
 
 startup_extensions = ["ext.Text", "ext.Randomizers", "ext.Documentation", "ext.Moderation", "ext.Info", "testing"]
 
