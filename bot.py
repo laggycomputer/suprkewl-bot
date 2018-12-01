@@ -12,7 +12,7 @@ import random
 import datetime
 import time
 
-startup_extensions = ["Text", "Randomizers", "Documentation", "Moderation", "Info", "testing"]
+startup_extensions = ["ext.Text", "ext.Randomizers", "ext.Documentation", "ext.Moderation", "ext.info", "testing"]
 
 client = commands.Bot(command_prefix = commands.when_mentioned_or('s!'), description = "SuprKewl Bot, by Too Laggy#3878", pm_help = True)
 
