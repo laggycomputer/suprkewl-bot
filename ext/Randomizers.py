@@ -12,7 +12,7 @@ class Randomizers():
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases = ["burn", ":fire:"])
+    @commands.command(aliases = ["burn"])
     async def roast(self, ctx, target: discord.Member):
         """Roast someone. ⌐■_■"""
 
@@ -123,7 +123,7 @@ class Randomizers():
 
             await msg.edit(content = content)
 
-    @commands.command(aliases = ["laugh", ":joy:"], description = "Browse a ridiculously tiny collection of funny images. Has a 2 second per-channel cooldown.")
+    @commands.command(aliases = ["laugh"], description = "Browse a ridiculously tiny collection of funny images. Has a 2 second per-channel cooldown.")
     @commands.cooldown(1, 2, commands.BucketType.channel)
     async def funny(self, ctx):
         """See 's!help funny'"""

@@ -80,7 +80,7 @@ class Moderation():
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members = True)
     @commands.has_permissions(ban_members = True)
-    async def ban(self, ctx, target:discord.Member, deletedays: int, reason: str):
+    async def ban(self, ctx, target: discord.Member, deletedays: int, reason: str):
         """(GUILD ONLY) Ban someone. See 's!help ban' for more info."""
 
         if isinstance(ctx.channel, discord.abc.GuildChannel):
