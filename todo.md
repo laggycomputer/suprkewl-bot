@@ -10,6 +10,5 @@ Here's a list of todos for this project. Expect this to change often.
 4. The variables in s!housefight look like a madhouse. Possibly move fighter-specific varaibles under a new fighter subclass of discord.Member.
 5. Add hidden cog reload command, with bot owner check
 6. add cooldown error catch and reinvoke, catch role error on s!roleinfo
-7. add command aliases (dice and roll, card and draw, funny and laugh, etc.)
-8. add command (owner only) to exec(something passes as a param). Make sure it works, doesn't seem to.
-9. Change kick and ban to halt if <target> is command invoker.
+7. add command (owner only) to exec(something passes as a param). Make sure it works, doesn't seem to.
+8. Change kick and ban to halt if <target> is command invoker.

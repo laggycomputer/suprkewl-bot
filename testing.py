@@ -11,7 +11,8 @@ import time
 class testing():
     def __init__(self, bot):
         self.bot = bot
-    @commands.command(description = "Get the profile of a passed <user>. Please note that <user> DOES NOT DEFAULT TO THE COMMAND INVOKER. Instead, use s!myprofile to get your own profile.")
+
+    @commands.command(aliases = ["userinfo"], description = "Get the profile of a passed <user>. Please note that <user> DOES NOT DEFAULT TO THE COMMAND INVOKER. Instead, use s!myprofile to get your own profile.")
     async def profile(self, ctx, user: discord.User):
         """See 's!help profile' for some important notes."""
 
