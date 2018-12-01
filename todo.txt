@@ -9,5 +9,4 @@
 9. add command aliases (dice and roll, card and draw, funny and laugh, etc.)
 10. add command (owner only) to exec(something passes as a param). Make sure it works, doesn't seem to.
 11. Change client in main file to use a class, insted of @checks.
-12. Change kick and ban to halt if <target> is command incoker.
-13. rps should have :choice: in the choices beforehand, not add : around it during randomization. Also, don't add good job or better luck next time (and corresponding emoji), just set a win or lose varaible. At the end, reference that and use it to add win/lose message.
+12. Change kick and ban to halt if <target> is command invoker.
