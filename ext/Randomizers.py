@@ -65,33 +65,47 @@ class Randomizers():
     async def rps(self, ctx):
         """See 's!help rps'."""
 
-        choices = ["fist", "newspaper", "scissors"]
+        choices = [":fist:", ":newspaper:", ":scissors:"]
 
         computer = random.choice(choices)
         user = random.choice(choices)
+        winner = None
+        winmsg = " Congrats! :slight_smile:"
+        losemsg = " Better luck next tome... :slight_frown:"
+
         content = "{} "
 
         if user == computer:
             content += "We both got :" + computer + ":. Tie!"
         else:
-            if user == "fist":
-                if computer == "scissors":
-                    content += "Your :" + user + ": beat my :" + computer + ":! Congrats! :slight_smile:"
+            if user == ":fist:":
+                if computer == ":scissors:":
+                    content += "Your " + user + " beat my " + computer + "!"
+                    winner = "usr"
                 else:
-                    content += "My :" + computer + ": beat your :" + user + ":! Better luck next time... :slight_frown:"
+                    content += "My " + computer + " beat your " + user + "!"
+                    winner = "comp"
 
-            elif user == "newspaper":
-                if computer == "fist":
-                    content +=" Your :" + user + ": beat my :" + computer + ":! Congrats! :slight_smile:"
+            elif user == ":newspaper:":
+                if computer == ":fist:":
+                    content +=" Your " + user + " beat my " + computer + "!"
+                    winner = "usr"
                 else:
-                    content += "My :" + computer + ": beat your :" + user + ":! Better luck next time... :slight_frown:"
+                    content += "My " + computer + " beat your " + user + "!"
+                    winner = "comp"
 
-            elif user == "scissors":
-                if computer == "newspaper":
-                    content += "Your :" + user + ": beat my :" + computer + ":! Congrats! :slight_smile:"
+            elif user == ":scissors:":
+                if computer == ":newspaper:":
+                    content += "Your " + user + " beat my " + computer + "!"
+                    winner = "usr"
                 else:
-                    msg += "My :" + computer + ": beat your :" + user + ":! Better luck next time... :slight_frown:"
+                    content += "My " + computer + " beat your " + user + "!"
+                    winner = "comp"
 
+        if winner == "usr":
+            content += winmsg
+        elif winner == "comp":
+            content + losemsg
         content = content.format(ctx.author.mention)
 
         async with ctx.channel.typing():
