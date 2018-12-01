@@ -67,9 +67,11 @@ async def playingstatus():
                      "meme-scrolling",
                      "and plotting pranks",
                      "with the Discord API"]
-    status = "{0} | lurking in {1} servers and watching over {2} users...".format(random.choice(playing_statuses), str(len(client.guilds)), str(len(client.users)))
-    await client.change_presence(activity = discord.Game(name = status))
-    await asyncio.sleep(120)
+    while not client.is_closed():
+        status = "{0} | lurking in {1} servers and watching over {2} users...".format(random.choice(playing_statuses), str(len(client.guilds)), str(len(client.users)))
+        await client.change_presence(activity = discord.Game(name = status))
+        await asyncio.sleep(120)
+        print("l00p")
 client.bg_task = client.loop.create_task(playingstatus())
 if __name__ == "__main__":
     for extension in startup_extensions:
