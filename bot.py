@@ -50,28 +50,27 @@ async def on_message(message):
 async def playingstatus():
     await client.wait_until_ready()
     playing_statuses = ["with the community",
-                     "with my dad, Too Laggy",
-                     "github.com/laggycomputer/suprkewl-bot",
-                     "being open source",
-                     "I don't game...",
-                     "waiting for you to call me! s!help",
-                     "being SuprKewl!",
-                     "with my Raspberry Pi",
-                     "creeping through the shadows",
-                     "eating robot food, brb",
-                     "being improved!",
-                     "ping and run",
-                     "helping the community",
-                     "living under the MIT license!",
-                     "at a robot party, brb in a bit",
-                     "meme-scrolling",
-                     "and plotting pranks",
-                     "with the Discord API"]
+                        "with my dad, Too Laggy",
+                        "github.com/laggycomputer/suprkewl-bot",
+                        "being open source",
+                        "I don't game...",
+                        "waiting for you to call me! s!help",
+                        "being SuprKewl!",
+                        "with my Raspberry Pi",
+                        "creeping through the shadows",
+                        "eating robot food, brb",
+                        "being improved!",
+                        "ping and run",
+                        "helping the community",
+                        "living under the MIT license!",
+                        "at a robot party, brb in a bit",
+                        "meme-scrolling",
+                        "and plotting pranks",
+                        "with the Discord API"]
     while not client.is_closed():
         status = "{0} | lurking in {1} servers and watching over {2} users...".format(random.choice(playing_statuses), str(len(client.guilds)), str(len(client.users)))
         await client.change_presence(activity = discord.Game(name = status))
         await asyncio.sleep(120)
-        print("l00p")
 client.bg_task = client.loop.create_task(playingstatus())
 if __name__ == "__main__":
     for extension in startup_extensions:
