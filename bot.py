@@ -12,35 +12,13 @@ import random
 import datetime
 import time
 
-startup_extensions = ["ext.Text", "ext.Randomizers", "ext.Documentation", "ext.Moderation", "ext.info", "testing"]
+startup_extensions = ["ext.Text", "ext.Randomizers", "ext.Documentation", "ext.Moderation", "ext.Info", "testing"]
 
 client = commands.Bot(command_prefix = commands.when_mentioned_or('s!'), description = "SuprKewl Bot, by Too Laggy#3878", pm_help = True)
-
-playing_statuses = ["with the community",
-                   "with my dad, Too Laggy",
-                   "github.com/laggycomputer/suprkewl-bot",
-                   "being open source",
-                   "I don't game...",
-                   "waiting for you to call me! s!help",
-                   "being SuprKewl!",
-                   "with my Raspberry Pi",
-                   "creeping through the shadows",
-                   "eating robot food, brb",
-                   "being improved!",
-                   "ping and run",
-                   "helping the community",
-                   "living under the MIT license!",
-                   "at a robot party, brb in a bit",
-                   "meme-scrolling",
-                   "and plotting pranks"]
 
 @client.event
 async def on_ready():
     print(licenseinfo)
-    status = random.choice(playing_statuses)+" | "
-    status += "lurking in {} servers".format(str(len(client.guilds)))
-    status += " and watching over {} users.".format(str(len(client.users)))
-    await client.change_presence(activity = discord.Game(name = status))
 
     print('Logged in as ' + client.user.name + ' (ID:' + str(client.user.id) + ') | Connected to '+str(len(client.guilds))+' servers | Connected to ' + str(len(set(client.get_all_members()))) + ' users')
     print('--------')
@@ -52,10 +30,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    if random.randint(1,10) == 1:
-        status = "{0} | lurking in {1} servers and watching over {2} users👀...".format(random.choice(playing_statuses), str(len(client.guilds)), str(len(client.users)))
-        await client.change_presence(activity = discord.Game(name = status))
-
+    
     print("Got message '" + message.content + "'")
     print("From " + str(message.author))
     print("In server " + str(message.guild))
@@ -74,6 +49,30 @@ async def on_message(message):
                     await message.author.send(":x: I can't send messages there! Perhaps try again elsewhere?")
         else:
             await client.process_commands(message)
+async def playingstatus():
+    await client.wait_until_ready()
+    playing_statuses = ["with the community",
+                     "with my dad, Too Laggy",
+                     "github.com/laggycomputer/suprkewl-bot",
+                     "being open source",
+                     "I don't game...",
+                     "waiting for you to call me! s!help",
+                     "being SuprKewl!",
+                     "with my Raspberry Pi",
+                     "creeping through the shadows",
+                     "eating robot food, brb",
+                     "being improved!",
+                     "ping and run",
+                     "helping the community",
+                     "living under the MIT license!",
+                     "at a robot party, brb in a bit",
+                     "meme-scrolling",
+                     "and plotting pranks",
+                     "with the Discord API"]
+    status = "{0} | lurking in {1} servers and watching over {2} users👀...".format(random.choice(playing_statuses), str(len(client.guilds)), str(len(client.users)))
+    await client.change_presence(activity = discord.Game(name = status))
+    await asyncio.sleep(120)
+client.bg_task = client.loop.create_task(playingstatus())
 if __name__ == "__main__":
     for extension in startup_extensions:
         try:
