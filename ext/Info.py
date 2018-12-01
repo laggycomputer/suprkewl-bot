@@ -2,24 +2,26 @@
 """Copyright 2018 Dante Dam
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."""
+
 import discord
 from discord.ext import commands
 import platform
 import time
+
 class Info():
-    def __init__(self,bot):
-        self.bot=bot
-    @commands.command(description="Gives info on role <permsRole> in server (ping the role). Append --perms to your message to also fetch permissions (in this case, the invoker must have a role called 'suprkewl-viewPerms'). If a permission is unlisted, it is likely that the permission in question cannot be requested from the bot's API. Also note the the permissions listed may or may not be overrideable on a per-channel, per-user/role basis.")
+    def __init__(self, bot):
+        self.bot = bot
+    @commands.command(description = "Gives info on role <permsRole> in server (ping the role). Append --perms to your message to also fetch permissions (in this case, the invoker must have a role called 'suprkewl-viewPerms'). If a permission is unlisted, it is likely that the permission in question cannot be requested from the bot's API. Also note the the permissions listed may or may not be overrideable on a per-channel, per-user/role basis.")    
     @commands.guild_only()
     @commands.has_any_role("suprkewl-viewPerms")
     @commands.bot_has_permissions(manage_roles = True)
-    async def roleinfo(self, ctx, permsRole:discord.Role):
+    async def roleinfo(self, ctx, permsRole: discord.Role):
         """(GUILD ONLY) Gives server perms. See 's!help serverperms'..."""
-        invoker=ctx.author
-        emb=discord.Embed(title="Perms for {0.name}, a role in {1.name}".format(permsRole, ctx.guild), color=permsRole.color)
-        emb.set_author(name='Me', icon_url=self.bot.user.avatar_url)
-        emb.add_field(name="Role Color (Hex)", value=str(permsRole.color))
-        emb.add_field(name="Members with Role", value=str(len(permsRole.members)))
+
+        emb = discord.Embed(title = "Perms for {0.name}, a role in {1.name}".format(permsRole, ctx.guild), color = permsRole.color)
+        emb.set_author(name = 'Me', icon_url = self.bot.user.avatar_url)
+        emb.add_field(name = "Role Color (Hex)", value = str(permsRole.color))
+        emb.add_field(name = "Members with Role", value = str(len(permsRole.members)))
         if "--perms" in ctx.message.content:
             perms = permsRole.permissions
             """
@@ -71,17 +73,20 @@ class Info():
                 fieldval = str(permtuples[number][1])
                 emd.add_field(name = fieldname, value = fieldval)
         await ctx.send(embed = emb)
+
     @roleinfo.error
     async def roleinfoerr(self, ctx, error):
         if isinstance(error, commands.NoPrivateMessage):
             await ctx.send(":x: This command is marked for servers only, and will not work in a DM!")
         if isinstance(error, commands.BotMissingPermissions):
             await ctx.send(":x: Without the permission `Manage Roles`, I can't fetch permssions!")
-    @commands.command(description="Gets some stats about the bot. Has a 5-second cooldown per channel..")
+
+    @commands.command(description = "Gets some stats about the bot. Has a 5-second cooldown per channel..")
     @commands.cooldown(1, 5, commands.BucketType.channel)
     async def botstats(self, ctx):
         """Give some system info for the bot."""
-        emb=discord.Embed(title="Bot info", color=0xffffff)
+
+        emb = discord.Embed(title = "Bot info", color = 0xffffff)
         year, month, dayofmonth, hour, minute, second, dayofweek, dayofyear, isdst = time.localtime()
         week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
         dayofweek = week[dayofweek]
@@ -90,6 +95,7 @@ class Info():
         disptime = f"{dayofweek}, {month} {dayofmonth}, {year}; {hour}:{minute}:{second}, Pacific Standard Time"
         if isdst:
             disptime = disptime + " (DST)"
+
         emb.add_field(name = "System Time", value = disptime)
         emb.add_field(name = "Processor Type", value = platform.machine().lower())
         emb.add_field(name = "OS version (short)", value = platform.system()+" "+platform.release())
@@ -100,5 +106,6 @@ class Info():
         emb.add_field(name = "Current server count", value = str(len(self.bot.guilds)))
         emb.add_field(name = "Total Users", value = str(len(self.bot.users)))
         await ctx.send(embed = emb)
+        
 def setup(bot):
     bot.add_cog(Info(bot))

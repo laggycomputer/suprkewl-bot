@@ -5,17 +5,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import discord
 from discord.ext import commands
 class Documentation():
-    def __init__(self,bot):
-        self.bot=bot
+    def __init__(self, bot):
+        self.bot = bot
+    
     @commands.command()
     async def invite(self, ctx):
         """Invite to the support server."""
-        await ctx.send(content="Join our support server! https://www.discord.gg/CRBBJVY")
+        await ctx.send("Join our support server! https://www.discord.gg/CRBBJVY")
+
     @commands.command()
     async def github(self, ctx):
         """A link to our GitHub repo."""
-        emb=discord.Emb(name="Our github", color=0xffffff)
-        emb.add_field(name="Our github", value="Do note that the repo is often out-of-date. Nonetheless: https://www.github.com/laggycomputer/suprkewl=bot")
-        await ctx.send(embed=emb)
+
+        emb = discord.Embed(name = "Our GitHub", color = 0xffffff)
+        emb.add_field(name = "Our github", value = "Do note that the repo is often out-of-date. Nonetheless: https://www.github.com/laggycomputer/suprkewl-bot")
+
+        await ctx.send(embed = emb)
+        
 def setup(bot):
     bot.add_cog(Documentation(bot))
