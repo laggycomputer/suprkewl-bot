@@ -12,7 +12,7 @@ class Randomizers():
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(aliases = ["burn", ":fire:"])
     async def roast(self, ctx, target: discord.Member):
         """Roast someone. ⌐■_■"""
 
@@ -36,7 +36,7 @@ class Randomizers():
 
         await ctx.send(content = random.choice(roasts).format(target.name))
 
-    @commands.command(description = "Draw from a standard, 52-card deck, no jokers.")
+    @commands.command(aliases = ["card"], description = "Draw from a standard, 52-card deck, no jokers.")
     async def draw(self, ctx):
         """Draw a card"""
 
@@ -45,7 +45,7 @@ class Randomizers():
 
         await ctx.send(content="I drew the " + random.choice(ranks) + " of " + random.choice(suits))
 
-    @commands.command()
+    @commands.command(aliases = ["flip", "quarter", "dime", "penny", "nickel"])
     async def coin(self, ctx):
         """Flip a coin"""
 
@@ -60,7 +60,7 @@ class Randomizers():
         else:
             await msg.edit(content = "It's tails.")
 
-    @commands.command(description ="Rock paper scissors. Randomizes a choice for you and the computer. Has a 3 second cooldown on a per-user basis.")
+    @commands.command(aliases = ["rockpaperscissors"], description = "Rock paper scissors. Randomizes a choice for you and the computer. Has a 3 second cooldown on a per-user basis.")
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def rps(self, ctx):
         """See 's!help rps'."""
@@ -123,7 +123,7 @@ class Randomizers():
 
             await msg.edit(content = content)
 
-    @commands.command(description = "Browse a ridiculously tiny collection of funny images. Has a 2 second per-channel cooldown.")
+    @commands.command(aliases = ["laugh", ":joy:"], description = "Browse a ridiculously tiny collection of funny images. Has a 2 second per-channel cooldown.")
     @commands.cooldown(1, 2, commands.BucketType.channel)
     async def funny(self, ctx):
         """See 's!help funny'"""
@@ -150,7 +150,7 @@ class Randomizers():
 
         await ctx.send(embed = msg)
 
-    @commands.command(description = "Rolls the dice specified, in AdB format. For example, 's!dice 3d6' would roll 3 six-sided dice. A must be a positive integer up to and including 10, and B has the same contraints, but with a upper limit of 20. This command has a user-based cooldown of 5 seconds.")
+    @commands.command(aliases = ["roll"], description = "Rolls the dice specified, in AdB format. For example, 's!dice 3d6' would roll 3 six-sided dice. A must be a positive integer up to and including 10, and B has the same contraints, but with a upper limit of 20. This command has a user-based cooldown of 5 seconds.")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def dice(self, ctx, dice: str):
         """see 's!help dice.'"""
@@ -177,7 +177,7 @@ class Randomizers():
         else:
             await msg.edit(content = "Your syntax was correct, but one of your arguments was too large to compute, or one of your arguments was negative. Please see 's!help dice' for more info.")
 
-    @commands.command(description = "The tiebreaker of all tiebreakers. Has a 1-second per-channel cooldown, triggered after the command is run twice in the same channel.")
+    @commands.command(aliases = ["pick", "rand"], description = "The tiebreaker of all tiebreakers. Has a 1-second per-channel cooldown, triggered after the command is run twice in the same channel.")
     @commands.cooldown(2, 1, commands.BucketType.channel)
     async def choose(self, ctx, *choices: str):
         """Choose between multiple choices"""
@@ -196,7 +196,9 @@ class Randomizers():
 
     @commands.command(description = "Starts a fight between the command invoker and the specified <target>. <target> must be a non-bot and must not be the command invoker. This command has a 10-second cooldown per user.")
     @commands.cooldown(1, 10, commands.BucketType.user)
-    async def housefight(self, ctx, target: discord.Member):
+    async def fight(self, ctx, target: discord.Member):
+        """FIGHT"""
+        
         invoker = ctx.author
         if target.bot:
             await ctx.send(content=":x: Oops! You can't fight a robot; it's robot arms will annihilate you! Perhaps you meant a human?")
