@@ -11,4 +11,3 @@ Here's a list of todos for this project. Expect this to change often.
 5. Add hidden cog reload command, with bot owner check
 6. add cooldown error catch and reinvoke, catch role error on s!roleinfo
 7. add command (owner only) to exec(something passes as a param). Make sure it works, doesn't seem to.
-8. Change kick and ban to halt if <target> is command invoker.

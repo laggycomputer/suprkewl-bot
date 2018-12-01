@@ -54,15 +54,18 @@ class Moderation():
             if target == meInServer:
                 await ctx.send(":x: I can't kick myself!")
             else:
-                if meInServer.top_role < invoker.top_role:
-                    try:
-                        await target.kick()
-                        await ctx.send(":boom: RIP {}.".format(target.mention))
-                        await target.send("You've been kicked from `{0.guild.name}`. :slight_frown:".format(ctx))
-                    except Exception:
-                        await ctx.send(":x: ?! An error has occured!")
+                if ctx.author == target:
+                    await ctx.send(":x: I'm not kicking you! If you hate this place that much, just leave!")
                 else:
-                    await ctx.send(":x: The passed member has a higher/equal top role than/to me, meaning I can't kick him/her. Oops! Try again...")
+                    if meInServer.top_role < invoker.top_role:
+                        try:
+                            await target.kick()
+                            await ctx.send(":boom: RIP {}.".format(target.mention))
+                            await target.send("You've been kicked from `{0.guild.name}`. :slight_frown:".format(ctx))
+                        except Exception:
+                            await ctx.send(":x: ?! An error has occured!")
+                    else:
+                        await ctx.send(":x: The passed member has a higher/equal top role than/to me, meaning I can't kick him/her. Oops! Try again...")
 
     @kick.error
     async def kickerr(self, ctx, error):
@@ -87,18 +90,21 @@ class Moderation():
                 if target == meInServer:
                     await ctx.send(":x: Oopsie! Can't ban myself...")
                 else:
-                    if meInServer.top_role > target.top_role:
-                        if deletedays <= 7 and deletedays >= 0:
-                            try:
-                                await ctx.guild.ban(target, delete_message_days = deletedays, reason = reason)
-                                await ctx.send(":boom: **INSTA BAN!** Swung the ban hammer on {0.mention}.".format(target))
-                                await target.send("Looks like you were banned from `{0.guild}`, {1.mention}. :slight_frown:".format(ctx, target))
-                            except Exception:
-                                await ctx.send(":x: Oh noes! It didn't work! I may have ran into ratelimits, or some unknown error may have occured.")
-                        else:
-                            await ctx.send("Oops! You specified an out-of-range integer for <deletedays>! See `s!help ban` for info on limits.")
+                    if target == ctx.author:
+                        await ctx.send(":x: I'm not banning you! Just leave if you hate this place so much!")
                     else:
-                        await ctx.send(":x: Oops! That member has a higher or equal top role to me, meaning I can't ban him/her!")
+                        if meInServer.top_role > target.top_role:
+                            if deletedays <= 7 and deletedays >= 0:
+                                try:
+                                    await ctx.guild.ban(target, delete_message_days = deletedays, reason = reason)
+                                    await ctx.send(":boom: **INSTA BAN!** Swung the ban hammer on {0.mention}.".format(target))
+                                    await target.send("Looks like you were banned from `{0.guild}`, {1.mention}. :slight_frown:".format(ctx, target))
+                                except Exception:
+                                    await ctx.send(":x: Oh noes! It didn't work! I may have ran into ratelimits, or some unknown error may have occured.")
+                            else:
+                                await ctx.send("Oops! You specified an out-of-range integer for <deletedays>! See `s!help ban` for info on limits.")
+                        else:
+                            await ctx.send(":x: Oops! That member has a higher or equal top role to me, meaning I can't ban him/her!")
 
     @ban.error
     async def banerr(self, ctx, error):
