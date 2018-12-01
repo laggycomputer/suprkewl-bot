@@ -1,10 +1,13 @@
 1. Add user status command, preferably an embed. Should include status (online, idle, etc.) and profile picture. Discord join date if possible.
 2. Copy discord.pw server custom emotes that are useful to the SuprKewl Bot support server, so that we can maintain our own copy of the emotes.
 3. Add command to check channel permissions.
-4. Finish debugging s!housefight (there's a lot of things that could go wrong)
+4. Finish debugging s!housefight (there's a lot of things that could go wrong). Possibly move fighter-specific varaibles under a new fighter subclass of discord.Member.
 5. Add spacing (variable=2 to variable = 2)
 6. Add hidden cog reload command, with bot owner check
 7. add cooldown error catch and reinvoke, catch role error on s!roleinfo
 8. add time.localtime() to bot info command
 9. add command aliases (dice and roll, card and draw, funny and laugh, etc.)
-10. add command (owner only) to exec(something passes as a param)
+10. add command (owner only) to exec(something passes as a param). Make sure it works, doesn't seem to.
+11. Change client in main file to use a class, insted of @checks.
+12. Change kick and ban to halt if <target> is command incoker.
+13. rps should have :choice: in the choices beforehand, not add : around it during randomization. Also, don't add good job or better luck next time (and corresponding emoji), just set a win or lose varaible. At the end, reference that and use it to add win/lose message.

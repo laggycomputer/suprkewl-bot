@@ -2,17 +2,20 @@
 """Copyright 2018 Dante Dam
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."""
+
 import discord
 from discord.ext import commands
 import time
+
 class Text():
-    def __init__(self,bot):
-        self.bot=bot
-    @commands.command(description="A bunch of lenny faces. This command has a 10-second cooldown per channel, as it produces a lot of output.")
-    @commands.cooldown(1,10,commands.BucketType.channel)
+    def __init__(self, bot):
+        self.bot = bot
+    @commands.command(description = "A bunch of lenny faces. This command has a 10-second cooldown per channel, as it produces a lot of output.")
+    @commands.cooldown(1, 10, commands.BucketType.channel)
     async def lenny(self, ctx):
         """( ͡° ͜ʖ ͡°) """
-        msg="""**LENNY FACES**
+
+        msg = """**LENNY FACES**
 Regular:( ͡° ͜ʖ ͡°)
 Eyebrow Lenny: ( ͠° ͜ʖ ͡°)
 chienese lenny: （͡°͜ʖ͡°）
@@ -63,11 +66,12 @@ Badass Lenny: ̿ ̿'̿'̵͇̿з=(⌐■ʖ■)=ε/̵͇̿/'̿̿ ̿
         async with ctx.channel.typing():
             time.sleep(1)
             await ctx.send(msg)
-    @commands.command(description="LMAO! Has a 5-second channel cooldown to keep things calm.")
-    @commands.cooldown(1,5,commands.BucketType.channel)
+
+    @commands.command(description = "LMAO! Has a 5-second channel cooldown to keep things calm.")
+    @commands.cooldown(1, 5, commands.BucketType.channel)
     async def lmao(self, ctx):
         """A nice and long lmao"""
-        msg="""
+        msg = """
 L
     M
         A
@@ -78,13 +82,17 @@ L
          。
         。
        ."""
+
         async with ctx.typing():
             time.sleep(1)
             await ctx.send(msg)
-    @commands.command(description="Make the bot say something. Watch what you say. Has a 5 second user cooldown.")
-    @commands.cooldown(1,5,commands.BucketType.user)
-    async def say(self, ctx, message:str):
+
+    @commands.command(description = "Make the bot say something. Watch what you say. Has a 5 second user cooldown.")
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def say(self, ctx, message: str):
         """Make the bot say something."""
-        await ctx.send(content=ctx.author.mention+" wants me to say '{}'.".format(message))
+
+        await ctx.send(content = ctx.author.mention + " wants me to say '{}'.".format(message))
+
 def setup(bot):
     bot.add_cog(Text(bot))
