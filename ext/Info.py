@@ -11,7 +11,7 @@ import time
 class Info():
     def __init__(self, bot):
         self.bot = bot
-    @commands.command(description = "Gives info on role <permsRole> in server (ping the role). Append --perms to your message to also fetch permissions (in this case, the invoker must have a role called 'suprkewl-viewPerms'). If a permission is unlisted, it is likely that the permission in question cannot be requested from the bot's API. Also note the the permissions listed may or may not be overrideable on a per-channel, per-user/role basis.")    
+    @commands.command(description = "Gives info on role <permsRole> in server (ping the role). Append --perms to your message to also fetch permissions (in this case, the invoker must have a role called 'suprkewl-viewPerms'). If a permission is unlisted, it is likely that the permission in question cannot be requested from the bot's API. Also note the the permissions listed may or may not be overrideable on a per-channel, per-user/role basis.")
     @commands.guild_only()
     @commands.has_any_role("suprkewl-viewPerms")
     @commands.bot_has_permissions(manage_roles = True)
