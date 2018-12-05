@@ -16,25 +16,25 @@ class Randomizers():
     async def roast(self, ctx, target: discord.Member):
         """Roast someone. ⌐■_■"""
 
-        roasts = ["You spend your time on this thingy {}? I bet you don't even know what it does. By the way, can you even read this?",
-                  "{}, I fart to make you smell better.",
-                  "{}, Your parents hated you so much your bath toys were an iron and a toaster. ~~go commit toaster bath~~",
-                  "{}, Why don't you check eBay and see if they have a life for sale?",
-                  "{}, You bring everyone a lot of joy, when you leave the room.",
-                  "{}, you're as bright as a black hole, and twice as dense.",
-                  "{}, what'll you do to get a face after that baboon wants his face back?",
-                  "{}, I don't exactly hate you, but if you were on fire and I had water, I'd drink the water.",
-                  "{}, I'll never forget the first time we met, although I'll keep trying.",
-                  "{}, I don't I can think of an insult bad enough for you.",
-                  "{}, There are more calories in your stomach than in the local supermarket!",
-                  "{}, You shouldn't play hide and seek, no one would look for you.",
-                  "{}, If I gave you a penny for your thoughts, I'd get change.",
-                  "{}, So you've changed your mind, does this one work any better?",
-                  "{}, You're so ugly, when your mom dropped you off at school she got a fine for littering.",
-                  "{}, You're so fat the only letters of the alphabet you know are KFC.",
-                  "I don't forget a single face, but in your case, {}, I'll make an exception."]
+        roasts = [f"You spend your time on this thingy {target.mention}? I bet you don't even know what it does. By the way, can you even read this?",
+                  f"{target.mention}, I fart to make you smell better.",
+                  f"{target.mention}, Your parents hated you so much your bath toys were an iron and a toaster. ~~go commit toaster bath~~",
+                  f"{target.mention}, Why don't you check eBay and see if they have a life for sale?",
+                  f"{target.mention}, You bring everyone a lot of joy, when you leave the room.",
+                  f"{target.mention}, you're as bright as a black hole, and twice as dense.",
+                  f"{target.mention}, what'll you do to get a face after that baboon wants his face back?",
+                  f"{target.mention}, I don't exactly hate you, but if you were on fire and I had water, I'd drink the water.",
+                  f"{target.mention}, I'll never forget the first time we met, although I'll keep trying.",
+                  f"{target.mention}, I don't I can think of an insult bad enough for you.",
+                  f"{target.mention}, There are more calories in your stomach than in the local supermarket!",
+                  f"{target.mention}, You shouldn't play hide and seek, no one would look for you.",
+                  f"{target.mention}, If I gave you a penny for your thoughts, I'd get change.",
+                  f"{target.mention}, So you've changed your mind, does this one work any better?",
+                  f"{target.mention}, You're so ugly, when your mom dropped you off at school she got a fine for littering.",
+                  f"{target.mention}, You're so fat the only letters of the alphabet you know are KFC.",
+                  f"I don't forget a single face, but in your case, {target.mention}, I'll make an exception."]
 
-        await ctx.send(random.choice(roasts).format(target.name))
+        await ctx.send(random.choice(roasts))
 
     @commands.command(aliases = ["card"], description = "Draw from a standard, 52-card deck, no jokers.")
     async def draw(self, ctx):
@@ -73,7 +73,7 @@ class Randomizers():
         winmsg = " Congrats! :slight_smile:"
         losemsg = " Better luck next tome... :slight_frown:"
 
-        content = "{} "
+        content = f"{ctx.author.mention} "
 
         if user == computer:
             content += "We both got :" + computer + ":. Tie!"
@@ -106,19 +106,18 @@ class Randomizers():
             content += winmsg
         elif winner == "comp":
             content + losemsg
-        content = content.format(ctx.author.mention)
 
         async with ctx.channel.typing():
             await asyncio.sleep(2)
-            msg = await ctx.send("{} :fist: Rock...".format(ctx.author.mention))
+            msg = await ctx.send(f"{ctx.author.mention} :fist: Rock..."
             await asyncio.sleep(1)
 
-            await msg.edit(content = "{} :newspaper: Paper...".format(ctx.author.mention))
+            await msg.edit(content = f"{ctx.author.mention} :newspaper: Paper..."
             await asyncio.sleep(1)
-            await msg.edit(content = "{} :scissors: Scissors...".format(ctx.author.mention))
+            await msg.edit(content = f"{ctx.author.mention} :scissors: Scissors..."
             await asyncio.sleep(1)
 
-            await msg.edit(content = "{} :boom: BAM!".format(ctx.author.mention))
+            await msg.edit(content = f"{ctx.author.mention} :boom: BAM!"
             await asyncio.sleep(0.5)
 
             await msg.edit(content = content)
@@ -168,12 +167,12 @@ class Randomizers():
         if count <= 10 and count > 0 and limit <= 20 and limit > 0:
 
             for i in range(1, count + 1):
-                await msg.edit(content = ":game_die: Rollling die {}...".format(i))
+                await msg.edit(content = f":game_die: Rollling die {i}..."
                 await asyncio.sleep(1)
 
             result = ', '.join(str(random.randint(1, limit)) for r in range(count))
 
-            await msg.edit(content = ":game_die: My rolls were: {}".format(result))
+            await msg.edit(content = f":game_die: My rolls were: {result}"
         else:
             await msg.edit(content = "Your syntax was correct, but one of your arguments was too large to compute, or one of your arguments was negative. Please see 's!help dice' for more info.")
 
@@ -190,7 +189,7 @@ class Randomizers():
 
         async with ctx.channel.typing():
             await asyncio.sleep(1)
-            message = "{}, I choose '".format(ctx.author.mention)
+            message = f"{ctx.author.mention}, I choose '"
             message += random.choice(choices)+"'."
             await msg.edit(content = message)
 
@@ -264,21 +263,21 @@ class Randomizers():
 
                     fightplaces = ["Laundry Room", "Dining Room", "Kitchen", "Bedroom", "Living Room", "Backyard"]
 
-                    fightactions = {"Laundry Room":["{0.mention} whips {1.mention} with a freshly washed towel", "{0.mention} shuts {1.mention} in the washer, but {1.mention} narrowly escapes","{0.mention} throws a tennis ball from inside the clothes dryer at {1.mention}"],
-                    "Dining Room":["{0.mention} throws a plate at {1.mention}","{0.mention} stabs {1.mention} with a piece of a broken vase", "{0.mention} pins {1.mention} against the wall with the table"],
-                    "Kitchen":["{0.mention} cuts {1.mention} with a a knife", "{0.mention} pours some boiling water on {1.mention}","{0.mention} hits {1.mention} with a pot"],
-                    "Bedroom":["{0.mention} hits {1.mention} with a pillow","{1.mention} takes a pillow to the head from {0.mention}"],
-                    "Living Room":["{0.mention} hits {1.mention} with the TV remote", "{0.mention} uses the Wii controller as a club on {1.mention} *wii sports plays*","{1.mention} trips over the Skyrim CD sleeve, 00f"],
-                    "Backyard":["{0.mention} hits {1.mention} with some tongs","{0.mention} turns the backyard stove over on {1.mention}"]}
+                    fightactions = {"Laundry Room": ["{0.mention} whips {1.mention} with a freshly washed towel", "{0.mention} shuts {1.mention} in the washer, but {1.mention} narrowly escapes", "{0.mention} throws a tennis ball from inside the clothes dryer at {1.mention}"],
+                    "Dining Room": ["{0.mention} throws a plate at {1.mention}", "{0.mention} stabs {1.mention} with a piece of a broken vase", "{0.mention} pins {1.mention} against the wall with the table"],
+                    "Kitchen": ["{0.mention} cuts {1.mention} with a a knife", "{0.mention} pours some boiling water on {1.mention}","{0.mention} hits {1.mention} with a pot"],
+                    "Bedroom": ["{0.mention} hits {1.mention} with a pillow", "{1.mention} takes a pillow to the head from {0.mention}"],
+                    "Living Room": ["{0.mention} hits {1.mention} with the TV remote", "{0.mention} uses the Wii controller as a club on {1.mention} *wii sports plays*","{1.mention} trips over the Skyrim CD sleeve, 00f"],
+                    "Backyard": ["{0.mention} hits {1.mention} with some tongs", "{0.mention} turns the backyard stove over on {1.mention}"]}
 
-                    universalactions = ["{0.mention} slugs {1.mention} in the face", "{0.mention} uses *sicc* karate skills on {1.mention}","{0.mention} pushes {1.mention} over"]
+                    universalactions = ["{0.mention} slugs {1.mention} in the face", "{0.mention} uses *sicc* karate skills on {1.mention}", "{0.mention} pushes {1.mention} over"]
 
-                    deathblows = {"Laundry Room":"{0.mention} shuts {1.mention} in the washer and starts it",
-                    "Dining Room":"{0.mention} pins {1.mention} agianst the table",
-                    "Kitchen":"{0.mention} uses top-notch ninja skills on {1.mention}, many of which involve the knives",
-                    "Bedroom":"{0.mention} gets a l33t hit om {1.mention} involving throwing the bedstand",
-                    "Living Room":"{0.mention} narrowly beats {1.mention} in a sword-fight using the Dolby 7:1 surround speakers",
-                    "Backyard":"{0.mention} throws some hot coals from the backyard stove at {1.mention}"}
+                    deathblows = {"Laundry Room": "{0.mention} shuts {1.mention} in the washer and starts it",
+                    "Dining Room": "{0.mention} pins {1.mention} agianst the table",
+                    "Kitchen": "{0.mention} uses top-notch ninja skills on {1.mention}, many of which involve the knives",
+                    "Bedroom": "{0.mention} gets a l33t hit om {1.mention} involving throwing the bedstand",
+                    "Living Room": "{0.mention} narrowly beats {1.mention} in a sword-fight using the Dolby 7:1 surround speakers",
+                    "Backyard": "{0.mention} throws some hot coals from the backyard stove at {1.mention}"}
 
                     connectedrooms = {"Laundry Room":["Backyard","Kitchen"], "Dining Room":["Kitchen","Backyard"], "Kitchen":["Dining Room","Living Room"],
                     "Bedroom":["Living Room"], "Living Room":["Kitchen","Bedroom"], "Backyard":["Laundry Room","Laundry Room"]}
@@ -288,7 +287,7 @@ class Randomizers():
                     p1.turn = True
 
                 while p1.health > 0 and p2.health > 0:
-                    askaction = await ctx.send("{0.mention}, what do you want to do? `hit`, `run`, or `end`.".format(findTurn().user))
+                    askaction = await ctx.send(f"{findTurn().user.mention}, what do you want to do? `hit`, `run`, or `end`."
 
                     def check(m):
                         if m.channel == ctx.channel and m.author == findTurn().user:
@@ -318,19 +317,19 @@ class Randomizers():
                                 blow = random.choice(fightactions[setting]).format(findTurn().user, findNotTurn().user)
                                 damage = random.randint(1, 50)
 
-                            blow += " ({} dmg)".format(damage)
+                            blow += f" ({damage} dmg)"
                             currentaction = blow
 
                         elif usrinput.content.lower().startswith("run"):
                             newsetting = random.choice(connectedrooms[setting])
 
-                            currentaction = "{0.mention} kicks {1.mention} in the shins and runs as fast as he/she can out of the {2} and into the {3}. {1.mention} gives chase.".format(findTurn().user, findNotTurn().user, setting, newsetting)
+                            currentaction = f"{getTurn().user.mention} kicks {getNotTurn().user.mention} in the shins and runs as fast as he/she can out of the {setting} and into the {newsetting}. {getTurn().user.mention} gives chase."
 
                             setting = newsetting
                             newsetting = ""
 
                         elif usrinput.content.lower().startswith("end"):
-                            await ctx.send("{0.mention} and {1.mention} get friendly and the fight's over.".format(findTurn().user, findNotTurn().user))
+                            await ctx.send(f"{findTurn().user.mention} and {findNotTurn().user.mention} get friendly and the fight's over."
                             return
                         
                         findNotTurn().health -= damage
@@ -339,9 +338,9 @@ class Randomizers():
 
                         emb = discord.Embed(name = "FIGHT", color = findTurn().user.colour)
 
-                        emb.add_field(name = "Current Setting", value = "`{}`".format(setting))
-                        emb.add_field(name = "Player 1 health", value = "**{}**".format(p1.health))
-                        emb.add_field(name = "Player 2 health", value = "**{}**".format(p2.health))
+                        emb.add_field(name = "Current Setting", value = f"`{setting}`")
+                        emb.add_field(name = "Player 1 health", value = f"**{p1.health}**")
+                        emb.add_field(name = "Player 2 health", value = f"**{p2.health}**")
                         emb.add_field(name = "Current action", value = currentaction)
 
                         await ctx.send(embed = emb)
@@ -358,7 +357,7 @@ class Randomizers():
                 else:
                     p2.won = False
                     p1.won = True
-                await ctx.send("Looks like {0.mention} defeated {1.mention} with {2} health left!".format(findwin().user, findloser().user, findwin().health))
+                await ctx.send(f"Looks like {findwin().user.mention} defeated {findloser().user.mention} with {findwin().health} health left!")
                 
 def setup(bot):
     bot.add_cog(Randomizers(bot))

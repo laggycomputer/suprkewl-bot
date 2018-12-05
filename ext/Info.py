@@ -17,7 +17,7 @@ class Info():
     async def roleinfo(self, ctx, role: discord.Role):
         """(GUILD ONLY) Gives info on a passed role."""
 
-        emb = discord.Embed(title = "Info for '{0}', a role in '{1.name}'".format(role, ctx.guild), color = role.color)
+        emb = discord.Embed(title = f"Info for '{role}', a role in '{ctx.guild}'", color = role.color)
         emb.set_author(name = 'Me', icon_url = self.bot.user.avatar_url)
         emb.add_field(name = "Role Color (Hex)", value = role.color)
         emb.add_field(name = "Members with Role", value = len(role.members))
@@ -43,7 +43,7 @@ class Info():
     async def roleperms(self, ctx, role: discord.Role):
         """(GUILD ONLY) Get permissions for a role"""
 
-        emb = discord.Embed(title = "Perms for '{0}', a role in '{1}'".format(role, ctx.guild), color = role.color)
+        emb = discord.Embed(title = f"Perms for '{role}', a role in '{ctx.server}'"
 
         perms = role.permissions
 
@@ -95,7 +95,7 @@ class Info():
         emb.add_field(name = "Processor Type", value = platform.machine().lower())
         emb.add_field(name = "OS version (short)", value = platform.system()+" "+platform.release())
         emb.add_field(name = "OS version (long)", value = platform.platform(aliased = True))
-        emb.add_field(name = "Python Version", value = "Python {0}, build date {1}".format(platform.python_branch(), platform.python_build()[1]))
+        emb.add_field(name = "Python Version", value = f"Python {platform.python_branch()}, build date {platform.python_build()[1]}")
         emb.add_field(name = "discord.py version", value = discord.__version__)
         emb.add_field(name = "Processor name", value = platform.processor())
         emb.add_field(name = "Current server count", value = str(len(self.bot.guilds)))

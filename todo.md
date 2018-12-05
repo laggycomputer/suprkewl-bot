@@ -10,6 +10,4 @@ Here's a list of todos for this project. Expect this to change often.
 4. Add hidden cog reload command, with bot owner check
 5. add cooldown error catch and reinvoke. also add error catches for things like disable command, and guild only command. may not be needed, but just in case we want to quickly restrict a command.
 6. add command (owner only) to exec(something passes as a param). Make sure it works, doesn't seem to.
-7. Change all concatenation and .format to use f-strings.
-8. Change all embed author fields to include message author and command invoked (or something like that)
-9. Allow implicit casting to do it's job (less x.name, more of just letting x be casted to its name)
+7. Change all embed author fields to include message author and command invoked (or something like that)
