@@ -34,7 +34,7 @@ class Randomizers():
                   "{}, You're so fat the only letters of the alphabet you know are KFC.",
                   "I don't forget a single face, but in your case, {}, I'll make an exception."]
 
-        await ctx.send(content = random.choice(roasts).format(target.name))
+        await ctx.send(random.choice(roasts).format(target.name))
 
     @commands.command(aliases = ["card"], description = "Draw from a standard, 52-card deck, no jokers.")
     async def draw(self, ctx):
@@ -43,13 +43,13 @@ class Randomizers():
         suits=[":spades:",":diamonds:",":hearts:",":clubs:"]
         ranks=["Ace",":two:",":three:",":four:",":five:",":six:",":seven:",":eight:",":nine:",":keycap_ten:","Jack","Queen","King"]
 
-        await ctx.send(content="I drew the " + random.choice(ranks) + " of " + random.choice(suits))
+        await ctx.send("I drew the " + random.choice(ranks) + " of " + random.choice(suits))
 
     @commands.command(aliases = ["flip", "quarter", "dime", "penny", "nickel"])
     async def coin(self, ctx):
         """Flip a coin"""
 
-        msg = await ctx.send(content = "My robot hand flips the coin.")
+        msg = await ctx.send("My robot hand flips the coin.")
         time.sleep(1)
 
         await msg.edit(content = "I slap the coin down on my robot arm.")
@@ -110,7 +110,7 @@ class Randomizers():
 
         async with ctx.channel.typing():
             time.sleep(2)
-            msg = await ctx.send(content="{} :fist: Rock...".format(ctx.author.mention))
+            msg = await ctx.send("{} :fist: Rock...".format(ctx.author.mention))
             time.sleep(1)
 
             await msg.edit(content = "{} :newspaper: Paper...".format(ctx.author.mention))
@@ -157,7 +157,7 @@ class Randomizers():
 
         async with ctx.channel.typing():
             time.sleep(1)
-            msg = await ctx.send(content = "thinking... :thinking:")
+            msg = await ctx.send("thinking... :thinking:")
             time.sleep(1)
         try:
             count, limit = map(int, dice.split('d'))
@@ -194,27 +194,68 @@ class Randomizers():
             message += random.choice(choices)+"'."
             await msg.edit(content = message)
 
+    class Fighter():
+        def __init__(self, user):
+            self.user = user
+            self.health = 100
+            self.turn = False
+            self.won = False
+
     @commands.command(description = "Starts a fight between the command invoker and the specified <target>. <target> must be a non-bot and must not be the command invoker. This command has a 10-second cooldown per user.")
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def fight(self, ctx, target: discord.Member):
         """FIGHT"""
         
-        invoker = ctx.author
         if target.bot:
-            await ctx.send(content=":x: Oops! You can't fight a robot; it's robot arms will annihilate you! Perhaps you meant a human?")
+            await ctx.send(":x: Oops! You can't fight a robot; it's robot arms will annihilate you! Perhaps you meant a human?")
         else:
             if target == ctx.author:
-                await ctx.send(content=":x: You can't fight yourself!")
+                await ctx.send(":x: You can't fight yourself!")
             else:
-                await ctx.send(content=":white_check_mark: Starting fight...")
+                await ctx.send(":white_check_mark: Starting fight...")
 
                 async with ctx.channel.typing():
                     time.sleep(1)
 
-                    invokerhealth = 100
-                    targethealth = 100
-                    turn = invoker
-                    notTurn = target
+                    p1 = self.Fighter(ctx.author)
+                    p2 = self.Fighter(target)
+
+                    def findTurn():
+                        if p1.turn:
+                            return p1
+                        elif p2.turn:
+                            return p2
+                        else:
+                            return None
+                    def findNotTurn():
+                        if p1.turn:
+                            return p2
+                        if p2.turn:
+                            return p1
+                        else:
+                            return None
+
+                    def findwin():
+                        if p1.won:
+                            return p1
+                        elif p2.won:
+                            return p2
+                        else:
+                            return None
+                    def findloser():
+                        if p1.won:
+                            return p2
+                        elif p2.won:
+                            return p1
+                        else:
+                            return None
+
+                    def switchturn():
+                        p1.turn = not p1.turn
+                        p2.turn = not p2.turn
+                        damage = 0
+                        currentaction = ""
+                        blow = ""
 
                     currentaction = ""
                     newsetting = ""
@@ -244,93 +285,80 @@ class Randomizers():
 
                     setting = random.choice(fightplaces)
 
-                while invokerhealth > 0 and targethealth > 0:
-                    msg = await ctx.send(content = "{0.mention}, what do you want to do? `hit`, `run`, or `end`.".format(turn))
+                    p1.turn = True
+
+                while p1.health > 0 and p2.health > 0:
+                    askaction = await ctx.send("{0.mention}, what do you want to do? `hit`, `run`, or `end`.".format(findTurn().user))
 
                     def check(m):
-                        if m.channel == ctx.channel and m.author == ctx.author:
-                            return m.content.lower().startswith("hit") or m.content.lower().startswith("run") or m.content.lower().startswith("end")                            
+                        if m.channel == ctx.channel and m.author == findTurn().user:
+                            return m.content.lower().startswith("hit") or m.content.lower().startswith("run") or m.content.lower().startswith("end")
                         else:
                             return False
-                    tmp = await self.bot.wait_for("message", check = check)
-                    if tmp == None:
-                        await ctx.send(content="it timed out noobs")
+
+                    usrinput = await self.bot.wait_for("message", check = check)
+
+                    if usrinput == None:
+                        await ctx.send("it timed out noobs")
                         return
                     else:
-                        if tmp.content.lower().startswith("hit"):
+                        if usrinput.content.lower().startswith("hit"):
                             damage = 0
                             rand = random.randint(1, 15)
                             if rand == 1:
-                                blow = random.choice(deathblows[setting]).format(turn, notTurn)
+                                blow = deathblows[setting].format(findTurn().user, findNotTurn().user)
                                 blow += " (DEATHBLOW)"
-                                if turn == invoker:
-                                    damage = targethealth
-                                else:
-                                    damage = targethealth
+                                damage = 100
 
                             elif rand > 9:
-                                blow = random.choice(universalactions).format(turn, notTurn)
+                                blow = random.choice(universalactions).format(findTurn().user, findNotTurn().user)
                                 damage = random.randint(1, 50)
 
-                                if notTurn == invoker:
-                                    if invokerhealth > damage:
-                                        damage = invokerhealth
-                                else:
-                                    if targethealth > damage:
-                                        damage = targethealth
                             else:
-                                blow = random.choice(fightactions[setting]).format(turn, notTurn)
+                                blow = random.choice(fightactions[setting]).format(findTurn().user, findNotTurn().user)
                                 damage = random.randint(1, 50)
 
                             blow += " ({} dmg)".format(damage)
                             currentaction = blow
 
-                        elif tmp.content.lower().startswith("run"):
+                        elif usrinput.content.lower().startswith("run"):
                             newsetting = random.choice(connectedrooms[setting])
-                            currentaction = "{0.mention} kicks {1.mention} in the shins and runs as fast as he/she can out of the {2} and into the {3}. {1.mention} gives chase.".format(turn, notTurn, setting, newsetting)
+
+                            currentaction = "{0.mention} kicks {1.mention} in the shins and runs as fast as he/she can out of the {2} and into the {3}. {1.mention} gives chase.".format(findTurn().user, findNotTurn().user, setting, newsetting)
+
                             setting = newsetting
                             newsetting = ""
-                        elif tmp.content.lower().startswith("end"):
-                            await ctx.send("{0} ended the fight, what a noob".format(turn.mention))
-                            return
-                        if notTurn == invoker:
-                            if invokerhealth < damage:
-                                damage = invokerhealth
-                            else:
-                                invokerhealth -= damage
-                        else:
-                            if targethealth < damage:
-                                damage = targethealth
-                            else:
-                                targethealth -= damage
 
-                        emb = discord.Embed(name = "FIGHT", color = turn.colour)
+                        elif usrinput.content.lower().startswith("end"):
+                            await ctx.send("{0.mention} and {1.mention} get friendly and the fight's over.".format(findTurn().user, findNotTurn().user))
+                            return
+                        
+                        findNotTurn().health -= damage
+                        if findNotTurn().health < 0:
+                            findNotTurn().health = 0
+
+                        emb = discord.Embed(name = "FIGHT", color = findTurn().user.colour)
 
                         emb.add_field(name = "Current Setting", value = "`{}`".format(setting))
-                        emb.add_field(name = "Player 1 health", value = "**{}**".format(invokerhealth))
-                        emb.add_field(name = "Player 2 health", value = "**{}**".format(targethealth))
+                        emb.add_field(name = "Player 1 health", value = "**{}**".format(p1.health))
+                        emb.add_field(name = "Player 2 health", value = "**{}**".format(p2.health))
                         emb.add_field(name = "Current action", value = currentaction)
 
                         await ctx.send(embed = emb)
-                        await msg.delete()
-                        await tmp.delete()
+                        await askaction.delete()
+                        await usrinput.delete()
 
-                        if turn == invoker:
-                            turn = target
-                            notTurn = invoker
-                        else:
-                            turn = invoker
-                            notTurn = target
+                        switchturn()
+                        
                         time.sleep(3)
-                if invokerhealth == 0:
-                    winner = target
-                    loser = invoker
-                    winnerhealth = targethealth
+                
+                if p1.health == 0:
+                    p2.won = True
+                    p1.won = False
                 else:
-                    winner = invoker
-                    loser = target
-                    winnerhealth = invokerhealth
-                await ctx.send("Looks like {0.mention} defeated {1.mention} with {2} health left!".format(winner, loser, winnerhealth))
+                    p2.won = False
+                    p1.won = True
+                await ctx.send("Looks like {0.mention} defeated {1.mention} with {2} health left!".format(findwin().user, findloser().user, findwin().health))
                 
 def setup(bot):
     bot.add_cog(Randomizers(bot))
