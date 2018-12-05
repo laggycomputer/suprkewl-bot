@@ -50,10 +50,10 @@ class Randomizers():
         """Flip a coin"""
 
         msg = await ctx.send("My robot hand flips the coin.")
-        time.sleep(1)
+        await asyncio.sleep(1)
 
         await msg.edit(content = "I slap the coin down on my robot arm.")
-        time.sleep(0.5)
+        await asyncio.sleep(0.5)
 
         if random.randint(1,2) == 1:
             await msg.edit(content = "It's heads!")
@@ -109,17 +109,17 @@ class Randomizers():
         content = content.format(ctx.author.mention)
 
         async with ctx.channel.typing():
-            time.sleep(2)
+            await asyncio.sleep(2)
             msg = await ctx.send("{} :fist: Rock...".format(ctx.author.mention))
-            time.sleep(1)
+            await asyncio.sleep(1)
 
             await msg.edit(content = "{} :newspaper: Paper...".format(ctx.author.mention))
-            time.sleep(1)
+            await asyncio.sleep(1)
             await msg.edit(content = "{} :scissors: Scissors...".format(ctx.author.mention))
-            time.sleep(1)
+            await asyncio.sleep(1)
 
             await msg.edit(content = "{} :boom: BAM!".format(ctx.author.mention))
-            time.sleep(0.5)
+            await asyncio.sleep(0.5)
 
             await msg.edit(content = content)
 
@@ -156,9 +156,9 @@ class Randomizers():
         """see 's!help dice.'"""
 
         async with ctx.channel.typing():
-            time.sleep(1)
+            await asyncio.sleep(1)
             msg = await ctx.send("thinking... :thinking:")
-            time.sleep(1)
+            await asyncio.sleep(1)
         try:
             count, limit = map(int, dice.split('d'))
         except Exception:
@@ -169,7 +169,7 @@ class Randomizers():
 
             for i in range(1, count + 1):
                 await msg.edit(content = ":game_die: Rollling die {}...".format(i))
-                time.sleep(1)
+                await asyncio.sleep(1)
 
             result = ', '.join(str(random.randint(1, limit)) for r in range(count))
 
@@ -183,13 +183,13 @@ class Randomizers():
         """Choose between multiple choices"""
 
         async with ctx.channel.typing():
-            time.sleep(1)
+            await asyncio.sleep(1)
             msg = await ctx.send("Choosing...")
-            time.sleep(1.5)
+            await asyncio.sleep(1.5)
             await msg.edit(content="Eeeny, Meeny, Miney, Mo. Catch a tiger by the toe...")
 
         async with ctx.channel.typing():
-            time.sleep(1)
+            await asyncio.sleep(1)
             message = "{}, I choose '".format(ctx.author.mention)
             message += random.choice(choices)+"'."
             await msg.edit(content = message)
@@ -215,7 +215,7 @@ class Randomizers():
                 await ctx.send(":white_check_mark: Starting fight...")
 
                 async with ctx.channel.typing():
-                    time.sleep(1)
+                    await asyncio.sleep(1)
 
                     p1 = self.Fighter(ctx.author)
                     p2 = self.Fighter(target)
@@ -350,7 +350,7 @@ class Randomizers():
 
                         switchturn()
                         
-                        time.sleep(3)
+                        await asyncio.sleep(3)
                 
                 if p1.health == 0:
                     p2.won = True
