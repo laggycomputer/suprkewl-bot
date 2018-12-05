@@ -30,7 +30,7 @@ class testing():
         if user.avatar_url == "":
             msg.set_thumbnail(user.default_avatar)
         else:
-            msg.set_thumbnail(url = "https://cdn.discordapp.com/avatars/{}/{}.png".format(user.id, user.avatar))
+            msg.set_thumbnail(url = f"https://cdn.discordapp.com/avatars/{user.id}/{user.avatar}.png")
             
         msg.add_field(name = "Username", value = user.name)
         msg.add_field(name = "Discriminator", value = str(user.discriminator))
@@ -55,12 +55,12 @@ class testing():
             minutes, seconds = divmod(remainder, 60)
 
             if hours > 0:
-                await ctx.send("**This command is on cooldown!** {0}hr, {1}m and {2}s remaining. Reinvoking command then.".format(hours, minutes, seconds))
+                await ctx.sendf(f"**This command is on cooldown!** {hours}hr, {minutes}m and {seconds}s remaining. Reinvoking command then.")
             else:
-                await ctx.send("**This command is on cooldown!** {0}m and {1}s remaining. Reinvoking command then.".format(minutes, seconds))
+                await ctx.send(f"**This command is on cooldown!** {minutes}m and {seconds}s remaining. Reinvoking command then.")
                 
             await asyncio.sleep(error.retry_after)
-            await ctx.send("{0.mention}! The cooldown has ended, reinvoking command...".format(ctx.author))
+            await ctx.send(f"{ctx.author.mention}! The cooldown has ended, reinvoking command...")
             await ctx.reinvoke(restart = True)
 
     @commands.command()

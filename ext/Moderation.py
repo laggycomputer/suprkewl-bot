@@ -29,7 +29,7 @@ class Moderation():
                 await message.delete()
             except Exception:
                 errorcnt += 1
-        await ctx.send(delete_after = 5, content = "<:suprKewl:508479728613851136> GOTEM! Failed to delete {0} messages. Remember that bots cannot delete messages older than 2 weeks. If you still see some messages that should be deleted, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear.".format(errorcnt))
+        await ctx.send(delete_after = 5, content = f"<:suprKewl:508479728613851136> GOTEM! Failed to delete {errorcnt} messages. Remember that bots cannot delete messages older than 2 weeks. If you still see some messages that should be deleted, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear.")
 
     @clear.error
     async def clearerr(self, ctx, error):
@@ -60,8 +60,8 @@ class Moderation():
                     if meInServer.top_role < invoker.top_role:
                         try:
                             await target.kick()
-                            await ctx.send(":boom: RIP {}.".format(target.mention))
-                            await target.send("You've been kicked from `{0.guild.name}`. :slight_frown:".format(ctx))
+                            await ctx.send(f":boom: RIP {target.mention}."
+                            await target.send(f"You've been kicked from `{ctx.guild}`. :slight_frown:")
                         except Exception:
                             await ctx.send(":x: ?! An error has occured!")
                     else:
@@ -97,8 +97,8 @@ class Moderation():
                             if deletedays <= 7 and deletedays >= 0:
                                 try:
                                     await ctx.guild.ban(target, delete_message_days = deletedays, reason = reason)
-                                    await ctx.send(":boom: **INSTA BAN!** Swung the ban hammer on {0.mention}.".format(target))
-                                    await target.send("Looks like you were banned from `{0.guild}`, {1.mention}. :slight_frown:".format(ctx, target))
+                                    await ctx.send(f":boom: **INSTA BAN!** Swung the ban hammer on {target.mention}."
+                                    await target.send(f"Looks like you were banned from `{ctx.guild}`, {target.mention}. :slight_frown:"
                                 except Exception:
                                     await ctx.send(":x: Oh noes! It didn't work! I may have ran into ratelimits, or some unknown error may have occured.")
                             else:
@@ -131,11 +131,11 @@ class Moderation():
             try:
                 await ctx.guild.unban(target)
                 await ctx.send("<:suprKewl:508479728613851136> Unbanned!")
-                await target.send(":thumbs_up: You've been unbanned from {}! If you still have a valid invite, you can use it to rejoin.".format(messageGuild.name))
+                await target.send(f":thumbs_up: You've been unbanned from {ctx.guild}! If you still have a valid invite, you can use it to rejoin.")
             except Exception:
-                await msg.edit(content = "{0.mention} :x: Oops! Looks like I couldn't unban {1.name}#{1.discriminator}! Perhaps I crashed into a rate-limit or tripped on another unknown error. Perhaps try again?".format(invoker, target))
+                await msg.edit(content = f"{ctx.author.mention} :x: Oops! Looks like I couldn't unban {target.name}#{target.discriminator}! Perhaps I crashed into a rate-limit or tripped on another unknown error. Perhaps try again?")
         else:
-            await msg.edit(content = "{0.mention} :x: Oops! That user ain't banned! Perhaps you meant someone else?".format(invoker))
+            await msg.edit(content = f"{ctx.author.mention} :x: Oops! That user ain't banned! Perhaps you meant someone else?")
 
     @unban.error
     async def unbanerr(self, ctx, error):
@@ -161,7 +161,7 @@ class Moderation():
             list.append(ban[0].name + "#" + ban[0].discriminator)
         commaspace = ", "
         msg = commaspace.join(list)
-        emb.add_field(name = "Banned users for {0.name}".format(ctx.guild), value = msg)
+        emb.add_field(name = f"Banned users for {ctx.guild}", value = msg)
 
         await ctx.send(embed = emb)
 
