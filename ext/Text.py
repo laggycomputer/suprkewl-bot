@@ -64,7 +64,7 @@ Put ur dongers up or I'll shoot:(ง ͡° ͜ʖ ͡°)=/̵͇̿/'̿'̿̿̿ ̿ ̿̿
 Badass Lenny: ̿ ̿'̿'̵͇̿з=(⌐■ʖ■)=ε/̵͇̿/'̿̿ ̿
 """
         async with ctx.channel.typing():
-            time.sleep(1)
+            await asyncio.sleep(1)
             await ctx.send(msg)
 
     @commands.command(description = "LMAO! Has a 5-second channel cooldown to keep things calm.")
@@ -84,7 +84,7 @@ L
        ."""
 
         async with ctx.typing():
-            time.sleep(1)
+            await asyncio.sleep(1)
             await ctx.send(msg)
 
     @commands.command(description = "Make the bot say something. Watch what you say. Has a 5 second user cooldown.")

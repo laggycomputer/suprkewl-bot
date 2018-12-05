@@ -58,7 +58,8 @@ class testing():
                 await ctx.send("**This command is on cooldown!** {0}hr, {1}m and {2}s remaining. Reinvoking command then.".format(hours, minutes, seconds))
             else:
                 await ctx.send("**This command is on cooldown!** {0}m and {1}s remaining. Reinvoking command then.".format(minutes, seconds))
-            time.sleep(error.retry_after)
+                
+            await asyncio.sleep(error.retry_after)
             await ctx.send("{0.mention}! The cooldown has ended, reinvoking command...".format(ctx.author))
             await ctx.reinvoke(restart = True)
 

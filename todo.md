@@ -13,4 +13,3 @@ Here's a list of todos for this project. Expect this to change often.
 7. Change all concatenation and .format to use f-strings.
 8. Change all embed author fields to include message author and command invoked (or something like that)
 9. Allow implicit casting to do it's job (less x.name, more of just letting x be casted to its name)
-10. Change all uses of time.sleep to asyncio.sleep.
