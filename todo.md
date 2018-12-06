@@ -7,7 +7,5 @@ Here's a list of todos for this project. Expect this to change often.
   b. Should include status (online, idle, etc.), server joined date (would render s!joined obsolete), and Discord join date.
 2. Copy discord.pw server custom emotes that are useful to the SuprKewl Bot support server, so that we can maintain our own copy of the emotes.
 3. Add command to check channel permissions.
-4. Add hidden cog reload command, with bot owner check
-5. add cooldown error catch and reinvoke. also add error catches for things like disable command, and guild only command. may not be needed, but just in case we want to quickly restrict a command.
-6. add command (owner only) to exec(something passes as a param). Make sure it works, doesn't seem to.
-7. Change all embed author fields to include message author and command invoked (or something like that)
+4. add cooldown error catch and reinvoke. also add error catches for things like disable command, and guild only command. may not be needed, but just in case we want to quickly restrict a command.
+5. Change all embed author fields to include message author and command invoked (or something like that)

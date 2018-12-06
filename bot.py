@@ -10,7 +10,7 @@ from discord.ext import commands
 import platform
 import random
 
-startup_extensions = ["ext.Text", "ext.Randomizers", "ext.Documentation", "ext.Moderation", "ext.Info", "testing"]
+startup_extensions = ["jishaku", "ext.Text", "ext.Randomizers", "ext.Documentation", "ext.Moderation", "ext.Info", "testing"]
 
 client = commands.Bot(command_prefix = commands.when_mentioned_or('s!'), description = "SuprKewl Bot, by Too Laggy#3878", pm_help = True)
 
