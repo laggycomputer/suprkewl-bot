@@ -43,7 +43,7 @@ class Info():
     async def roleperms(self, ctx, role: discord.Role):
         """(GUILD ONLY) Get permissions for a role"""
 
-        emb = discord.Embed(title = f"Perms for '{role}', a role in '{ctx.server}'"
+        emb = discord.Embed(title = f"Perms for '{role}', a role in '{ctx.server}'")
 
         perms = role.permissions
 
