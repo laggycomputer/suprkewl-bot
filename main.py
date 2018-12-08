@@ -8,8 +8,9 @@ from discord.ext.commands import Bot
 from discord.ext import commands
 import asyncio
 import random
+import platform
 
-startup_extensions = ["jishaku", "playingloop", "clientevents", "ext.Text", "ext.Randomizers", "ext.Documentation", "ext.Moderation", "ext.Info", "testing"]
+startup_extensions = ["jishaku", "ext.Text", "ext.Randomizers", "ext.Documentation", "ext.Moderation", "ext.Info", "testing"]
 
 client = commands.Bot(command_prefix = "s!", description = "SuprKewl Bot, by Too Laggy#3878", pm_help = True)
 
@@ -43,6 +44,42 @@ async def playingstatus():
         await asyncio.sleep(120)
 
 client.bg_task = client.loop.create_task(playingstatus())
+
+@client.event
+async def on_ready():
+
+    print(f"Logged in as {client.user.name} (ID {client.user.id} | Connected to {len(client.guilds)} servers | Connected to {len(set(client.get_all_members()))} users")
+    print("-" * 8)
+    print(f"Current Discord.py Version: {discord.__version__} | Current Python Version: {platform.python_version()}")
+    print("-" * 8)
+    print(f"Use this link to invite {client.user.name}:")
+    print(f"https://discordapp.com/oauth2/authorize?client_id={client.user.id}&scope=bot&permissions=8")
+    print("-" * 8)
+
+@client.event
+async def on_message(message):
+
+    print(f"Got message '{message.content}'")
+    print(f"From @{message.author}")
+    print(f"In server {message.guild}")
+    print(f"In channel {message.channel}")
+
+    if message.author.bot:
+        return
+    else:
+        if isinstance(message.channel, discord.abc.GuildChannel):
+            if message.channel.permissions_for(message.guild.me).send_messages:
+
+                if message.content == "<@408869071946514452>":
+                    await message.channel.send(":eyes: **WHO DARE PING** btw my prefix is `s!`.")
+
+                await client.process_commands(message)
+
+            else:
+                if message.content.startswith("s!"):
+                    await message.author.send(":x: I can't send messages there! Perhaps try again elsewhere?")
+        else:
+            await client.process_commands(message)
 
 if __name__ == "__main__":
     for extension in startup_extensions:
