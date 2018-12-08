@@ -9,3 +9,4 @@ Here's a list of todos for this project. Expect this to change often.
 3. Add command to check channel permissions.
 4. add cooldown error catch and reinvoke. also add error catches for things like disable command, and guild only command. may not be needed, but just in case we want to quickly restrict a command.
 5. Change all embed author fields to include message author and command invoked (or something like that)
+6. More embeds. They look great.

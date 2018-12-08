@@ -11,7 +11,13 @@ class Documentation():
     @commands.command()
     async def invite(self, ctx):
         """Invite to the support server."""
-        await ctx.send("Join our support server! https://www.discord.gg/CRBBJVY")
+
+        emb = discord.Embed(author = "Join our Discord server!")
+
+        emb.add_field(name = "\u200b", value = "https://www.discord.gg/CRBBJVY")
+        emb.set_footer(text = f"Requested by {ctx.author.mention}.", icon_url = self.bot.user.avatar_url)
+
+        await ctx.send(embed = emb)
 
     @commands.command(aliases = ["git"])
     async def github(self, ctx):
