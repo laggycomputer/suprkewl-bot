@@ -60,7 +60,7 @@ class Moderation():
                     if meInServer.top_role < invoker.top_role:
                         try:
                             await target.kick()
-                            await ctx.send(f":boom: RIP {target.mention}."
+                            await ctx.send(f":boom: RIP {target.mention}.")
                             await target.send(f"You've been kicked from `{ctx.guild}`. :slight_frown:")
                         except Exception:
                             await ctx.send(":x: ?! An error has occured!")
@@ -97,8 +97,8 @@ class Moderation():
                             if deletedays <= 7 and deletedays >= 0:
                                 try:
                                     await ctx.guild.ban(target, delete_message_days = deletedays, reason = reason)
-                                    await ctx.send(f":boom: **INSTA BAN!** Swung the ban hammer on {target.mention}."
-                                    await target.send(f"Looks like you were banned from `{ctx.guild}`, {target.mention}. :slight_frown:"
+                                    await ctx.send(f":boom: **INSTA BAN!** Swung the ban hammer on {target.mention}.")
+                                    await target.send(f"Looks like you were banned from `{ctx.guild}`, {target.mention}. :slight_frown:")
                                 except Exception:
                                     await ctx.send(":x: Oh noes! It didn't work! I may have ran into ratelimits, or some unknown error may have occured.")
                             else:

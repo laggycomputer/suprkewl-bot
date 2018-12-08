@@ -109,15 +109,15 @@ class Randomizers():
 
         async with ctx.channel.typing():
             await asyncio.sleep(2)
-            msg = await ctx.send(f"{ctx.author.mention} :fist: Rock..."
+            msg = await ctx.send(f"{ctx.author.mention} :fist: Rock...")
             await asyncio.sleep(1)
 
-            await msg.edit(content = f"{ctx.author.mention} :newspaper: Paper..."
+            await msg.edit(content = f"{ctx.author.mention} :newspaper: Paper...")
             await asyncio.sleep(1)
-            await msg.edit(content = f"{ctx.author.mention} :scissors: Scissors..."
+            await msg.edit(content = f"{ctx.author.mention} :scissors: Scissors...")
             await asyncio.sleep(1)
 
-            await msg.edit(content = f"{ctx.author.mention} :boom: BAM!"
+            await msg.edit(content = f"{ctx.author.mention} :boom: BAM!")
             await asyncio.sleep(0.5)
 
             await msg.edit(content = content)
@@ -167,12 +167,12 @@ class Randomizers():
         if count <= 10 and count > 0 and limit <= 20 and limit > 0:
 
             for i in range(1, count + 1):
-                await msg.edit(content = f":game_die: Rollling die {i}..."
+                await msg.edit(content = f":game_die: Rollling die {i}...")
                 await asyncio.sleep(1)
 
             result = ', '.join(str(random.randint(1, limit)) for r in range(count))
 
-            await msg.edit(content = f":game_die: My rolls were: {result}"
+            await msg.edit(content = f":game_die: My rolls were: {result}")
         else:
             await msg.edit(content = "Your syntax was correct, but one of your arguments was too large to compute, or one of your arguments was negative. Please see 's!help dice' for more info.")
 
@@ -287,7 +287,7 @@ class Randomizers():
                     p1.turn = True
 
                 while p1.health > 0 and p2.health > 0:
-                    askaction = await ctx.send(f"{findTurn().user.mention}, what do you want to do? `hit`, `run`, or `end`."
+                    askaction = await ctx.send(f"{findTurn().user.mention}, what do you want to do? `hit`, `run`, or `end`.")
 
                     def check(m):
                         if m.channel == ctx.channel and m.author == findTurn().user:
@@ -329,7 +329,7 @@ class Randomizers():
                             newsetting = ""
 
                         elif usrinput.content.lower().startswith("end"):
-                            await ctx.send(f"{findTurn().user.mention} and {findNotTurn().user.mention} get friendly and the fight's over."
+                            await ctx.send(f"{findTurn().user.mention} and {findNotTurn().user.mention} get friendly and the fight's over.")
                             return
                         
                         findNotTurn().health -= damage
