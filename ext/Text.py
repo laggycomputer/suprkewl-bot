@@ -88,9 +88,9 @@ L
             await asyncio.sleep(1)
             await ctx.send(msg)
 
-    @commands.command(description = "Make the bot say something. Remember to put messages with spaces in them in quotes. Watch what you say. Has a 5 second user cooldown.")
+    @commands.command(description = "Make the bot say something. Watch what you say. Has a 5 second user cooldown.")
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def say(self, ctx, message: str):
+    async def say(self, ctx, *, message: str):
         """Make the bot say something."""
 
         await ctx.send(f"{ctx.author.mention} wants me to say '{message}'")

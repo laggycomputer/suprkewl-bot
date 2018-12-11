@@ -24,7 +24,7 @@ class theBot(commands.Bot):
         for extension in startup_extensions:
             try:
                 self.load_extension(extension)
-                print("Loaded module {}. yay".format(extension))
+                print(f"Loaded module {extension}. yay")
             except Exception as e:
                 exc = f"{e.__name__}: {e}"
                 print(f"Failed to load extension {extension}\n{exc}")
