@@ -12,12 +12,12 @@ class testing():
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases = ["userinfo"], description = "Get the profile of a passed <user>. Please note that <user> DOES NOT DEFAULT TO THE COMMAND INVOKER. Instead, use s!myprofile to get your own profile.")
+    @commands.command(aliases=["userinfo"], description="Get the profile of a passed <user>. Please note that <user> DOES NOT DEFAULT TO THE COMMAND INVOKER. Instead, use s!myprofile to get your own profile.")
     async def profile(self, ctx, user: discord.User):
         """See 's!help profile' for some important notes."""
 
-        pool = redis.ConnectionPool(host = 'localhost', port = 6379, db = 0)
-        r = redis.Redis(connection_pool = pool)
+        pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
+        r = redis.Redis(connection_pool=pool)
         defaultbio = "This user has no set bio! If that's you, please set it with `s!setbio`."
 
         """pipe = r.pipeline()
@@ -25,21 +25,22 @@ class testing():
         bio=pipe.hget("userbios", user.id)
         pipe.execute()"""
 
-        msg = discord.Embed(color = user.colour)
+        msg = discord.Embed(color=user.colour)
 
         if user.avatar_url == "":
             msg.set_thumbnail(user.default_avatar)
         else:
-            msg.set_thumbnail(url = f"https://cdn.discordapp.com/avatars/{user.id}/{user.avatar}.png")
+            msg.set_thumbnail(url=f"https://cdn.discordapp.com/avatars/{user.id}/{user.avatar}.png")
             
-        msg.add_field(name = "Username", value = user.name)
-        msg.add_field(name = "Discriminator", value = str(user.discriminator))
-        msg.add_field(name = "Is a bot", value = str(user.bot))
-        msg.add_field(name = "Mention String", value="\\" + user.mention)
-        msg.add_field(name = "Discord join date and time", value = str(user.created_at) + " (in UTC timezone)")
-        msg.add_field(name = "Server join date", value = str(user.joined_at) + " (first time user joined)")
+        msg.add_field(name="Username", value=user.name)
+        msg.add_field(name="Discriminator", value=str(user.discriminator))
+        msg.add_field(name="Is a bot", value=str(user.bot))
+        msg.add_field(name="Mention String", value="\\"+user.mention)
+        msg.add_field(name="Discord join date and time",
+                      value=str(user.created_at) + " (in UTC timezone)")
+        msg.add_field(name="Server join date", value=str(user.joined_at) + " (first time user joined)")
 
-        await ctx.send(embed = msg)
+        await ctx.send(embed=msg)
 
     @commands.command(description = "A test for cooldown errors. Does nothing otherwise.")
     @commands.cooldown(1, 86410, commands.BucketType.user)

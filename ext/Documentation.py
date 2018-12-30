@@ -14,21 +14,21 @@ class Documentation():
     async def invite(self, ctx):
         """Invite to the support server."""
 
-        emb = discord.Embed(author = "Join our Discord server!")
+        emb = discord.Embed(author="Join our Discord server!")
 
-        emb.add_field(name = "\u200b", value = "https://www.discord.gg/CRBBJVY")
-        emb.set_footer(text = f"Requested by {ctx.author.mention}.", icon_url = self.bot.user.avatar_url)
+        emb.add_field(name="\u200b", value="https://www.discord.gg/CRBBJVY")
+        emb.set_footer(text=f"Requested by {ctx.author.mention}.", icon_url=self.bot.user.avatar_url)
 
-        await ctx.send(embed = emb)
+        await ctx.send(embed=emb)
 
-    @commands.command(aliases = ["git"])
+    @commands.command(aliases=["git"])
     async def github(self, ctx):
         """A link to our GitHub repo."""
 
-        emb = discord.Embed(name = "Our GitHub", color = 0xffffff)
-        emb.add_field(name = "Our github", value = "https://www.github.com/laggycomputer/suprkewl-bot")
+        emb = discord.Embed(name="Our GitHub", color=0xffffff)
+        emb.add_field(name="Our github", value="https://www.github.com/laggycomputer/suprkewl-bot")
 
-        await ctx.send(embed = emb)
+        await ctx.send(embed=emb)
         
 def setup(bot):
     bot.add_cog(Documentation(bot))

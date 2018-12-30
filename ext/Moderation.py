@@ -12,17 +12,17 @@ class Moderation():
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(description = "Clear <count> messages from the bottom of the current channel. Remember that bots cannot delete messages older than 2 weeks, and that both the command invoker and the bot must have the 'Manage Messages' permission.")
+    @commands.command(description="Clear <count> messages from the bottom of the current channel. Remember that bots cannot delete messages older than 2 weeks, and that both the command invoker and the bot must have the 'Manage Messages' permission.")
     @commands.guild_only()
-    @commands.bot_has_permissions(manage_messages = True)
-    @commands.has_permissions(manage_messages = True)
+    @commands.bot_has_permissions(manage_messages=True)
+    @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, count: int):
         """(GUILD ONLY) Clear messages. See 's!help clear' for more."""
 
         await ctx.message.delete()
 
-        messages = await channel.history(limit = count).flatten()
-        await ctx.send(delete_after = 5, content = "Clearing...")
+        messages = await channel.history(limit=count).flatten()
+        await ctx.send(delete_after=5, content="Clearing...")
         errorcnt = 0
 
         for message in messages:
@@ -30,7 +30,7 @@ class Moderation():
                 await message.delete()
             except Exception:
                 errorcnt += 1
-        await ctx.send(delete_after = 5, content = f"<:suprKewl:508479728613851136> GOTEM! Failed to delete {errorcnt} messages. Remember that bots cannot delete messages older than 2 weeks. If you still see some messages that should be deleted, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear.")
+        await ctx.send(delete_after=5, content=f"<:suprKewl:508479728613851136> GOTEM! Failed to delete {errorcnt} messages. Remember that bots cannot delete messages older than 2 weeks. If you still see some messages that should be deleted, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear.")
 
     @clear.error
     async def clearerr(self, ctx, error):
@@ -38,14 +38,14 @@ class Moderation():
             await ctx.send(":x: I don't have the needed permission `Manage Messages`. This won't work... yet!")
         if isinstance(error, commands.MissingPermissions):
             await ctx.message.delete()
-            await ctx.send(delete_after = 5, content = ":x: You don't have the proper permissions to delete messages! You need the permission `Manage Messages`.")
+            await ctx.send(delete_after=5, content=":x: You don't have the proper permissions to delete messages! You need the permission `Manage Messages`.")
         if isinstance(error, commands.NoPrivateMessage):
             await ctx.send(":x: This command is marked for servers only, and will not work in a DM!")
 
-    @commands.command(description = "Kicks the given <target>. Please ensure both the bot and the command invoker have the permission 'Kick Members' before running this command. Also notifies <target> of kick.")
+    @commands.command(description="Kicks the given <target>. Please ensure both the bot and the command invoker have the permission 'Kick Members' before running this command. Also notifies <target> of kick.")
     @commands.guild_only()
-    @commands.bot_has_permissions(kick_members = True)
-    @commands.has_permissions(kick_members = True)
+    @commands.bot_has_permissions(kick_members=True)
+    @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, target: discord.Member):
         """(GUILD ONLY) Kick someone. See 's!help kick' for more."""
 
@@ -77,10 +77,10 @@ class Moderation():
         if isinstance(error, commands.NoPrivateMessage):
             await ctx.send(":x: This command is marked for servers only, and will not work in a DM!")
 
-    @commands.command(description = "Bans the given <target> with reason <reason>, deleteing all messages sent from that user over the last <deletedays> days (must be an integer betweeen and including 0 and 7). Ensure that both the command invoker and the bot have the permission 'Ban Members'. Also DMs <target> to let them know they've been banned.")
+    @commands.command(description="Bans the given <target> with reason <reason>, deleteing all messages sent from that user over the last <deletedays> days (must be an integer betweeen and including 0 and 7). Ensure that both the command invoker and the bot have the permission 'Ban Members'. Also DMs <target> to let them know they've been banned.")
     @commands.guild_only()
-    @commands.bot_has_permissions(ban_members = True)
-    @commands.has_permissions(ban_members = True)
+    @commands.bot_has_permissions(ban_members=True)
+    @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, target: discord.Member, deletedays: int, reason: str):
         """(GUILD ONLY) Ban someone. See 's!help ban' for more info."""
 
@@ -97,7 +97,7 @@ class Moderation():
                         if meInServer.top_role > target.top_role:
                             if deletedays <= 7 and deletedays >= 0:
                                 try:
-                                    await ctx.guild.ban(target, delete_message_days = deletedays, reason = reason)
+                                    await ctx.guild.ban(target, delete_message_days=deletedays, reason=reason)
                                     await ctx.send(f":boom: **INSTA BAN!** Swung the ban hammer on {target.mention}.")
                                     await target.send(f"Looks like you were banned from `{ctx.guild}`, {target.mention}. :slight_frown:")
                                 except Exception:
@@ -116,10 +116,10 @@ class Moderation():
         if isinstance(error, commands.NoPrivateMessage):
             await ctx.send(":x: This command is marked for servers only, and will not work in a DM!")
 
-    @commands.command(description = "Unbans the given <target>. The target must be banned from the given server, and both the command invoker and the bot must have the permission 'Ban Members'. <target> will be DM'd once they are unbanned.")
+    @commands.command(description="Unbans the given <target>. The target must be banned from the given server, and both the command invoker and the bot must have the permission 'Ban Members'. <target> will be DM'd once they are unbanned.")
     @commands.guild_only()
-    @commands.bot_has_permissions(ban_members = True)
-    @commands.has_permissions(ban_members = True)
+    @commands.bot_has_permissions(ban_members=True)
+    @commands.has_permissions(ban_members=True)
 
     async def unban(self, ctx, target: discord.User):
         """(GUILD ONLY) Unbans someone. See `s!help unban` for more info."""
@@ -147,24 +147,24 @@ class Moderation():
         if isinstance(error, commands.NoPrivateMessage):
             await ctx.send(":x: This command is marked for servers only, and will not work in a DM!")
 
-    @commands.command(description = "Gives the list of banned users for this server. Both the command invoker and the bot must have the permission `Ban Members`.")
+    @commands.command(description="Gives the list of banned users for this server. Both the command invoker and the bot must have the permission `Ban Members`.")
     @commands.guild_only()
-    @commands.bot_has_permissions(ban_members = True)
-    @commands.has_permissions(ban_members = True)
+    @commands.bot_has_permissions(ban_members=True)
+    @commands.has_permissions(ban_members=True)
     async def banlist(self, ctx):
         """(GUILD ONLY) Gives a list of banned users."""
 
         emb = discord.Embed()
-        emb.set_author(name = 'Me', icon_url = self.bot.user.avatar_url)
+        emb.set_author(name='Me', icon_url=self.bot.user.avatar_url)
         list = []
         banlist = await ctx.guild.bans()
         for ban in banlist:
             list.append(ban[0].name + "#" + ban[0].discriminator)
         commaspace = ", "
         msg = commaspace.join(list)
-        emb.add_field(name = f"Banned users for {ctx.guild}", value = msg)
+        emb.add_field(name=f"Banned users for {ctx.guild}", value=msg)
 
-        await ctx.send(embed = emb)
+        await ctx.send(embed=emb)
 
     @banlist.error
     async def banlisterr(self, ctx, error):

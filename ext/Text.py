@@ -11,7 +11,7 @@ from discord.ext import commands
 class Text():
     def __init__(self, bot):
         self.bot = bot
-    @commands.command(description = "A bunch of lenny faces. This command has a 10-second cooldown per channel, as it produces a lot of output.")
+    @commands.command(description="A bunch of lenny faces. This command has a 10-second cooldown per channel, as it produces a lot of output.")
     @commands.cooldown(1, 10, commands.BucketType.channel)
     async def lenny(self, ctx):
         """( ͡° ͜ʖ ͡°) """
@@ -68,7 +68,7 @@ Badass Lenny: ̿ ̿'̿'̵͇̿з=(⌐■ʖ■)=ε/̵͇̿/'̿̿ ̿
             await asyncio.sleep(1)
             await ctx.send(msg)
 
-    @commands.command(description = "LMAO! Has a 5-second channel cooldown to keep things calm.")
+    @commands.command(description="LMAO! Has a 5-second channel cooldown to keep things calm.")
     @commands.cooldown(1, 5, commands.BucketType.channel)
     async def lmao(self, ctx):
         """A nice and long lmao"""
@@ -88,7 +88,7 @@ L
             await asyncio.sleep(1)
             await ctx.send(msg)
 
-    @commands.command(description = "Make the bot say something. Watch what you say. Has a 5 second user cooldown.")
+    @commands.command(description="Make the bot say something. Watch what you say. Has a 5 second user cooldown.")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def say(self, ctx, *, message: str):
         """Make the bot say something."""

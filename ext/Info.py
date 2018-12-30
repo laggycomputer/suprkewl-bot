@@ -12,23 +12,23 @@ from discord.ext import commands
 class Info():
     def __init__(self, bot):
         self.bot = bot
-    @commands.command(description = "Gives info on role <permsRole> in server (ping the role). Includes role color and member count, amongst other things.")
+    @commands.command(description="Gives info on role <permsRole> in server (ping the role). Includes role color and member count, amongst other things.")
     @commands.guild_only()
-    @commands.bot_has_permissions(manage_roles = True)
+    @commands.bot_has_permissions(manage_roles=True)
     async def roleinfo(self, ctx, role: discord.Role):
         """(GUILD ONLY) Gives info on a passed role."""
 
-        emb = discord.Embed(title = f"Info for '{role}', a role in '{ctx.guild}'", color = role.color)
-        emb.set_author(name = 'Me', icon_url = self.bot.user.avatar_url)
-        emb.add_field(name = "Role Color (Hex)", value = role.color)
-        emb.add_field(name = "Members with Role", value = len(role.members))
-        emb.add_field(name = "Role ID", value = role.id)
-        dispHoist = "No"
+        emb = discord.Embed(title=f"Info for '{role}', a role in '{ctx.guild}'", color=role.color)
+        emb.set_author(name='Me', icon_url=self.bot.user.avatar_url)
+        emb.add_field(name="Role Color (Hex)", value=role.color)
+        emb.add_field(name="Members with Role", value=len(role.members))
+        emb.add_field(name="Role ID", value=role.id)
+        dispHoist="No"
         if role.hoist:
-            dispHoist = "Yes"
-        emb.add_field(name = "'Display role member seperately from online members'", value = dispHoist)
+            dispHoist="Yes"
+        emb.add_field(name="'Display role member seperately from online members'", value=dispHoist)
 
-        await ctx.send(embed = emb)
+        await ctx.send(embed=emb)
 
     @roleinfo.error
     async def roleinfoerr(self, ctx, error):
@@ -37,14 +37,14 @@ class Info():
         if isinstance(error, commands.BotMissingPermissions):
             await ctx.send(":x: Without the permission `Manage Roles`, I can't fetch permssions!")
 
-    @commands.command(description = "Gives perms on the given <role> (ping it). Permissions are listed in the order they appear on Discord. The bot must have the 'Manage Roles' permission for this to work, and the user must have a role called 'suprkewl-viewPerms' to use the command. Remember that role perms may be overridden on a per-channel (sometimes also on a per-user) basis.")
+    @commands.command(description="Gives perms on the given <role> (ping it). Permissions are listed in the order they appear on Discord. The bot must have the 'Manage Roles' permission for this to work, and the user must have a role called 'suprkewl-viewPerms' to use the command. Remember that role perms may be overridden on a per-channel (sometimes also on a per-user) basis.")
     @commands.guild_only()
     @commands.has_any_role("suprkewl-viewPerms")
-    @commands.bot_has_permissions(manage_roles = True)
+    @commands.bot_has_permissions(manage_roles=True)
     async def roleperms(self, ctx, role: discord.Role):
         """(GUILD ONLY) Get permissions for a role"""
 
-        emb = discord.Embed(title = f"Perms for '{role}', a role in '{ctx.server}'")
+        emb = discord.Embed(title=f"Perms for '{role}', a role in '{ctx.server}'")
 
         perms = role.permissions
 
@@ -73,16 +73,16 @@ class Info():
                 fieldval = "Yes"
             else:
                 fieldval = "No"
-            emb.add_field(name = fieldname, value = fieldval)
+            emb.add_field(name=fieldname, value=fieldval)
 
-        await ctx.send(embed = emb)
+        await ctx.send(embed=emb)
 
-    @commands.command(description = "Gets some stats about the bot. Has a 5-second cooldown per channel..")
+    @commands.command(description="Gets some stats about the bot. Has a 5-second cooldown per channel..")
     @commands.cooldown(1, 5, commands.BucketType.channel)
     async def botstats(self, ctx):
         """Give some system info for the bot."""
 
-        emb = discord.Embed(title = "Bot info", color = 0xffffff)
+        emb = discord.Embed(title="Bot info", color=0xffffff)
         year, month, dayofmonth, hour, minute, second, dayofweek, dayofyear, isdst = time.localtime()
         week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
         dayofweek = week[dayofweek]
@@ -92,16 +92,16 @@ class Info():
         if isdst:
             disptime = disptime + " (DST)"
 
-        emb.add_field(name = "System Time", value = disptime)
-        emb.add_field(name = "Processor Type", value = platform.machine().lower())
-        emb.add_field(name = "OS version (short)", value = platform.system()+" "+platform.release())
-        emb.add_field(name = "OS version (long)", value = platform.platform(aliased = True))
-        emb.add_field(name = "Python Version", value = f"Python {platform.python_branch()}, build date {platform.python_build()[1]}")
-        emb.add_field(name = "discord.py version", value = discord.__version__)
-        emb.add_field(name = "Processor name", value = platform.processor())
-        emb.add_field(name = "Current server count", value = str(len(self.bot.guilds)))
-        emb.add_field(name = "Total Users", value = str(len(self.bot.users)))
-        await ctx.send(embed = emb)
+        emb.add_field(name="System Time", value=disptime)
+        emb.add_field(name="Processor Type", value=platform.machine().lower())
+        emb.add_field(name="OS version (short)", value=platform.system() + " " + platform.release())
+        emb.add_field(name="OS version (long)", value=platform.platform(aliased = True))
+        emb.add_field(name="Python Version", value=f"Python {platform.python_branch()}, build date {platform.python_build()[1]}")
+        emb.add_field(name="discord.py version", value=discord.__version__)
+        emb.add_field(name="Processor name", value=platform.processor())
+        emb.add_field(name="Current server count", value=str(len(self.bot.guilds)))
+        emb.add_field(name="Total Users", value=str(len(self.bot.users)))
+        await ctx.send(embed=emb)
         
 def setup(bot):
     bot.add_cog(Info(bot))

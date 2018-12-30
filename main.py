@@ -92,6 +92,9 @@ class theBot(commands.Bot):
             await self.change_presence(activity = discord.Game(name = status))
             await asyncio.sleep(120)
 
-client = theBot(command_prefix = "s!", description = "SuprKewl Bot, by Too Laggy#3878", pm_help = True)
+client = theBot(
+                command_prefix="s!",
+                description="SuprKewl Bot, by Too Laggy#3878",
+                pm_help=True)
 
 client.run("TOKEN")
