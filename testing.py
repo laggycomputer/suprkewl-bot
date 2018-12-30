@@ -41,33 +41,6 @@ class testing():
         msg.add_field(name="Server join date", value=str(user.joined_at) + " (first time user joined)")
 
         await ctx.send(embed=msg)
-
-    @commands.command(description = "A test for cooldown errors. Does nothing otherwise.")
-    @commands.cooldown(1, 86410, commands.BucketType.user)
-    async def cooldowntest(self, ctx):
-        await ctx.send(content = "Cooldowns ok, command triggered")
-
-    @cooldowntest.error
-    async def cooldowntest_handler(self, ctx, error):
-        if isinstance(error, commands.CommandOnCooldown):
-            seconds = error.retry_after
-            seconds = round(seconds, 2)
-            hours, remainder = divmod(int(seconds), 3600)
-            minutes, seconds = divmod(remainder, 60)
-
-            if hours > 0:
-                await ctx.sendf(f"**This command is on cooldown!** {hours}hr, {minutes}m and {seconds}s remaining. Reinvoking command then.")
-            else:
-                await ctx.send(f"**This command is on cooldown!** {minutes}m and {seconds}s remaining. Reinvoking command then.")
-                
-            await asyncio.sleep(error.retry_after)
-            await ctx.send(f"{ctx.author.mention}! The cooldown has ended, reinvoking command...")
-            await ctx.reinvoke(restart = True)
-
-    @commands.command()
-    async def roleiter(self, ctx, role: discord.Role):
-        for i in iter(role.permissions):
-            print(i)
             
 def setup(bot):
     bot.add_cog(testing(bot))
