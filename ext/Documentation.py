@@ -27,6 +27,7 @@ class Documentation():
 
         emb = discord.Embed(name="Our GitHub", color=0xffffff)
         emb.add_field(name="Our github", value="https://www.github.com/laggycomputer/suprkewl-bot")
+        emb.add_field(name="Clone it!", value="`git clone https://github.com/laggycomputer/suprkewl-bot.git`")
 
         await ctx.send(embed=emb)
         
