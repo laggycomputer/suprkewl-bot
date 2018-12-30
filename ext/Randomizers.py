@@ -13,7 +13,7 @@ class Randomizers():
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases = ["burn"])
+    @commands.command(aliases=["burn"])
     async def roast(self, ctx, target: discord.Member):
         """Roast someone. ⌐■_■"""
 
@@ -37,31 +37,32 @@ class Randomizers():
 
         await ctx.send(random.choice(roasts))
 
-    @commands.command(aliases = ["card"], description = "Draw from a standard, 52-card deck, no jokers.")
+    @commands.command(aliases=["card"], description="Draw from a standard, 52-card deck, no jokers.")
     async def draw(self, ctx):
         """Draw a card"""
 
-        suits=[":spades:",":diamonds:",":hearts:",":clubs:"]
-        ranks=["Ace",":two:",":three:",":four:",":five:",":six:",":seven:",":eight:",":nine:",":keycap_ten:","Jack","Queen","King"]
+        suits = [":spades:", ":diamonds:", ":hearts:", ":clubs:"]
+        ranks = ["Ace", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", 
+                 ":eight:", ":nine:", ":keycap_ten:", "Jack", "Queen", "King"]
 
-        await ctx.send("I drew the " + random.choice(ranks) + " of " + random.choice(suits))
+        await ctx.send(f"I drew the {random.choice(ranks)} of {random.choice(suits)}")
 
-    @commands.command(aliases = ["flip", "quarter", "dime", "penny", "nickel"])
+    @commands.command(aliases=["flip", "quarter", "dime", "penny", "nickel"])
     async def coin(self, ctx):
         """Flip a coin"""
 
         msg = await ctx.send("My robot hand flips the coin.")
         await asyncio.sleep(1)
 
-        await msg.edit(content = "I slap the coin down on my robot arm.")
+        await msg.edit(content="I slap the coin down on my robot arm.")
         await asyncio.sleep(0.5)
 
         if random.randint(1,2) == 1:
-            await msg.edit(content = "It's heads!")
+            await msg.edit(content="It's heads!")
         else:
-            await msg.edit(content = "It's tails.")
+            await msg.edit(content="It's tails.")
 
-    @commands.command(aliases = ["rockpaperscissors"], description = "Rock paper scissors. Randomizes a choice for you and the computer. Has a 3 second cooldown on a per-user basis.")
+    @commands.command(aliases=["rockpaperscissors"], description="Rock paper scissors. Randomizes a choice for you and the computer. Has a 3 second cooldown on a per-user basis.")
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def rps(self, ctx):
         """See 's!help rps'."""
@@ -113,44 +114,45 @@ class Randomizers():
             msg = await ctx.send(f"{ctx.author.mention} :fist: Rock...")
             await asyncio.sleep(1)
 
-            await msg.edit(content = f"{ctx.author.mention} :newspaper: Paper...")
+            await msg.edit(content=f"{ctx.author.mention} :newspaper: Paper...")
             await asyncio.sleep(1)
-            await msg.edit(content = f"{ctx.author.mention} :scissors: Scissors...")
+            await msg.edit(content=f"{ctx.author.mention} :scissors: Scissors...")
             await asyncio.sleep(1)
 
-            await msg.edit(content = f"{ctx.author.mention} :boom: BAM!")
+            await msg.edit(content=f"{ctx.author.mention} :boom: BAM!")
             await asyncio.sleep(0.5)
 
             await msg.edit(content = content)
 
-    @commands.command(aliases = ["laugh"], description = "Browse a ridiculously tiny collection of funny images. Has a 2 second per-channel cooldown.")
+    @commands.command(aliases=["laugh"], description="Browse a ridiculously tiny collection of funny images. Has a 2 second per-channel cooldown.")
     @commands.cooldown(1, 2, commands.BucketType.channel)
     async def funny(self, ctx):
         """See 's!help funny'"""
 
         images = ["https://image.ibb.co/f57pL7/Bill.png",
-                 "https://image.ibb.co/hHM27n/yey.jpg",
-                 "https://image.ibb.co/dWRS7n/bruh1.gif",
-                 "https://image.ibb.co/kpUx7n/u_mad_broo.jpg",
-                 "https://image.ibb.co/nKTX7n/jumped_Off.jpg",
-                 "https://image.ibb.co/i76wYS/uwut.jpg",
-                 "https://image.ibb.co/edp0tS/uhhh.jpg",
-                 "https://image.ibb.co/gknDF7/no_Briefcase.jpg",
-                 "https://image.ibb.co/hFF3hn/any_More_Weekend.jpg",
-                 "https://image.ibb.co/hc9Re7/llama.jpg",
-                 "https://image.ibb.co/jOuOsS/llamaart.jpg",
-                 "https://image.ibb.co/bytavf/justspamf.png"]
+                  "https://image.ibb.co/hHM27n/yey.jpg",
+                  "https://image.ibb.co/dWRS7n/bruh1.gif",
+                  "https://image.ibb.co/kpUx7n/u_mad_broo.jpg",
+                  "https://image.ibb.co/nKTX7n/jumped_Off.jpg",
+                  "https://image.ibb.co/i76wYS/uwut.jpg",
+                  "https://image.ibb.co/edp0tS/uhhh.jpg",
+                  "https://image.ibb.co/gknDF7/no_Briefcase.jpg",
+                  "https://image.ibb.co/hFF3hn/any_More_Weekend.jpg",
+                  "https://image.ibb.co/hc9Re7/llama.jpg",
+                  "https://image.ibb.co/jOuOsS/llamaart.jpg",
+                  "https://image.ibb.co/bytavf/justspamf.png"]
         red = random.random() * 255
-        green = random.random()*255
-        blue = random.random()*255
+        green = random.random() * 255
+        blue = random.random() * 255
 
-        msg = discord.Embed(name = "This is", title = "something funny", description = "Don't die of laughter", color = discord.Colour.from_rbg(red, green, blue))
+        msg = discord.Embed(name= "This is", title="something funny",
+                            description="Don't die of laughter", color=discord.Colour.from_rbg(red, green, blue))
 
-        msg.set_image(url = random.choice(images))
+        msg.set_image(url=random.choice(images))
 
-        await ctx.send(embed = msg)
+        await ctx.send(embed=msg)
 
-    @commands.command(aliases = ["roll"], description = "Rolls the dice specified, in AdB format. For example, 's!dice 3d6' would roll 3 six-sided dice. A must be a positive integer up to and including 10, and B has the same contraints, but with a upper limit of 20. This command has a user-based cooldown of 5 seconds.")
+    @commands.command(aliases=["roll"], description="Rolls the dice specified, in AdB format. For example, 's!dice 3d6' would roll 3 six-sided dice. A must be a positive integer up to and including 10, and B has the same contraints, but with a upper limit of 20. This command has a user-based cooldown of 5 seconds.")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def dice(self, ctx, dice: str):
         """see 's!help dice.'"""
@@ -168,16 +170,16 @@ class Randomizers():
         if count <= 10 and count > 0 and limit <= 20 and limit > 0:
 
             for i in range(1, count + 1):
-                await msg.edit(content = f":game_die: Rollling die {i}...")
+                await msg.edit(content=f":game_die: Rollling die {i}...")
                 await asyncio.sleep(1)
 
             result = ', '.join(str(random.randint(1, limit)) for r in range(count))
 
-            await msg.edit(content = f":game_die: My rolls were: {result}")
+            await msg.edit(content=f":game_die: My rolls were: {result}")
         else:
-            await msg.edit(content = "Your syntax was correct, but one of your arguments was too large to compute, or one of your arguments was negative. Please see 's!help dice' for more info.")
+            await msg.edit(content="Your syntax was correct, but one of your arguments was too large to compute, or one of your arguments was negative. Please see 's!help dice' for more info.")
 
-    @commands.command(aliases = ["pick", "rand"], description = "The tiebreaker of all tiebreakers. Has a 1-second per-channel cooldown, triggered after the command is run twice in the same channel.")
+    @commands.command(aliases=["pick", "rand"], description="The tiebreaker of all tiebreakers. Has a 1-second per-channel cooldown, triggered after the command is run twice in the same channel.")
     @commands.cooldown(2, 1, commands.BucketType.channel)
     async def choose(self, ctx, *choices: str):
         """Choose between multiple choices"""
@@ -192,7 +194,7 @@ class Randomizers():
             await asyncio.sleep(1)
             message = f"{ctx.author.mention}, I choose '"
             message += random.choice(choices)+"'."
-            await msg.edit(content = message)
+            await msg.edit(content=message)
 
     class Fighter():
         def __init__(self, user):
@@ -201,7 +203,7 @@ class Randomizers():
             self.turn = False
             self.won = False
 
-    @commands.command(description = "Starts a fight between the command invoker and the specified <target>. <target> must be a non-bot and must not be the command invoker. This command has a 10-second cooldown per user.")
+    @commands.command(description="Starts a fight between the command invoker and the specified <target>. <target> must be a non-bot and must not be the command invoker. This command has a 10-second cooldown per user.")
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def fight(self, ctx, target: discord.Member):
         """FIGHT"""
@@ -265,23 +267,23 @@ class Randomizers():
                     fightplaces = ["Laundry Room", "Dining Room", "Kitchen", "Bedroom", "Living Room", "Backyard"]
 
                     fightactions = {"Laundry Room": ["{0.mention} whips {1.mention} with a freshly washed towel", "{0.mention} shuts {1.mention} in the washer, but {1.mention} narrowly escapes", "{0.mention} throws a tennis ball from inside the clothes dryer at {1.mention}"],
-                    "Dining Room": ["{0.mention} throws a plate at {1.mention}", "{0.mention} stabs {1.mention} with a piece of a broken vase", "{0.mention} pins {1.mention} against the wall with the table"],
-                    "Kitchen": ["{0.mention} cuts {1.mention} with a a knife", "{0.mention} pours some boiling water on {1.mention}","{0.mention} hits {1.mention} with a pot"],
-                    "Bedroom": ["{0.mention} hits {1.mention} with a pillow", "{1.mention} takes a pillow to the head from {0.mention}"],
-                    "Living Room": ["{0.mention} hits {1.mention} with the TV remote", "{0.mention} uses the Wii controller as a club on {1.mention} *wii sports plays*","{1.mention} trips over the Skyrim CD sleeve, 00f"],
-                    "Backyard": ["{0.mention} hits {1.mention} with some tongs", "{0.mention} turns the backyard stove over on {1.mention}"]}
+                                    "Dining Room": ["{0.mention} throws a plate at {1.mention}", "{0.mention} stabs {1.mention} with a piece of a broken vase", "{0.mention} pins {1.mention} against the wall with the table"],
+                                    "Kitchen": ["{0.mention} cuts {1.mention} with a a knife", "{0.mention} pours some boiling water on {1.mention}","{0.mention} hits {1.mention} with a pot"],
+                                    "Bedroom": ["{0.mention} hits {1.mention} with a pillow", "{1.mention} takes a pillow to the head from {0.mention}"],
+                                    "Living Room": ["{0.mention} hits {1.mention} with the TV remote", "{0.mention} uses the Wii controller as a club on {1.mention} *wii sports plays*","{1.mention} trips over the Skyrim CD sleeve, 00f"],
+                                    "Backyard": ["{0.mention} hits {1.mention} with some tongs", "{0.mention} turns the backyard stove over on {1.mention}"]}
 
                     universalactions = ["{0.mention} slugs {1.mention} in the face", "{0.mention} uses *sicc* karate skills on {1.mention}", "{0.mention} pushes {1.mention} over"]
 
                     deathblows = {"Laundry Room": "{0.mention} shuts {1.mention} in the washer and starts it",
-                    "Dining Room": "{0.mention} pins {1.mention} agianst the table",
-                    "Kitchen": "{0.mention} uses top-notch ninja skills on {1.mention}, many of which involve the knives",
-                    "Bedroom": "{0.mention} gets a l33t hit om {1.mention} involving throwing the bedstand",
-                    "Living Room": "{0.mention} narrowly beats {1.mention} in a sword-fight using the Dolby 7:1 surround speakers",
-                    "Backyard": "{0.mention} throws some hot coals from the backyard stove at {1.mention}"}
+                                  "Dining Room": "{0.mention} pins {1.mention} agianst the table",
+                                  "Kitchen": "{0.mention} uses top-notch ninja skills on {1.mention}, many of which involve the knives",
+                                  "Bedroom": "{0.mention} gets a l33t hit om {1.mention} involving throwing the bedstand",
+                                  "Living Room": "{0.mention} narrowly beats {1.mention} in a sword-fight using the Dolby 7:1 surround speakers",
+                                  "Backyard": "{0.mention} throws some hot coals from the backyard stove at {1.mention}"}
 
                     connectedrooms = {"Laundry Room":["Backyard","Kitchen"], "Dining Room":["Kitchen","Backyard"], "Kitchen":["Dining Room","Living Room"],
-                    "Bedroom":["Living Room"], "Living Room":["Kitchen","Bedroom"], "Backyard":["Laundry Room","Laundry Room"]}
+                                      "Bedroom":["Living Room"], "Living Room":["Kitchen","Bedroom"], "Backyard":["Laundry Room","Laundry Room"]}
 
                     setting = random.choice(fightplaces)
 
@@ -337,14 +339,14 @@ class Randomizers():
                         if findNotTurn().health < 0:
                             findNotTurn().health = 0
 
-                        emb = discord.Embed(name = "FIGHT", color = findTurn().user.colour)
+                        emb = discord.Embed(name="FIGHT", color=findTurn().user.colour)
 
-                        emb.add_field(name = "Current Setting", value = f"`{setting}`")
-                        emb.add_field(name = "Player 1 health", value = f"**{p1.health}**")
-                        emb.add_field(name = "Player 2 health", value = f"**{p2.health}**")
-                        emb.add_field(name = "Current action", value = currentaction)
+                        emb.add_field(name="Current Setting", value=f"`{setting}`")
+                        emb.add_field(name="Player 1 health", value=f"**{p1.health}**")
+                        emb.add_field(name="Player 2 health", value=f"**{p2.health}**")
+                        emb.add_field(name="Current action", value=currentaction)
 
-                        await ctx.send(embed = emb)
+                        await ctx.send(embed=emb)
                         await askaction.delete()
                         await usrinput.delete()
 
