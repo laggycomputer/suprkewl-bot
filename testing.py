@@ -31,7 +31,7 @@ class testing():
             msg.set_thumbnail(user.default_avatar)
         else:
             msg.set_thumbnail(url=f"https://cdn.discordapp.com/avatars/{user.id}/{user.avatar}.png")
-            
+
         msg.add_field(name="Username", value=user.name)
         msg.add_field(name="Discriminator", value=str(user.discriminator))
         msg.add_field(name="Is a bot", value=str(user.bot))
@@ -41,6 +41,6 @@ class testing():
         msg.add_field(name="Server join date", value=str(user.joined_at) + " (first time user joined)")
 
         await ctx.send(embed=msg)
-            
+
 def setup(bot):
     bot.add_cog(testing(bot))
