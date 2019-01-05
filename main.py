@@ -6,6 +6,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import asyncio
 import platform
 import random
+import sys
 
 import discord
 from discord.ext import commands
@@ -91,6 +92,84 @@ class theBot(commands.Bot):
 
             await self.change_presence(activity = discord.Game(name = status))
             await asyncio.sleep(120)
+    async def on_command_error(ctx, error):
+        if hasattr(ctx.command, "on_error"):
+            return
+
+        ignored = (commands.CommandNotFound, commands.UserInputError)
+
+        error = getattr(error, "original", error)
+
+		def perms_list(perms):	
+			if len(perms) == 0:
+				return None
+			else:
+				if len(perms) == 1:
+					return len[0]
+				else:
+					list = ", ".join(perms[0:-1])
+					list += f", and {perms[-1]}"
+					return list
+		
+        if isinstance(error, ignored):
+            return
+
+        elif isinstance(error, commands.DisabledCommand):
+
+            emb = discord.Embed
+            emb.add_field(name="Disabled Command", value=f":x: `{ctx.prefix}{ctx.command}` has been disabled!")
+            emb.set_footer(f"Command invoked by {ctx.author}")
+
+            return await ctx.send(embed=emb)
+
+        elif isinstance(error, commands.NoPrivateMessage):
+
+            emb = discord.Embed
+            emb.add_field(name="This command is disabled in DMs", value=f":x: `{ctx.prefix}{ctx.command}` can only be used in servers, not in DMs or DM groups.")
+            emb.set_footer(f"Command invoked by {ctx.author}")
+
+            return await ctx.send(embed=emb)
+
+        elif isinstance(error, commands.CommandOnCooldown):
+
+            retry = round(error.retry_after, 2)
+
+            emb = discord.Embed
+            emb.add_field(name="Command on Cooldown",
+                          value=f"Woah there! You just triggered a cooldown trying to run `{ctx.prefix}{ctx.command}`. I'll start it again after the cooldown of {retry} is over."}
+            emb.set_footer(f"Command invoked by {ctx.author}")
+
+            msg=await ctx.send(embed=emb)
+
+            await asyncio.sleep(retry)
+
+            await ctx.send(f"{ctx.author.mention} The cooldown is over! Starting command `{ctx.prefix}{ctx.command}`...")
+
+            await ctx.invoke(ctx.command, ctx.*args, ctx.**kwargs)
+
+            return msg
+					
+		elif isinstance(error, commands.MissingPermissions):
+		
+			emb = discord.Embed
+			missingPerms = perms_list(error.missing_perms)
+			emb.add_field(name="User Missing Permissions", value=f":x: Permission denied to run {ctx.prefix}{ctx.command}. You need to be able to {missingPerms}.")
+			emb.set_footer(f"Command invoked by {ctx.author}")
+			
+			return await ctx.send(embed=emb)
+			
+		elif isinstance(error, commands.BotMissingPermissions):
+			
+			emb = discord.Embed
+			missingPerms = perms_list(error.missing_perms)
+			emb.add_field(name="Bot Missing Permissions", value=f":x: I don't have the proper permissions to run {ctx.prefix}{ctx.command}. I need to be allowed to {missingPerms}.")
+			emb.set_footer(f"Command invoked by {ctx.author}")
+			
+			return await ctx.send(embed=emb)
+			
+        print(f"Ignoring exception in command {ctx.prefix}{ctx.command}:", file=sys.stderr)
+
+        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
 client = theBot(
                 command_prefix="s!",
