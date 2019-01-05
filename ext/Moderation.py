@@ -32,16 +32,6 @@ class Moderation():
                 errorcnt += 1
         await ctx.send(delete_after=5, content=f"<:suprKewl:508479728613851136> GOTEM! Failed to delete {errorcnt} messages. Remember that bots cannot delete messages older than 2 weeks. If you still see some messages that should be deleted, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear.")
 
-    @clear.error
-    async def clearerr(self, ctx, error):
-        if isinstance(error, commands.BotMissingPermissions):
-            await ctx.send(":x: I don't have the needed permission `Manage Messages`. This won't work... yet!")
-        if isinstance(error, commands.MissingPermissions):
-            await ctx.message.delete()
-            await ctx.send(delete_after=5, content=":x: You don't have the proper permissions to delete messages! You need the permission `Manage Messages`.")
-        if isinstance(error, commands.NoPrivateMessage):
-            await ctx.send(":x: This command is marked for servers only, and will not work in a DM!")
-
     @commands.command(description="Kicks the given <target>. Please ensure both the bot and the command invoker have the permission 'Kick Members' before running this command. Also notifies <target> of kick.")
     @commands.guild_only()
     @commands.bot_has_permissions(kick_members=True)
@@ -67,15 +57,6 @@ class Moderation():
                             await ctx.send(":x: ?! An error has occured!")
                     else:
                         await ctx.send(":x: The passed member has a higher/equal top role than/to me, meaning I can't kick him/her. Oops! Try again...")
-
-    @kick.error
-    async def kickerr(self, ctx, error):
-        if isinstance(error, commands.BotMissingPermissions):
-            await ctx.send(":x: Whoa! I don't have the permission `Kick Members`, which I need for this command.")
-        if isinstance(error, commands.MissingPermissions):
-            await ctx.send(":x: Hey! You dont have permissions! In the words of our great Robbie Rotten, **WHAT ARE YOU DOING?!**")
-        if isinstance(error, commands.NoPrivateMessage):
-            await ctx.send(":x: This command is marked for servers only, and will not work in a DM!")
 
     @commands.command(description="Bans the given <target> with reason <reason>, deleteing all messages sent from that user over the last <deletedays> days (must be an integer betweeen and including 0 and 7). Ensure that both the command invoker and the bot have the permission 'Ban Members'. Also DMs <target> to let them know they've been banned.")
     @commands.guild_only()
@@ -107,15 +88,6 @@ class Moderation():
                         else:
                             await ctx.send(":x: Oops! That member has a higher or equal top role to me, meaning I can't ban him/her!")
 
-    @ban.error
-    async def banerr(self, ctx, error):
-        if isinstance(error, commands.BotMissingPermissions):
-            await ctx.send(":x: I don't have the permission to `Ban Members`!")
-        if isinstance(error, commands.MissingPermissions):
-            await ctx.send(":x: Hey! You don't have the right permissions!")
-        if isinstance(error, commands.NoPrivateMessage):
-            await ctx.send(":x: This command is marked for servers only, and will not work in a DM!")
-
     @commands.command(description="Unbans the given <target>. The target must be banned from the given server, and both the command invoker and the bot must have the permission 'Ban Members'. <target> will be DM'd once they are unbanned.")
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
@@ -138,15 +110,6 @@ class Moderation():
         else:
             await msg.edit(content = f"{ctx.author.mention} :x: Oops! That user ain't banned! Perhaps you meant someone else?")
 
-    @unban.error
-    async def unbanerr(self, ctx, error):
-        if isinstance(error, commands.BotMissingPermissions):
-            await ctx.send(":x: I don't have permission to `Ban Members`, meaning I also can't unban them!")
-        if isinstance(error, commands.MissingPermissions):
-            await ctx.send(":x: Hey! You don't have permissions!")
-        if isinstance(error, commands.NoPrivateMessage):
-            await ctx.send(":x: This command is marked for servers only, and will not work in a DM!")
-
     @commands.command(description="Gives the list of banned users for this server. Both the command invoker and the bot must have the permission `Ban Members`.")
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
@@ -165,15 +128,6 @@ class Moderation():
         emb.add_field(name=f"Banned users for {ctx.guild}", value=msg)
 
         await ctx.send(embed=emb)
-
-    @banlist.error
-    async def banlisterr(self, ctx, error):
-        if isinstance(error, commands.BotMissingPermissions):
-            await ctx.send(":x: With out the permission to `Ban Members`, I can't get a banlist!")
-        if isinstance(error, commands.MissingPermissions):
-            await ctx.send(":x: Hey! You don't have permissions!")
-        if isinstance(error, commands.NoPrivateMessage):
-            await ctx.send(":x: This command is marked for servers only, and will not work in a DM!")
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

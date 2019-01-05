@@ -32,8 +32,6 @@ class Info():
 
     @roleinfo.error
     async def roleinfoerr(self, ctx, error):
-        if isinstance(error, commands.NoPrivateMessage):
-            await ctx.send(":x: This command is marked for servers only, and will not work in a DM!")
         if isinstance(error, commands.BotMissingPermissions):
             await ctx.send(":x: Without the permission `Manage Roles`, I can't fetch permssions!")
 
