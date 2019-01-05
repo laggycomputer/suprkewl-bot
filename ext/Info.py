@@ -88,7 +88,7 @@ class Info():
         month = months[month]
         disptime = f"{dayofweek}, {month} {dayofmonth}, {year}; {hour}:{minute}:{second}, Pacific Standard Time"
         if isdst:
-            disptime = disptime + " (DST)"
+            disptime += " (DST)"
 
         emb.add_field(name="System Time", value=disptime)
         emb.add_field(name="Processor Type", value=platform.machine().lower())
