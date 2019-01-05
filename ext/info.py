@@ -30,11 +30,6 @@ class Info():
 
         await ctx.send(embed=emb)
 
-    @roleinfo.error
-    async def roleinfoerr(self, ctx, error):
-        if isinstance(error, commands.BotMissingPermissions):
-            await ctx.send(":x: Without the permission `Manage Roles`, I can't fetch permssions!")
-
     @commands.command(description="Gives perms on the given <role> (ping it). Permissions are listed in the order they appear on Discord. The bot must have the 'Manage Roles' permission for this to work, and the user must have a role called 'suprkewl-viewPerms' to use the command. Remember that role perms may be overridden on a per-channel (sometimes also on a per-user) basis.")
     @commands.guild_only()
     @commands.has_any_role("suprkewl-viewPerms")
