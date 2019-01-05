@@ -42,6 +42,7 @@ class Randomizers():
         """Draw a card"""
 
         suits = [":spades:", ":diamonds:", ":hearts:", ":clubs:"]
+        
         ranks = ["Ace", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:",
                  ":eight:", ":nine:", ":keycap_ten:", "Jack", "Queen", "King"]
 
