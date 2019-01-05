@@ -102,6 +102,6 @@ class Info():
         emb.add_field(name="Current server count", value=str(len(self.bot.guilds)))
         emb.add_field(name="Total Users", value=str(len(self.bot.users)))
         await ctx.send(embed=emb)
-        
+
 def setup(bot):
     bot.add_cog(Info(bot))

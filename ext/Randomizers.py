@@ -42,7 +42,7 @@ class Randomizers():
         """Draw a card"""
 
         suits = [":spades:", ":diamonds:", ":hearts:", ":clubs:"]
-        ranks = ["Ace", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", 
+        ranks = ["Ace", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:",
                  ":eight:", ":nine:", ":keycap_ten:", "Jack", "Queen", "King"]
 
         await ctx.send(f"I drew the {random.choice(ranks)} of {random.choice(suits)}")
@@ -207,7 +207,7 @@ class Randomizers():
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def fight(self, ctx, target: discord.Member):
         """FIGHT"""
-        
+
         if target.bot:
             await ctx.send(":x: Oops! You can't fight a robot; it's robot arms will annihilate you! Perhaps you meant a human?")
         else:
@@ -334,7 +334,7 @@ class Randomizers():
                         elif usrinput.content.lower().startswith("end"):
                             await ctx.send(f"{findTurn().user.mention} and {findNotTurn().user.mention} get friendly and the fight's over.")
                             return
-                        
+
                         findNotTurn().health -= damage
                         if findNotTurn().health < 0:
                             findNotTurn().health = 0
@@ -351,9 +351,9 @@ class Randomizers():
                         await usrinput.delete()
 
                         switchturn()
-                        
+
                         await asyncio.sleep(3)
-                
+
                 if p1.health == 0:
                     p2.won = True
                     p1.won = False
@@ -361,6 +361,6 @@ class Randomizers():
                     p2.won = False
                     p1.won = True
                 await ctx.send(f"Looks like {findwin().user.mention} defeated {findloser().user.mention} with {findwin().health} health left!")
-                
+
 def setup(bot):
     bot.add_cog(Randomizers(bot))

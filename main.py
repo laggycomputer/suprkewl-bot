@@ -66,7 +66,7 @@ class theBot(commands.Bot):
     async def playingstatus(self):
 
         await self.wait_until_ready()
-        
+
         playing_statuses = ["with the community",
                             "with my dad, Too Laggy",
                             "github.com/laggycomputer/suprkewl-bot",

@@ -9,7 +9,7 @@ from discord.ext import commands
 class Documentation():
     def __init__(self, bot):
         self.bot = bot
-    
+
     @commands.command()
     async def invite(self, ctx):
         """Invite to the support server."""
@@ -30,6 +30,6 @@ class Documentation():
         emb.add_field(name="Clone it!", value="`git clone https://github.com/laggycomputer/suprkewl-bot.git`")
 
         await ctx.send(embed=emb)
-        
+
 def setup(bot):
     bot.add_cog(Documentation(bot))
