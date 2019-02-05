@@ -153,16 +153,14 @@ class theBot(commands.Bot):
 
             emb = discord.Embed
             emb.add_field(name="Command on Cooldown",
-                          value=f"Woah there! You just triggered a cooldown trying to run `{ctx.prefix}{ctx.command}`. I'll start it again after the cooldown of {retry} is over."}
+                          value=f"Woah there! You just triggered a cooldown trying to run `{ctx.prefix}{ctx.command}`. I'll let you know you can start it after the cooldown of {retry} is over.")
             emb.set_footer(f"Command invoked by {ctx.author}")
 
             msg = await ctx.send(embed=emb)
 
             await asyncio.sleep(retry)
 
-            await ctx.send(f"{ctx.author.mention} The cooldown is over! Starting command `{ctx.prefix}{ctx.command}`...")
-
-            await ctx.invoke(ctx.command, ctx.*args, ctx.**kwargs)
+            await ctx.send(f"{ctx.author.mention} The cooldown is over!")
 
             return msg
 
