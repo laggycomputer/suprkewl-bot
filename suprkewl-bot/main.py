@@ -7,11 +7,10 @@ import asyncio
 import platform
 import random
 import sys
+import traceback
 
 import discord
 from discord.ext import commands
-from discord.ext.commands import Bot
-
 
 class theBot(commands.Bot):
 
