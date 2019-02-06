@@ -92,7 +92,7 @@ class theBot(commands.Bot):
             await self.change_presence(activity = discord.Game(name = status))
             await asyncio.sleep(120)
 
-    async def on_command_error(ctx, error):
+    async def on_command_error(self, ctx, error):
 
         if hasattr(ctx.command, "on_error"):
             return
@@ -181,7 +181,7 @@ class theBot(commands.Bot):
 
             return await ctx.send(embed=emb)
 
-        print(f"Ignoring exception in command {ctx.prefix}{ctx.command}:", file=sys.stderr)
+        print(f"Ignoring exception in command {ctx.prefix}{ctx.command}:")
 
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
