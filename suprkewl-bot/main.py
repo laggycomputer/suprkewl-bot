@@ -186,7 +186,7 @@ class theBot(commands.Bot):
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
 client = theBot(command_prefix="s!",
-                description="SuprKewl Bot, by Too Laggy#3878",
+                description="Did you know? This is the most used command on this bot.",
                 pm_help=True)
 
 client.run("TOKEN")
