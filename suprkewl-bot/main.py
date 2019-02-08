@@ -19,7 +19,7 @@ class theBot(commands.Bot):
 
         self.bg_task = self.loop.create_task(self.playingstatus())
 
-        startup_extensions = ["jishaku", "ext.text", "ext.rand", "ext.docs", "ext.mod", "ext.info", "testing"]
+        startup_extensions = ["jishaku", "ext.text", "ext.rand", "ext.docs", "ext.mod", "ext.info"]
 
         for extension in startup_extensions:
             try:
