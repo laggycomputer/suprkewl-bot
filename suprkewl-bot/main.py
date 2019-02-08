@@ -83,6 +83,9 @@ class theBot(commands.Bot):
                             "living under the MIT license!",
                             "at a robot party, brb in a bit",
                             "meme-scrolling",
+                            "the attention game",
+                            "tag with other robots",
+                            " ",
                             "and plotting pranks",
                             "with the Discord API"]
 
