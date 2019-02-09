@@ -92,7 +92,7 @@ class theBot(commands.Bot):
         while not self.is_closed():
             status = f"{random.choice(playing_statuses)} | lurking in {len(self.guilds)} servers and watching over {len(self.users)} users..."
 
-            await self.change_presence(activity = discord.Game(name = status))
+            await self.change_presence(activity=discord.Game(name=status))
             await asyncio.sleep(120)
 
     async def on_command_error(self, ctx, error):
