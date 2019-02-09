@@ -188,8 +188,13 @@ class theBot(commands.Bot):
 
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
-client = theBot(command_prefix="s!",
-                description="Did you know? This is the most used command on this bot.",
-                pm_help=True)
+async def get_pre(bot, message):
+    if isinstance(message.channel, discord.DMChannel):
+        return ["s!", ""]
+    else:
+        return "s!"
+
+client = theBot(command_prefix=get_pre,
+                description="Did you know? If you are in a DM with me, you don't need a prefix!")
 
 client.run("TOKEN")
