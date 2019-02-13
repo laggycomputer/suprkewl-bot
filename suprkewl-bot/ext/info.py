@@ -96,5 +96,15 @@ class Info():
         emb.add_field(name="Total Users", value=str(len(self.bot.users)))
         await ctx.send(embed=emb)
 
+    @commands.command()
+    async def ping(self, ctx):
+        """Check the bot's latency."""
+
+        latency = self.bot.latency * 1000
+        latency = round(latency, 4)
+        emb = discord.Embed(color=0xf92f2f, description=f":ping_pong: My current latency is {latency} milliseconds.")
+
+        await ctx.send(embed=emb)
+
 def setup(bot):
     bot.add_cog(Info(bot))
