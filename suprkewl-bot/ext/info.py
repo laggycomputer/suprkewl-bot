@@ -12,6 +12,7 @@ from discord.ext import commands
 class Info():
     def __init__(self, bot):
         self.bot = bot
+
     @commands.command(description="Gives info on role <permsRole> in server (ping the role). Includes role color and member count, amongst other things.")
     @commands.guild_only()
     @commands.bot_has_permissions(manage_roles=True)
@@ -88,7 +89,7 @@ class Info():
         emb.add_field(name="System Time", value=disptime)
         emb.add_field(name="Processor Type", value=platform.machine().lower())
         emb.add_field(name="OS version (short)", value=platform.system() + " " + platform.release())
-        emb.add_field(name="OS version (long)", value=platform.platform(aliased = True))
+        emb.add_field(name="OS version (long)", value=platform.platform(aliased=True))
         emb.add_field(name="Python Version", value=f"Python {platform.python_branch()}, build date {platform.python_build()[1]}")
         emb.add_field(name="discord.py version", value=discord.__version__)
         emb.add_field(name="Processor name", value=platform.processor())
