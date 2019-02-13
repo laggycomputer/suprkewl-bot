@@ -195,7 +195,7 @@ class Randomizers():
         async with ctx.channel.typing():
             await asyncio.sleep(1)
             message = f"{ctx.author.mention}, I choose '"
-            message += random.choice(choices)+"'."
+            message += random.choice(choices) + "'."
             await msg.edit(content=message)
 
     class Fighter():
