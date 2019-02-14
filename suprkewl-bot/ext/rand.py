@@ -166,7 +166,7 @@ class Randomizers():
         try:
             count, limit = map(int, dice.split('d'))
         except Exception:
-            await msg.edit(content="Format must be AdB! I was unable to find a seperator between your numbers, or there were no numbers to find. Please check 's!help dice' for more info.")
+            await msg.edit(content=f":x:Format must be AdB! I was unable to find a seperator between your numbers, or there were no numbers to find. Please check '{ctx.prefix}help dice' for more info.")
             return
 
         if count <= 10 and count > 0 and limit <= 20 and limit > 0:
@@ -179,7 +179,7 @@ class Randomizers():
 
             await msg.edit(content=f":game_die: My rolls were: {result}")
         else:
-            await msg.edit(content="Your syntax was correct, but one of your arguments was too large to compute, or one of your arguments was negative. Please see 's!help dice' for more info.")
+            await msg.edit(content=f"Your syntax was correct, but one of your arguments was too large to compute, or one of your arguments was negative. Please see '{ctx.prefix}help dice' for more info.")
 
     @commands.command(aliases=["pick", "rand"], description="The tiebreaker of all tiebreakers. Has a 1-second per-channel cooldown, triggered after the command is run twice in the same channel.")
     @commands.cooldown(2, 1, commands.BucketType.channel)
