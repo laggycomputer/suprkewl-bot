@@ -84,7 +84,7 @@ class Moderation():
                                 except Exception:
                                     await ctx.send(":x: Oh noes! It didn't work! I may have ran into ratelimits, or some unknown error may have occured.")
                             else:
-                                await ctx.send("Oops! You specified an out-of-range integer for <deletedays>! See `s!help ban` for info on limits.")
+                                await ctx.send(f"Oops! You specified an out-of-range integer for <deletedays>! See `{ctx.prefix}help ban` for info on limits.")
                         else:
                             await ctx.send(":x: Oops! That member has a higher or equal top role to me, meaning I can't ban him/her!")
 
