@@ -17,21 +17,25 @@ class Moderation():
     @commands.bot_has_permissions(manage_messages=True)
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, count: int):
-        """(GUILD ONLY) Clear messages. See 's!help clear' for more."""
+        """(GUILD ONLY) Delete messages. See full command help for more."""
 
         await ctx.message.delete()
 
         messages = await ctx.history(limit=count).flatten()
 
         await ctx.send(delete_after=5, content="Clearing...")
+        deleted = 0
         errorcnt = 0
 
         for message in messages:
             try:
                 await message.delete()
+                deleted += 1
             except Exception:
                 errorcnt += 1
-        await ctx.send(delete_after=10, content=f"<:suprKewl:508479728613851136> GOTEM! Failed to delete {errorcnt} messages. Remember that bots cannot delete messages older than 2 weeks. If you still see some messages that should be deleted, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear.")
+
+        await ctx.send(delete_after=10, content=f"<:suprKewl:508479728613851136> Done! Deleted {deleted} messages, failed to delete {errorcnt} messages. Remember that bots cannot delete messages older than 2 weeks. If you still see some messages that should be deleted, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear.")
+
     @clear.command(description="Delete messages within the past <count> messages, but only if they are from <user>. See the help dialog on the main clear command for rate-limit info and more.")
     async def user(self, ctx, user: discord.Member, count: int):
 
