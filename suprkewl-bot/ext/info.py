@@ -104,6 +104,7 @@ class Info():
         latency = self.bot.latency * 1000
         latency = round(latency, 4)
         emb = discord.Embed(color=0xf92f2f, description=f":ping_pong: My current latency is {latency} milliseconds.")
+        emb.set_image(url="https://images-ext-2.discordapp.net/external/pKGlPehvn1NTxya18d7ZyggEm4pKFakjbO_sYS-pagM/https/media.giphy.com/media/nE8wBpOIfKJKE/giphy.gif")
 
         await ctx.send(embed=emb)
 
