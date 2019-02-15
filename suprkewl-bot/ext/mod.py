@@ -21,7 +21,8 @@ class Moderation():
 
         await ctx.message.delete()
 
-        messages = await channel.history(limit=count).flatten()
+        messages = await ctx.history(limit=count).flatten()
+
         await ctx.send(delete_after=5, content="Clearing...")
         errorcnt = 0
 
@@ -30,7 +31,7 @@ class Moderation():
                 await message.delete()
             except Exception:
                 errorcnt += 1
-        await ctx.send(delete_after=5, content=f"<:suprKewl:508479728613851136> GOTEM! Failed to delete {errorcnt} messages. Remember that bots cannot delete messages older than 2 weeks. If you still see some messages that should be deleted, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear.")
+        await ctx.send(delete_after=10, content=f"<:suprKewl:508479728613851136> GOTEM! Failed to delete {errorcnt} messages. Remember that bots cannot delete messages older than 2 weeks. If you still see some messages that should be deleted, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear.")
 
     @commands.command(description="Kicks the given <target>. Please ensure both the bot and the command invoker have the permission 'Kick Members' before running this command. Also notifies <target> of kick.")
     @commands.guild_only()
