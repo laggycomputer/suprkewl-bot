@@ -10,7 +10,7 @@ import time
 import discord
 from discord.ext import commands
 
-class Randomizers():
+class Random():
     def __init__(self, bot):
         self.bot = bot
 
@@ -363,4 +363,4 @@ class Randomizers():
                 await ctx.send(f"Looks like {findwin().user.mention} defeated {findloser().user.mention} with {findwin().health} health left!")
 
 def setup(bot):
-    bot.add_cog(Randomizers(bot))
+    bot.add_cog(Random(bot))
