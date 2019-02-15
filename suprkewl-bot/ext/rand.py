@@ -80,30 +80,30 @@ class Randomizers():
         content = f"{ctx.author.mention} "
 
         if user == computer:
-            content += "We both got :" + computer + ":. Tie!"
+            content += f"We both got {computer}. Tie!"
         else:
             if user == ":fist:":
                 if computer == ":scissors:":
-                    content += "Your " + user + " beat my " + computer + "!"
+                    content += f"Your {user} smashed my {computer}!"
                     winner = "usr"
                 else:
-                    content += "My " + computer + " beat your " + user + "!"
+                    content += f"My {computer} wrapped your {user}!"
                     winner = "comp"
 
             elif user == ":newspaper:":
                 if computer == ":fist:":
-                    content +=" Your " + user + " beat my " + computer + "!"
+                    content += f" Your {user} wrapped my {computer}!"
                     winner = "usr"
                 else:
-                    content += "My " + computer + " beat your " + user + "!"
+                    content += f"My {computer} cut your {user}!"
                     winner = "comp"
 
             elif user == ":scissors:":
                 if computer == ":newspaper:":
-                    content += "Your " + user + " beat my " + computer + "!"
+                    content += f"Your {user} cut my {computer}!"
                     winner = "usr"
                 else:
-                    content += "My " + computer + " beat your " + user + "!"
+                    content += f"My {computer} smashed your {user}!"
                     winner = "comp"
 
         if winner == "usr":
@@ -121,10 +121,10 @@ class Randomizers():
             await msg.edit(content=f"{ctx.author.mention} :scissors: Scissors...")
             await asyncio.sleep(1)
 
-            await msg.edit(content=f"{ctx.author.mention} :boom: BAM!")
+            await msg.edit(content=f"{ctx.author.mention} :gun: Shoot! :boom:")
             await asyncio.sleep(0.5)
 
-            await msg.edit(content = content)
+            await msg.edit(content=content)
 
     @commands.command(aliases=["laugh"], description="Browse a ridiculously tiny collection of funny images. Has a 2 second per-channel cooldown.")
     @commands.cooldown(1, 2, commands.BucketType.channel)
@@ -147,7 +147,7 @@ class Randomizers():
         green = random.random() * 255
         blue = random.random() * 255
 
-        msg = discord.Embed(name= "This is", title="something funny",
+        msg = discord.Embed(name="This is", title="something funny",
                             description="Don't die of laughter", color=discord.Colour.from_rbg(red, green, blue))
 
         msg.set_image(url=random.choice(images))
@@ -157,7 +157,8 @@ class Randomizers():
     @commands.command(aliases=["roll"], description="Rolls the dice specified, in AdB format. For example, 's!dice 3d6' would roll 3 six-sided dice. A must be a positive integer up to and including 10, and B has the same contraints, but with a upper limit of 20. This command has a user-based cooldown of 5 seconds.")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def dice(self, ctx, dice: str):
-        """see 's!help dice.'"""
+        
+        """See 's!help dice.'"""
 
         async with ctx.channel.typing():
             await asyncio.sleep(1)
