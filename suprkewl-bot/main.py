@@ -115,7 +115,7 @@ class theBot(commands.Bot):
                           "mute_members": "Mute Members", "priority_speaker": "Use Priority PTT", "read_message_history": "Read Past Messages in Text Channels",
                           "read_messages": "Read Messages and See Voice Channels", "send_messages": "Send Messages", "send_tts_messages": "Send TTS Messages",
                           "speak": "Speak", "use_voice_activation": "No Voice Activity", "view_audit_log": "View the Server Audit Log"}
-            
+
             if len(perms) == 0:
                 return None
             else:
@@ -127,9 +127,9 @@ class theBot(commands.Bot):
                         fmt += apiToHuman[i]
                         fmt += ", "
                         fmt += f"and {perms[-1]}"
-                        
+
                     return fmt
-		    
+
         if isinstance(error, ignored):
             return
 
@@ -172,7 +172,7 @@ class theBot(commands.Bot):
             missingPerms = permsList(error.missing_perms)
             emb.add_field(name="User Missing Permissions", value=f":x: Permission denied to run `{ctx.prefix}{ctx.command}`. You need to be able to {missingPerms}.")
             emb.set_footer(text=f"Command invoked by {ctx.author}")
-            
+
             return await ctx.send(embed=emb)
 
         elif isinstance(error, commands.BotMissingPermissions):
