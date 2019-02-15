@@ -135,17 +135,17 @@ class theBot(commands.Bot):
 
         elif isinstance(error, commands.DisabledCommand):
 
-            emb = discord.Embed
+            emb = discord.Embed()
             emb.add_field(name="Disabled Command", value=f":x: `{ctx.prefix}{ctx.command}` has been disabled!")
-            emb.set_footer(f"Command invoked by {ctx.author}")
+            emb.set_footer(text=f"Command invoked by {ctx.author}")
 
             return await ctx.send(embed=emb)
 
         elif isinstance(error, commands.NoPrivateMessage):
 
-            emb = discord.Embed
+            emb = discord.Embed()
             emb.add_field(name="This command is disabled in DMs", value=f":x: `{ctx.prefix}{ctx.command}` can only be used in servers, not in DMs or DM groups.")
-            emb.set_footer(f"Command invoked by {ctx.author}")
+            emb.set_footer(text=f"Command invoked by {ctx.author}")
 
             return await ctx.send(embed=emb)
 
@@ -153,10 +153,10 @@ class theBot(commands.Bot):
 
             retry = round(error.retry_after, 2)
 
-            emb = discord.Embed
+            emb = discord.Embed()
             emb.add_field(name="Command on Cooldown",
                           value=f"Woah there! You just triggered a cooldown trying to run `{ctx.prefix}{ctx.command}`. I'll let you know you can start it after the cooldown of {retry} is over.")
-            emb.set_footer(f"Command invoked by {ctx.author}")
+            emb.set_footer(text=f"Command invoked by {ctx.author}")
 
             msg = await ctx.send(embed=emb)
 
@@ -168,25 +168,25 @@ class theBot(commands.Bot):
 
         elif isinstance(error, commands.MissingPermissions):
 
-            emb = discord.Embed
+            emb = discord.Embed()
             missingPerms = permsList(error.missing_perms)
-            emb.add_field(name="User Missing Permissions", value=f":x: Permission denied to run {ctx.prefix}{ctx.command}. You need to be able to {missingPerms}.")
-            emb.set_footer(f"Command invoked by {ctx.author}")
+            emb.add_field(name="User Missing Permissions", value=f":x: Permission denied to run `{ctx.prefix}{ctx.command}`. You need to be able to {missingPerms}.")
+            emb.set_footer(text=f"Command invoked by {ctx.author}")
             
             return await ctx.send(embed=emb)
 
         elif isinstance(error, commands.BotMissingPermissions):
 
-            emb = discord.Embed
+            emb = discord.Embed()
             missingPerms = permsList(error.missing_perms)
-            emb.add_field(name="Bot Missing Permissions", value=f":x: I don't have the proper permissions to run {ctx.prefix}{ctx.command}. I need to be allowed to {missingPerms}.")
-            emb.set_footer(f"Command invoked by {ctx.author}")
+            emb.add_field(name="Bot Missing Permissions", value=f":x: I don't have the proper permissions to run `{ctx.prefix}{ctx.command}`. I need to be allowed to {missingPerms}.")
+            emb.set_footer(text=f"Command invoked by {ctx.author}")
 
             return await ctx.send(embed=emb)
 
         print(f"Ignoring exception in command {ctx.prefix}{ctx.command}:")
 
-        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+        traceback.print_exception(type(error), error, error.__traceback__)
 
 async def get_pre(bot, message):
     if isinstance(message.channel, discord.DMChannel):
