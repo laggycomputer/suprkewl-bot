@@ -89,7 +89,7 @@ class Moderation():
     @commands.bot_has_permissions(kick_members=True)
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, target: discord.Member):
-        """(GUILD ONLY) Kick someone. See 's!help kick' for more."""
+        """(GUILD ONLY) Kick someone. See full help command."""
 
         if target == ctx.guild.owner:
             await ctx.send(":x: I can't kick the server owner!")
@@ -115,7 +115,7 @@ class Moderation():
     @commands.bot_has_permissions(ban_members=True)
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, target: discord.Member, deletedays: int, reason: str):
-        """(GUILD ONLY) Ban someone. See 's!help ban' for more info."""
+        """(GUILD ONLY) Ban someone. See main help dialog."""
 
         if isinstance(ctx.channel, discord.abc.GuildChannel):
             if target == ctx.guild.owner:
@@ -146,7 +146,7 @@ class Moderation():
     @commands.has_permissions(ban_members=True)
 
     async def unban(self, ctx, target: discord.User):
-        """(GUILD ONLY) Unbans someone. See `s!help unban` for more info."""
+        """(GUILD ONLY) Unbans someone. Please refer to the main help dialog."""
 
         targetBanned = False
         async for ban in await ctx.guild.bans():
