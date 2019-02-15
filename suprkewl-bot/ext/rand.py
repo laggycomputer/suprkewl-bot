@@ -155,7 +155,6 @@ class Random():
     @commands.command(aliases=["roll"], description="Rolls the dice specified, in AdB format. For example, 'dice 3d6' would roll 3 six-sided dice. A must be a positive integer up to and including 10, and B has the same contraints, but with a upper limit of 20. This command has a user-based cooldown of 5 seconds.")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def dice(self, ctx, dice: str):
-        
 
         async with ctx.channel.typing():
             await asyncio.sleep(1)
@@ -182,7 +181,7 @@ class Random():
     @commands.command(aliases=["pick", "rand"], description="The tiebreaker of all tiebreakers. Has a 1-second per-channel cooldown, triggered after the command is run twice in the same channel.")
     @commands.cooldown(2, 1, commands.BucketType.channel)
     async def choose(self, ctx, *choices: str):
-        """Choose between multiple choices"""
+        """Choose between given choices"""
 
         async with ctx.channel.typing():
             await asyncio.sleep(1)
