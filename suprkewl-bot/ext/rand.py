@@ -67,7 +67,6 @@ class Randomizers():
     @commands.command(aliases=["rockpaperscissors"], description="Rock paper scissors. Randomizes a choice for you and the computer. Has a 3 second cooldown on a per-user basis.")
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def rps(self, ctx):
-        """See 's!help rps'."""
 
         choices = [":fist:", ":newspaper:", ":scissors:"]
 
@@ -129,7 +128,6 @@ class Randomizers():
     @commands.command(aliases=["laugh"], description="Browse a ridiculously tiny collection of funny images. Has a 2 second per-channel cooldown.")
     @commands.cooldown(1, 2, commands.BucketType.channel)
     async def funny(self, ctx):
-        """See 's!help funny'"""
 
         images = ["https://image.ibb.co/f57pL7/Bill.png",
                   "https://image.ibb.co/hHM27n/yey.jpg",
@@ -154,11 +152,10 @@ class Randomizers():
 
         await ctx.send(embed=msg)
 
-    @commands.command(aliases=["roll"], description="Rolls the dice specified, in AdB format. For example, 's!dice 3d6' would roll 3 six-sided dice. A must be a positive integer up to and including 10, and B has the same contraints, but with a upper limit of 20. This command has a user-based cooldown of 5 seconds.")
+    @commands.command(aliases=["roll"], description="Rolls the dice specified, in AdB format. For example, 'dice 3d6' would roll 3 six-sided dice. A must be a positive integer up to and including 10, and B has the same contraints, but with a upper limit of 20. This command has a user-based cooldown of 5 seconds.")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def dice(self, ctx, dice: str):
         
-        """See 's!help dice.'"""
 
         async with ctx.channel.typing():
             await asyncio.sleep(1)
