@@ -10,7 +10,7 @@ class Moderation():
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.group(invoke_without_command=True, description="Clear <count> messages from the bottom of the current channel, excluding the message used to run the command. Remember that bots cannot delete messages older than 2 weeks, and that both the command invoker and the bot must have the 'Manage Messages' permission.")
+    @commands.group(aliases=["purge"], invoke_without_command=True, description="Clear <count> messages from the bottom of the current channel, excluding the message used to run the command. Remember that bots cannot delete messages older than 2 weeks, and that both the command invoker and the bot must have the 'Manage Messages' permission.")
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
     @commands.has_permissions(manage_messages=True)
