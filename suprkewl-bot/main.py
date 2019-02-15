@@ -53,12 +53,12 @@ class theBot(commands.Bot):
                 if message.channel.permissions_for(message.guild.me).send_messages:
 
                     if message.content.startswith(message.guild.me.mention):
-                        await message.channel.send(f":eyes: Who pinged? My prefix is `{self.command_prefix()}`.")
+                        await message.channel.send(f":eyes: Who pinged? My prefix is `s!`. If you are in a DM with me, I do not require a prefix.")
 
                     await self.process_commands(message)
 
                 else:
-                    if message.content.startswith(self.command_prefix()):
+                    if message.content.startswith("s!"):
                         await message.author.send(":x: I can't send messages there! Perhaps try again elsewhere?")
             else:
                 await self.process_commands(message)
@@ -72,7 +72,7 @@ class theBot(commands.Bot):
                             "github.com/laggycomputer/suprkewl-bot",
                             "being open source",
                             "I don't game...",
-                            f"waiting for you to call me! {self.command_prefix()}help",
+                            "waiting for you to call me!",
                             "being SuprKewl!",
                             "with my Raspberry Pi",
                             "creeping through the shadows",
