@@ -52,8 +52,8 @@ class theBot(commands.Bot):
             if isinstance(message.channel, discord.abc.GuildChannel):
                 if message.channel.permissions_for(message.guild.me).send_messages:
 
-                    if message.content == message.guild.me.mention:
-                        await message.channel.send(f":eyes: **WHO DARE PING** btw my prefix is `{self.command_prefix()}`.")
+                    if message.content.startswith(message.guild.me.mention):
+                        await message.channel.send(f":eyes: Who pinged? My prefix is `{self.command_prefix()}`.")
 
                     await self.process_commands(message)
 
