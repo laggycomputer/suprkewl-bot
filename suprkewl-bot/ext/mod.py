@@ -34,7 +34,13 @@ class Moderation():
 
         await ctx.send(delete_after=10, content=f"<:suprKewl:508479728613851136> Done! Deleted {deleted} messages, failed to delete {errorcnt} messages. Remember that bots cannot delete messages older than 2 weeks. If you still see some messages that should be deleted, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear.")
 
-    @clear.command(description="Delete messages within the past <count> messages, but only if they are from <user>. See the help dialog on the main clear command for rate-limit info and more.")
+    @clear.command(description="Shows info on a Discord client bug affecting message deletion, and the limitations on bots and their ability to delete messages.")
+    async def info(self, ctx):
+        """Shows info on clearing limitations."""
+
+        await ctx.send("Remember that bots are not gods. They can only delete 5 messages a second. They also cannot delete messages older than 2 weeks. If you still see some messages that should be deleted after the command says it finishes, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear.")
+
+    @clear.command(description="Delete messages within the past <count> messages, but only if they are from <user>. See the info subcommand of clear for more info.")
     async def user(self, ctx, user: discord.Member, count: int):
 
         if not await ctx.command.parent.can_run(ctx):
@@ -56,9 +62,9 @@ class Moderation():
                     errorcnt += 1
                 total += 1
 
-        await ctx.send(delete_after=10, content=f"<:suprKewl:508479728613851136> Done! Tried to delete {total} messages, failed to delete {errorcnt} messages. Remember that bots cannot delete messages older than 2 weeks. If you still see some messages that should be deleted, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear.")
+        await ctx.send(delete_after=10, content=f"<:suprKewl:508479728613851136> Done! Tried to delete {total} messages, failed to delete {errorcnt} messages. See `{ctx.prefix}clear info` for info on Discord client bugs and limitations.")
 
-    @clear.command(description="Delete all messages within the given limit that were sent by members with the given role (ping it). See the main clear command help for info on rate-limits and more.")
+    @clear.command(description="Delete all messages within the given limit that were sent by members with the given role (ping it). See the info subcommand of clear for more info.")
     async def role(self, ctx, role: discord.Role, count: int):
 
         if not await ctx.command.parent.can_run(ctx):
@@ -80,7 +86,7 @@ class Moderation():
                     errorent += 1
                 total +=1
 
-        await ctx.send(delete_after=10, content=f"<:suprKewl:508479728613851136> Done! Tried to delete {total} messages, failed to delete {errorcnt} messages. Remember that bots cannot delete messages older than 2 weeks. If you still see some messages that should be deleted, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear.")
+        await ctx.send(delete_after=10, content=f"<:suprKewl:508479728613851136> Done! Tried to delete {total} messages, failed to delete {errorcnt} messages. See `{ctx.prefix}clear info` for info on Discord client bugs and limitations.")
 
     @commands.command(description="Kicks the given <target>. Please ensure both the bot and the command invoker have the permission 'Kick Members' before running this command. Also notifies <target> of kick.")
     @commands.guild_only()
