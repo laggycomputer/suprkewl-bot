@@ -31,11 +31,11 @@ class theBot(commands.Bot):
 
     async def on_ready(self):
 
-        print(f"Logged in as {self.user.name} (ID {self.user.id} | Connected to {len(self.guilds)} servers | Connected to {len(set(client.get_all_members()))} users")
+        print(f"Logged in as {self.user.name} (UID {self.user.id}) | Connected to {len(self.guilds)} servers and their combined {len(set(client.get_all_members()))} members")
         print("-" * 8)
-        print(f"Current Discord.py Version: {discord.__version__} | Current Python Version: {platform.python_version()}")
+        print(f"Current discord.py version: {discord.__version__} | Current Python version: {platform.python_version()}")
         print("-" * 8)
-        print(f"Use this link to invite {self.user.name}:")
+        print(f"Use this link to invite this bot:")
         print(f"https://discordapp.com/oauth2/authorize?client_id={self.user.id}&scope=bot&permissions=8")
         print("-" * 8)
 
