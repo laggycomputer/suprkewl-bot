@@ -42,6 +42,13 @@ class theBot(commands.Bot):
     async def on_message(self, message):
 
         print(f"Got message '{message.content}'")
+
+        if len(message.embeds) > 0:
+            embeds = ""
+            for emb in message.embeds:
+                embeds += str(emb.to_dict())
+            print(f"With embeds:\n{embeds}")
+
         print(f"From @{message.author}")
         print(f"In server {message.guild}")
         print(f"In channel {message.channel}")
