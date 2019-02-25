@@ -9,7 +9,7 @@ import random
 import discord
 from discord.ext import commands
 
-class Random():
+class Random(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
