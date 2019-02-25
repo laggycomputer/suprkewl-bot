@@ -6,7 +6,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import discord
 from discord.ext import commands
 
-class Documentation():
+class Documentation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
