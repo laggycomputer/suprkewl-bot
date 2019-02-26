@@ -54,7 +54,7 @@ class theBot(commands.Bot):
             embeds = ""
             for emb in message.embeds:
                 embeds += str(emb.to_dict())
-            print(f"With embeds:\n{embeds}")
+            print(f"With embed(s):\n{embeds}")
 
         print(f"From @{message.author}")
         print(f"In server {message.guild}")
