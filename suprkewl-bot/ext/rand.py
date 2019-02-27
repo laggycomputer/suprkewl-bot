@@ -162,20 +162,29 @@ class Random(commands.Cog):
         try:
             count, limit = map(int, dice.split('d'))
         except Exception:
-            await msg.edit(content=f":x:Format must be AdB! I was unable to find a seperator between your numbers, or there were no numbers to find. Please check '{ctx.prefix}help dice' for more info.")
+            await msg.edit(content=f":x: Your input must be of the form `AdB`! I was unable to find a seperator between your numbers, or there were no numbers to find. Please check `{ctx.prefix}help dice` for more info.")
             return
 
-        if count <= 10 and count > 0 and limit <= 20 and limit > 0:
+        if count <= 100 and count > 0 and limit <= 1000 and limit > 0:
 
-            for i in range(1, count + 1):
-                await msg.edit(content=f":game_die: Rollling die {i}...")
-                await asyncio.sleep(1)
+            rolls = []
+            total = 0
+            
+            await msg.edit(content=f":game_die: Rollling dice...")
+            await asyncio.sleep(0.1 * count)
+            
+            for i in range(0, count):
+                result = random.randint(1, limit)
+                rolls.append(str(result))
+                total += result
 
-            result = ', '.join(str(random.randint(1, limit)) for r in range(count))
-
-            await msg.edit(content=f":game_die: My rolls were: {result}")
+            rolls = " ".join(rolls)
+            avg = total / count
+            avg = round(avg, 8)
+            
+            await msg.edit(content=f":game_die: {rolls}. The total was {total}, and the average (mean) was {avg}.")
         else:
-            await msg.edit(content=f"Your syntax was correct, but one of your arguments was too large to compute, or one of your arguments was negative. Please see '{ctx.prefix}help dice' for more info.")
+            await msg.edit(content=f"Your syntax was correct, but your input was too large to compute, or one of your arguments was negative. Please see '{ctx.prefix}help dice' for more info.")
 
     @commands.command(aliases=["pick", "rand"], description="The tiebreaker of all tiebreakers. Has a 1-second per-channel cooldown, triggered after the command is run twice in the same channel.")
     @commands.cooldown(2, 1, commands.BucketType.channel)
