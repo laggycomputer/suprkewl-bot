@@ -140,12 +140,9 @@ class Random(commands.Cog):
                   "https://image.ibb.co/hc9Re7/llama.jpg",
                   "https://image.ibb.co/jOuOsS/llamaart.jpg",
                   "https://image.ibb.co/bytavf/justspamf.png"]
-        red = random.random() * 255
-        green = random.random() * 255
-        blue = random.random() * 255
 
         emb = discord.Embed(name="This is", title="something funny",
-                            description="Don't die of laughter", color=discord.Colour.from_rbg(red, green, blue))
+                            description="Don't die of laughter", color=discord.Colour.from_rbg(255, 0, 0))
 
         emb.set_thumbnail(url=self.bot.user.avatar_url)
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
@@ -356,6 +353,11 @@ class Random(commands.Cog):
                         emb.add_field(name="Player 1 health", value=f"**{p1.health}**")
                         emb.add_field(name="Player 2 health", value=f"**{p2.health}**")
                         emb.add_field(name="Current action", value=currentaction)
+
+                        emb.set_thumbnail(url=self.bot.user.avatar_url)
+                        emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
+                        emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+
 
                         await ctx.send(embed=emb)
                         await askaction.delete()
