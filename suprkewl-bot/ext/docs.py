@@ -17,7 +17,10 @@ class Documentation(commands.Cog):
         emb = discord.Embed(author="Join our Discord server!")
 
         emb.add_field(name="\u200b", value="https://www.discord.gg/CRBBJVY")
-        emb.set_footer(text=f"Requested by {ctx.author.mention}.", icon_url=self.bot.user.avatar_url)
+        
+        emb.set_thumbnail(url=self.bot.user.avatar_url)
+        emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
+        emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         await ctx.send(embed=emb)
 
@@ -28,6 +31,10 @@ class Documentation(commands.Cog):
         emb = discord.Embed(name="Our GitHub", color=0xffffff)
         emb.add_field(name="Our github", value="https://www.github.com/laggycomputer/suprkewl-bot")
         emb.add_field(name="Clone it!", value="`git clone https://github.com/laggycomputer/suprkewl-bot.git`")
+
+        emb.set_thumbnail(url=self.bot.user.avatar_url)
+        emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
+        emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         await ctx.send(embed=emb)
 
