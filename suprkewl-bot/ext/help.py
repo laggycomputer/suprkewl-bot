@@ -20,14 +20,14 @@ class Help(commands.Cog):
 
                 if isinstance(command, commands.GroupMixin):
                     for subcommand in command.commands:
-                        emb.add_field(name=f"`{ctx.prefix}{subcommand.qualified_name}{', ' if any(subcommand.aliases) else ''}{', '.join(subcommand.aliases)}`", value=subcommand.short_doc)
+                        emb.add_field(name=f"`{ctx.prefix}{subcommand.qualified_name}{', ' if any(subcommand.aliases) else ''}{', '.join(subcommand.aliases)}`", value=subcommand.short_doc + "\u200b")
 
         else:
             emb = discord.Embed(title="Help and Information", color=0xf92f2f)
             for name, command in self.bot.all_commands.items():
                 if name in command.aliases or (command.hidden and not await self.bot.is_owner(ctx.author)):
                     continue
-                emb.add_field(name=f"{name}{', ' if any(command.aliases) else ''}{', '.join(command.aliases)}", value=command.short_doc)
+                emb.add_field(name=f"{name}{', ' if any(command.aliases) else ''}{', '.join(command.aliases)}", value=command.short_doc + "\u200b")
 
         emb.set_thumbnail(url=self.bot.user.avatar_url)
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
