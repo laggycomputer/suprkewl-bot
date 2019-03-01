@@ -16,14 +16,14 @@ class Help(commands.Cog):
                 await ctx.send(":x: Command not found!")
                 return
             else:
-                emb = discord.Embed(title=f"{ctx.prefix}{command.qualified_name}{', ' if any(command.aliases) else ''}{', '.join(command.aliases)}", description=command.short_doc, color=discord.Colour.from_rgb(255, 0, 0))
+                emb = discord.Embed(title=f"{ctx.prefix}{command.qualified_name}{', ' if any(command.aliases) else ''}{', '.join(command.aliases)}", description=command.short_doc, color=0xf92f2f)
 
                 if isinstance(command, commands.GroupMixin):
                     for subcommand in command.commands:
                         emb.add_field(name=f"`{ctx.prefix}{subcommand.qualified_name}{', ' if any(subcommand.aliases) else ''}{', '.join(subcommand.aliases)}`", value=subcommand.short_doc)
 
         else:
-            emb = discord.Embed(title = "Help and Information")
+            emb = discord.Embed(title="Help and Information", color=0xf92f2f)
             for name, command in self.bot.all_commands.items():
                 if name in command.aliases or (command.hidden and not await self.bot.is_owner(ctx.author)):
                     continue
