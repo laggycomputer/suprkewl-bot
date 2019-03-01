@@ -15,7 +15,7 @@ class Moderation(commands.Cog):
     @commands.bot_has_permissions(manage_messages=True)
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, count: int):
-        """(GUILD ONLY) Delete messages. See full command help for more."""
+        """Delete messages. See full command help for more."""
 
         await ctx.message.delete()
 
@@ -93,7 +93,7 @@ class Moderation(commands.Cog):
     @commands.bot_has_permissions(kick_members=True)
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, target: discord.Member):
-        """(GUILD ONLY) Kick someone. See full help command."""
+        """Kick someone. See full help command."""
 
         if target == ctx.guild.owner:
             await ctx.send(":x: I can't kick the server owner!")
@@ -119,7 +119,7 @@ class Moderation(commands.Cog):
     @commands.bot_has_permissions(ban_members=True)
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, target: discord.Member, deletedays: int, reason: str):
-        """(GUILD ONLY) Ban someone. See main help dialog."""
+        """Ban someone. See main help dialog."""
 
         if isinstance(ctx.channel, discord.abc.GuildChannel):
             if target == ctx.guild.owner:
@@ -150,7 +150,7 @@ class Moderation(commands.Cog):
     @commands.has_permissions(ban_members=True)
 
     async def unban(self, ctx, target: discord.User):
-        """(GUILD ONLY) Unbans someone. Please refer to the main help dialog."""
+        """Unbans someone. Please refer to the main help dialog."""
 
         targetBanned = False
         async for ban in await ctx.guild.bans():
@@ -171,7 +171,7 @@ class Moderation(commands.Cog):
     @commands.bot_has_permissions(ban_members=True)
     @commands.has_permissions(ban_members=True)
     async def banlist(self, ctx):
-        """(GUILD ONLY) Gives a list of banned users."""
+        """Gives a list of banned users."""
 
         emb = discord.Embed(color=0xf92f2f)
         bans = []
