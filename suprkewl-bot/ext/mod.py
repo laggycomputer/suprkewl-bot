@@ -42,6 +42,7 @@ class Moderation(commands.Cog):
 
     @clear.command(description="Delete messages within the past <count> messages, but only if they are from <user>. See the info subcommand of clear for more info.")
     async def user(self, ctx, user: discord.Member, count: int):
+        """Clear messages by user."""
 
         if not await ctx.command.parent.can_run(ctx):
             return
@@ -66,6 +67,7 @@ class Moderation(commands.Cog):
 
     @clear.command(description="Delete all messages within the given limit that were sent by members with the given role (ping it). See the info subcommand of clear for more info.")
     async def role(self, ctx, role: discord.Role, count: int):
+        """Clear messages by role."""
 
         if not await ctx.command.parent.can_run(ctx):
             return
