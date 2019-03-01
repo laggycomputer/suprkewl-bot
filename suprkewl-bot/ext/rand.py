@@ -154,6 +154,7 @@ class Random(commands.Cog):
         emb.set_image(url=random.choice(images))
 
         await ctx.send(embed=emb)
+
     @commands.command(aliases=["roll"], description="Rolls the dice specified, in AdB format. For example, 'dice 3d6' would roll 3 six-sided dice. A must be a positive integer up to and including 10, and B has the same contraints, but with a upper limit of 20. This command has a user-based cooldown of 5 seconds.")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def dice(self, ctx, dice: str):
