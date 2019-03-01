@@ -174,13 +174,12 @@ class Moderation(commands.Cog):
         """(GUILD ONLY) Gives a list of banned users."""
 
         emb = discord.Embed(color=0xf92f2f)
-        emb.set_author(name='Me', icon_url=self.bot.user.avatar_url)
-        list = []
+        bans = []
         banlist = await ctx.guild.bans()
         for ban in banlist:
-            list.append(ban[0].name + "#" + ban[0].discriminator)
-        commaspace = ", "
-        msg = commaspace.join(list)
+            bans.append(ban[0].name + "#" + ban[0].discriminator)
+
+        msg = ", ".join(bans)
         emb.add_field(name=f"Banned users for {ctx.guild}", value=msg)
 
         emb.set_thumbnail(url=self.bot.user.avatar_url)
