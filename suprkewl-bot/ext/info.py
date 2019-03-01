@@ -17,7 +17,7 @@ class Info(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(manage_roles=True)
     async def roleinfo(self, ctx, role: discord.Role):
-        """(GUILD ONLY) Gives info on a passed role."""
+        """Gives info on a passed role."""
 
         emb = discord.Embed(title=f"Info for '{role}', a role in '{ctx.guild}'", color=role.color)
         emb.set_author(name='Me', icon_url=self.bot.user.avatar_url)
@@ -41,7 +41,7 @@ class Info(commands.Cog):
     @commands.has_any_role("suprkewl-viewPerms")
     @commands.bot_has_permissions(manage_roles=True)
     async def roleperms(self, ctx, role: discord.Role):
-        """(GUILD ONLY) Get permissions for a role"""
+        """Get permissions for a role"""
 
         emb = discord.Embed(title=f"Perms for '{role}', a role in '{ctx.server}'", color=0xf92f2f)
         emb.set_thumbnail(url=self.bot.user.avatar_url)
