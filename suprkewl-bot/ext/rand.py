@@ -142,7 +142,7 @@ class Random(commands.Cog):
                   "https://image.ibb.co/bytavf/justspamf.png"]
 
         emb = discord.Embed(name="This is", title="something funny",
-                            description="Don't die of laughter", color=discord.Colour.from_rbg(255, 0, 0))
+                            description="Don't die of laughter", color=0xf92f2f)
 
         emb.set_thumbnail(url=self.bot.user.avatar_url)
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
@@ -170,10 +170,10 @@ class Random(commands.Cog):
 
             rolls = []
             total = 0
-            
+
             await msg.edit(content=f":game_die: Rollling dice...")
             await asyncio.sleep(0.1 * count)
-            
+
             for i in range(0, count):
                 result = random.randint(1, limit)
                 rolls.append(str(result))
@@ -182,7 +182,7 @@ class Random(commands.Cog):
             rolls = " ".join(rolls)
             avg = total / count
             avg = round(avg, 8)
-            
+
             await msg.edit(content=f":game_die: {rolls}. The total was {total}, and the average (mean) was {avg}.")
         else:
             await msg.edit(content=f"Your syntax was correct, but your input was too large to compute, or one of your arguments was negative. Please see '{ctx.prefix}help dice' for more info.")

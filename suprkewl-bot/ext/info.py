@@ -43,7 +43,7 @@ class Info(commands.Cog):
     async def roleperms(self, ctx, role: discord.Role):
         """(GUILD ONLY) Get permissions for a role"""
 
-        emb = discord.Embed(title=f"Perms for '{role}', a role in '{ctx.server}'")
+        emb = discord.Embed(title=f"Perms for '{role}', a role in '{ctx.server}'", color=0xf92f2f)
         emb.set_thumbnail(url=self.bot.user.avatar_url)
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
         emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
@@ -84,7 +84,7 @@ class Info(commands.Cog):
     async def botstats(self, ctx):
         """Give some system info for the bot."""
 
-        emb = discord.Embed(title="Bot info", color=0xffffff)
+        emb = discord.Embed(title="Bot info", color=0xf92f2f)
         year, month, dayofmonth, hour, minute, second, dayofweek, dayofyear, isdst = time.localtime()
         week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
         dayofweek = week[dayofweek]
@@ -116,7 +116,7 @@ class Info(commands.Cog):
 
         latency = self.bot.latency * 1000
         latency = round(latency, 4)
-        emb = discord.Embed(color=0xf92f2f, description=f":ping_pong: My current latency is {latency} milliseconds.")
+        emb = discord.Embed(description=f":ping_pong: My current latency is {latency} milliseconds.", color=0xf92f2f)
         emb.set_image(url="https://images-ext-2.discordapp.net/external/pKGlPehvn1NTxya18d7ZyggEm4pKFakjbO_sYS-pagM/https/media.giphy.com/media/nE8wBpOIfKJKE/giphy.gif")
 
         await ctx.send(embed=emb)
