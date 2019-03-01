@@ -24,7 +24,11 @@ class Info(commands.Cog):
         emb.add_field(name="Role Color (Hex)", value=role.color)
         emb.add_field(name="Members with Role", value=len(role.members))
         emb.add_field(name="Role ID", value=role.id)
-        dispHoist="No"
+
+        emb.set_thumbnail(url=self.bot.user.avatar_url)
+        emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
+        emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+
         if role.hoist:
             dispHoist="Yes"
         emb.add_field(name="'Display role member seperately from online members'", value=dispHoist)
@@ -39,6 +43,9 @@ class Info(commands.Cog):
         """(GUILD ONLY) Get permissions for a role"""
 
         emb = discord.Embed(title=f"Perms for '{role}', a role in '{ctx.server}'")
+        emb.set_thumbnail(url=self.bot.user.avatar_url)
+        emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
+        emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         perms = role.permissions
 
@@ -95,6 +102,11 @@ class Info(commands.Cog):
         emb.add_field(name="Processor name", value=platform.processor())
         emb.add_field(name="Current server count", value=str(len(self.bot.guilds)))
         emb.add_field(name="Total Users", value=str(len(self.bot.users)))
+
+        emb.set_thumbnail(url=self.bot.user.avatar_url)
+        emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
+        emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+
         await ctx.send(embed=emb)
 
     @commands.command()

@@ -144,13 +144,16 @@ class Random(commands.Cog):
         green = random.random() * 255
         blue = random.random() * 255
 
-        msg = discord.Embed(name="This is", title="something funny",
+        emb = discord.Embed(name="This is", title="something funny",
                             description="Don't die of laughter", color=discord.Colour.from_rbg(red, green, blue))
 
-        msg.set_image(url=random.choice(images))
+        emb.set_thumbnail(url=self.bot.user.avatar_url)
+        emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
+        emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
-        await ctx.send(embed=msg)
+        emb.set_image(url=random.choice(images))
 
+        await ctx.send(embed=emb)
     @commands.command(aliases=["roll"], description="Rolls the dice specified, in AdB format. For example, 'dice 3d6' would roll 3 six-sided dice. A must be a positive integer up to and including 10, and B has the same contraints, but with a upper limit of 20. This command has a user-based cooldown of 5 seconds.")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def dice(self, ctx, dice: str):
