@@ -2,7 +2,7 @@
 
 <p align="center">
 <a href="https://discord.gg/CRBBJVY"><img src="https://img.shields.io/discord/498185249952366602.svg"></a>
-<a href="./LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+<a href="./LICENSE-mit.txt"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>
 
 
