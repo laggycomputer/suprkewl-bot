@@ -13,9 +13,12 @@ import traceback
 import discord
 from discord.ext import commands
 
+# config file
+import config
+
 logger = logging.getLogger("discord")
-logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler(filename="../suprkewl.log", encoding="utf-8", mode="w")
+logger.setLevel(config.loglevel)
+handler = logging.FileHandler(filename=config.logpath, encoding="utf-8", mode="w")
 handler.setFormatter(logging.Formatter("%(asctime)s: %(levelname)s: %(name)s: %(message)s"))
 logger.addHandler(handler)
 
@@ -221,4 +224,4 @@ async def get_pre(bot, message):
 client = theBot(command_prefix=get_pre,
                 description="Did you know? If you are in a DM with me, you don't need a prefix!")
 
-client.run("TOKEN")
+client.run("config.token")
