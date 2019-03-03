@@ -14,10 +14,10 @@ class Documentation(commands.Cog):
     async def invite(self, ctx):
         """Invite to the support server."""
 
-        emb = discord.Embed(author="Join our Discord server!")
+        emb = discord.Embed(author="Join our Discord server!", color=0xf92f2f)
 
         emb.add_field(name="\u200b", value="https://www.discord.gg/CRBBJVY")
-        
+
         emb.set_thumbnail(url=self.bot.user.avatar_url)
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
         emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
@@ -28,7 +28,7 @@ class Documentation(commands.Cog):
     async def github(self, ctx):
         """A link to our GitHub repo."""
 
-        emb = discord.Embed(name="Our GitHub", color=0xffffff)
+        emb = discord.Embed(name="Our GitHub", color=0xf92f2f)
         emb.add_field(name="Our github", value="https://www.github.com/laggycomputer/suprkewl-bot")
         emb.add_field(name="Clone it!", value="`git clone https://github.com/laggycomputer/suprkewl-bot.git`")
 
