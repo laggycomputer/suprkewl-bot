@@ -35,7 +35,7 @@ class Help(commands.Cog):
                     for alias in command.aliases:
                         alist.append(f"`{alias}`")
 
-                    emb = discord.Embed(title=f"{ctx.prefix}{command.qualified_name}{', ' if any(command.aliases) else ''}{', '.join(alist))}", description=command.short_doc, color=0xf92f2f)
+                    emb = discord.Embed(title=f"{ctx.prefix}{command.qualified_name}{', ' if any(command.aliases) else ''}{', '.join(alist)}", description=command.short_doc, color=0xf92f2f)
                     emb.add_field(name="Full description", value=command.description + "\u200b")
 
                     if isinstance(command, commands.GroupMixin):
