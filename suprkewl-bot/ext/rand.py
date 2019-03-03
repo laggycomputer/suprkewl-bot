@@ -66,6 +66,7 @@ class Random(commands.Cog):
     @commands.command(aliases=["rockpaperscissors"], description="Rock paper scissors. Randomizes a choice for you and the computer. Has a 3 second cooldown on a per-user basis.")
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def rps(self, ctx):
+        """Rock, Paper, Scissors, Shoot!"""
 
         choices = [":fist:", ":newspaper:", ":scissors:"]
 
@@ -127,6 +128,7 @@ class Random(commands.Cog):
     @commands.command(aliases=["laugh"], description="Browse a ridiculously tiny collection of funny images. Has a 2 second per-channel cooldown.")
     @commands.cooldown(1, 2, commands.BucketType.channel)
     async def funny(self, ctx):
+        """Haha. Very funny."""
 
         images = ["https://image.ibb.co/f57pL7/Bill.png",
                   "https://image.ibb.co/hHM27n/yey.jpg",
@@ -140,12 +142,9 @@ class Random(commands.Cog):
                   "https://image.ibb.co/hc9Re7/llama.jpg",
                   "https://image.ibb.co/jOuOsS/llamaart.jpg",
                   "https://image.ibb.co/bytavf/justspamf.png"]
-        red = random.random() * 255
-        green = random.random() * 255
-        blue = random.random() * 255
 
         emb = discord.Embed(name="This is", title="something funny",
-                            description="Don't die of laughter", color=discord.Colour.from_rbg(red, green, blue))
+                            description="Don't die of laughter", color=0xf92f2f)
 
         emb.set_thumbnail(url=self.bot.user.avatar_url)
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
@@ -158,6 +157,7 @@ class Random(commands.Cog):
     @commands.command(aliases=["roll"], description="Rolls the dice specified, in AdB format. For example, 'dice 3d6' would roll 3 six-sided dice. A must be a positive integer up to and including 10, and B has the same contraints, but with a upper limit of 20. This command has a user-based cooldown of 5 seconds.")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def dice(self, ctx, dice: str):
+        """Now you can roll 1000-sided dice!"""
 
         async with ctx.channel.typing():
             await asyncio.sleep(1)
@@ -173,10 +173,10 @@ class Random(commands.Cog):
 
             rolls = []
             total = 0
-            
+
             await msg.edit(content=f":game_die: Rollling dice...")
             await asyncio.sleep(0.1 * count)
-            
+
             for i in range(0, count):
                 result = random.randint(1, limit)
                 rolls.append(str(result))
@@ -185,7 +185,7 @@ class Random(commands.Cog):
             rolls = " ".join(rolls)
             avg = total / count
             avg = round(avg, 8)
-            
+
             await msg.edit(content=f":game_die: {rolls}. The total was {total}, and the average (mean) was {avg}.")
         else:
             await msg.edit(content=f"Your syntax was correct, but your input was too large to compute, or one of your arguments was negative. Please see '{ctx.prefix}help dice' for more info.")
@@ -356,6 +356,11 @@ class Random(commands.Cog):
                         emb.add_field(name="Player 1 health", value=f"**{p1.health}**")
                         emb.add_field(name="Player 2 health", value=f"**{p2.health}**")
                         emb.add_field(name="Current action", value=currentaction)
+
+                        emb.set_thumbnail(url=self.bot.user.avatar_url)
+                        emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
+                        emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+
 
                         await ctx.send(embed=emb)
                         await askaction.delete()
