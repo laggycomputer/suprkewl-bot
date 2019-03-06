@@ -223,5 +223,7 @@ async def get_pre(bot, message):
 
 client = theBot(command_prefix=get_pre,
                 description="Did you know? If you are in a DM with me, you don't need a prefix!")
-
-client.run("config.token")
+if config.token == "":
+    raise ValueError("Please set your token in the config file.")
+else:
+    client.run(config.token)
