@@ -34,23 +34,25 @@ class Random(commands.Cog):
     async def roast(self, ctx, target: discord.Member):
         """Roast someone. ⌐■_■"""
 
-        roasts = [f"You spend your time on this thingy {target.mention}? I bet you don't even know what it does. By the way, can you even read this?",
-                  f"{target.mention}, I fart to make you smell better.",
-                  f"{target.mention}, Your parents hated you so much your bath toys were an iron and a toaster. ~~go commit toaster bath~~",
-                  f"{target.mention}, Why don't you check eBay and see if they have a life for sale?",
-                  f"{target.mention}, You bring everyone a lot of joy, when you leave the room.",
-                  f"{target.mention}, you're as bright as a black hole, and twice as dense.",
-                  f"{target.mention}, what'll you do to get a face after that baboon wants his face back?",
-                  f"{target.mention}, I don't exactly hate you, but if you were on fire and I had water, I'd drink the water.",
-                  f"{target.mention}, I'll never forget the first time we met, although I'll keep trying.",
-                  f"{target.mention}, I don't I can think of an insult bad enough for you.",
-                  f"{target.mention}, There are more calories in your stomach than in the local supermarket!",
-                  f"{target.mention}, You shouldn't play hide and seek, no one would look for you.",
-                  f"{target.mention}, If I gave you a penny for your thoughts, I'd get change.",
-                  f"{target.mention}, So you've changed your mind, does this one work any better?",
-                  f"{target.mention}, You're so ugly, when your mom dropped you off at school she got a fine for littering.",
-                  f"{target.mention}, You're so fat the only letters of the alphabet you know are KFC.",
-                  f"I don't forget a single face, but in your case, {target.mention}, I'll make an exception."]
+        roasts = [
+            f"You spend your time on this thingy {target.mention}? I bet you don't even know what it does. By the way, can you even read this?",
+            f"{target.mention}, I fart to make you smell better.",
+            f"{target.mention}, Your parents hated you so much your bath toys were an iron and a toaster. ~~go commit toaster bath~~",
+            f"{target.mention}, Why don't you check eBay and see if they have a life for sale?",
+            f"{target.mention}, You bring everyone a lot of joy, when you leave the room.",
+            f"{target.mention}, you're as bright as a black hole, and twice as dense.",
+            f"{target.mention}, what'll you do to get a face after that baboon wants his face back?",
+            f"{target.mention}, I don't exactly hate you, but if you were on fire and I had water, I'd drink the water.",
+            f"{target.mention}, I'll never forget the first time we met, although I'll keep trying.",
+            f"{target.mention}, I don't I can think of an insult bad enough for you.",
+            f"{target.mention}, There are more calories in your stomach than in the local supermarket!",
+            f"{target.mention}, You shouldn't play hide and seek, no one would look for you.",
+            f"{target.mention}, If I gave you a penny for your thoughts, I'd get change.",
+            f"{target.mention}, So you've changed your mind, does this one work any better?",
+            f"{target.mention}, You're so ugly, when your mom dropped you off at school she got a fine for littering.",
+            f"{target.mention}, You're so fat the only letters of the alphabet you know are KFC.",
+            f"I don't forget a single face, but in your case, {target.mention}, I'll make an exception."
+        ]
 
         await ctx.send(random.choice(roasts))
 
@@ -60,8 +62,10 @@ class Random(commands.Cog):
 
         suits = [":spades:", ":diamonds:", ":hearts:", ":clubs:"]
 
-        ranks = ["Ace", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:",
-                 ":eight:", ":nine:", ":keycap_ten:", "Jack", "Queen", "King"]
+        ranks = [
+            "Ace", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:",
+            ":eight:", ":nine:", ":keycap_ten:", "Jack", "Queen", "King"
+        ]
 
         await ctx.send(f"I drew the {random.choice(ranks)} of {random.choice(suits)}")
 
@@ -142,26 +146,33 @@ class Random(commands.Cog):
 
             await msg.edit(content=content)
 
-    @commands.command(aliases=["laugh"], description="Browse a ridiculously tiny collection of funny images. Has a 2 second per-channel cooldown.")
+    @commands.command(
+        aliases=["laugh"],
+        description="Browse a ridiculously tiny collection of funny images. Has a 2 second per-channel cooldown."
+    )
     @commands.cooldown(1, 2, commands.BucketType.channel)
     async def funny(self, ctx):
         """Haha. Very funny."""
 
-        images = ["https://image.ibb.co/f57pL7/Bill.png",
-                  "https://image.ibb.co/hHM27n/yey.jpg",
-                  "https://image.ibb.co/dWRS7n/bruh1.gif",
-                  "https://image.ibb.co/kpUx7n/u_mad_broo.jpg",
-                  "https://image.ibb.co/nKTX7n/jumped_Off.jpg",
-                  "https://image.ibb.co/i76wYS/uwut.jpg",
-                  "https://image.ibb.co/edp0tS/uhhh.jpg",
-                  "https://image.ibb.co/gknDF7/no_Briefcase.jpg",
-                  "https://image.ibb.co/hFF3hn/any_More_Weekend.jpg",
-                  "https://image.ibb.co/hc9Re7/llama.jpg",
-                  "https://image.ibb.co/jOuOsS/llamaart.jpg",
-                  "https://image.ibb.co/bytavf/justspamf.png"]
+        images = [
+            "https://image.ibb.co/f57pL7/Bill.png",
+            "https://image.ibb.co/hHM27n/yey.jpg",
+            "https://image.ibb.co/dWRS7n/bruh1.gif",
+            "https://image.ibb.co/kpUx7n/u_mad_broo.jpg",
+            "https://image.ibb.co/nKTX7n/jumped_Off.jpg",
+            "https://image.ibb.co/i76wYS/uwut.jpg",
+            "https://image.ibb.co/edp0tS/uhhh.jpg",
+            "https://image.ibb.co/gknDF7/no_Briefcase.jpg",
+            "https://image.ibb.co/hFF3hn/any_More_Weekend.jpg",
+            "https://image.ibb.co/hc9Re7/llama.jpg",
+            "https://image.ibb.co/jOuOsS/llamaart.jpg",
+            "https://image.ibb.co/bytavf/justspamf.png"
+        ]
 
-        emb = discord.Embed(name="This is", title="something funny",
-                            description="Don't die of laughter", color=0xf92f2f)
+        emb = discord.Embed(
+            name="This is", title="something funny",
+            description="Don't die of laughter", color=0xf92f2f
+        )
 
         emb.set_thumbnail(url=self.bot.user.avatar_url)
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
@@ -171,7 +182,10 @@ class Random(commands.Cog):
 
         await ctx.send(embed=emb)
 
-    @commands.command(aliases=["roll"], description="Rolls the dice specified, in AdB format. For example, 'dice 3d6' would roll 3 six-sided dice. A must be a positive integer up to and including 10, and B has the same contraints, but with a upper limit of 20. This command has a user-based cooldown of 5 seconds.")
+    @commands.command(
+        aliases=["roll"],
+        description="Rolls the dice specified, in AdB format. For example, 'dice 3d6' would roll 3 six-sided dice. A must be a positive integer up to and including 10, and B has the same contraints, but with a upper limit of 20. This command has a user-based cooldown of 5 seconds."
+    )
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def dice(self, ctx, dice: str):
         """Now you can roll 1000-sided dice!"""
@@ -183,7 +197,9 @@ class Random(commands.Cog):
         try:
             count, limit = map(int, dice.split('d'))
         except Exception:
-            await msg.edit(content=f":x: Your input must be of the form `AdB`! I was unable to find a seperator between your numbers, or there were no numbers to find. Please check `{ctx.prefix}help dice` for more info.")
+            await msg.edit(
+                content=f":x: Your input must be of the form `AdB`! I was unable to find a seperator between your numbers, or there were no numbers to find. Please check `{ctx.prefix}help dice` for more info."
+            )
             return
 
         if count <= 100 and count > 0 and limit <= 1000 and limit > 0:
@@ -203,11 +219,18 @@ class Random(commands.Cog):
             avg = total / count
             avg = round(avg, 8)
 
-            await msg.edit(content=f":game_die: {rolls}. The total was {total}, and the average (mean) was {avg}.")
+            await msg.edit(
+                content=f":game_die: {rolls}. The total was {total}, and the average (mean) was {avg}."
+            )
         else:
-            await msg.edit(content=f"Your syntax was correct, but your input was too large to compute, or one of your arguments was negative. Please see '{ctx.prefix}help dice' for more info.")
+            await msg.edit(
+                content=f"Your syntax was correct, but your input was too large to compute, or one of your arguments was negative. Please see '{ctx.prefix}help dice' for more info."
+            )
 
-    @commands.command(aliases=["pick", "rand"], description="The tiebreaker of all tiebreakers. Has a 1-second per-channel cooldown, triggered after the command is run twice in the same channel.")
+    @commands.command(
+        aliases=["pick", "rand"],
+        description="The tiebreaker of all tiebreakers. Has a 1-second per-channel cooldown, triggered after the command is run twice in the same channel."
+    )
     @commands.cooldown(2, 1, commands.BucketType.channel)
     async def choose(self, ctx, *choices: str):
         """Choose between given choices"""
@@ -231,13 +254,17 @@ class Random(commands.Cog):
             self.turn = False
             self.won = False
 
-    @commands.command(description="Starts a fight between the command invoker and the specified <target>. <target> must be a non-bot and must not be the command invoker. This command has a 10-second cooldown per user.")
+    @commands.command(
+        description="Starts a fight between the command invoker and the specified <target>. <target> must be a non-bot and must not be the command invoker. This command has a 10-second cooldown per user."
+    )
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def fight(self, ctx, target: discord.Member):
         """FIGHT"""
 
         if target.bot:
-            await ctx.send(":x: Oops! You can't fight a robot; it's robot arms will annihilate you! Perhaps you meant a human?")
+            await ctx.send(
+                ":x: Oops! You can't fight a robot; it's robot arms will annihilate you! Perhaps you meant a human?"
+            )
         else:
             if target == ctx.author:
                 await ctx.send(":x: You can't fight yourself!")
@@ -292,26 +319,34 @@ class Random(commands.Cog):
                     blow = ""
                     damage = 0
 
-                    fightplaces = ["Laundry Room", "Dining Room", "Kitchen", "Bedroom", "Living Room", "Backyard"]
+                    fightplaces = [
+                        "Laundry Room", "Dining Room", "Kitchen", "Bedroom", "Living Room", "Backyard"
+                    ]
 
-                    fightactions = {"Laundry Room": ["{0.mention} whips {1.mention} with a freshly washed towel", "{0.mention} shuts {1.mention} in the washer, but {1.mention} narrowly escapes", "{0.mention} throws a tennis ball from inside the clothes dryer at {1.mention}"],
-                                    "Dining Room": ["{0.mention} throws a plate at {1.mention}", "{0.mention} stabs {1.mention} with a piece of a broken vase", "{0.mention} pins {1.mention} against the wall with the table"],
-                                    "Kitchen": ["{0.mention} cuts {1.mention} with a a knife", "{0.mention} pours some boiling water on {1.mention}","{0.mention} hits {1.mention} with a pot"],
-                                    "Bedroom": ["{0.mention} hits {1.mention} with a pillow", "{1.mention} takes a pillow to the head from {0.mention}"],
-                                    "Living Room": ["{0.mention} hits {1.mention} with the TV remote", "{0.mention} uses the Wii controller as a club on {1.mention} *wii sports plays*","{1.mention} trips over the Skyrim CD sleeve, 00f"],
-                                    "Backyard": ["{0.mention} hits {1.mention} with some tongs", "{0.mention} turns the backyard stove over on {1.mention}"]}
+                    fightactions = {
+                        "Laundry Room": ["{0.mention} whips {1.mention} with a freshly washed towel", "{0.mention} shuts {1.mention} in the washer, but {1.mention} narrowly escapes", "{0.mention} throws a tennis ball from inside the clothes dryer at {1.mention}"],
+                        "Dining Room": ["{0.mention} throws a plate at {1.mention}", "{0.mention} stabs {1.mention} with a piece of a broken vase", "{0.mention} pins {1.mention} against the wall with the table"],
+                        "Kitchen": ["{0.mention} cuts {1.mention} with a a knife", "{0.mention} pours some boiling water on {1.mention}","{0.mention} hits {1.mention} with a pot"],
+                        "Bedroom": ["{0.mention} hits {1.mention} with a pillow", "{1.mention} takes a pillow to the head from {0.mention}"],
+                        "Living Room": ["{0.mention} hits {1.mention} with the TV remote", "{0.mention} uses the Wii controller as a club on {1.mention} *wii sports plays*","{1.mention} trips over the Skyrim CD sleeve, 00f"],
+                        "Backyard": ["{0.mention} hits {1.mention} with some tongs", "{0.mention} turns the backyard stove over on {1.mention}"]
+                    }
 
                     universalactions = ["{0.mention} slugs {1.mention} in the face", "{0.mention} uses *sicc* karate skills on {1.mention}", "{0.mention} pushes {1.mention} over"]
 
-                    deathblows = {"Laundry Room": "{0.mention} shuts {1.mention} in the washer and starts it",
-                                  "Dining Room": "{0.mention} pins {1.mention} agianst the table",
-                                  "Kitchen": "{0.mention} uses top-notch ninja skills on {1.mention}, many of which involve the knives",
-                                  "Bedroom": "{0.mention} gets a l33t hit om {1.mention} involving throwing the bedstand",
-                                  "Living Room": "{0.mention} narrowly beats {1.mention} in a sword-fight using the Dolby 7:1 surround speakers",
-                                  "Backyard": "{0.mention} throws some hot coals from the backyard stove at {1.mention}"}
+                    deathblows = {
+                        "Laundry Room": "{0.mention} shuts {1.mention} in the washer and starts it",
+                        "Dining Room": "{0.mention} pins {1.mention} agianst the table",
+                        "Kitchen": "{0.mention} uses top-notch ninja skills on {1.mention}, many of which involve the knives",
+                        "Bedroom": "{0.mention} gets a l33t hit om {1.mention} involving throwing the bedstand",
+                        "Living Room": "{0.mention} narrowly beats {1.mention} in a sword-fight using the Dolby 7:1 surround speakers",
+                        "Backyard": "{0.mention} throws some hot coals from the backyard stove at {1.mention}"
+                    }
 
-                    connectedrooms = {"Laundry Room":["Backyard","Kitchen"], "Dining Room":["Kitchen","Backyard"], "Kitchen":["Dining Room","Living Room"],
-                                      "Bedroom":["Living Room"], "Living Room":["Kitchen","Bedroom"], "Backyard":["Laundry Room","Laundry Room"]}
+                    connectedrooms = {
+                        "Laundry Room":["Backyard","Kitchen"], "Dining Room":["Kitchen","Backyard"], "Kitchen":["Dining Room","Living Room"],
+                        "Bedroom":["Living Room"], "Living Room":["Kitchen","Bedroom"], "Backyard":["Laundry Room","Laundry Room"]
+                    }
 
                     setting = random.choice(fightplaces)
 
@@ -376,7 +411,10 @@ class Random(commands.Cog):
 
                         emb.set_thumbnail(url=self.bot.user.avatar_url)
                         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
-                        emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+                        emb.set_footer(
+                            text=f"{self.bot.description} Requested by {ctx.author}",
+                            icon_url=ctx.author.avatar_url
+                        )
 
 
                         await ctx.send(embed=emb)
@@ -393,7 +431,9 @@ class Random(commands.Cog):
                 else:
                     p2.won = False
                     p1.won = True
-                await ctx.send(f"Looks like {findwin().user.mention} defeated {findloser().user.mention} with {findwin().health} health left!")
+                await ctx.send(
+                    f"Looks like {findwin().user.mention} defeated {findloser().user.mention} with {findwin().health} health left!"
+                )
 
 def setup(bot):
     bot.add_cog(Random(bot))

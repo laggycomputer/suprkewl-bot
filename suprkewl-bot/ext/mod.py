@@ -27,7 +27,10 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.group(aliases=["purge"], invoke_without_command=True, description="Clear <count> messages from the bottom of the current channel, excluding the message used to run the command. Remember that bots cannot delete messages older than 2 weeks, and that both the command invoker and the bot must have the 'Manage Messages' permission.")
+    @commands.group(
+        aliases=["purge"], invoke_without_command=True,
+        description="Clear <count> messages from the bottom of the current channel, excluding the message used to run the command. Remember that bots cannot delete messages older than 2 weeks, and that both the command invoker and the bot must have the 'Manage Messages' permission."
+    )
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
     @commands.has_permissions(manage_messages=True)
@@ -49,15 +52,24 @@ class Moderation(commands.Cog):
             except Exception:
                 errorcnt += 1
 
-        await ctx.send(delete_after=10, content=f"<:suprKewl:508479728613851136> Done! Deleted {deleted} messages, failed to delete {errorcnt} messages. Remember that bots cannot delete messages older than 2 weeks. If you still see some messages that should be deleted, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear.")
+        await ctx.send(
+            delete_after=10,
+            content=f"<:suprKewl:508479728613851136> Done! Deleted {deleted} messages, failed to delete {errorcnt} messages. Remember that bots cannot delete messages older than 2 weeks. If you still see some messages that should be deleted, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear."
+        )
 
-    @clear.command(name="info", description="Shows info on a Discord client bug affecting message deletion, and the limitations on bots and their ability to delete messages.")
+    @clear.command(
+        name="info",
+        description="Shows info on a Discord client bug affecting message deletion, and the limitations on bots and their ability to delete messages."
+    )
     async def clear_info(self, ctx):
         """Shows info on clearing limitations."""
 
         await ctx.send("Remember that bots are not gods. They can only delete 5 messages a second. They also cannot delete messages older than 2 weeks. If you still see some messages that should be deleted after the command says it finishes, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear.")
 
-    @clear.command(name="user", description="Delete messages within the past <count> messages, but only if they are from <user>. See the info subcommand of clear for more info.")
+    @clear.command(
+        name="user",
+        description="Delete messages within the past <count> messages, but only if they are from <user>. See the info subcommand of clear for more info."
+    )
     async def clear_user(self, ctx, user: discord.Member, count: int):
         """Clear messages by user."""
 
@@ -80,9 +92,15 @@ class Moderation(commands.Cog):
                     errorcnt += 1
                 total += 1
 
-        await ctx.send(delete_after=10, content=f"<:suprKewl:508479728613851136> Done! Tried to delete {total} messages, failed to delete {errorcnt} messages. See `{ctx.prefix}clear info` for info on Discord client bugs and limitations.")
+        await ctx.send(
+            delete_after=10,
+            content=f"<:suprKewl:508479728613851136> Done! Tried to delete {total} messages, failed to delete {errorcnt} messages. See `{ctx.prefix}clear info` for info on Discord client bugs and limitations."
+        )
 
-    @clear.command(name="role", description="Delete all messages within the given limit that were sent by members with the given role (ping it). See the info subcommand of clear for more info.")
+    @clear.command(
+        name="role",
+        description="Delete all messages within the given limit that were sent by members with the given role (ping it). See the info subcommand of clear for more info."
+    )
     async def clear_role(self, ctx, role: discord.Role, count: int):
         """Clear messages by role."""
 
@@ -105,9 +123,14 @@ class Moderation(commands.Cog):
                     errorent += 1
                 total +=1
 
-        await ctx.send(delete_after=10, content=f"<:suprKewl:508479728613851136> Done! Tried to delete {total} messages, failed to delete {errorcnt} messages. See `{ctx.prefix}clear info` for info on Discord client bugs and limitations.")
+        await ctx.send(
+            delete_after=10,
+            content=f"<:suprKewl:508479728613851136> Done! Tried to delete {total} messages, failed to delete {errorcnt} messages. See `{ctx.prefix}clear info` for info on Discord client bugs and limitations."
+        )
 
-    @commands.command(description="Kicks the given <target>. Please ensure both the bot and the command invoker have the permission 'Kick Members' before running this command. Also notifies <target> of kick.")
+    @commands.command(
+        description="Kicks the given <target>. Please ensure both the bot and the command invoker have the permission 'Kick Members' before running this command. Also notifies <target> of kick."
+    )
     @commands.guild_only()
     @commands.bot_has_permissions(kick_members=True)
     @commands.has_permissions(kick_members=True)
@@ -133,7 +156,9 @@ class Moderation(commands.Cog):
                     else:
                         await ctx.send(":x: The passed member has a higher/equal top role than/to me, meaning I can't kick him/her. Oops! Try again...")
 
-    @commands.command(description="Bans the given <target> with reason <reason>, deleteing all messages sent from that user over the last <deletedays> days (must be an integer betweeen and including 0 and 7). Ensure that both the command invoker and the bot have the permission 'Ban Members'. Also DMs <target> to let them know they've been banned.")
+    @commands.command(
+        description="Bans the given <target> with reason <reason>, deleteing all messages sent from that user over the last <deletedays> days (must be an integer betweeen and including 0 and 7). Ensure that both the command invoker and the bot have the permission 'Ban Members'. Also DMs <target> to let them know they've been banned."
+    )
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @commands.has_permissions(ban_members=True)
@@ -153,7 +178,9 @@ class Moderation(commands.Cog):
                         if meInServer.top_role > target.top_role:
                             if deletedays <= 7 and deletedays >= 0:
                                 try:
-                                    await ctx.guild.ban(target, delete_message_days=deletedays, reason=reason)
+                                    await ctx.guild.ban(
+                                        target, delete_message_days=deletedays, reason=reason
+                                    )
                                     await ctx.send(f":boom: **INSTA BAN!** Swung the ban hammer on {target.mention}.")
                                     await target.send(f"Looks like you were banned from `{ctx.guild}`, {target.mention}. :slight_frown:")
                                 except Exception:
@@ -163,7 +190,9 @@ class Moderation(commands.Cog):
                         else:
                             await ctx.send(":x: Oops! That member has a higher or equal top role to me, meaning I can't ban him/her!")
 
-    @commands.command(description="Unbans the given <target>. The target must be banned from the given server, and both the command invoker and the bot must have the permission 'Ban Members'. <target> will be DM'd once they are unbanned.")
+    @commands.command(
+        description="Unbans the given <target>. The target must be banned from the given server, and both the command invoker and the bot must have the permission 'Ban Members'. <target> will be DM'd once they are unbanned."
+    )
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @commands.has_permissions(ban_members=True)
@@ -185,7 +214,9 @@ class Moderation(commands.Cog):
         else:
             await msg.edit(content = f"{ctx.author.mention} :x: Oops! That user ain't banned! Perhaps you meant someone else?")
 
-    @commands.command(description="Gives the list of banned users for this server. Both the command invoker and the bot must have the permission `Ban Members`.")
+    @commands.command(
+        description="Gives the list of banned users for this server. Both the command invoker and the bot must have the permission `Ban Members`."
+    )
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @commands.has_permissions(ban_members=True)
@@ -203,7 +234,10 @@ class Moderation(commands.Cog):
 
         emb.set_thumbnail(url=self.bot.user.avatar_url)
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
-        emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        emb.set_footer(
+            text=f"{self.bot.description} Requested by {ctx.author}",
+            icon_url=ctx.author.avatar_url
+        )
 
         await ctx.send(embed=emb)
 
