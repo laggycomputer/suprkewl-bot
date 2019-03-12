@@ -101,27 +101,29 @@ class theBot(commands.Bot):
 
         await self.wait_until_ready()
 
-        playing_statuses = ["with the community",
-                            "with my dad, Too Laggy",
-                            "github.com/laggycomputer/suprkewl-bot",
-                            "being open source",
-                            "I don't game...",
-                            "waiting for you to call me!",
-                            "being SuprKewl!",
-                            "with my Raspberry Pi",
-                            "creeping through the shadows",
-                            "eating robot food, brb",
-                            "being improved!",
-                            "ping and run",
-                            "helping the community",
-                            "living under the MIT license!",
-                            "at a robot party, brb in a bit",
-                            "meme-scrolling",
-                            "the attention game",
-                            "tag with other robots",
-                            " ",
-                            "and plotting pranks",
-                            "with the Discord API"]
+        playing_statuses = [
+            "with the community",
+            "with my dad, Too Laggy",
+            "github.com/laggycomputer/suprkewl-bot",
+            "being open source",
+            "I don't game...",
+            "waiting for you to call me!",
+            "being SuprKewl!",
+            "with my Raspberry Pi",
+            "creeping through the shadows",
+            "eating robot food, brb",
+            "being improved!",
+            "ping and run",
+            "helping the community",
+            "living under the MIT license!",
+            "at a robot party, brb in a bit",
+            "meme-scrolling",
+            "the attention game",
+            "tag with other robots",
+            " ",
+            "and plotting pranks",
+            "with the Discord API"
+        ]
 
         while not self.is_closed():
             status = f"{random.choice(playing_statuses)} | lurking in {len(self.guilds)} servers and watching over {len(self.users)} users..."
@@ -139,16 +141,18 @@ class theBot(commands.Bot):
         error = getattr(error, "original", error)
 
         def permsList(perms):
-            apiToHuman = {"add_reactions": "Add Reactions", "administrator": "Administrator", "attach_files": "Attach Files", "ban_members": "Ban Members",
-                          "change_nickname": "Can Change Own Nickname", "connect": "Connect to Voice Channels", "create_instant_invite": "Create Server Invites",
-                          "deafen_members": "Deafen Members", "embed_links": "Embed Links", "external_emojis": "(Nitro Only) Use External Emotes",
-                          "kick_members": "Kick Members", "manage_channels": "Change, Create, and Delete Roles",
-                          "manage_emojis": "Create, Delete, and Rename Server Emotes", "manage_guild": "Manage Server", "manage_messages": "Manage Messages",
-                          "manage_nicknames": "Manage Nicknames", "manage_roles": "Manage Roles", "manage_webhooks": "Manage Webhooks",
-                          "mention_everyone": "Ping @\u200beveryone and @\u200bhere", "move_members": "Move Members Between Voice Channels",
-                          "mute_members": "Mute Members", "priority_speaker": "Use Priority PTT", "read_message_history": "Read Past Messages in Text Channels",
-                          "read_messages": "Read Messages and See Voice Channels", "send_messages": "Send Messages", "send_tts_messages": "Send TTS Messages",
-                          "speak": "Speak", "use_voice_activation": "No Voice Activity", "view_audit_log": "View the Server Audit Log"}
+            apiToHuman = {
+                "add_reactions": "Add Reactions", "administrator": "Administrator", "attach_files": "Attach Files", "ban_members": "Ban Members",
+                "change_nickname": "Can Change Own Nickname", "connect": "Connect to Voice Channels", "create_instant_invite": "Create Server Invites",
+                "deafen_members": "Deafen Members", "embed_links": "Embed Links", "external_emojis": "(Nitro Only) Use External Emotes",
+                "kick_members": "Kick Members", "manage_channels": "Change, Create, and Delete Roles",
+                "manage_emojis": "Create, Delete, and Rename Server Emotes", "manage_guild": "Manage Server", "manage_messages": "Manage Messages",
+                "manage_nicknames": "Manage Nicknames", "manage_roles": "Manage Roles", "manage_webhooks": "Manage Webhooks",
+                "mention_everyone": "Ping @\u200beveryone and @\u200bhere", "move_members": "Move Members Between Voice Channels",
+                "mute_members": "Mute Members", "priority_speaker": "Use Priority PTT", "read_message_history": "Read Past Messages in Text Channels",
+                "read_messages": "Read Messages and See Voice Channels", "send_messages": "Send Messages", "send_tts_messages": "Send TTS Messages",
+                "speak": "Speak", "use_voice_activation": "No Voice Activity", "view_audit_log": "View the Server Audit Log"
+            }
 
             if len(perms) == 0:
                 return None
@@ -238,8 +242,10 @@ async def get_pre(bot, message):
     else:
         return "s!"
 
-client = theBot(command_prefix=get_pre,
-                description="Did you know? If you are in a DM with me, you don't need a prefix!")
+client = theBot(
+    command_prefix=get_pre,
+    description="Did you know? If you are in a DM with me, you don't need a prefix!"
+)
 if config.token == "":
     raise ValueError("Please set your token in the config file.")
 else:
