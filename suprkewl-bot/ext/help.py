@@ -51,14 +51,14 @@ class Help(commands.Cog):
                         for alias in command.aliases:
                            alist.append(f"`{ctx.prefix}{alias}`")
 
-                        emb.add_field(name=f"`{ctx.prefix}{command.qualified_name}`{', ' if any(command.aliases) else ''}{', '.join(alist)}", description=command.short_doc + "\u200b")
+                        emb.add_field(name=f"`{ctx.prefix}{command.qualified_name}`{', ' if any(command.aliases) else ''}{', '.join(alist)}", description=command.short_doc)
                 else:
                     alist = []
                     for alias in command.aliases:
                         alist.append(f"`{alias}`")
 
                     emb = discord.Embed(title=f"{ctx.prefix}{command.qualified_name}{', ' if any(command.aliases) else ''}{', '.join(alist)}", description=command.short_doc, color=0xf92f2f)
-                    emb.add_field(name="Full description", value=command.description + "\u200b")
+                    emb.add_field(name="Full description", value=f"{command.description if any(command.description) else 'None at the moment...'}")
 
                     if isinstance(command, commands.GroupMixin):
                         for subcommand in command.commands:
@@ -66,7 +66,7 @@ class Help(commands.Cog):
                             for alias in subcommand.aliases:
                                 alist.append(f"`{ctx.prefix}{alias}`")
 
-                            emb.add_field(name=f"`{ctx.prefix}{subcommand.qualified_name}`{', ' if any(subcommand.aliases) else ''}{', '.join(alist)}", value=subcommand.short_doc + "\u200b")
+                            emb.add_field(name=f"`{ctx.prefix}{subcommand.qualified_name}`{', ' if any(subcommand.aliases) else ''}{', '.join(alist)}", value=subcommand.short_doc)
         else:
             emb = discord.Embed(title="Help and Information", color=0xf92f2f)
             for name, command in self.bot.all_commands.items():
