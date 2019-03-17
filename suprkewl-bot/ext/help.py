@@ -33,7 +33,7 @@ class Help(commands.Cog):
 
         if specific:
 
-            command = self.bot.get_cog(speific)
+            command = self.bot.get_cog(specific)
             command = self.bot.get_command(specific)
 
             if command is None:
@@ -86,5 +86,5 @@ class Help(commands.Cog):
         await ctx.send(embed=emb)
 
 def setup(bot):
-    oldhelp = bot.remove_command("help")
+    bot.remove_command("help")
     bot.add_cog(Help(bot))
