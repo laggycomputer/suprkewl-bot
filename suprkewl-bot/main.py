@@ -67,8 +67,10 @@ class theBot(commands.Bot):
         print("-" * 8)
 
     async def on_message(self, message):
-
-        print(f"Got message '{message.content}'")
+        try:
+            print(f"Got message '{message.content}'")
+        except UnicodeDecodeError:
+            print("Message content not printable")
 
         if len(message.embeds) > 0:
             embeds = ""
@@ -250,4 +252,7 @@ client = theBot(
 if config.token == "":
     raise ValueError("Please set your token in the config file.")
 else:
-    client.run(config.token)
+    try:
+        client.run(config.token)
+    except discord.LoginFailure:
+        print("Invalid token passed, exiting.")
