@@ -11,3 +11,12 @@ loglevel = loglevels[4]
 
 # If this is true, the log will be cleared on bot startup.
 clearLog = False
+
+# Redis config
+redis_host = "192.168.1.23"
+# IMPORTANT: If you running the bot on a server that is open to the web,
+# CHANGE BOTH THESE VALUES HERE AND IN REDIS CONFIG, ESPECIALLY THE PASSWORD
+redis_port = "6379"
+# Again, this is insecure
+# CHANGE IT
+redis_password = "testing"
