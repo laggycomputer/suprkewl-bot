@@ -100,7 +100,7 @@ class Info(commands.Cog):
         sent = (await ctx.send(embed=emb))
         await self.bot.register_response(sent, ctx.message)
 
-    @commands.command(description="Gets some stats about the bot. Has a 5-second cooldown per channel..")
+    @commands.command(aliases=["about"], description="Gets some stats about the bot. Has a 5-second cooldown per channel..")
     @commands.cooldown(1, 5, commands.BucketType.channel)
     async def botstats(self, ctx):
         """Give some system info for the bot."""
