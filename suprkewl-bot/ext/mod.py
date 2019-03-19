@@ -140,13 +140,13 @@ class Moderation(commands.Cog):
         if target == ctx.guild.owner:
             await ctx.send(":x: I can't kick the server owner!")
         else:
-            if target == meInServer:
                 await ctx.send(":x: I can't kick myself!")
+            if target == ctx.guild.me:
             else:
                 if ctx.author == target:
                     await ctx.send(":x: I'm not kicking you! If you hate this place that much, just leave!")
                 else:
-                    if meInServer.top_role < invoker.top_role:
+                    if ctx.guild.me.top_role < ctx.author.top_role:
                         try:
                             await target.kick()
                             await ctx.send(f":boom: RIP {target.mention}.")
@@ -169,13 +169,13 @@ class Moderation(commands.Cog):
             if target == ctx.guild.owner:
                 await ctx.send(":x: The server owner can't be banned!")
             else:
-                if target == meInServer:
                     await ctx.send(":x: Oopsie! Can't ban myself...")
+                if target == ctx.guild.me:
                 else:
                     if target == ctx.author:
                         await ctx.send(":x: I'm not banning you! Just leave if you hate this place so much!")
                     else:
-                        if meInServer.top_role > target.top_role:
+                        if ctx.guild.me.top_role > target.top_role:
                             if deletedays <= 7 and deletedays >= 0:
                                 try:
                                     await ctx.guild.ban(
