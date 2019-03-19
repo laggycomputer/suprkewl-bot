@@ -39,7 +39,8 @@ class Documentation(commands.Cog):
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
         emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
-        await ctx.send(embed=emb)
+        sent = (await ctx.send(embed=emb))
+        await self.bot.register_response(sent, ctx.message)
 
     @commands.command(aliases=["git"])
     async def github(self, ctx):
@@ -53,7 +54,8 @@ class Documentation(commands.Cog):
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
         emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
-        await ctx.send(embed=emb)
+        sent = (await ctx.send(embed=emb))
+        await self.bot.register_response(sent, ctx.message)
 
 def setup(bot):
     bot.add_cog(Documentation(bot))

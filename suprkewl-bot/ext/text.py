@@ -84,9 +84,8 @@ Manly Lenny: ᕦ( ͡͡~͜ʖ ͡° )ᕤ
 Put ur dongers up or I'll shoot:(ง ͡° ͜ʖ ͡°)=/̵͇̿/'̿'̿̿̿ ̿ ̿̿
 Badass Lenny: ̿ ̿'̿'̵͇̿з=(⌐■ʖ■)=ε/̵͇̿/'̿̿ ̿
 """
-        async with ctx.channel.typing():
-            await asyncio.sleep(1)
-            await ctx.send(msg)
+        sent = (await ctx.send(msg))
+        await self.bot.register_response(sent, ctx.message)
 
     @commands.command(description="LMAO! Has a 5-second channel cooldown to keep things calm.")
     @commands.cooldown(1, 5, commands.BucketType.channel)
@@ -104,9 +103,8 @@ L
         。
        ."""
 
-        async with ctx.typing():
-            await asyncio.sleep(1)
-            await ctx.send(msg)
+        sent = (await ctx.send(msg))
+        await self.bot.register_response(sent, ctx.message)
 
     @commands.command(
         description="Make the bot say something. Watch what you say. Has a 5 second user cooldown."
@@ -115,7 +113,8 @@ L
     async def say(self, ctx, *, message: str):
         """Make the bot say something."""
 
-        await ctx.send(f"{ctx.author.mention} wants me to say '{message}'")
+        sent = (await ctx.send(f"{ctx.author.mention} wants me to say '{message}'"))
+        await self.bot.register_response(sent, ctx.message)
 
 def setup(bot):
     bot.add_cog(Text(bot))

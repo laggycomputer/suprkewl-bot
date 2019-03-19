@@ -52,10 +52,10 @@ class Moderation(commands.Cog):
             except Exception:
                 errorcnt += 1
 
-        await ctx.send(
-            delete_after=10,
-            content=f"<:suprKewl:508479728613851136> Done! Deleted {deleted} messages, failed to delete {errorcnt} messages. Remember that bots cannot delete messages older than 2 weeks. If you still see some messages that should be deleted, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear."
-        )
+        sent = (await ctx.send(
+            content=f"<:suprKewl:508479728613851136> Done! Deleted {deleted} messages, failed to delete {errorcnt} messages. See `{ctx.prefix}clear info for more.`"
+        ))
+        await self.bot.register_response(sent, ctx.message)
 
     @clear.command(
         name="info",
@@ -64,7 +64,10 @@ class Moderation(commands.Cog):
     async def clear_info(self, ctx):
         """Shows info on clearing limitations."""
 
-        await ctx.send("Remember that bots are not gods. They can only delete 5 messages a second. They also cannot delete messages older than 2 weeks. If you still see some messages that should be deleted after the command says it finishes, it may be a Discord bug. Reload Discord (Cntrl or Command R) and they should disappear.")
+        sent = (await ctx.send(
+            "If messages do not disappear when deleted, refresh Discord (Ctrl R) and they should disappear. Remember that bots cannot delete messages older than 2 weeks, and cannot delete messages faster than 5 per five seconds."
+        ))
+        await self.bot.register_response(sent, ctx.message)
 
     @clear.command(
         name="user",
@@ -92,10 +95,10 @@ class Moderation(commands.Cog):
                     errorcnt += 1
                 total += 1
 
-        await ctx.send(
-            delete_after=10,
+        sent = (await ctx.send(
             content=f"<:suprKewl:508479728613851136> Done! Tried to delete {total} messages, failed to delete {errorcnt} messages. See `{ctx.prefix}clear info` for info on Discord client bugs and limitations."
-        )
+        ))
+        await self.bot.register_response(sent, ctx.message)
 
     @clear.command(
         name="role",
@@ -123,10 +126,10 @@ class Moderation(commands.Cog):
                     errorent += 1
                 total +=1
 
-        await ctx.send(
-            delete_after=10,
+        sent = (await ctx.send(
             content=f"<:suprKewl:508479728613851136> Done! Tried to delete {total} messages, failed to delete {errorcnt} messages. See `{ctx.prefix}clear info` for info on Discord client bugs and limitations."
-        )
+        ))
+        await self.bot.register_response(sent, ctx.message)
 
     @commands.command(
         description="Kicks the given <target>. Please ensure both the bot and the command invoker have the permission 'Kick Members' before running this command. Also notifies <target> of kick."
@@ -138,23 +141,32 @@ class Moderation(commands.Cog):
         """Kick someone. See full help command."""
 
         if target == ctx.guild.owner:
-            await ctx.send(":x: I can't kick the server owner!")
+            sent = (await ctx.send(":x: I can't kick the server owner!"))
+            await self.bot.register_response(sent, ctx.message)
         else:
-                await ctx.send(":x: I can't kick myself!")
             if target == ctx.guild.me:
+                sent = (await ctx.send(":x: I can't kick myself!"))
+                await self.bot.register_response(sent, ctx.message)
             else:
                 if ctx.author == target:
-                    await ctx.send(":x: I'm not kicking you! If you hate this place that much, just leave!")
+                    sent = (await ctx.send(":x: I'm not kicking you! If you hate this place that much, just leave!"))
+                    await self.bot.register_response(sent, ctx.message)
                 else:
                     if ctx.guild.me.top_role < ctx.author.top_role:
+                        await target.kick()
+                        sent = (await ctx.send(f":boom: RIP {target.mention}."))
+                        await self.bot.register_response(sent, ctx.message)
+
                         try:
-                            await target.kick()
-                            await ctx.send(f":boom: RIP {target.mention}.")
                             await target.send(f"You've been kicked from `{ctx.guild}`. :slight_frown:")
                         except Exception:
-                            await ctx.send(":x: ?! An error has occured!")
+                            await asyncio.sleep(5)
+                            await sent.edit(
+                                content=":x: ?! The kicked user's priviacy settings deny me from telling them they have been kicked."
+                            )
                     else:
-                        await ctx.send(":x: The passed member has a higher/equal top role than/to me, meaning I can't kick him/her. Oops! Try again...")
+                        sent = (await ctx.send(":x: The passed member has a higher/equal top role than/to me, meaning I can't kick him/her. Oops! Try again..."))
+                        await self.bot.register_response(sent, ctx.message)
 
     @commands.command(
         description="Bans the given <target> with reason <reason>, deleteing all messages sent from that user over the last <deletedays> days (must be an integer betweeen and including 0 and 7). Ensure that both the command invoker and the bot have the permission 'Ban Members'. Also DMs <target> to let them know they've been banned."
@@ -167,28 +179,35 @@ class Moderation(commands.Cog):
 
         if isinstance(ctx.channel, discord.abc.GuildChannel):
             if target == ctx.guild.owner:
-                await ctx.send(":x: The server owner can't be banned!")
+                sent = (await ctx.send(":x: The server owner can't be banned!"))
+                await self.bot.register_response(sent, ctx.message)
             else:
-                    await ctx.send(":x: Oopsie! Can't ban myself...")
                 if target == ctx.guild.me:
+                    sent = (await ctx.send(":x: Oopsie! Can't ban myself..."))
+                    await self.bot.register_response(sent, ctx.message)
                 else:
                     if target == ctx.author:
-                        await ctx.send(":x: I'm not banning you! Just leave if you hate this place so much!")
+                        sent = (await ctx.send(":x: I'm not banning you! Just leave if you hate this place so much!"))
+                        await self.bot.register_response(sent, ctx.message)
                     else:
                         if ctx.guild.me.top_role > target.top_role:
                             if deletedays <= 7 and deletedays >= 0:
+                                await ctx.guild.ban(
+                                    target, delete_message_days=deletedays, reason=reason
+                                )
+                                sent = (await ctx.send(f":boom: Swung the ban hammer on {target.mention}."))
+                                await self.bot.register_response(sent, ctx.message)
+
                                 try:
-                                    await ctx.guild.ban(
-                                        target, delete_message_days=deletedays, reason=reason
-                                    )
-                                    await ctx.send(f":boom: **INSTA BAN!** Swung the ban hammer on {target.mention}.")
                                     await target.send(f"Looks like you were banned from `{ctx.guild}`, {target.mention}. :slight_frown:")
                                 except Exception:
-                                    await ctx.send(":x: Oh noes! It didn't work! I may have ran into ratelimits, or some unknown error may have occured.")
+                                    await sent.edit(content=":x: Oh noes! The banned member's priviacy settings forbid me from notifying them, but they are nonetheless banned.")
                             else:
-                                await ctx.send(f"Oops! You specified an out-of-range integer for <deletedays>! See `{ctx.prefix}help ban` for info on limits.")
+                                sent = (await ctx.send(f"Oops! You specified an out-of-range integer for <deletedays>! See `{ctx.prefix}help ban` for info on limits."))
+                                await self.bot.register_response(sent, ctx.message)
                         else:
-                            await ctx.send(":x: Oops! That member has a higher or equal top role to me, meaning I can't ban him/her!")
+                            sent = (await ctx.send(":x: Oops! That member has a higher or equal top role to me, meaning I can't ban him/her!"))
+                            await self.bot.register_response(sent, ctx.message)
 
     @commands.command(
         description="Unbans the given <target>. The target must be banned from the given server, and both the command invoker and the bot must have the permission 'Ban Members'. <target> will be DM'd once they are unbanned."
@@ -205,15 +224,16 @@ class Moderation(commands.Cog):
             if ban[0] == target:
                 targetBanned = True
         if targetBanned:
+            await ctx.guild.unban(target)
+            sent = (await ctx.send("<:suprKewl:508479728613851136> Unbanned!"))
+            await self.bot.register_response(sent, ctx.message)
 
             try:
-                await ctx.guild.unban(target)
-                await ctx.send("<:suprKewl:508479728613851136> Unbanned!")
                 await target.send(f":thumbs_up: You've been unbanned from {ctx.guild}! If you still have a valid invite, you can use it to rejoin.")
             except Exception:
-                await msg.edit(content = f"{ctx.author.mention} :x: Oops! Looks like I couldn't unban {target.name}#{target.discriminator}! Perhaps I crashed into a rate-limit or tripped on another unknown error. Perhaps try again?")
+                await sent.edit(content=f"{ctx.author.mention} The unbanned user's priviacy settings prevent me from notofying them of their unbanning.")
         else:
-            await msg.edit(content = f"{ctx.author.mention} :x: Oops! That user ain't banned! Perhaps you meant someone else?")
+            await sent.edit(content=f"{ctx.author.mention} :x: Oops! That user ain't banned! Perhaps you meant someone else?")
 
     @commands.command(
         description="Gives the list of banned users for this server. Both the command invoker and the bot must have the permission `Ban Members`."
@@ -240,7 +260,8 @@ class Moderation(commands.Cog):
             icon_url=ctx.author.avatar_url
         )
 
-        await ctx.send(embed=emb)
+        sent = (await ctx.send(embed=emb))
+        await self.bot.register_response(sent, ctx.message)
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

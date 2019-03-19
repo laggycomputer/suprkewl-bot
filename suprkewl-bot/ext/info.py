@@ -51,7 +51,8 @@ class Info(commands.Cog):
             dispHoist = "Yes"
         emb.add_field(name="'Display role member seperately from online members'", value=dispHoist)
 
-        await ctx.send(embed=emb)
+        sent = (await ctx.send(embed=emb))
+        await self.bot.register_response(sent, ctx.message)
 
     @commands.command(description="Gives perms on the given <role> (ping it). Permissions are listed in the order they appear on Discord. The bot must have the 'Manage Roles' permission for this to work, and the user must have a role called 'suprkewl-viewPerms' to use the command. Remember that role perms may be overridden on a per-channel (sometimes also on a per-user) basis.")
     @commands.guild_only()
@@ -96,7 +97,8 @@ class Info(commands.Cog):
                 fieldval = "No"
             emb.add_field(name=fieldname, value=fieldval)
 
-        await ctx.send(embed=emb)
+        sent = (await ctx.send(embed=emb))
+        await self.bot.register_response(sent, ctx.message)
 
     @commands.command(description="Gets some stats about the bot. Has a 5-second cooldown per channel..")
     @commands.cooldown(1, 5, commands.BucketType.channel)
@@ -127,7 +129,8 @@ class Info(commands.Cog):
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
         emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
-        await ctx.send(embed=emb)
+        sent = (await ctx.send(embed=emb))
+        await self.bot.register_response(sent, ctx.message)
 
     @commands.command()
     async def ping(self, ctx):
@@ -138,7 +141,8 @@ class Info(commands.Cog):
         emb = discord.Embed(description=f":ping_pong: My current latency is {latency} milliseconds.", color=0xf92f2f)
         emb.set_image(url="https://images-ext-2.discordapp.net/external/pKGlPehvn1NTxya18d7ZyggEm4pKFakjbO_sYS-pagM/https/media.giphy.com/media/nE8wBpOIfKJKE/giphy.gif")
 
-        await ctx.send(embed=emb)
+        sent = (await ctx.send(embed=emb))
+        await self.bot.register_response(sent, ctx.message)
 
 def setup(bot):
     bot.add_cog(Info(bot))

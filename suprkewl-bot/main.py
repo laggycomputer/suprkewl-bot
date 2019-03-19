@@ -20,6 +20,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+import aioredis
 import asyncio
 import logging
 import platform
@@ -30,8 +31,8 @@ import traceback
 import discord
 from discord.ext import commands
 
-# config file
 import config
+import redis
 
 logger = logging.getLogger("discord")
 logger.setLevel(config.loglevel)
@@ -47,6 +48,7 @@ class theBot(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.redis = None
         self.bg_task = self.loop.create_task(self.playingstatus())
 
         startup_extensions = ["jishaku", "ext.text", "ext.rand", "ext.docs", "ext.mod", "ext.info", "ext.help"]
@@ -60,6 +62,10 @@ class theBot(commands.Bot):
                 print(f"Failed to load extension {extension}\n{exc}")
 
     async def on_ready(self):
+
+        if not self.redis:
+            self.redis = redis.Redis()
+            await self.redis.connect()
 
         print(f"Logged in as {self.user.name} (UID {self.user.id}) | Connected to {len(self.guilds)} servers and their combined {len(set(client.get_all_members()))} members")
         print("-" * 8)
@@ -88,6 +94,8 @@ class theBot(commands.Bot):
         if message.author.bot:
             return
         else:
+            await self.track_message(f"tracked_message {message.id}")
+
             if isinstance(message.channel, discord.abc.GuildChannel):
                 if message.channel.permissions_for(message.guild.me).send_messages:
 

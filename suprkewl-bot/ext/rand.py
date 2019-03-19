@@ -54,7 +54,8 @@ class Random(commands.Cog):
             f"I don't forget a single face, but in your case, {target.mention}, I'll make an exception."
         ]
 
-        await ctx.send(random.choice(roasts))
+        sent = await ctx.send(random.choice(roasts))
+        await self.bot.register_response(sent, ctx.message)
 
     @commands.command(aliases=["card"], description="Draw from a standard, 52-card deck, no jokers.")
     async def draw(self, ctx):
@@ -67,7 +68,8 @@ class Random(commands.Cog):
             ":eight:", ":nine:", ":keycap_ten:", "Jack", "Queen", "King"
         ]
 
-        await ctx.send(f"I drew the {random.choice(ranks)} of {random.choice(suits)}")
+        sent = await ctx.send(f"I drew the {random.choice(ranks)} of {random.choice(suits)}")
+        await self.bot.register_response(sent, ctx.message)
 
     @commands.command(aliases=["flip", "quarter", "dime", "penny", "nickel"])
     async def coin(self, ctx):
@@ -83,6 +85,8 @@ class Random(commands.Cog):
             await msg.edit(content="It's heads!")
         else:
             await msg.edit(content="It's tails.")
+
+        await self.bot.register_response(msg, ctx.message)
 
     @commands.command(aliases=["rockpaperscissors"], description="Rock paper scissors. Randomizes a choice for you and the computer. Has a 3 second cooldown on a per-user basis.")
     @commands.cooldown(1, 3, commands.BucketType.user)
@@ -134,6 +138,7 @@ class Random(commands.Cog):
         async with ctx.channel.typing():
             await asyncio.sleep(2)
             msg = await ctx.send(f"{ctx.author.mention} :fist: Rock...")
+            await self.bot.register_response(msg, ctx.message)
             await asyncio.sleep(1)
 
             await msg.edit(content=f"{ctx.author.mention} :newspaper: Paper...")
@@ -181,6 +186,7 @@ class Random(commands.Cog):
         emb.set_image(url=random.choice(images))
 
         sent = await ctx.send(embed=emb)
+        await self.bot.register_response(sent, ctx.message)
 
     @commands.command(
         aliases=["roll"],
@@ -193,6 +199,7 @@ class Random(commands.Cog):
         async with ctx.channel.typing():
             await asyncio.sleep(1)
             msg = await ctx.send("thinking... :thinking:")
+            await self.bot.register_response(msg, ctx.message)
             await asyncio.sleep(1)
         try:
             count, limit = map(int, dice.split('d'))
@@ -238,6 +245,7 @@ class Random(commands.Cog):
         async with ctx.channel.typing():
             await asyncio.sleep(1)
             msg = await ctx.send("Choosing...")
+            await self.bot.register_response(msg, ctx.message)
             await asyncio.sleep(1.5)
             await msg.edit(content="Eeeny, Meeny, Miney, Mo. Catch a tiger by the toe...")
 
@@ -416,6 +424,7 @@ class Random(commands.Cog):
 
                         if sent is None:
                             sent = (await ctx.send(embed=emb))
+                            await self.bot.register_response(sent, ctx.message)
                         else:
                             await sent.edit(embed=emb)
                         await askaction.delete()
