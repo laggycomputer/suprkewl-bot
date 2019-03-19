@@ -168,26 +168,30 @@ class theBot(commands.Bot):
         await self.wait_until_ready()
 
         playing_statuses = [
-            "with the community",
-            "with my dad, Too Laggy",
-            "github.com/laggycomputer/suprkewl-bot",
-            "being open source",
-            "I don't game...",
-            "waiting for you to call me!",
-            "being SuprKewl!",
-            "with my Raspberry Pi",
-            "creeping through the shadows",
-            "eating robot food, brb",
-            "being improved!",
-            "ping and run",
-            "helping the community",
-            "living under the MIT license!",
-            "at a robot party, brb in a bit",
-            "meme-scrolling",
-            "the attention game",
-            "tag with other robots",
             " ",
             "and plotting pranks",
+            "at a robot party, brb in a bit",
+            "being improved!",
+            "being open source",
+            "being SuprKewl!",
+            "chess with Kasparov",
+            "creeping through the shadows",
+            "eating robot food, brb",
+            "github.com/laggycomputer/suprkewl-bot",
+            "helping the community",
+            "I don't game...",
+            "idling",
+            "living under the MIT license!",
+            "mafia",
+            "meme-scrolling",
+            "ping and run",
+            "tag with other robots",
+            "the attention game",
+            "waiting for you to call me!",
+            "werewolf",
+            "with my dad, Too Laggy",
+            "with my Raspberry Pi",
+            "with the community",
             "with the Discord API"
         ]
 
@@ -297,6 +301,7 @@ async def get_pre(bot, message):
         return "s!"
 
 client = theBot(
+    status=discord.Status.idle,
     command_prefix=get_pre,
     description="Did you know? If you are in a DM with me, you don't need a prefix!",
 )
