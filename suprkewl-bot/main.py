@@ -31,6 +31,8 @@ import traceback
 import discord
 from discord.ext import commands
 
+from ext.utils.apiToHuman import apiToHuman
+
 import config
 import redis
 
@@ -110,6 +112,57 @@ class theBot(commands.Bot):
             else:
                 await self.process_commands(message)
 
+
+    async def track_message(self, message):
+        if await self.redis.exists(message):
+            return
+
+        await self.redis.rpush(message, 0)
+        await self.redis.expire(message, 3600)
+
+    async def on_raw_message_edit(self, payload):
+        if "content" not in payload.data:
+            return
+
+        channel = self.get_channel(int(payload.data["channel_id"]))
+
+        if channel is None:
+            return
+
+        message = channel._state._get_message(payload.message_id)
+        if message is None:
+            try:
+                message = await channel.fetch_message(payload.message_id)
+            except discord.HTTPException:
+                return
+
+        if await self.redis.exists(f"tracked_message {payload.message_id}"):
+            await self.clear_messages(f"tracked_message {payload.message_id}")
+        await self.process_commands(message)
+
+    async def on_raw_message_delete(self, payload):
+        if await self.redis.exists(payload.message_id):
+            await self.clear_messages(payload.message_id)
+            await self.redis.delete(payload.message_id)
+
+    async def clear_messages(self, tracked_message):
+        for message_data in await self.redis.lrange(tracked_message, 1, -1):
+            channel_id, message_id = message_data.split(":")
+            try:
+                await self.http.delete_message(
+                    int(channel_id), int(message_id))
+            except discord.NotFound:
+                pass
+
+        await self.redis.execute("LTRIM", tracked_message, 0, 0)
+
+    async def register_response(self, response, request):
+        if await self.redis.exists(f"tracked_message {request.id}"):
+            await self.redis.rpush(
+                f"tracked_message {request.id}",
+                f"{response.channel.id}:{response.id}"
+            )
+
     async def playingstatus(self):
 
         await self.wait_until_ready()
@@ -138,7 +191,7 @@ class theBot(commands.Bot):
             "with the Discord API"
         ]
 
-        while not self.is_closed():
+        while client.is_ready():
             status = f"{random.choice(playing_statuses)} | lurking in {len(self.guilds)} servers and watching over {len(self.users)} users..."
 
             await self.change_presence(activity=discord.Game(name=status))
@@ -154,18 +207,6 @@ class theBot(commands.Bot):
         error = getattr(error, "original", error)
 
         def permsList(perms):
-            apiToHuman = {
-                "add_reactions": "Add Reactions", "administrator": "Administrator", "attach_files": "Attach Files", "ban_members": "Ban Members",
-                "change_nickname": "Can Change Own Nickname", "connect": "Connect to Voice Channels", "create_instant_invite": "Create Server Invites",
-                "deafen_members": "Deafen Members", "embed_links": "Embed Links", "external_emojis": "(Nitro Only) Use External Emotes",
-                "kick_members": "Kick Members", "manage_channels": "Change, Create, and Delete Roles",
-                "manage_emojis": "Create, Delete, and Rename Server Emotes", "manage_guild": "Manage Server", "manage_messages": "Manage Messages",
-                "manage_nicknames": "Manage Nicknames", "manage_roles": "Manage Roles", "manage_webhooks": "Manage Webhooks",
-                "mention_everyone": "Ping @\u200beveryone and @\u200bhere", "move_members": "Move Members Between Voice Channels",
-                "mute_members": "Mute Members", "priority_speaker": "Use Priority PTT", "read_message_history": "Read Past Messages in Text Channels",
-                "read_messages": "Read Messages and See Voice Channels", "send_messages": "Send Messages", "send_tts_messages": "Send TTS Messages",
-                "speak": "Speak", "use_voice_activation": "No Voice Activity", "view_audit_log": "View the Server Audit Log"
-            }
 
             if len(perms) == 0:
                 return None
@@ -258,8 +299,8 @@ async def get_pre(bot, message):
 client = theBot(
     command_prefix=get_pre,
     description="Did you know? If you are in a DM with me, you don't need a prefix!",
-    help_command=None
 )
+
 if config.token == "":
     raise ValueError("Please set your token in the config file.")
 else:
