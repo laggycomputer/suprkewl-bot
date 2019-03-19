@@ -106,7 +106,7 @@ class Info(commands.Cog):
         """Give some system info for the bot."""
 
         emb = discord.Embed(title="Bot info", color=0xf92f2f)
-        year, month, dayofmonth, hour, minute, second, dayofweek, dayofyear, isdst = time.localtime()
+        year, month, dayofmonth, hour, minute, second, dayofweek, _, isdst = time.localtime()
         week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
         dayofweek = week[dayofweek]
         months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "November", "December"]
@@ -125,7 +125,7 @@ class Info(commands.Cog):
         emb.add_field(name="Current server count", value=str(len(self.bot.guilds)))
         emb.add_field(name="Total Users", value=str(len(self.bot.users)))
 
-        emb.add_field(name=f"See `{ctx.prefix}git` for source code.")
+        emb.add_field(name=f"See `{ctx.prefix}git` for source code.", value="\u200b")
 
         emb.set_thumbnail(url=self.bot.user.avatar_url)
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
