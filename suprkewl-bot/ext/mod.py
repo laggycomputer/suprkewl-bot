@@ -205,6 +205,7 @@ class Moderation(commands.Cog):
             if ban[0] == target:
                 targetBanned = True
         if targetBanned:
+
             try:
                 await ctx.guild.unban(target)
                 await ctx.send("<:suprKewl:508479728613851136> Unbanned!")
