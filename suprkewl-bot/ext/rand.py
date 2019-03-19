@@ -180,7 +180,7 @@ class Random(commands.Cog):
 
         emb.set_image(url=random.choice(images))
 
-        await ctx.send(embed=emb)
+        sent = await ctx.send(embed=emb)
 
     @commands.command(
         aliases=["roll"],
@@ -318,6 +318,7 @@ class Random(commands.Cog):
                     newsetting = ""
                     blow = ""
                     damage = 0
+                    sent = None
 
                     fightplaces = [
                         "Laundry Room", "Dining Room", "Kitchen", "Bedroom", "Living Room", "Backyard"
@@ -416,8 +417,10 @@ class Random(commands.Cog):
                             icon_url=ctx.author.avatar_url
                         )
 
-
-                        await ctx.send(embed=emb)
+                        if sent is None:
+                            sent = (await ctx.send(embed=emb))
+                        else:
+                            await sent.edit(embed=emb)
                         await askaction.delete()
                         await usrinput.delete()
 
