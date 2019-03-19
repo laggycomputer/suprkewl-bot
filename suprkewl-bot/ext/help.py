@@ -104,7 +104,7 @@ class Embedinator():
 
     async def handle_reaction(self, reaction, user):
         emoji = str(reaction.emoji)
-        
+
         if emoji == "⏹":
             await self.cleanup()
 

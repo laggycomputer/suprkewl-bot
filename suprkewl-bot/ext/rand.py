@@ -323,7 +323,6 @@ class Random(commands.Cog):
                     fightplaces = [
                         "Laundry Room", "Dining Room", "Kitchen", "Bedroom", "Living Room", "Backyard"
                     ]
-
                     fightactions = {
                         "Laundry Room": ["{0.mention} whips {1.mention} with a freshly washed towel", "{0.mention} shuts {1.mention} in the washer, but {1.mention} narrowly escapes", "{0.mention} throws a tennis ball from inside the clothes dryer at {1.mention}"],
                         "Dining Room": ["{0.mention} throws a plate at {1.mention}", "{0.mention} stabs {1.mention} with a piece of a broken vase", "{0.mention} pins {1.mention} against the wall with the table"],
@@ -332,9 +331,7 @@ class Random(commands.Cog):
                         "Living Room": ["{0.mention} hits {1.mention} with the TV remote", "{0.mention} uses the Wii controller as a club on {1.mention} *wii sports plays*","{1.mention} trips over the Skyrim CD sleeve, 00f"],
                         "Backyard": ["{0.mention} hits {1.mention} with some tongs", "{0.mention} turns the backyard stove over on {1.mention}"]
                     }
-
                     universalactions = ["{0.mention} slugs {1.mention} in the face", "{0.mention} uses *sicc* karate skills on {1.mention}", "{0.mention} pushes {1.mention} over"]
-
                     deathblows = {
                         "Laundry Room": "{0.mention} shuts {1.mention} in the washer and starts it",
                         "Dining Room": "{0.mention} pins {1.mention} agianst the table",
