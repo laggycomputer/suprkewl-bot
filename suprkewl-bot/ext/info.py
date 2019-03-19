@@ -125,6 +125,8 @@ class Info(commands.Cog):
         emb.add_field(name="Current server count", value=str(len(self.bot.guilds)))
         emb.add_field(name="Total Users", value=str(len(self.bot.users)))
 
+        emb.add_field(name=f"See `{ctx.prefix}git` for source code.")
+
         emb.set_thumbnail(url=self.bot.user.avatar_url)
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
         emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
