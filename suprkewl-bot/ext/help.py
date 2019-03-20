@@ -23,7 +23,7 @@ DEALINGS IN THE SOFTWARE.
 import discord
 from discord.ext import commands
 
-from .utils.embedinator import Embedinator
+from .utils import Embedinator
 
 class HelpCommand(commands.HelpCommand):
     def __init__(self):

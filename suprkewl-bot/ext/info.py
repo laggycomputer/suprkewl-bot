@@ -26,7 +26,7 @@ import time
 import discord
 from discord.ext import commands
 
-from .utils.apiToHuman import apiToHuman
+from .utils import apiToHuman
 
 class Info(commands.Cog):
     def __init__(self, bot):
