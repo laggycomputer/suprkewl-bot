@@ -26,8 +26,7 @@ import typing
 import discord
 from discord.ext import commands
 
-from .utils.codeblock import escape_codeblocks
-from .utils.jsonfmt import format_json
+from .utils import escape_codeblocks, format_json
 
 class Text(commands.Cog):
     def __init__(self, bot):
