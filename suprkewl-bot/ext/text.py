@@ -121,7 +121,7 @@ L
 
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.group(description="Gives the data under a message, channel, or member in a JSON format, as recived from the Discord API.")
-    async def raw(ctx):
+    async def raw(self, ctx):
         """Returns a dict version of some objects."""
 
         if ctx.invoked_subcommand is None:
@@ -140,10 +140,10 @@ L
         raw = await self.bot.http.get_message(message.channel.id, message.id)
 
         try:
-            sent = (await ctx.send(f"```json\n{self.escape_codeblocks(self.format_json(raw))}```"))
+            sent = (await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```"))
             await self.bot.register_response(sent, ctx.message)
         except discord.HTTPException:
-            raw_string = "```json\n{}```".format(self.escape_codeblocks(self.format_json(raw)))
+            raw_string = "```json\n{}```".format(escape_codeblocks(format_json(raw)))
             half = int(len(raw_string) / 2)
             raw_string = [raw_string[0:half] + "```", "```json\n" + raw_string[half:len(raw_string)]]
             await ctx.send(raw_string[0])
@@ -158,7 +158,7 @@ L
         route = discord.http.Route("GET", f"/users/{user.id}")
         raw = await self.bot.http.request(route)
 
-        sent = (await ctx.send(f"```json\n{self.escape_codeblocks(self.format_json(raw))}```"))
+        sent = (await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```"))
         await self.bot.register_response(sent, ctx.message)
 
     @raw.command()
@@ -171,7 +171,7 @@ L
         route = discord.http.Route("GET", f"/channels/{channel.id}")
         raw = await self.bot.http.request(route)
 
-        sent = (await ctx.send(f"```json\n{self.escape_codeblocks(self.format_json(raw))}```"))
+        sent = (await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```"))
         await self.bot.register_response(sent, ctx.message)
 
 def setup(bot):
