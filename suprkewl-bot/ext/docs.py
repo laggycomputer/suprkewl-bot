@@ -20,6 +20,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+import subprocess
+
 import discord
 from discord.ext import commands
 
@@ -49,6 +51,10 @@ class Documentation(commands.Cog):
         emb = discord.Embed(name="Our GitHub", color=0xf92f2f)
         emb.add_field(name="Our github", value="https://www.github.com/laggycomputer/suprkewl-bot")
         emb.add_field(name="Clone it!", value="`git clone https://github.com/laggycomputer/suprkewl-bot.git`")
+
+        HEAD = subprocess.run(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE).stdout
+        HEAD = HEAD.decode().rstrip("\n")
+        emb.add_field(inline=False, name="Current HEAD", value=f"`{HEAD}`")
 
         emb.set_thumbnail(url=self.bot.user.avatar_url)
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
