@@ -31,7 +31,7 @@ import traceback
 import discord
 from discord.ext import commands
 
-from ext.utils.apiToHuman import apiToHuman
+from ext.utils import apiToHuman
 
 import config
 import redis
@@ -270,7 +270,7 @@ class theBot(commands.Bot):
 
         elif isinstance(error, commands.MissingPermissions):
 
-            emb = discord.Embed(0xf92f2f)
+            emb = discord.Embed(color=0xf92f2f)
             missingPerms = permsList(error.missing_perms)
             emb.add_field(name="User Missing Permissions", value=f":x: Permission denied to run `{ctx.prefix}{ctx.command}`. You need to be able to {missingPerms}.")
             emb.set_thumbnail(url=self.bot.user.avatar_url)
