@@ -9,9 +9,11 @@ class Redis:
         if self.connection is not None and not self.connection.closed:
             return
 
+        if any(config.redis_password):
+            passwd = config.redis_password
         self.connection = await aioredis.create_connection(
             (config.redis_host, config.redis_port),
-            password=config.redis_password
+            password=passwd
         )
 
     async def reconnect(self):
