@@ -20,6 +20,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+import pkg_resources
 import platform
 import time
 
@@ -109,7 +110,7 @@ class Info(commands.Cog):
         emb.add_field(name="OS version (short)", value=platform.system() + " " + platform.release())
         emb.add_field(name="OS version (long)", value=platform.platform(aliased=True))
         emb.add_field(name="Python Version", value=f"Python {platform.python_branch()}, build date {platform.python_build()[1]}")
-        emb.add_field(name="discord.py version", value=discord.__version__)
+        emb.add_field(name="discord.py version", value=pkg_resources.get_distribution('discord.py').version)
         emb.add_field(name="Processor name", value=platform.processor())
         emb.add_field(name="Current server count", value=str(len(self.bot.guilds)))
         emb.add_field(name="Total Users", value=str(len(self.bot.users)))
