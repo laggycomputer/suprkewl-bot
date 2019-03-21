@@ -291,6 +291,7 @@ class theBot(commands.Bot):
 
         traceback.print_exception(type(error), error, error.__traceback__)
 
+
 async def get_pre(bot, message):
     if isinstance(message.channel, discord.DMChannel):
         return ["s!", ""]
