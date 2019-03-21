@@ -2,7 +2,8 @@ import asyncio
 import discord
 import traceback
 
-class Embedinator():
+
+class Embedinator:
     def __init__(self, bot, destination, member=None, **kwargs):
         self.bot = bot
         self.destination = destination
@@ -68,7 +69,7 @@ class Embedinator():
                     await self.handle_reaction(reaction, user)
                 else:
                     await self.cleanup()
-            except Exception:
+            except discord.NotFound:
                 traceback.print_exc()
                 return
 

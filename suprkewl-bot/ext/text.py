@@ -20,7 +20,6 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-import asyncio
 import typing
 
 import discord
@@ -28,12 +27,13 @@ from discord.ext import commands
 
 from .utils import escape_codeblocks, format_json
 
+
 class Text(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command(
-        description="A bunch of lenny faces. This command has a 10-second cooldown per channel, as it produces a lot of output."
+        description="A bunch of lenny faces."
     )
     @commands.cooldown(1, 10, commands.BucketType.channel)
     async def lenny(self, ctx):
@@ -120,7 +120,9 @@ L
         await self.bot.register_response(sent, ctx.message)
 
     @commands.cooldown(1, 5, commands.BucketType.user)
-    @commands.group(description="Gives the data under a message, channel, or member in a JSON format, as recived from the Discord API.")
+    @commands.group(
+        description="Gives the data under a message, channel, or member in a JSON format, as recived from the Discord API."
+    )
     async def raw(self, ctx):
         """Returns a dict version of some objects."""
 
@@ -134,7 +136,9 @@ L
 
         message = await ctx.channel.fetch_message(message_id)
         if message is None:
-            sent = (await ctx.send(":x: You gave an invalid message ID! If that message is not in this channel, try this command in the channel it belongs to."))
+            sent = (await ctx.send(
+                ":x: You gave an invalid message ID! If that message is not in this channel, try this command in the channel it belongs to."
+            ))
             await self.bot.register_response(sent, ctx.message)
 
         raw = await self.bot.http.get_message(message.channel.id, message.id)
@@ -173,6 +177,7 @@ L
 
         sent = (await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```"))
         await self.bot.register_response(sent, ctx.message)
+
 
 def setup(bot):
     bot.add_cog(Text(bot))

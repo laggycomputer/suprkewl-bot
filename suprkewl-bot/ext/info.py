@@ -29,11 +29,12 @@ from discord.ext import commands
 
 from .utils import apiToHuman
 
+
 class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(description="Gives info on role <permsRole> in server (ping the role). Includes role color and member count, amongst other things.")
+    @commands.command(description="Gives info on role <permsRole> in server (ping the role).")
     @commands.guild_only()
     @commands.bot_has_permissions(manage_roles=True)
     async def roleinfo(self, ctx, role: discord.Role):
@@ -42,22 +43,25 @@ class Info(commands.Cog):
         emb = discord.Embed(title=f"Info for '{role}', a role in '{ctx.guild}'", color=role.color)
         emb.set_author(name='Me', icon_url=self.bot.user.avatar_url)
         emb.add_field(name="Role Color (Hex)", value=role.color)
-        emb.add_field(name="Members with Role", value=len(role.members))
+        emb.add_field(name="Members with Role", value=str(len(role.members)))
         emb.add_field(name="Role ID", value=role.id)
 
         emb.set_thumbnail(url=self.bot.user.avatar_url)
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
         emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
-        dispHoist = "No"
+        disp_hoist = "No"
         if role.hoist:
-            dispHoist = "Yes"
-        emb.add_field(name="'Display role member seperately from online members'", value=dispHoist)
+            disp_hoist = "Yes"
+        emb.add_field(name="'Display role member seperately from online members'", value=disp_hoist)
 
         sent = (await ctx.send(embed=emb))
         await self.bot.register_response(sent, ctx.message)
 
-    @commands.command(description="Gives perms on the given <role> (ping it). Permissions are listed in the order they appear on Discord. The bot must have the 'Manage Roles' permission for this to work, and the user must have a role called 'suprkewl-viewPerms' to use the command. Remember that role perms may be overridden on a per-channel (sometimes also on a per-user) basis.")
+    @commands.command(
+        description="Gives perms on the given role. The bot must have the 'Manage Roles' permission, and the user must "
+                    "have a role called 'suprkewl-viewPerms'. Perms may be overridden."
+    )
     @commands.guild_only()
     @commands.has_any_role("suprkewl-viewPerms")
     @commands.bot_has_permissions(manage_roles=True)
@@ -71,11 +75,13 @@ class Info(commands.Cog):
 
         perms = role.permissions
 
-        order = [1, 28, 13, 16, 11, 10, 3, 6, 4, 15, 12, 17, 23, 24, 25, 14, 8, 2, 22, 18, 9, 0, 5, 26, 20, 7, 19, 27, 21]
+        order = [
+            1, 28, 13, 16, 11, 10, 3, 6, 4, 15, 12, 17, 23, 24, 25, 14, 8, 2, 22, 18, 9, 0, 5, 26, 20, 7, 19, 27, 21
+        ]
         permtuples = []
 
         for permTuple in iter(perms):
-            readablename = apitohuman[permTuple[0]]
+            readablename = apiToHuman[permTuple[0]]
             permtuples.append((readablename, permTuple[1]))
 
         for number in order:
@@ -90,7 +96,9 @@ class Info(commands.Cog):
         sent = (await ctx.send(embed=emb))
         await self.bot.register_response(sent, ctx.message)
 
-    @commands.command(aliases=["about"], description="Gets some stats about the bot. Has a 5-second cooldown per channel..")
+    @commands.command(
+        aliases=["about"], description="Gets some stats about the bot. Has a 5-second cooldown per channel.."
+    )
     @commands.cooldown(1, 5, commands.BucketType.channel)
     async def botstats(self, ctx):
         """Give some system info for the bot."""
@@ -99,7 +107,10 @@ class Info(commands.Cog):
         year, month, dayofmonth, hour, minute, second, dayofweek, _, isdst = time.localtime()
         week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
         dayofweek = week[dayofweek]
-        months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "November", "December"]
+        months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "November", "December"
+        ]
         month = months[month]
         disptime = f"{dayofweek}, {month} {dayofmonth}, {year}; {hour}:{minute}:{second}, Pacific Standard Time"
         if isdst:
@@ -109,7 +120,9 @@ class Info(commands.Cog):
         emb.add_field(name="Processor Type", value=platform.machine().lower())
         emb.add_field(name="OS version (short)", value=platform.system() + " " + platform.release())
         emb.add_field(name="OS version (long)", value=platform.platform(aliased=True))
-        emb.add_field(name="Python Version", value=f"Python {platform.python_branch()}, build date {platform.python_build()[1]}")
+        emb.add_field(
+            name="Python Version", value=f"Python {platform.python_branch()}, build date {platform.python_build()[1]}"
+        )
         emb.add_field(name="discord.py version", value=pkg_resources.get_distribution("discord.py").version)
         emb.add_field(name="Jishaku version", value=pkg_resources.get_distribution("jishaku").version)
         emb.add_field(name="Processor name", value=platform.processor())
@@ -132,10 +145,13 @@ class Info(commands.Cog):
         latency = self.bot.latency * 1000
         latency = round(latency, 4)
         emb = discord.Embed(description=f":ping_pong: My current latency is {latency} milliseconds.", color=0xf92f2f)
-        emb.set_image(url="https://images-ext-2.discordapp.net/external/pKGlPehvn1NTxya18d7ZyggEm4pKFakjbO_sYS-pagM/https/media.giphy.com/media/nE8wBpOIfKJKE/giphy.gif")
+        emb.set_image(
+            url="https://images-ext-2.discordapp.net/external/pKGlPehvn1NTxya18d7ZyggEm4pKFakjbO_sYS-pagM/https/media.giphy.com/media/nE8wBpOIfKJKE/giphy.gif"
+        )
 
         sent = (await ctx.send(embed=emb))
         await self.bot.register_response(sent, ctx.message)
+
 
 def setup(bot):
     bot.add_cog(Info(bot))

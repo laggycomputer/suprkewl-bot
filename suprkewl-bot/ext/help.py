@@ -25,6 +25,7 @@ from discord.ext import commands
 
 from .utils import Embedinator
 
+
 class HelpCommand(commands.HelpCommand):
     def __init__(self):
         super().__init__()
@@ -39,7 +40,8 @@ class HelpCommand(commands.HelpCommand):
         else:
             return f"Command `{self.context.prefix}{command.qualified_name}` has no subcommands."
 
-    def get_command_name(self, command):
+    @staticmethod
+    def get_command_name(command):
         name = command.name
         if any(command.aliases):
             alist = []
@@ -57,7 +59,10 @@ class HelpCommand(commands.HelpCommand):
             icon_url=self.context.bot.user.avatar_url
         )
         embed.set_thumbnail(url=self.context.bot.user.avatar_url)
-        embed.set_footer(text=f"{self.context.bot.description} Requested by {self.context.author}", icon_url=self.context.author.avatar_url)
+        embed.set_footer(
+            text=f"{self.context.bot.description} Requested by {self.context.author}",
+            icon_url=self.context.author.avatar_url
+        )
 
         return embed
 
@@ -91,7 +96,7 @@ class HelpCommand(commands.HelpCommand):
 
         destination = self.get_destination()
         sent = (await destination.send(embed=embed))
-        await self.context.bot.register_response(sent, context.message)
+        await self.context.bot.register_response(sent, self.context.message)
 
     async def send_group_help(self, group):
         embedinator = self.create_embedinator(
@@ -151,8 +156,9 @@ class HelpCommand(commands.HelpCommand):
 
     def get_opening_note(self):
         command_name = self.context.invoked_with
-        return f"Use `{self.context.prefix}{command_name} <command>` or `{self.context.prefix}{command_name} <category>` for more info "\
-               " on a command or category."
+        return f"Use `{self.context.prefix}{command_name} <command>` or `{self.context.prefix}{command_name}"\
+               " <category>` for more info  on a command or category."
+
 
 class Help(commands.Cog):
     def __init__(self, bot):
@@ -164,6 +170,7 @@ class Help(commands.Cog):
 
     def cog_unload(self):
         self.bot.help_command = self.original_help_command
+
 
 def setup(bot):
     bot.add_cog(Help(bot))
