@@ -472,8 +472,6 @@ class Random(commands.Cog):
 
                         switchturn()
 
-                        await asyncio.sleep(3)
-
                 if p1.health == 0:
                     p2.won = True
                     p1.won = False
