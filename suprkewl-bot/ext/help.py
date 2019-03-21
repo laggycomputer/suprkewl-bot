@@ -91,7 +91,7 @@ class HelpCommand(commands.HelpCommand):
 
         destination = self.get_destination()
         sent = (await destination.send(embed=embed))
-        await self.context.bot.register_response(sent, content.message)
+        await self.context.bot.register_response(sent, context.message)
 
     async def send_group_help(self, group):
         embedinator = self.create_embedinator(
