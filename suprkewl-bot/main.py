@@ -20,17 +20,14 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-import aioredis
 import asyncio
 import logging
 import platform
 import random
-import sys
 import traceback
 
 import discord
 from discord.ext import commands
-
 from ext.utils import apiToHuman
 
 import config
@@ -233,9 +230,9 @@ class theBot(commands.Bot):
 
             emb = discord.Embed(color=0xf92f2f)
             emb.add_field(name="Disabled Command", value=f":x: `{ctx.prefix}{ctx.command}` has been disabled!")
-            emb.set_thumbnail(url=self.bot.user.avatar_url)
-            emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
-            emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            emb.set_thumbnail(url=self.user.avatar_url)
+            emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
+            emb.set_footer(text=f"{self.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             return await ctx.send(embed=emb)
 
@@ -243,9 +240,9 @@ class theBot(commands.Bot):
 
             emb = discord.Embed(color=0xf92f2f)
             emb.add_field(name="This command is disabled in DMs", value=f":x: `{ctx.prefix}{ctx.command}` can only be used in servers, not in DMs or DM groups.")
-            emb.set_thumbnail(url=self.bot.user.avatar_url)
-            emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
-            emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            emb.set_thumbnail(url=self.user.avatar_url)
+            emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
+            emb.set_footer(text=f"{self.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             return await ctx.send(embed=emb)
 
@@ -256,9 +253,9 @@ class theBot(commands.Bot):
             emb = discord.Embed(color=0xf92f2f)
             emb.add_field(name="Command on Cooldown",
                           value=f"Woah there! You just triggered a cooldown trying to run `{ctx.prefix}{ctx.command}`. I'll let you know you can start it after the cooldown of {retry} seconds is over.")
-            emb.set_thumbnail(url=self.bot.user.avatar_url)
-            emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
-            emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            emb.set_thumbnail(url=self.user.avatar_url)
+            emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
+            emb.set_footer(text=f"{self.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             msg = await ctx.send(embed=emb)
 
@@ -273,9 +270,9 @@ class theBot(commands.Bot):
             emb = discord.Embed(color=0xf92f2f)
             missingPerms = permsList(error.missing_perms)
             emb.add_field(name="User Missing Permissions", value=f":x: Permission denied to run `{ctx.prefix}{ctx.command}`. You need to be able to {missingPerms}.")
-            emb.set_thumbnail(url=self.bot.user.avatar_url)
-            emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
-            emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            emb.set_thumbnail(url=self.user.avatar_url)
+            emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
+            emb.set_footer(text=f"{self.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             return await ctx.send(embed=emb)
 
@@ -284,9 +281,9 @@ class theBot(commands.Bot):
             emb = discord.Embed(color=0xf92f2f)
             missingPerms = permsList(error.missing_perms)
             emb.add_field(name="Bot Missing Permissions", value=f":x: I don't have the proper permissions to run `{ctx.prefix}{ctx.command}`. I need to be allowed to {missingPerms}.")
-            emb.set_thumbnail(url=self.bot.user.avatar_url)
-            emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
-            emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            emb.set_thumbnail(url=self.user.avatar_url)
+            emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
+            emb.set_footer(text=f"{self.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             return await ctx.send(embed=emb)
 
