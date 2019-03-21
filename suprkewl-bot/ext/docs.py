@@ -25,6 +25,7 @@ import subprocess
 import discord
 from discord.ext import commands
 
+
 class Documentation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -52,9 +53,9 @@ class Documentation(commands.Cog):
         emb.add_field(name="Our github", value="https://www.github.com/laggycomputer/suprkewl-bot")
         emb.add_field(name="Clone it!", value="`git clone https://github.com/laggycomputer/suprkewl-bot.git`")
 
-        HEAD = subprocess.run(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE).stdout
-        HEAD = HEAD.decode().rstrip("\n")
-        emb.add_field(inline=False, name="Current HEAD", value=f"`{HEAD}`")
+        head_hash = subprocess.run(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE).stdout
+        head_hash = head_hash.decode().rstrip("\n")
+        emb.add_field(inline=False, name="Current HEAD", value=f"`{head_hash}`")
 
         emb.set_thumbnail(url=self.bot.user.avatar_url)
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
@@ -62,6 +63,7 @@ class Documentation(commands.Cog):
 
         sent = (await ctx.send(embed=emb))
         await self.bot.register_response(sent, ctx.message)
+
 
 def setup(bot):
     bot.add_cog(Documentation(bot))

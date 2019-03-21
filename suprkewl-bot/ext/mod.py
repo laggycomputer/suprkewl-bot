@@ -19,6 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
+import asyncio
 
 import discord
 from discord.ext import commands
@@ -29,7 +30,7 @@ class Moderation(commands.Cog):
 
     @commands.group(
         aliases=["purge"], invoke_without_command=True,
-        description="Clear <count> messages from the bottom of the current channel, excluding the message used to run the command. Remember that bots cannot delete messages older than 2 weeks, and that both the command invoker and the bot must have the 'Manage Messages' permission."
+        description="Clear <count> messages from the bottom of the current channel, excluding the message used to run the command."
     )
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
@@ -123,8 +124,8 @@ class Moderation(commands.Cog):
                 try:
                     await message.delete()
                 except Exception:
-                    errorent += 1
-                total +=1
+                    errorcnt += 1
+                total += 1
 
         sent = (await ctx.send(
             content=f"<:suprKewl:508479728613851136> Done! Tried to delete {total} messages, failed to delete {errorcnt} messages. See `{ctx.prefix}clear info` for info on Discord client bugs and limitations."
@@ -165,11 +166,13 @@ class Moderation(commands.Cog):
                                 content=":x: ?! The kicked user's priviacy settings deny me from telling them they have been kicked."
                             )
                     else:
-                        sent = (await ctx.send(":x: The passed member has a higher/equal top role than/to me, meaning I can't kick him/her. Oops! Try again..."))
+                        sent = (await ctx.send(
+                            ":x: The passed member has a higher/equal top role than/to me, meaning I can't kick 'em."
+                        ))
                         await self.bot.register_response(sent, ctx.message)
 
     @commands.command(
-        description="Bans the given <target> with reason <reason>, deleteing all messages sent from that user over the last <deletedays> days (must be an integer betweeen and including 0 and 7). Ensure that both the command invoker and the bot have the permission 'Ban Members'. Also DMs <target> to let them know they've been banned."
+        description="Bans the given <target> with reason <reason>, deleteing all messages sent from that user over the last <deletedays> days."
     )
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
@@ -191,7 +194,7 @@ class Moderation(commands.Cog):
                         await self.bot.register_response(sent, ctx.message)
                     else:
                         if ctx.guild.me.top_role > target.top_role:
-                            if deletedays <= 7 and deletedays >= 0:
+                            if 7 >= deletedays >= 0:
                                 await ctx.guild.ban(
                                     target, delete_message_days=deletedays, reason=reason
                                 )
@@ -206,7 +209,9 @@ class Moderation(commands.Cog):
                                 sent = (await ctx.send(f"Oops! You specified an out-of-range integer for <deletedays>! See `{ctx.prefix}help ban` for info on limits."))
                                 await self.bot.register_response(sent, ctx.message)
                         else:
-                            sent = (await ctx.send(":x: Oops! That member has a higher or equal top role to me, meaning I can't ban him/her!"))
+                            sent = (await ctx.send(
+                                ":x: Oops! That member has a higher or equal top role to me, meaning I can't ban him/her!"
+                            ))
                             await self.bot.register_response(sent, ctx.message)
 
     @commands.command(
@@ -215,7 +220,6 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @commands.has_permissions(ban_members=True)
-
     async def unban(self, ctx, target: discord.User):
         """Unbans someone. Please refer to the main help dialog."""
 
@@ -231,12 +235,14 @@ class Moderation(commands.Cog):
             try:
                 await target.send(f":thumbs_up: You've been unbanned from {ctx.guild}! If you still have a valid invite, you can use it to rejoin.")
             except Exception:
-                await sent.edit(content=f"{ctx.author.mention} The unbanned user's priviacy settings prevent me from notofying them of their unbanning.")
+                await sent.edit(
+                    content=f"{ctx.author.mention} The unbanned user's priviacy settings prevent me from notofying them of their unbanning."
+                )
         else:
             await sent.edit(content=f"{ctx.author.mention} :x: Oops! That user ain't banned! Perhaps you meant someone else?")
 
     @commands.command(
-        description="Gives the list of banned users for this server. Both the command invoker and the bot must have the permission `Ban Members`."
+        description="Gives the list of banned users for this server."
     )
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
@@ -262,6 +268,7 @@ class Moderation(commands.Cog):
 
         sent = (await ctx.send(embed=emb))
         await self.bot.register_response(sent, ctx.message)
+
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

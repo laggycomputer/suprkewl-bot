@@ -26,6 +26,7 @@ import random
 import discord
 from discord.ext import commands
 
+
 class Random(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -81,14 +82,17 @@ class Random(commands.Cog):
         await msg.edit(content="I slap the coin down on my robot arm.")
         await asyncio.sleep(0.5)
 
-        if random.randint(1,2) == 1:
+        if random.randint(1, 2) == 1:
             await msg.edit(content="It's heads!")
         else:
             await msg.edit(content="It's tails.")
 
         await self.bot.register_response(msg, ctx.message)
 
-    @commands.command(aliases=["rockpaperscissors"], description="Rock paper scissors. Randomizes a choice for you and the computer. Has a 3 second cooldown on a per-user basis.")
+    @commands.command(
+        aliases=["rockpaperscissors"],
+        description="Rock paper scissors. Randomizes a choice for you and the computer."
+    )
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def rps(self, ctx):
         """Rock, Paper, Scissors, Shoot!"""
@@ -133,7 +137,7 @@ class Random(commands.Cog):
         if winner == "usr":
             content += winmsg
         elif winner == "comp":
-            content + losemsg
+            content += losemsg
 
         async with ctx.channel.typing():
             await asyncio.sleep(2)
@@ -190,7 +194,7 @@ class Random(commands.Cog):
 
     @commands.command(
         aliases=["roll"],
-        description="Rolls the dice specified, in AdB format. For example, 'dice 3d6' would roll 3 six-sided dice. A must be a positive integer up to and including 10, and B has the same contraints, but with a upper limit of 20. This command has a user-based cooldown of 5 seconds."
+        description="Rolls the dice specified, in AdB format. For example, 'dice 3d6' would roll 3 six-sided dice."
     )
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def dice(self, ctx, dice: str):
@@ -202,14 +206,14 @@ class Random(commands.Cog):
             await self.bot.register_response(msg, ctx.message)
             await asyncio.sleep(1)
         try:
-            count, limit = map(int, dice.split('d'))
-        except Exception:
+            count, limit = map(int, dice.split("d"))
+        except ValueError:
             await msg.edit(
-                content=f":x: Your input must be of the form `AdB`! I was unable to find a seperator between your numbers, or there were no numbers to find. Please check `{ctx.prefix}help dice` for more info."
+                content=f":x: Your input must be of the form `AdB`! Please check `{ctx.prefix}help dice` for more info."
             )
             return
 
-        if count <= 100 and count > 0 and limit <= 1000 and limit > 0:
+        if 100 >= count > 0 and 1000 >= limit > 0:
 
             rolls = []
             total = 0
@@ -231,12 +235,12 @@ class Random(commands.Cog):
             )
         else:
             await msg.edit(
-                content=f"Your syntax was correct, but your input was too large to compute, or one of your arguments was negative. Please see '{ctx.prefix}help dice' for more info."
+                content=f"Your syntax was correct, however one of your arguments were invalid."
             )
 
     @commands.command(
         aliases=["pick", "rand"],
-        description="The tiebreaker of all tiebreakers. Has a 1-second per-channel cooldown, triggered after the command is run twice in the same channel."
+        description="The tiebreaker of all tiebreakers."
     )
     @commands.cooldown(2, 1, commands.BucketType.channel)
     async def choose(self, ctx, *choices: str):
@@ -255,7 +259,7 @@ class Random(commands.Cog):
             message += random.choice(choices) + "'."
             await msg.edit(content=message)
 
-    class Fighter():
+    class Fighter:
         def __init__(self, user):
             self.user = user
             self.health = 100
@@ -263,7 +267,7 @@ class Random(commands.Cog):
             self.won = False
 
     @commands.command(
-        description="Starts a fight between the command invoker and the specified <target>. <target> must be a non-bot and must not be the command invoker. This command has a 10-second cooldown per user."
+        description="Starts a fight between the command invoker and the specified <target>."
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def fight(self, ctx, target: discord.Member):
@@ -285,14 +289,15 @@ class Random(commands.Cog):
                     p1 = self.Fighter(ctx.author)
                     p2 = self.Fighter(target)
 
-                    def findTurn():
+                    def find_turn():
                         if p1.turn:
                             return p1
                         elif p2.turn:
                             return p2
                         else:
                             return None
-                    def findNotTurn():
+
+                    def find_not_turn():
                         if p1.turn:
                             return p2
                         if p2.turn:
@@ -307,6 +312,7 @@ class Random(commands.Cog):
                             return p2
                         else:
                             return None
+
                     def findloser():
                         if p1.won:
                             return p2
@@ -332,14 +338,40 @@ class Random(commands.Cog):
                         "Laundry Room", "Dining Room", "Kitchen", "Bedroom", "Living Room", "Backyard"
                     ]
                     fightactions = {
-                        "Laundry Room": ["{0.mention} whips {1.mention} with a freshly washed towel", "{0.mention} shuts {1.mention} in the washer, but {1.mention} narrowly escapes", "{0.mention} throws a tennis ball from inside the clothes dryer at {1.mention}"],
-                        "Dining Room": ["{0.mention} throws a plate at {1.mention}", "{0.mention} stabs {1.mention} with a piece of a broken vase", "{0.mention} pins {1.mention} against the wall with the table"],
-                        "Kitchen": ["{0.mention} cuts {1.mention} with a a knife", "{0.mention} pours some boiling water on {1.mention}","{0.mention} hits {1.mention} with a pot"],
-                        "Bedroom": ["{0.mention} hits {1.mention} with a pillow", "{1.mention} takes a pillow to the head from {0.mention}"],
-                        "Living Room": ["{0.mention} hits {1.mention} with the TV remote", "{0.mention} uses the Wii controller as a club on {1.mention} *wii sports plays*","{1.mention} trips over the Skyrim CD sleeve, 00f"],
-                        "Backyard": ["{0.mention} hits {1.mention} with some tongs", "{0.mention} turns the backyard stove over on {1.mention}"]
+                        "Laundry Room": [
+                            "{0.mention} whips {1.mention} with a freshly washed towel",
+                            "{0.mention} shuts {1.mention} in the washer, but {1.mention} narrowly escapes",
+                            "{0.mention} throws a tennis ball from inside the clothes dryer at {1.mention}"
+                        ],
+                        "Dining Room": [
+                            "{0.mention} throws a plate at {1.mention}",
+                            "{0.mention} stabs {1.mention} with a piece of a broken vase",
+                            "{0.mention} pins {1.mention} against the wall with the table"
+                        ],
+                        "Kitchen": [
+                            "{0.mention} cuts {1.mention} with a a knife",
+                            "{0.mention} pours some boiling water on {1.mention}",
+                            "{0.mention} hits {1.mention} with a pot"
+                        ],
+                        "Bedroom": [
+                            "{0.mention} hits {1.mention} with a pillow",
+                            "{1.mention} takes a pillow to the head from {0.mention}"
+                        ],
+                        "Living Room": [
+                            "{0.mention} hits {1.mention} with the TV remote",
+                            "{0.mention} uses the Wii controller as a club on {1.mention} *wii sports plays*",
+                            "{1.mention} trips over the Skyrim CD sleeve, 00f"
+                        ],
+                        "Backyard": [
+                            "{0.mention} hits {1.mention} with some tongs",
+                            "{0.mention} turns the backyard stove over on {1.mention}"
+                        ]
                     }
-                    universalactions = ["{0.mention} slugs {1.mention} in the face", "{0.mention} uses *sicc* karate skills on {1.mention}", "{0.mention} pushes {1.mention} over"]
+                    universalactions = [
+                        "{0.mention} slugs {1.mention} in the face",
+                        "{0.mention} uses *sicc* karate skills on {1.mention}",
+                        "{0.mention} pushes {1.mention} over"
+                    ]
                     deathblows = {
                         "Laundry Room": "{0.mention} shuts {1.mention} in the washer and starts it",
                         "Dining Room": "{0.mention} pins {1.mention} agianst the table",
@@ -359,15 +391,17 @@ class Random(commands.Cog):
                     p1.turn = True
 
                 while p1.health > 0 and p2.health > 0:
-                    askaction = await ctx.send(f"{findTurn().user.mention}, what do you want to do? `hit`, `run`, or `end`.")
+                    askaction = await ctx.send(
+                        f"{find_turn().user.mention}, what do you want to do? `hit`, `run`, or `end`."
+                    )
 
                     def check(m):
-                        if m.channel == ctx.channel and m.author == findTurn().user:
+                        if m.channel == ctx.channel and m.author == find_turn().user:
                             return m.content.lower().startswith("hit") or m.content.lower().startswith("run") or m.content.lower().startswith("end")
                         else:
                             return False
 
-                    usrinput = await self.bot.wait_for("message", check = check)
+                    usrinput = await self.bot.wait_for("message", check=check)
 
                     if usrinput == None:
                         await ctx.send("it timed out noobs")
@@ -377,16 +411,16 @@ class Random(commands.Cog):
                             damage = 0
                             rand = random.randint(1, 15)
                             if rand == 1:
-                                blow = deathblows[setting].format(findTurn().user, findNotTurn().user)
+                                blow = deathblows[setting].format(find_turn().user, find_not_turn().user)
                                 blow += " (DEATHBLOW)"
                                 damage = 100
 
                             elif rand > 9:
-                                blow = random.choice(universalactions).format(findTurn().user, findNotTurn().user)
+                                blow = random.choice(universalactions).format(find_turn().user, find_not_turn().user)
                                 damage = random.randint(1, 50)
 
                             else:
-                                blow = random.choice(fightactions[setting]).format(findTurn().user, findNotTurn().user)
+                                blow = random.choice(fightactions[setting]).format(find_turn().user, find_not_turn().user)
                                 damage = random.randint(1, 50)
 
                             blow += f" ({damage} dmg)"
@@ -401,14 +435,16 @@ class Random(commands.Cog):
                             newsetting = ""
 
                         elif usrinput.content.lower().startswith("end"):
-                            await ctx.send(f"{findTurn().user.mention} and {findNotTurn().user.mention} get friendly and the fight's over.")
+                            await ctx.send(
+                                f"{find_turn().user.mention} and {find_not_turn().user.mention} get friendly and the fight's over."
+                            )
                             return
 
-                        findNotTurn().health -= damage
-                        if findNotTurn().health < 0:
-                            findNotTurn().health = 0
+                        find_not_turn().health -= damage
+                        if find_not_turn().health < 0:
+                            find_not_turn().health = 0
 
-                        emb = discord.Embed(name="FIGHT", color=findTurn().user.colour)
+                        emb = discord.Embed(name="FIGHT", color=find_turn().user.colour)
 
                         emb.add_field(name="Current Setting", value=f"`{setting}`")
                         emb.add_field(name="Player 1 health", value=f"**{p1.health}**")
@@ -427,8 +463,12 @@ class Random(commands.Cog):
                             await self.bot.register_response(sent, ctx.message)
                         else:
                             await sent.edit(embed=emb)
-                        await askaction.delete()
-                        await usrinput.delete()
+
+                        try:
+                            await askaction.delete()
+                            await usrinput.delete()
+                        except discord.Forbidden or discord.NotFound:
+                            pass
 
                         switchturn()
 
@@ -440,9 +480,13 @@ class Random(commands.Cog):
                 else:
                     p2.won = False
                     p1.won = True
+
+                win_mention = findwin().user.mention
+                lose_mention = findloser().user.mention
                 await ctx.send(
-                    f"Looks like {findwin().user.mention} defeated {findloser().user.mention} with {findwin().health} health left!"
+                    f"Looks like {win_mention} defeated {lose_mention} with {findwin().health} health left!"
                 )
+
 
 def setup(bot):
     bot.add_cog(Random(bot))
