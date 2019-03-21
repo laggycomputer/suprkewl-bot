@@ -169,11 +169,18 @@ L
     async def channel(self, ctx,
                       channel: typing.Union[discord.TextChannel, discord.VoiceChannel, discord.CategoryChannel] = None):
         """Return a channel as a dict."""
+
         if channel is None:
             channel = ctx.channel
 
         route = discord.http.Route("GET", f"/channels/{channel.id}")
-        raw = await self.bot.http.request(route)
+        try:
+            raw = await self.bot.http.request(route)
+        except discord.Forbidden:
+            sent = (await ctx.send(":x: I can't see info on that channel!"))
+            await self.bot.register_response(sent, ctx.message)
+
+            return
 
         sent = (await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```"))
         await self.bot.register_response(sent, ctx.message)
