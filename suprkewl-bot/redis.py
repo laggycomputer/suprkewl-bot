@@ -11,6 +11,8 @@ class Redis:
 
         if any(config.redis_password):
             passwd = config.redis_password
+        else:
+            passwd = None
         self.connection = await aioredis.create_connection(
             (config.redis_host, config.redis_port),
             password=passwd
