@@ -192,13 +192,18 @@ class Random(commands.Cog):
         sent = await ctx.send(embed=emb)
         await self.bot.register_response(sent, ctx.message)
 
-    @commands.command(
+    @commands.group(
         aliases=["roll"],
-        description="Rolls the dice specified, in AdB format. For example, 'dice 3d6' would roll 3 six-sided dice."
+        description="Rolls the dice specified, in AdB format. For example, 'dice 3d6' would roll 3 six-sided dice.",
+        invoke_without_subcommand=True
     )
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def dice(self, ctx, dice: str):
         """Now you can roll 1000-sided dice!"""
+
+        if dice == "info":
+            await self.dice_info.invoke(ctx)
+            return
 
         async with ctx.channel.typing():
             await asyncio.sleep(1)
@@ -209,7 +214,7 @@ class Random(commands.Cog):
             count, limit = map(int, dice.split("d"))
         except ValueError:
             await msg.edit(
-                content=f":x: Your input must be of the form `AdB`! Please check `{ctx.prefix}help dice` for more info."
+                content=f":x: Your input must be of the form `AdB`! Please check `{ctx.prefix}{ctx.invoked_with} info` for more info."
             )
             return
 
@@ -218,8 +223,10 @@ class Random(commands.Cog):
             rolls = []
             total = 0
 
-            await msg.edit(content=f":game_die: Rollling dice...")
-            await asyncio.sleep(0.1 * count)
+            await msg.edit(content=":game_die: Rollling dice at the speed of sound...")
+            await asyncio.sleep(1)
+            await msg.edit(content="*A sonic :boom: echoes in the background*")
+            await asyncio.sleep(1)
 
             for i in range(0, count):
                 result = random.randint(1, limit)
@@ -235,8 +242,15 @@ class Random(commands.Cog):
             )
         else:
             await msg.edit(
-                content=f"Your syntax was correct, however one of your arguments were invalid."
+                content=f"Your syntax was correct, however one of your arguments were invalid. See `{ctx.prefix}{ctx.invoked_with} info.`"
             )
+
+    @dice.command(description="Show info for dice command.", name="info")
+    async def dice_info(self, ctx):
+        sent = (await ctx.send(
+            "Your argument must be of the form AdB, where A is the number of dice to roll and B is the number of sides on each die. A and B must be postive integers between 1 and 1000."
+        ))
+        await self.bot.register_response(sent, ctx.message)
 
     @commands.command(
         aliases=["pick", "rand"],
