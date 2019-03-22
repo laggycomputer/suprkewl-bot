@@ -68,6 +68,12 @@ class Documentation(commands.Cog):
         sent = (await ctx.send(embed=emb))
         await self.bot.register_response(sent, ctx.message)
 
+    @commands.command()
+    async def support(self, ctx):
+        """"A support server link."""
+
+        sent = (await ctx.send("https://discord.gg/CRBBJVY"))
+        await self.bot.register_response(sent, ctx.message)
 
 def setup(bot):
     bot.add_cog(Documentation(bot))
