@@ -463,7 +463,7 @@ class Random(commands.Cog):
                         elif usrinput.content.lower().startswith("run"):
                             newsetting = random.choice(connectedrooms[setting])
 
-                            currentaction = f"{find_turn().user.mention} kicks {getNotTurn().user.mention} in the shins and runs as fast as he/she can out of the {setting} and into the {newsetting}. {find_turn().user.mention} gives chase."
+                            currentaction = f"{find_turn().user.mention} kicks {find_not_turn().user.mention} in the shins and runs as fast as he/she can out of the {setting} and into the {newsetting}. {find_turn().user.mention} gives chase."
 
                             setting = newsetting
                             newsetting = ""
