@@ -4,3 +4,4 @@
 token
 *.log
 .idea/*
+tmp/*/*.txt

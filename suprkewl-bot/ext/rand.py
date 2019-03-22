@@ -21,6 +21,7 @@ DEALINGS IN THE SOFTWARE.
 """
 
 import asyncio
+import os
 import random
 
 import discord
@@ -208,7 +209,6 @@ class Random(commands.Cog):
         async with ctx.channel.typing():
             await asyncio.sleep(1)
             msg = await ctx.send("thinking... :thinking:")
-            await self.bot.register_response(msg, ctx.message)
             await asyncio.sleep(1)
         try:
             count, limit = map(int, dice.split("d"))
@@ -216,6 +216,7 @@ class Random(commands.Cog):
             await msg.edit(
                 content=f":x: Your input must be of the form `AdB`! Please check `{ctx.prefix}{ctx.invoked_with} info` for more info."
             )
+            await self.bot.register_response(msg, ctx.message)
             return
 
         if 1000 >= count > 0 and 1000 >= limit > 0:
@@ -237,13 +238,33 @@ class Random(commands.Cog):
             avg = total / count
             avg = round(avg, 8)
 
-            await msg.edit(
-                content=f":game_die: {rolls}. The total was {total}, and the average (mean) was {avg}."
-            )
+            content = f":game_die: {rolls}. The total was {total}, and the average (mean) was {avg}."
+
+            if len(content) > 2000:
+                # Yes, this is blocking, but given current limits responses are almost always ~4000 characters max.
+
+                fname = f"../../tmp/rolls/roll_result_{ctx.message.id}.txt"
+                with open(fname, "w", newline="\n") as fp:
+                    fp.write(content)
+                with open(fname, "r", newline="\n") as fp:
+                    sent = (await ctx.send(
+                        content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this file:",
+                        file=discord.File(fp)
+                    ))
+                    await self.bot.register_response(sent, ctx.message)
+
+                os.remove(fname)
+
+            else:
+                await msg.edit(
+                    content=f":game_die: {rolls}. The total was {total}, and the average (mean) was {avg}."
+                )
+                await self.bot.register_response(msg, ctx.message)
         else:
             await msg.edit(
                 content=f"Your syntax was correct, however one of your arguments were invalid. See `{ctx.prefix}{ctx.invoked_with} info.`"
             )
+            await self.bot.register_response(msg, ctx.message)
 
     @dice.command(description="Show info for dice command.", name="info")
     async def dice_info(self, ctx):
