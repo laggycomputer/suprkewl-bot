@@ -76,6 +76,8 @@ class theBot(commands.Bot):
         print("-" * 8)
 
     async def on_message(self, message):
+        if not self.is_ready():
+            return
         try:
             print(f"Got message '{message.content}'")
         except UnicodeDecodeError:
