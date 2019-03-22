@@ -6,7 +6,7 @@
 </p>
 
 
-An open-sourced Discord bot. We've moderation, fun, user info, and more planned.
+An open-sourced Discord bot. Features such as moderation, just-for-fun, user info and more will be implemented at a later date.  
 
 If you want to host this bot:
 
