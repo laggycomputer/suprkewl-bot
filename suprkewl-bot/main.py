@@ -42,6 +42,7 @@ else:
 handler.setFormatter(logging.Formatter("%(asctime)s: %(levelname)s: %(name)s: %(message)s"))
 logger.addHandler(handler)
 
+
 class theBot(commands.Bot):
 
     def __init__(self, *args, **kwargs):
@@ -99,7 +100,13 @@ class theBot(commands.Bot):
                 if message.channel.permissions_for(message.guild.me).send_messages:
 
                     if message.content.startswith(message.guild.me.mention):
-                        await message.channel.send(f":eyes: Who pinged? My prefix is `s!`. If you are in a DM with me, I do not require a prefix.")
+                        emb = discord.Embed(
+                            color=0xf92f2f,
+                            description=":eyes: Who pinged? My prefix is `s!`. If you are in a DM with me, I do not require a prefix."
+                        )
+                        emb.set_image(url="https://cdn.discordapp.com/attachments/541876503814733836/557088019073466408/unknown.png")
+
+                        await message.channel.send(embed=emb)
 
                     await self.process_commands(message)
 
