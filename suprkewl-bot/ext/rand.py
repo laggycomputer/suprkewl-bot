@@ -29,8 +29,6 @@ from discord.ext import commands
 
 
 class Random(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
 
     @commands.command(aliases=["burn"])
     async def roast(self, ctx, target: discord.Member):
@@ -57,7 +55,7 @@ class Random(commands.Cog):
         ]
 
         sent = await ctx.send(random.choice(roasts))
-        await self.bot.register_response(sent, ctx.message)
+        await ctx.bot.register_response(sent, ctx.message)
 
     @commands.command(aliases=["card"], description="Draw from a standard, 52-card deck, no jokers.")
     async def draw(self, ctx):
@@ -71,7 +69,7 @@ class Random(commands.Cog):
         ]
 
         sent = await ctx.send(f"I drew the {random.choice(ranks)} of {random.choice(suits)}")
-        await self.bot.register_response(sent, ctx.message)
+        await ctx.bot.register_response(sent, ctx.message)
 
     @commands.command(aliases=["flip", "quarter", "dime", "penny", "nickel"])
     async def coin(self, ctx):
@@ -88,7 +86,7 @@ class Random(commands.Cog):
         else:
             await msg.edit(content="It's tails.")
 
-        await self.bot.register_response(msg, ctx.message)
+        await ctx.bot.register_response(msg, ctx.message)
 
     @commands.command(
         aliases=["rockpaperscissors"],
@@ -143,7 +141,7 @@ class Random(commands.Cog):
         async with ctx.channel.typing():
             await asyncio.sleep(2)
             msg = await ctx.send(f"{ctx.author.mention} :fist: Rock...")
-            await self.bot.register_response(msg, ctx.message)
+            await ctx.bot.register_response(msg, ctx.message)
             await asyncio.sleep(1)
 
             await msg.edit(content=f"{ctx.author.mention} :newspaper: Paper...")
@@ -184,14 +182,14 @@ class Random(commands.Cog):
             description="Don't die of laughter", color=0xf92f2f
         )
 
-        emb.set_thumbnail(url=self.bot.user.avatar_url)
-        emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
-        emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+        emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+        emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         emb.set_image(url=random.choice(images))
 
         sent = await ctx.send(embed=emb)
-        await self.bot.register_response(sent, ctx.message)
+        await ctx.bot.register_response(sent, ctx.message)
 
     @commands.group(
         aliases=["roll"],
@@ -216,7 +214,7 @@ class Random(commands.Cog):
             await msg.edit(
                 content=f":x: Your input must be of the form `AdB`! Please check `{ctx.prefix}{ctx.invoked_with} info` for more info."
             )
-            await self.bot.register_response(msg, ctx.message)
+            await ctx.bot.register_response(msg, ctx.message)
             return
 
         if 1000 >= count > 0 and 1000 >= limit > 0:
@@ -252,7 +250,7 @@ class Random(commands.Cog):
                         content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this file:",
                         file=discord.File(fp)
                     ))
-                    await self.bot.register_response(sent, ctx.message)
+                    await ctx.bot.register_response(sent, ctx.message)
 
                 os.remove(fname)
 
@@ -260,19 +258,19 @@ class Random(commands.Cog):
                 await msg.edit(
                     content=content
                 )
-                await self.bot.register_response(msg, ctx.message)
+                await ctx.bot.register_response(msg, ctx.message)
         else:
             await msg.edit(
                 content=f"Your syntax was correct, however one of your arguments were invalid. See `{ctx.prefix}{ctx.invoked_with} info.`"
             )
-            await self.bot.register_response(msg, ctx.message)
+            await ctx.bot.register_response(msg, ctx.message)
 
     @dice.command(description="Show info for dice command.", name="info")
     async def dice_info(self, ctx):
         sent = (await ctx.send(
             "Your argument must be of the form AdB, where A is the number of dice to roll and B is the number of sides on each die. A and B must be postive integers between 1 and 1000."
         ))
-        await self.bot.register_response(sent, ctx.message)
+        await ctx.bot.register_response(sent, ctx.message)
 
     @commands.command(
         aliases=["pick", "rand"],
@@ -285,7 +283,7 @@ class Random(commands.Cog):
         async with ctx.channel.typing():
             await asyncio.sleep(1)
             msg = await ctx.send("Choosing...")
-            await self.bot.register_response(msg, ctx.message)
+            await ctx.bot.register_response(msg, ctx.message)
             await asyncio.sleep(1.5)
             await msg.edit(content="Eeeny, Meeny, Miney, Mo. Catch a tiger by the toe...")
 
@@ -437,7 +435,7 @@ class Random(commands.Cog):
                         else:
                             return False
 
-                    usrinput = await self.bot.wait_for("message", check=check)
+                    usrinput = await ctx.bot.wait_for("message", check=check)
 
                     if usrinput == None:
                         await ctx.send("it timed out noobs")
@@ -487,16 +485,16 @@ class Random(commands.Cog):
                         emb.add_field(name="Player 2 health", value=f"**{p2.health}**")
                         emb.add_field(name="Current action", value=currentaction)
 
-                        emb.set_thumbnail(url=self.bot.user.avatar_url)
-                        emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
+                        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+                        emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
                         emb.set_footer(
-                            text=f"{self.bot.description} Requested by {ctx.author}",
+                            text=f"{ctx.bot.description} Requested by {ctx.author}",
                             icon_url=ctx.author.avatar_url
                         )
 
                         if sent is None:
                             sent = (await ctx.send(embed=emb))
-                            await self.bot.register_response(sent, ctx.message)
+                            await ctx.bot.register_response(sent, ctx.message)
                         else:
                             await sent.edit(embed=emb)
 

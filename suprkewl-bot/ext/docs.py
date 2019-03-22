@@ -27,8 +27,6 @@ from discord.ext import commands
 
 
 class Documentation(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
 
     @commands.command()
     async def invite(self, ctx):
@@ -38,12 +36,12 @@ class Documentation(commands.Cog):
 
         emb.add_field(name="\u200b", value="https://www.discord.gg/CRBBJVY")
 
-        emb.set_thumbnail(url=self.bot.user.avatar_url)
-        emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
-        emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+        emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+        emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         sent = (await ctx.send(embed=emb))
-        await self.bot.register_response(sent, ctx.message)
+        await ctx.bot.register_response(sent, ctx.message)
 
     @commands.command(aliases=["git"])
     async def github(self, ctx):
@@ -61,19 +59,19 @@ class Documentation(commands.Cog):
             value=f"[Here](https://github.com/laggycomputer/suprkewl-bot/commit/{head_hash})"
         )
 
-        emb.set_thumbnail(url=self.bot.user.avatar_url)
-        emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
-        emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+        emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+        emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         sent = (await ctx.send(embed=emb))
-        await self.bot.register_response(sent, ctx.message)
+        await ctx.bot.register_response(sent, ctx.message)
 
     @commands.command()
     async def support(self, ctx):
         """A support server link."""
 
         sent = (await ctx.send("https://discord.gg/CRBBJVY"))
-        await self.bot.register_response(sent, ctx.message)
+        await ctx.bot.register_response(sent, ctx.message)
 
 def setup(bot):
-    bot.add_cog(Documentation(bot))
+    bot.add_cog(Documentation())
