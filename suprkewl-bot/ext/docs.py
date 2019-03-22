@@ -43,7 +43,7 @@ class Documentation(commands.Cog):
         sent = (await ctx.send(embed=emb))
         await ctx.bot.register_response(sent, ctx.message)
 
-    @commands.command(aliases=["git"])
+    @commands.command(aliases=["git", "source"])
     async def github(self, ctx):
         """A link to our GitHub repo."""
 
