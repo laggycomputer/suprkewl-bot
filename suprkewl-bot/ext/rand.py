@@ -21,7 +21,7 @@ DEALINGS IN THE SOFTWARE.
 """
 
 import asyncio
-import os
+import io
 import random
 
 import discord
@@ -240,19 +240,12 @@ class Random(commands.Cog):
             if len(content) > 2000:
                 # Yes, this is blocking, but given current limits responses are almost always ~4000 characters max.
                 file_content = "Rolls: {0}Total: {2}{1}Average:{3}".format("\n".join(rolls), "\n", total, avg)
-                fname = f"{os.path.dirname(os.path.realpath(__file__))}\\..\\..\\tmp\\rolls\\roll_result_{ctx.message.id}.txt"
-                fp = open(fname, "x", newline="\n")
-                fp.close()
-                with open(fname, "w", newline="\n") as fp:
-                    fp.write(file_content)
-                with open(fname, "r", newline="\n") as fp:
-                    sent = (await ctx.send(
-                        content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this file:",
-                        file=discord.File(fp)
-                    ))
-                    await ctx.bot.register_response(sent, ctx.message)
-
-                os.remove(fname)
+                fp = io.BytesIO(file_content.encode("utf-8"))
+                sent = (await ctx.send(
+                    content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this file:",
+                    file=discord.File(fp, "rolls.txt")
+                ))
+                await ctx.bot.register_response(sent, ctx.message)
 
             else:
                 await msg.edit(
