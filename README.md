@@ -6,5 +6,10 @@
 </p>
 
 
-An open-sourced Discord bot. We've moderation, fun, user info, and more planned.
-If you want to host this bot, place your token, and Redis server IP (can be internal), port, and password (don't set one if you don't want to use one). Then, install Redis on your host of choice. Finally, you can use `pip3 install -r requirements.txt` at the root of this repo to install the requirements, and `./purgepyc.sh` to purge `__pycache__` from all code folders.
+An open-sourced Discord bot. Features such as moderation, just-for-fun, user info and more will be implemented at a later date.  
+## Simple steps to host this bot:  
+ * Place your token
+ * Place Redis server IP (can be internal)
+ * Place port, and password (password not required)
+ * Install Redis on a host of your choice. 
+ * Use `pip3 install -r requirements.txt` at the root of this repo to install the requirements, and `./purgepyc.sh` to purge `__pycache__` from all code folders.
