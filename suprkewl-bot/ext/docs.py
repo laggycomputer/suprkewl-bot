@@ -70,7 +70,7 @@ class Documentation(commands.Cog):
 
     @commands.command()
     async def support(self, ctx):
-        """"A support server link."""
+        """A support server link."""
 
         sent = (await ctx.send("https://discord.gg/CRBBJVY"))
         await self.bot.register_response(sent, ctx.message)
