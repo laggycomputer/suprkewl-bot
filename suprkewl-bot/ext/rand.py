@@ -103,7 +103,7 @@ class Random(commands.Cog):
         user = random.choice(choices)
         winner = None
         winmsg = " Congrats! :slight_smile:"
-        losemsg = " Better luck next tome... :slight_frown:"
+        losemsg = " Better luck next time... :slight_frown:"
 
         content = f"{ctx.author.mention} "
 
