@@ -55,7 +55,11 @@ class Documentation(commands.Cog):
 
         head_hash = subprocess.run(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE).stdout
         head_hash = head_hash.decode().rstrip("\n")
-        emb.add_field(inline=False, name="Current HEAD", value=f"`{head_hash}`")
+        emb.add_field(
+            inline=False,
+            name="Current HEAD",
+            value=f"[Here](https://github.com/laggycomputer/suprkewl-bot/commit/{head_hash})"
+        )
 
         emb.set_thumbnail(url=self.bot.user.avatar_url)
         emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
