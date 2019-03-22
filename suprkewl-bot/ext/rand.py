@@ -234,7 +234,6 @@ class Random(commands.Cog):
                 rolls.append(str(result))
                 total += result
 
-            rolls = " ".join(rolls)
             avg = total / count
             avg = round(avg, 8)
 
@@ -242,10 +241,12 @@ class Random(commands.Cog):
 
             if len(content) > 2000:
                 # Yes, this is blocking, but given current limits responses are almost always ~4000 characters max.
-
-                fname = f"../../tmp/rolls/roll_result_{ctx.message.id}.txt"
+                file_content = "Rolls: {0}Total: {2}{1}Average:{3}".format("\n".join(rolls), "\n", total, avg)
+                fname = f"{os.path.dirname(os.path.realpath(__file__))}\\..\\..\\tmp\\rolls\\roll_result_{ctx.message.id}.txt"
+                fp = open(fname, "x", newline="\n")
+                fp.close()
                 with open(fname, "w", newline="\n") as fp:
-                    fp.write(content)
+                    fp.write(file_content)
                 with open(fname, "r", newline="\n") as fp:
                     sent = (await ctx.send(
                         content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this file:",
@@ -257,7 +258,7 @@ class Random(commands.Cog):
 
             else:
                 await msg.edit(
-                    content=f":game_die: {rolls}. The total was {total}, and the average (mean) was {avg}."
+                    content=content
                 )
                 await self.bot.register_response(msg, ctx.message)
         else:
