@@ -31,8 +31,6 @@ from .utils import apiToHuman
 
 
 class Info(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
 
     @commands.command(description="Gives info on role <permsRole> in server (ping the role).")
     @commands.guild_only()
@@ -41,14 +39,14 @@ class Info(commands.Cog):
         """Gives info on a passed role."""
 
         emb = discord.Embed(title=f"Info for '{role}', a role in '{ctx.guild}'", color=role.color)
-        emb.set_author(name='Me', icon_url=self.bot.user.avatar_url)
+        emb.set_author(name='Me', icon_url=ctx.bot.user.avatar_url)
         emb.add_field(name="Role Color (Hex)", value=role.color)
         emb.add_field(name="Members with Role", value=str(len(role.members)))
         emb.add_field(name="Role ID", value=role.id)
 
-        emb.set_thumbnail(url=self.bot.user.avatar_url)
-        emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
-        emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+        emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+        emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         disp_hoist = "No"
         if role.hoist:
@@ -56,7 +54,7 @@ class Info(commands.Cog):
         emb.add_field(name="'Display role member seperately from online members'", value=disp_hoist)
 
         sent = (await ctx.send(embed=emb))
-        await self.bot.register_response(sent, ctx.message)
+        await ctx.bot.register_response(sent, ctx.message)
 
     @commands.command(
         description="Gives perms on the given role. The bot must have the 'Manage Roles' permission, and the user must "
@@ -69,9 +67,9 @@ class Info(commands.Cog):
         """Get permissions for a role"""
 
         emb = discord.Embed(title=f"Perms for '{role}', a role in '{ctx.guild}'", color=0xf92f2f)
-        emb.set_thumbnail(url=self.bot.user.avatar_url)
-        emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
-        emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+        emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+        emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         perms = role.permissions
 
@@ -94,7 +92,7 @@ class Info(commands.Cog):
             emb.add_field(name=fieldname, value=fieldval)
 
         sent = (await ctx.send(embed=emb))
-        await self.bot.register_response(sent, ctx.message)
+        await ctx.bot.register_response(sent, ctx.message)
 
     @commands.command(
         aliases=["about"], description="Gets some stats about the bot. Has a 5-second cooldown per channel.."
@@ -126,23 +124,23 @@ class Info(commands.Cog):
         emb.add_field(name="discord.py version", value=pkg_resources.get_distribution("discord.py").version)
         emb.add_field(name="Jishaku version", value=pkg_resources.get_distribution("jishaku").version)
         emb.add_field(name="Processor name", value=platform.processor())
-        emb.add_field(name="Current server count", value=str(len(self.bot.guilds)))
-        emb.add_field(name="Total Users", value=str(len(self.bot.users)))
+        emb.add_field(name="Current server count", value=str(len(ctx.bot.guilds)))
+        emb.add_field(name="Total Users", value=str(len(ctx.bot.users)))
 
         emb.add_field(name=f"See `{ctx.prefix}git` for source code.", value="\u200b")
 
-        emb.set_thumbnail(url=self.bot.user.avatar_url)
-        emb.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
-        emb.set_footer(text=f"{self.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+        emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+        emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         sent = (await ctx.send(embed=emb))
-        await self.bot.register_response(sent, ctx.message)
+        await ctx.bot.register_response(sent, ctx.message)
 
     @commands.command()
     async def ping(self, ctx):
         """Check the bot's latency."""
 
-        latency = self.bot.latency * 1000
+        latency = ctx.bot.latency * 1000
         latency = round(latency, 4)
         emb = discord.Embed(description=f":ping_pong: My current latency is {latency} milliseconds.", color=0xf92f2f)
         emb.set_image(
@@ -150,8 +148,8 @@ class Info(commands.Cog):
         )
 
         sent = (await ctx.send(embed=emb))
-        await self.bot.register_response(sent, ctx.message)
+        await ctx.bot.register_response(sent, ctx.message)
 
 
 def setup(bot):
-    bot.add_cog(Info(bot))
+    bot.add_cog(Info())

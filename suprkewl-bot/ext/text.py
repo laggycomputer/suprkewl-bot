@@ -29,8 +29,6 @@ from .utils import escape_codeblocks, format_json
 
 
 class Text(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
 
     @commands.command(
         description="A bunch of lenny faces."
@@ -88,7 +86,7 @@ Put ur dongers up or I'll shoot:(ง ͡° ͜ʖ ͡°)=/̵͇̿/'̿'̿̿̿ ̿ ̿̿
 Badass Lenny: ̿ ̿'̿'̵͇̿з=(⌐■ʖ■)=ε/̵͇̿/'̿̿ ̿
 """
         sent = (await ctx.send(msg))
-        await self.bot.register_response(sent, ctx.message)
+        await ctx.bot.register_response(sent, ctx.message)
 
     @commands.command(description="LMAO! Has a 5-second channel cooldown to keep things calm.")
     @commands.cooldown(1, 5, commands.BucketType.channel)
@@ -107,7 +105,7 @@ L
        ."""
 
         sent = (await ctx.send(msg))
-        await self.bot.register_response(sent, ctx.message)
+        await ctx.bot.register_response(sent, ctx.message)
 
     @commands.command(
         description="Make the bot say something. Watch what you say. Has a 5 second user cooldown."
@@ -117,7 +115,7 @@ L
         """Make the bot say something."""
 
         sent = (await ctx.send(f"{ctx.author.mention} wants me to say '{message}'"))
-        await self.bot.register_response(sent, ctx.message)
+        await ctx.bot.register_response(sent, ctx.message)
 
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.group(
@@ -128,7 +126,7 @@ L
 
         if ctx.invoked_subcommand is None:
             sent = (await ctx.send(":x: Please give a subcommand!"))
-            await self.bot.register_response(sent, ctx.message)
+            await ctx.bot.register_response(sent, ctx.message)
 
     @raw.command(aliases=["msg"])
     async def message(self, ctx, message_id: int):
@@ -139,13 +137,13 @@ L
             sent = (await ctx.send(
                 ":x: You gave an invalid message ID! If that message is not in this channel, try this command in the channel it belongs to."
             ))
-            await self.bot.register_response(sent, ctx.message)
+            await ctx.bot.register_response(sent, ctx.message)
 
-        raw = await self.bot.http.get_message(message.channel.id, message.id)
+        raw = await ctx.bot.http.get_message(message.channel.id, message.id)
 
         try:
             sent = (await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```"))
-            await self.bot.register_response(sent, ctx.message)
+            await ctx.bot.register_response(sent, ctx.message)
         except discord.HTTPException:
             raw_string = "```json\n{}```".format(escape_codeblocks(format_json(raw)))
             half = int(len(raw_string) / 2)
@@ -160,10 +158,10 @@ L
             user = ctx.author
 
         route = discord.http.Route("GET", f"/users/{user.id}")
-        raw = await self.bot.http.request(route)
+        raw = await ctx.bot.http.request(route)
 
         sent = (await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```"))
-        await self.bot.register_response(sent, ctx.message)
+        await ctx.bot.register_response(sent, ctx.message)
 
     @raw.command()
     async def channel(self, ctx,
@@ -175,16 +173,16 @@ L
 
         route = discord.http.Route("GET", f"/channels/{channel.id}")
         try:
-            raw = await self.bot.http.request(route)
+            raw = await ctx.bot.http.request(route)
         except discord.Forbidden:
             sent = (await ctx.send(":x: I can't see info on that channel!"))
-            await self.bot.register_response(sent, ctx.message)
+            await ctx.bot.register_response(sent, ctx.message)
 
             return
 
         sent = (await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```"))
-        await self.bot.register_response(sent, ctx.message)
+        await ctx.bot.register_response(sent, ctx.message)
 
 
 def setup(bot):
-    bot.add_cog(Text(bot))
+    bot.add_cog(Text())
