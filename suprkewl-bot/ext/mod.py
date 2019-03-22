@@ -253,6 +253,9 @@ class Moderation(commands.Cog):
         emb = discord.Embed(color=0xf92f2f)
         bans = []
         banlist = await ctx.guild.bans()
+        if not any(banlist):
+            sent = (await ctx.send(":white_check_mark: The server has no bans!"))
+            await self.bot.register_response(sent, ctx.message)
         for ban in banlist:
             bans.append(ban[0].name + "#" + ban[0].discriminator)
 
