@@ -22,6 +22,7 @@ DEALINGS IN THE SOFTWARE.
 
 import asyncio
 import io
+import math
 import random
 
 import discord
@@ -292,6 +293,7 @@ class Random(commands.Cog):
             self.health = 100
             self.turn = False
             self.won = False
+            self.blocking = False
 
     @commands.command(
         description="Starts a fight between the command invoker and the specified <target>."
@@ -300,6 +302,7 @@ class Random(commands.Cog):
     async def fight(self, ctx, target: discord.Member):
         """FIGHT"""
 
+        # Yes, this entire command is an eyesore. I'll get to it. Soon.
         if target.bot:
             await ctx.send(
                 ":x: Oops! You can't fight a robot; it's robot arms will annihilate you! Perhaps you meant a human?"
@@ -308,6 +311,41 @@ class Random(commands.Cog):
             if target == ctx.author:
                 await ctx.send(":x: You can't fight yourself!")
             else:
+                if (await ctx.bot.redis.exists(f"{ctx.author.id}:fighting")):
+                    emb = discord.Embed(
+                        color=0xf92f2f,
+                        description=f"{ctx.author.mention} :x: You can't fight multiple people at once! You're not Bruce Lee."
+                    )
+                    emb.set_image(
+                        url="https://media1.tenor.com/images/8c69a1095f5d7745fabbdedf569644e7/tenor.gif?itemid=13291191"
+                    )
+                    emb.set_thumbnail(url=ctx.guild.me.avatar_url)
+                    emb.set_author(name=ctx.guild.me.name, icon_url=ctx.guild.me.avatar_url)
+                    emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+
+                    sent = (await ctx.send(embed=emb))
+                    await ctx.bot.register_response(sent, ctx.message)
+
+                    return
+                if (await ctx.bot.redis.exists(f"{target.id}:fighting")):
+                    emb = discord.Embed(
+                        color=0xf92f2f,
+                        description=f"{ctx.author.mention} :x: Don't make {target.mention} fight multiple people at once! They're' not Bruce Lee."
+                    )
+                    emb.set_image(
+                        url="https://media1.tenor.com/images/8c69a1095f5d7745fabbdedf569644e7/tenor.gif?itemid=13291191"
+                    )
+                    emb.set_thumbnail(url=ctx.guild.me.avatar_url)
+                    emb.set_author(name=ctx.guild.me.name, icon_url=ctx.guild.me.avatar_url)
+                    emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+
+                    sent = (await ctx.send(embed=emb))
+                    await ctx.bot.register_response(sent, ctx.message)
+
+                    return
+                await ctx.bot.redis.execute("SET", f"{ctx.author.id}:fighting", "fighting")
+                await ctx.bot.redis.execute("SET", f"{target.id}:fighting", "fighting")
+
                 await ctx.send(":white_check_mark: Starting fight...")
 
                 async with ctx.channel.typing():
@@ -351,6 +389,8 @@ class Random(commands.Cog):
                     def switchturn():
                         p1.turn = not p1.turn
                         p2.turn = not p2.turn
+                        p1.blocking = False
+                        p2.blocking = False
                         damage = 0
                         currentaction = ""
                         blow = ""
@@ -419,12 +459,13 @@ class Random(commands.Cog):
 
                 while p1.health > 0 and p2.health > 0:
                     askaction = await ctx.send(
-                        f"{find_turn().user.mention}, what do you want to do? `hit`, `run`, or `end`."
+                        f"{find_turn().user.mention}, what do you want to do? `hit`, `run`, `block`, or `end`."
                     )
 
                     def check(m):
                         if m.channel == ctx.channel and m.author == find_turn().user:
-                            return m.content.lower().startswith("hit") or m.content.lower().startswith("run") or m.content.lower().startswith("end")
+                            return m.content.lower().startswith("hit") or m.content.lower().startswith("run")\
+                                   or m.content.lower().startswith("block") or m.content.lower().startswith("end")
                         else:
                             return False
 
@@ -434,7 +475,13 @@ class Random(commands.Cog):
                         await ctx.send("it timed out noobs")
                         return
                     else:
-                        if usrinput.content.lower().startswith("hit"):
+
+                        if usrinput.content.lower().startswith("block"):
+                            currentaction = f"{find_turn().user.mention} is bloccing"
+                            find_turn().blocking = True
+
+
+                        elif usrinput.content.lower().startswith("hit"):
                             damage = 0
                             rand = random.randint(1, 15)
                             if rand == 1:
@@ -450,7 +497,19 @@ class Random(commands.Cog):
                                 blow = random.choice(fightactions[setting]).format(find_turn().user, find_not_turn().user)
                                 damage = random.randint(1, 50)
 
+                            if find_not_turn().blocking:
+                                rand = random.randint(0, 5)
+                                if rand:
+                                    damage = math.floor(damage / 2)
+
                             blow += f" ({damage} dmg)"
+
+                            if find_not_turn().blocking:
+                                if rand:
+                                    blow += f", and {find_not_turn().user.mention} blocked successfully! Half damage."
+                                else:
+                                    blow += f", and {find_not_turn().user.mention} failed to blocc!"
+
                             currentaction = blow
 
                         elif usrinput.content.lower().startswith("run"):
@@ -465,6 +524,7 @@ class Random(commands.Cog):
                             await ctx.send(
                                 f"{find_turn().user.mention} and {find_not_turn().user.mention} get friendly and the fight's over."
                             )
+                            await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
                             return
 
                         find_not_turn().health -= damage
@@ -511,6 +571,8 @@ class Random(commands.Cog):
                 await ctx.send(
                     f"Looks like {win_mention} defeated {lose_mention} with {findwin().health} health left!"
                 )
+
+                await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
 
 
 def setup(bot):
