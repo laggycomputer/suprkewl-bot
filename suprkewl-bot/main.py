@@ -62,7 +62,6 @@ class theBot(commands.Bot):
                 print(f"Failed to load extension {extension}\n{exc}")
 
     async def on_ready(self):
-
         if not self.redis:
             self.redis = redis.Redis()
             await self.redis.connect()
@@ -133,6 +132,9 @@ class theBot(commands.Bot):
         await self.redis.expire(message, 3600)
 
     async def on_raw_message_edit(self, payload):
+        if not self.is_ready():
+            return
+
         if "content" not in payload.data:
             return
 
@@ -153,6 +155,9 @@ class theBot(commands.Bot):
         await self.process_commands(message)
 
     async def on_raw_message_delete(self, payload):
+        if not self.is_ready():
+            return
+
         if await self.redis.exists(payload.message_id):
             await self.clear_messages(payload.message_id)
             await self.redis.delete(payload.message_id)
