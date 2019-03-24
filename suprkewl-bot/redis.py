@@ -44,6 +44,9 @@ class Redis:
     async def exists(self, *values):
         return await self.execute("EXISTS", *values) == len(values)
 
+    async def get(self, key):
+        return await self.execute("GET", key)
+
     async def execute(self, command, *args):
         value = await self.connection.execute(command, *args)
 
