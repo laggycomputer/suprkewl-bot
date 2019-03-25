@@ -36,6 +36,11 @@ class _fighter:
         self.turn = False
         self.won = False
         self.blocking = False
+class _fdata:
+    def __init__(self, p1, p2):
+        self.p1 = p1
+        self.p2 = p2
+
 class Random(commands.Cog):
 
     @commands.command(aliases=["burn"])
@@ -303,275 +308,277 @@ class Random(commands.Cog):
 
         # Yes, this entire command is an eyesore. I'll get to it. Soon.
         if target.bot:
-            await ctx.send(
+            sent = (await ctx.send(
                 ":x: Oops! You can't fight a robot; it's robot arms will annihilate you! Perhaps you meant a human?"
+            ))
+            await ctx.bot.register_response(sent, ctx.message)
+            return
+        if target == ctx.author:
+            sent = (await ctx.send(":x: You can't fight yourself!"))
+            await ctx.bot.register_response(sent, ctx.message)
+            return
+        if (await ctx.bot.redis.exists(f"{ctx.author.id}:fighting")):
+            emb = discord.Embed(
+                color=0xf92f2f,
+                description=f"{ctx.author.mention} :x: You can't fight multiple people at once! You're not Bruce Lee."
             )
-        else:
-            if target == ctx.author:
-                await ctx.send(":x: You can't fight yourself!")
-            else:
-                if (await ctx.bot.redis.exists(f"{ctx.author.id}:fighting")):
-                    emb = discord.Embed(
-                        color=0xf92f2f,
-                        description=f"{ctx.author.mention} :x: You can't fight multiple people at once! You're not Bruce Lee."
-                    )
-                    emb.set_image(
-                        url="https://media1.tenor.com/images/8c69a1095f5d7745fabbdedf569644e7/tenor.gif?itemid=13291191"
-                    )
-                    emb.set_thumbnail(url=ctx.guild.me.avatar_url)
-                    emb.set_author(name=ctx.guild.me.name, icon_url=ctx.guild.me.avatar_url)
-                    emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            emb.set_image(
+                url="https://media1.tenor.com/images/8c69a1095f5d7745fabbdedf569644e7/tenor.gif?itemid=13291191"
+            )
+            emb.set_thumbnail(url=ctx.guild.me.avatar_url)
+            emb.set_author(name=ctx.guild.me.name, icon_url=ctx.guild.me.avatar_url)
+            emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
-                    sent = (await ctx.send(embed=emb))
-                    await ctx.bot.register_response(sent, ctx.message)
+            sent = (await ctx.send(embed=emb))
+            await ctx.bot.register_response(sent, ctx.message)
 
-                    return
-                if (await ctx.bot.redis.exists(f"{target.id}:fighting")):
-                    emb = discord.Embed(
-                        color=0xf92f2f,
-                        description=f"{ctx.author.mention} :x: Don't make {target.mention} fight multiple people at once! They're' not Bruce Lee."
-                    )
-                    emb.set_image(
-                        url="https://media1.tenor.com/images/8c69a1095f5d7745fabbdedf569644e7/tenor.gif?itemid=13291191"
-                    )
-                    emb.set_thumbnail(url=ctx.guild.me.avatar_url)
-                    emb.set_author(name=ctx.guild.me.name, icon_url=ctx.guild.me.avatar_url)
-                    emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            return
+        if (await ctx.bot.redis.exists(f"{target.id}:fighting")):
+            emb = discord.Embed(
+                color=0xf92f2f,
+                description=f"{ctx.author.mention} :x: Don't make {target.mention} fight multiple people at once! They're' not Bruce Lee."
+            )
+            emb.set_image(
+                url="https://media1.tenor.com/images/8c69a1095f5d7745fabbdedf569644e7/tenor.gif?itemid=13291191"
+            )
+            emb.set_thumbnail(url=ctx.guild.me.avatar_url)
+            emb.set_author(name=ctx.guild.me.name, icon_url=ctx.guild.me.avatar_url)
+            emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
-                    sent = (await ctx.send(embed=emb))
-                    await ctx.bot.register_response(sent, ctx.message)
+            sent = (await ctx.send(embed=emb))
+            await ctx.bot.register_response(sent, ctx.message)
 
-                    return
-                await ctx.bot.redis.execute("SET", f"{ctx.author.id}:fighting", "fighting")
-                await ctx.bot.redis.execute("SET", f"{target.id}:fighting", "fighting")
+            return
+        await ctx.bot.redis.execute("SET", f"{ctx.author.id}:fighting", "fighting")
+        await ctx.bot.redis.execute("SET", f"{target.id}:fighting", "fighting")
 
-                await ctx.send(":white_check_mark: Starting fight...")
+        await ctx.send(":white_check_mark: Starting fight...")
 
-                async with ctx.channel.typing():
-                    await asyncio.sleep(1)
+        async with ctx.channel.typing():
+            await asyncio.sleep(1)
 
             p1 = _fighter(ctx.author)
             p2 = _fighter(target)
 
-                    def find_turn():
-                        if p1.turn:
-                            return p1
-                        elif p2.turn:
-                            return p2
-                        else:
-                            return None
-
-                    def find_not_turn():
-                        if p1.turn:
-                            return p2
-                        if p2.turn:
-                            return p1
-                        else:
-                            return None
-
-                    def findwin():
-                        if p1.won:
-                            return p1
-                        elif p2.won:
-                            return p2
-                        else:
-                            return None
-
-                    def findloser():
-                        if p1.won:
-                            return p2
-                        elif p2.won:
-                            return p1
-                        else:
-                            return None
-
-                    def switchturn():
-                        p1.turn = not p1.turn
-                        p2.turn = not p2.turn
-                        p1.blocking = False
-                        p2.blocking = False
-                        damage = 0
-                        currentaction = ""
-                        blow = ""
-
-                    currentaction = ""
-                    newsetting = ""
-                    blow = ""
-                    damage = 0
-                    sent = None
-
-                    fightplaces = [
-                        "Laundry Room", "Dining Room", "Kitchen", "Bedroom", "Living Room", "Backyard"
-                    ]
-                    fightactions = {
-                        "Laundry Room": [
-                            "{0.mention} whips {1.mention} with a freshly washed towel",
-                            "{0.mention} shuts {1.mention} in the washer, but {1.mention} narrowly escapes",
-                            "{0.mention} throws a tennis ball from inside the clothes dryer at {1.mention}"
-                        ],
-                        "Dining Room": [
-                            "{0.mention} throws a plate at {1.mention}",
-                            "{0.mention} stabs {1.mention} with a piece of a broken vase",
-                            "{0.mention} pins {1.mention} against the wall with the table"
-                        ],
-                        "Kitchen": [
-                            "{0.mention} cuts {1.mention} with a a knife",
-                            "{0.mention} pours some boiling water on {1.mention}",
-                            "{0.mention} hits {1.mention} with a pot"
-                        ],
-                        "Bedroom": [
-                            "{0.mention} hits {1.mention} with a pillow",
-                            "{1.mention} takes a pillow to the head from {0.mention}"
-                        ],
-                        "Living Room": [
-                            "{0.mention} hits {1.mention} with the TV remote",
-                            "{0.mention} uses the Wii controller as a club on {1.mention} *wii sports plays*",
-                            "{1.mention} trips over the Skyrim CD sleeve, 00f"
-                        ],
-                        "Backyard": [
-                            "{0.mention} hits {1.mention} with some tongs",
-                            "{0.mention} turns the backyard stove over on {1.mention}"
-                        ]
-                    }
-                    universalactions = [
-                        "{0.mention} slugs {1.mention} in the face",
-                        "{0.mention} uses *sicc* karate skills on {1.mention}",
-                        "{0.mention} pushes {1.mention} over"
-                    ]
-                    deathblows = {
-                        "Laundry Room": "{0.mention} shuts {1.mention} in the washer and starts it",
-                        "Dining Room": "{0.mention} pins {1.mention} agianst the table",
-                        "Kitchen": "{0.mention} uses top-notch ninja skills on {1.mention}, many of which involve the knives",
-                        "Bedroom": "{0.mention} gets a l33t hit om {1.mention} involving throwing the bedstand",
-                        "Living Room": "{0.mention} narrowly beats {1.mention} in a sword-fight using the Dolby 7:1 surround speakers",
-                        "Backyard": "{0.mention} throws some hot coals from the backyard stove at {1.mention}"
-                    }
-
-                    connectedrooms = {
-                        "Laundry Room":["Backyard","Kitchen"], "Dining Room":["Kitchen","Backyard"], "Kitchen":["Dining Room","Living Room"],
-                        "Bedroom":["Living Room"], "Living Room":["Kitchen","Bedroom"], "Backyard":["Laundry Room","Laundry Room"]
-                    }
-
-                    setting = random.choice(fightplaces)
-
-                    p1.turn = True
-
-                while p1.health > 0 and p2.health > 0:
-                    askaction = await ctx.send(
-                        f"{find_turn().user.mention}, what do you want to do? `hit`, `run`, `block`, or `end`."
-                    )
-
-                    def check(m):
-                        if m.channel == ctx.channel and m.author == find_turn().user:
-                            return m.content.lower().startswith("hit") or m.content.lower().startswith("run")\
-                                   or m.content.lower().startswith("block") or m.content.lower().startswith("end")
-                        else:
-                            return False
-
-                    usrinput = await ctx.bot.wait_for("message", check=check)
-
-                    if usrinput == None:
-                        await ctx.send("it timed out noobs")
-                        return
-                    else:
-
-                        if usrinput.content.lower().startswith("block"):
-                            currentaction = f"{find_turn().user.mention} is bloccing"
-                            find_turn().blocking = True
-
-
-                        elif usrinput.content.lower().startswith("hit"):
-                            damage = 0
-                            rand = random.randint(1, 15)
-                            if rand == 1:
-                                blow = deathblows[setting].format(find_turn().user, find_not_turn().user)
-                                blow += " (DEATHBLOW)"
-                                damage = 100
-
-                            elif rand > 9:
-                                blow = random.choice(universalactions).format(find_turn().user, find_not_turn().user)
-                                damage = random.randint(1, 50)
-
-                            else:
-                                blow = random.choice(fightactions[setting]).format(find_turn().user, find_not_turn().user)
-                                damage = random.randint(1, 50)
-
-                            if find_not_turn().blocking:
-                                rand = random.randint(0, 5)
-                                if rand:
-                                    damage = math.floor(damage / 2)
-
-                            blow += f" ({damage} dmg)"
-
-                            if find_not_turn().blocking:
-                                if rand:
-                                    blow += f", and {find_not_turn().user.mention} blocked successfully! Half damage."
-                                else:
-                                    blow += f", and {find_not_turn().user.mention} failed to blocc!"
-
-                            currentaction = blow
-
-                        elif usrinput.content.lower().startswith("run"):
-                            newsetting = random.choice(connectedrooms[setting])
-
-                            currentaction = f"{find_turn().user.mention} kicks {find_not_turn().user.mention} in the shins and runs as fast as he/she can out of the {setting} and into the {newsetting}. {find_turn().user.mention} gives chase."
-
-                            setting = newsetting
-                            newsetting = ""
-
-                        elif usrinput.content.lower().startswith("end"):
-                            await ctx.send(
-                                f"{find_turn().user.mention} and {find_not_turn().user.mention} get friendly and the fight's over."
-                            )
-                            await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
-                            return
-
-                        find_not_turn().health -= damage
-                        if find_not_turn().health < 0:
-                            find_not_turn().health = 0
-
-                        emb = discord.Embed(name="FIGHT", color=find_turn().user.colour)
-
-                        emb.add_field(name="Current Setting", value=f"`{setting}`")
-                        emb.add_field(name="Player 1 health", value=f"**{p1.health}**")
-                        emb.add_field(name="Player 2 health", value=f"**{p2.health}**")
-                        emb.add_field(name="Current action", value=currentaction)
-
-                        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
-                        emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
-                        emb.set_footer(
-                            text=f"{ctx.bot.description} Requested by {ctx.author}",
-                            icon_url=ctx.author.avatar_url
-                        )
-
-                        if sent is None:
-                            sent = (await ctx.send(embed=emb))
-                            await ctx.bot.register_response(sent, ctx.message)
-                        else:
-                            await sent.edit(embed=emb)
-
-                        try:
-                            await askaction.delete()
-                            await usrinput.delete()
-                        except discord.Forbidden or discord.NotFound:
-                            pass
-
-                        switchturn()
-
-                if p1.health == 0:
-                    p2.won = True
-                    p1.won = False
+            def find_turn():
+                if p1.turn:
+                    return p1
+                elif p2.turn:
+                    return p2
                 else:
-                    p2.won = False
-                    p1.won = True
+                    return None
 
-                win_mention = findwin().user.mention
-                lose_mention = findloser().user.mention
-                await ctx.send(
-                    f"Looks like {win_mention} defeated {lose_mention} with {findwin().health} health left!"
+            def find_not_turn():
+                if p1.turn:
+                    return p2
+                if p2.turn:
+                    return p1
+                else:
+                    return None
+
+            def findwin():
+                if p1.won:
+                    return p1
+                elif p2.won:
+                    return p2
+                else:
+                    return None
+
+            def findloser():
+                if p1.won:
+                    return p2
+                elif p2.won:
+                    return p1
+                else:
+                    return None
+
+            def switchturn():
+                p1.turn = not p1.turn
+                p2.turn = not p2.turn
+                p1.blocking = False
+                p2.blocking = False
+                damage = 0
+                currentaction = ""
+                blow = ""
+
+            currentaction = ""
+            newsetting = ""
+            blow = ""
+            damage = 0
+            sent = None
+
+            fightplaces = [
+                "Laundry Room", "Dining Room", "Kitchen", "Bedroom", "Living Room", "Backyard"
+            ]
+            fightactions = {
+                "Laundry Room": [
+                    "{0.mention} whips {1.mention} with a freshly washed towel",
+                    "{0.mention} shuts {1.mention} in the washer, but {1.mention} narrowly escapes",
+                    "{0.mention} throws a tennis ball from inside the clothes dryer at {1.mention}"
+                ],
+                "Dining Room": [
+                    "{0.mention} throws a plate at {1.mention}",
+                    "{0.mention} stabs {1.mention} with a piece of a broken vase",
+                    "{0.mention} pins {1.mention} against the wall with the table"
+                ],
+                "Kitchen": [
+                    "{0.mention} cuts {1.mention} with a a knife",
+                    "{0.mention} pours some boiling water on {1.mention}",
+                    "{0.mention} hits {1.mention} with a pot"
+                ],
+                "Bedroom": [
+                    "{0.mention} hits {1.mention} with a pillow",
+                    "{1.mention} takes a pillow to the head from {0.mention}"
+                ],
+                "Living Room": [
+                    "{0.mention} hits {1.mention} with the TV remote",
+                    "{0.mention} uses the Wii controller as a club on {1.mention} *wii sports plays*",
+                    "{1.mention} trips over the Skyrim CD sleeve, 00f"
+                ],
+                "Backyard": [
+                    "{0.mention} hits {1.mention} with some tongs",
+                    "{0.mention} turns the backyard stove over on {1.mention}"
+                ]
+            }
+            universalactions = [
+                "{0.mention} slugs {1.mention} in the face",
+                "{0.mention} uses *sicc* karate skills on {1.mention}",
+                "{0.mention} pushes {1.mention} over"
+            ]
+            deathblows = {
+                "Laundry Room": "{0.mention} shuts {1.mention} in the washer and starts it",
+                "Dining Room": "{0.mention} pins {1.mention} agianst the table",
+                "Kitchen": "{0.mention} uses top-notch ninja skills on {1.mention}, many of which involve the knives",
+                "Bedroom": "{0.mention} gets a l33t hit om {1.mention} involving throwing the bedstand",
+                "Living Room": "{0.mention} narrowly beats {1.mention} in a sword-fight using the Dolby 7:1 surround speakers",
+                "Backyard": "{0.mention} throws some hot coals from the backyard stove at {1.mention}"
+            }
+
+            connectedrooms = {
+                "Laundry Room":["Backyard","Kitchen"], "Dining Room":["Kitchen","Backyard"], "Kitchen":["Dining Room","Living Room"],
+                "Bedroom":["Living Room"], "Living Room":["Kitchen","Bedroom"], "Backyard":["Laundry Room","Laundry Room"]
+            }
+
+            setting = random.choice(fightplaces)
+
+            p1.turn = True
+
+        while p1.health > 0 and p2.health > 0:
+            askaction = await ctx.send(
+                f"{find_turn().user.mention}, what do you want to do? `hit`, `run`, `block`, or `end`."
+            )
+
+            def check(m):
+                if m.channel == ctx.channel and m.author == find_turn().user:
+                    return m.content.lower().startswith("hit") or m.content.lower().startswith("run")\
+                           or m.content.lower().startswith("block") or m.content.lower().startswith("end")
+                else:
+                    return False
+
+            usrinput = await ctx.bot.wait_for("message", check=check)
+
+            if usrinput == None:
+                await ctx.send("it timed out noobs")
+                return
+            else:
+
+                if usrinput.content.lower().startswith("block"):
+                    currentaction = f"{find_turn().user.mention} is bloccing"
+                    find_turn().blocking = True
+
+
+                elif usrinput.content.lower().startswith("hit"):
+                    damage = 0
+                    rand = random.randint(1, 15)
+                    if rand == 1:
+                        blow = deathblows[setting].format(find_turn().user, find_not_turn().user)
+                        blow += " (DEATHBLOW)"
+                        damage = 100
+
+                    elif rand > 9:
+                        blow = random.choice(universalactions).format(find_turn().user, find_not_turn().user)
+                        damage = random.randint(1, 50)
+
+                    else:
+                        blow = random.choice(fightactions[setting]).format(find_turn().user, find_not_turn().user)
+                        damage = random.randint(1, 50)
+
+                    if find_not_turn().blocking:
+                        rand = random.randint(0, 5)
+                        if rand:
+                            damage = math.floor(damage / 2)
+
+                    blow += f" ({damage} dmg)"
+
+                    if find_not_turn().blocking:
+                        if rand:
+                            blow += f", and {find_not_turn().user.mention} blocked successfully! Half damage."
+                        else:
+                            blow += f", and {find_not_turn().user.mention} failed to blocc!"
+
+                    currentaction = blow
+
+                elif usrinput.content.lower().startswith("run"):
+                    newsetting = random.choice(connectedrooms[setting])
+
+                    currentaction = f"{find_turn().user.mention} kicks {find_not_turn().user.mention} in the shins and runs as fast as he/she can out of the {setting} and into the {newsetting}. {find_turn().user.mention} gives chase."
+
+                    setting = newsetting
+                    newsetting = ""
+
+                elif usrinput.content.lower().startswith("end"):
+                    await ctx.send(
+                        f"{find_turn().user.mention} and {find_not_turn().user.mention} get friendly and the fight's over."
+                    )
+                    await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
+                    return
+
+                find_not_turn().health -= damage
+                if find_not_turn().health < 0:
+                    find_not_turn().health = 0
+
+                emb = discord.Embed(name="FIGHT", color=find_turn().user.colour)
+
+                emb.add_field(name="Current Setting", value=f"`{setting}`")
+                emb.add_field(name="Player 1 health", value=f"**{p1.health}**")
+                emb.add_field(name="Player 2 health", value=f"**{p2.health}**")
+                emb.add_field(name="Current action", value=currentaction)
+
+                emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+                emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+                emb.set_footer(
+                    text=f"{ctx.bot.description} Requested by {ctx.author}",
+                    icon_url=ctx.author.avatar_url
                 )
 
-                await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
+                if sent is None:
+                    sent = (await ctx.send(embed=emb))
+                    await ctx.bot.register_response(sent, ctx.message)
+                else:
+                    await sent.edit(embed=emb)
+
+                try:
+                    await askaction.delete()
+                    await usrinput.delete()
+                except discord.Forbidden or discord.NotFound:
+                    pass
+
+                switchturn()
+
+        if p1.health == 0:
+            p2.won = True
+            p1.won = False
+        else:
+            p2.won = False
+            p1.won = True
+
+        win_mention = findwin().user.mention
+        lose_mention = findloser().user.mention
+        await ctx.send(
+            f"Looks like {win_mention} defeated {lose_mention} with {findwin().health} health left!"
+        )
+
+        await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
 
 
 def setup(bot):
