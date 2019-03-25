@@ -20,6 +20,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+import os
+import random
 import typing
 
 import discord
@@ -183,6 +185,13 @@ L
         sent = (await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```"))
         await ctx.bot.register_response(sent, ctx.message)
 
+    @commands.command(description="Sends text. Strict cooldown.")
+    @commands.cooldown(1, 120, commands.BucketType.channel)
+    async def text(self, ctx):
+        files = ["bee.txt", "uwu.txt"]
+        with open(os.getcwd() + f"..\\..\\assets\\{random.choice(files)}", "rb") as fp:
+            sent = (await ctx.send(file=discord.File(fp, filename="love_letter.txt")))
+        await ctx.bot.register_response(sent, ctx.message)
 
 def setup(bot):
     bot.add_cog(Text())
