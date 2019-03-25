@@ -29,6 +29,13 @@ import discord
 from discord.ext import commands
 
 
+class _fighter:
+    def __init__(self, user):
+        self.user = user
+        self.health = 100
+        self.turn = False
+        self.won = False
+        self.blocking = False
 class Random(commands.Cog):
 
     @commands.command(aliases=["burn"])
@@ -287,14 +294,6 @@ class Random(commands.Cog):
             message += random.choice(choices) + "'."
             await msg.edit(content=message)
 
-    class Fighter:
-        def __init__(self, user):
-            self.user = user
-            self.health = 100
-            self.turn = False
-            self.won = False
-            self.blocking = False
-
     @commands.command(
         description="Starts a fight between the command invoker and the specified <target>."
     )
@@ -351,8 +350,8 @@ class Random(commands.Cog):
                 async with ctx.channel.typing():
                     await asyncio.sleep(1)
 
-                    p1 = self.Fighter(ctx.author)
-                    p2 = self.Fighter(target)
+            p1 = _fighter(ctx.author)
+            p2 = _fighter(target)
 
                     def find_turn():
                         if p1.turn:
