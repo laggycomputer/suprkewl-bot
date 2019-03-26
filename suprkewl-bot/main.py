@@ -26,9 +26,10 @@ import platform
 import random
 import traceback
 
+import aiosqlite
 import discord
 from discord.ext import commands
-from ext.utils import apiToHuman
+from ext.utils import apiToHuman, plural
 
 import config
 import redis
@@ -49,9 +50,12 @@ class theBot(commands.Bot):
         super().__init__(*args, **kwargs)
 
         self.redis = None
+
         self.bg_task = self.loop.create_task(self.playingstatus())
 
-        startup_extensions = ["jishaku", "ext.text", "ext.rand", "ext.docs", "ext.mod", "ext.info", "ext.help"]
+        startup_extensions = [
+            "jishaku", "ext.text", "ext.rand", "ext.docs", "ext.mod", "ext.info", "ext.help", "ext.config"
+        ]
 
         for extension in startup_extensions:
             try:
@@ -107,9 +111,10 @@ class theBot(commands.Bot):
                             "https://media.tenor.com/images/cca1d4bbb1216e46645d368050c020ac/tenor.gif",
                             "https://media.tenor.com/images/2ccae15299d6f3345a45306214b9baea/tenor.gif"
                         ]
+                        desc = plural(get_pre(self, message))
                         emb = discord.Embed(
                             color=0xf92f2f,
-                            description=":eyes: Who pinged? My prefix is `s!`. If you are in a DM with me, I do not require a prefix."
+                            description=f":eyes: Who pinged? My prefix(es) is/are `{desc}`. If you are in a DM with me, I do not require a prefix."
                         )
                         emb.set_image(url=random.choice(ping_images))
 
@@ -118,7 +123,7 @@ class theBot(commands.Bot):
                     await self.process_commands(message)
 
                 else:
-                    if message.content.startswith("s!"):
+                    if message.content.startswith(config.prefix):
                         await message.author.send(":x: I can't send messages there! Perhaps try again elsewhere?")
             else:
                 await self.process_commands(message)
@@ -179,6 +184,14 @@ class theBot(commands.Bot):
                 f"tracked_message {request.id}",
                 f"{response.channel.id}:{response.id}"
             )
+
+    async def on_guild_join(self, guild):
+        async with aiosqlite.connect(config.db_path) as db:
+            await db.execute(f"INSERT INTO guilds (id, prefix) VALUES ({guild.id}, '{config.prefix}');")
+
+    async def on_guild_remove(self, guild):
+        async with aiosqlite.connect(config.db_path) as db:
+            await db.execute(f"DELETE FROM guilds WHERE id = {guild.id};")
 
     async def playingstatus(self):
 
@@ -313,10 +326,17 @@ class theBot(commands.Bot):
 
 
 async def get_pre(bot, message):
+    pre = [config.prefix]
     if isinstance(message.channel, discord.DMChannel):
-        return ["s!", ""]
-    else:
-        return "s!"
+        pre.append("")
+    elif isinstance(message.channel, discord.TextChannel):
+        async with aiosqlite.connect(config.db_path) as db:
+            async with db.execute(f"SELECT prefix FROM guilds WHERE id = {message.guild.id};") as cur:
+                fetched = (await cur.fetchall())[0][0]
+            if fetched not in pre:
+                pre.append(fetched[0][0])
+
+    return pre
 
 client = theBot(
     status=discord.Status.idle,
