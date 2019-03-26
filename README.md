@@ -13,4 +13,5 @@ If you want to host this bot:
 * Edit `suprkewl-bot/config.py` to include your token.
 * Repeat with your Redis server IP (can be internal) and port, and password (don't set one if you don't want to use one).
 * Then, install Redis on your host of choice, and set it up with the same password that you configured.
+* Create a SQLite3 database, and specify its path (remember to use `\\` in place of `\`) in the config file.
 * Finally, you can use `pip3 install -r requirements.txt` at the root of this repo to install the requirements, and `./purgepyc.sh` to purge `__pycache__` from all code folders.

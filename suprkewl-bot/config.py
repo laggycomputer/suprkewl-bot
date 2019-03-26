@@ -2,6 +2,7 @@ import logging
 
 # Your Discord bot token here:
 token = ""
+prefix = "s!"
 # Logging path and level.
 logpath = "../suprkewl.log"
 loglevels = (logging.CRITICAL, logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG)
@@ -20,3 +21,6 @@ redis_port = "6379"
 # Again, this is insecure
 # CHANGE IT
 redis_password = "testing"
+
+# This is intentionally useless without being set. SET IT
+db_path = "C:\\Users\\WindowsUser\\Documents\\suprkewl-bot\\skbot.db"

@@ -580,6 +580,5 @@ class Random(commands.Cog):
 
         await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
 
-
 def setup(bot):
     bot.add_cog(Random(bot))
