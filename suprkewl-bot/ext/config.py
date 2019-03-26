@@ -35,13 +35,12 @@ class Config(commands.Cog):
 
     @prefix.command(name="set", description="Sets your prefix. Limit 10 characters.")
     async def prefix_set(self, ctx, prefix):
-        if not await ctx.parent.can_run(ctx):
+        if not await ctx.command.parent.can_run(ctx):
             return
         if len(prefix) <= 10:
             async with aiosqlite.connect(config.db_path) as db:
-                query = "UPDATE guilds SET prefix = %s WHERE id = " % prefix
-                query += f"{ctx.guild.id};"
-                await db.execute(query)
+                query = f"UPDATE guilds SET prefix = '$1' WHERE id = {ctx.guild.id};"
+                await db.execute(query, prefix)
 
             sent = (await ctx.send(":white_check_mark: Updated!"))
         else:

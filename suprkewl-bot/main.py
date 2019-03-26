@@ -111,7 +111,7 @@ class theBot(commands.Bot):
                             "https://media.tenor.com/images/cca1d4bbb1216e46645d368050c020ac/tenor.gif",
                             "https://media.tenor.com/images/2ccae15299d6f3345a45306214b9baea/tenor.gif"
                         ]
-                        desc = plural(get_pre(self, message))
+                        desc = plural(await get_pre(self, message))
                         emb = discord.Embed(
                             color=0xf92f2f,
                             description=f":eyes: Who pinged? My prefix(es) is/are `{desc}`. If you are in a DM with me, I do not require a prefix."
