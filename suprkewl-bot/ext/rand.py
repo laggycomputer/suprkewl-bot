@@ -617,7 +617,10 @@ class Random(commands.Cog):
             text = await resp.text()
         text = json.loads(text)
         
-        emb = discord.Embed(description=f"Here you are! xkcd comic #{number}. Credits to [xkcd](https://xkcd.com/{number}).")
+        emb = discord.Embed(
+            color=0xf92f2f,
+            description=f"Here you are! xkcd comic #{number}. Credits to [xkcd](https://xkcd.com/{number})."
+        )
         emb.set_image(url=text["img"])
 
         emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
@@ -646,6 +649,7 @@ class Random(commands.Cog):
         text = json.loads(text)
 
         emb = discord.Embed(
+            color=0xf92f2f,
             description=f"Here you are! xkcd comic #{comic_to_get}. Credits to [xkcd](https://xkcd.com/{comic_to_get})."
         )
         emb.set_image(url=text["img"])
@@ -675,6 +679,7 @@ class Random(commands.Cog):
         num = text["num"]
 
         emb = discord.Embed(
+            color=0xf92f2f,
             description=f"Here you are! xkcd comic #{num}. Credits to [xkcd](https://xkcd.com/{num})."
         )
         emb.set_image(url=text["img"])
