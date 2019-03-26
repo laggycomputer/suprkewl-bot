@@ -26,6 +26,7 @@ import platform
 import random
 import traceback
 
+import aiohttp
 import aiosqlite
 import discord
 from discord.ext import commands
@@ -50,6 +51,7 @@ class theBot(commands.Bot):
         super().__init__(*args, **kwargs)
 
         self.redis = None
+        self.http2 = None
 
         self.bg_task = self.loop.create_task(self.playingstatus())
 
@@ -60,7 +62,7 @@ class theBot(commands.Bot):
         for extension in startup_extensions:
             try:
                 self.load_extension(extension)
-                print(f"Loaded module {extension}. yay")
+                print(f"Loaded cog {extension}.")
             except Exception as e:
                 exc = f"{e.__name__}: {e}"
                 print(f"Failed to load extension {extension}\n{exc}")
@@ -69,6 +71,8 @@ class theBot(commands.Bot):
         if not self.redis:
             self.redis = redis.Redis()
             await self.redis.connect()
+        if not self.http2:
+            self.http2 = aiohttp.ClientSession()
 
         print(f"Logged in as {self.user.name} (UID {self.user.id}) | Connected to {len(self.guilds)} servers and their combined {len(set(client.get_all_members()))} members")
         print("-" * 8)

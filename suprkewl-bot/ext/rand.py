@@ -22,9 +22,11 @@ DEALINGS IN THE SOFTWARE.
 
 import asyncio
 import io
+import json
 import math
 import random
 
+import aiohttp
 import discord
 from discord.ext import commands
 
@@ -579,6 +581,115 @@ class Random(commands.Cog):
         )
 
         await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
+
+    @commands.group(description="Gets an xkcd comic.", invoke_without_command=True)
+    @commands.cooldown(1, 3, commands.BucketType.channel)
+    async def xkcd(self, ctx, arg=None, arg2=None):
+        if arg == "get":
+            await self.xkcd_get.invoke(ctx, num=arg2)
+        elif arg == "rand":
+            await self.xkcd_rand.invoke(ctx)
+        elif arg == "latest":
+            await self.xkcd_latest.invoke(ctx)
+        else:
+            sent = (await ctx.send(":x: This command requires a subcommand, and you have not specified one."))
+            await ctx.bot.register_response(sent, ctx.message)
+    
+    @xkcd.command(name="get", description="Get an xkcd comic by number.")
+    async def xkcd_get(self, ctx, number):
+        if not ctx.command.parent.can_run(ctx):
+            return
+
+        try:
+            number = int(number)
+            if number > 0:
+                pass
+        except ValueError:
+            sent = (await ctx.send(":x: Invalid number!"))
+            await ctx.bot.register_response(sent, ctx.message)
+            return
+
+        async with ctx.bot.http2.get(f"https://xkcd.com/{number}/info.0.json") as resp:
+            if resp.status == 404:
+                sent = (await ctx.send(":x: Comic not found!"))
+                await ctx.bot.register_response(sent, ctx.message)
+                return
+            text = await resp.text()
+        text = json.loads(text)
+        
+        emb = discord.Embed(description=f"Here you are! xkcd comic #{number}. Credits to [xkcd](https://xkcd.com/{number}).")
+        emb.set_image(url=text["img"])
+
+        emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+        emb.set_footer(
+            text=f"{ctx.bot.description} Requested by {ctx.author}",
+            icon_url=ctx.author.avatar_url
+        )
+
+        sent = (await ctx.send(embed=emb))
+        await ctx.bot.register_response(sent, ctx.message)
+
+    @xkcd.command(name="random", aliases=["rand"], description="Get a random xkcd comic.")
+    async def xkcd_random(self, ctx):
+        if not ctx.command.parent.can_run(ctx):
+            return
+
+        async with ctx.bot.http2.get("https://xkcd.com/info.0.json") as resp:
+            text = await resp.text()
+        text = json.loads(text)
+        latest_comic = text["num"]
+
+        comic_to_get = random.randint(0, int(latest_comic))
+
+        async with ctx.bot.http2.get(f"https://xkcd.com/{comic_to_get}/info.0.json") as resp:
+            text = await resp.text()
+        text = json.loads(text)
+
+        emb = discord.Embed(
+            description=f"Here you are! xkcd comic #{comic_to_get}. Credits to [xkcd](https://xkcd.com/{comic_to_get})."
+        )
+        emb.set_image(url=text["img"])
+
+        emb.set_author(
+            name=ctx.bot.user.name,
+            icon_url=ctx.bot.user.avatar_url
+        )
+        emb.set_footer(
+            text=f"{ctx.bot.description} Requested by {ctx.author}",
+            icon_url=ctx.author.avatar_url
+        )
+
+        sent = (await ctx.send(embed=emb))
+        await ctx.bot.register_response(sent, ctx.message)
+
+    @xkcd.command(name="latest", description="Get the latest xkcd comic.")
+    async def xkcd_latest(self, ctx):
+        if not ctx.command.parent.can_run(ctx):
+            return
+
+        async with ctx.bot.http2.get("https://xkcd.com/info.0.json") as resp:
+            text = await resp.text()
+
+        text = json.loads(text)
+
+        num = text["num"]
+
+        emb = discord.Embed(
+            description=f"Here you are! xkcd comic #{num}. Credits to [xkcd](https://xkcd.com/{num})."
+        )
+        emb.set_image(url=text["img"])
+
+        emb.set_author(
+            name=ctx.bot.user.name,
+            icon_url=ctx.bot.user.avatar_url
+        )
+        emb.set_footer(
+            text=f"{ctx.bot.description} Requested by {ctx.author}",
+            icon_url=ctx.author.avatar_url
+        )
+
+        sent = (await ctx.send(embed=emb))
+        await ctx.bot.register_response(sent, ctx.message)
 
 def setup(bot):
     bot.add_cog(Random(bot))
