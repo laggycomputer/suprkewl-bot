@@ -585,6 +585,9 @@ class Random(commands.Cog):
     @commands.group(description="Gets an xkcd comic.", invoke_without_command=True)
     @commands.cooldown(1, 3, commands.BucketType.channel)
     async def xkcd(self, ctx, arg=None, arg2=None):
+        if arg is None:
+            sent = (await ctx.send(":x: This command requires a subcommand, and you have not speficied one."))
+            await ctx.bot.register_response(sent, ctx.message)
         if arg == "get":
             await self.xkcd_get.invoke(ctx, num=arg2)
         elif arg == "rand":
@@ -592,7 +595,7 @@ class Random(commands.Cog):
         elif arg == "latest":
             await self.xkcd_latest.invoke(ctx)
         else:
-            sent = (await ctx.send(":x: This command requires a subcommand, and you have not specified one."))
+            sent = (await ctx.send(":x: This command requires a subcommand, and you have specified an invalid one."))
             await ctx.bot.register_response(sent, ctx.message)
     
     @xkcd.command(name="get", description="Get an xkcd comic by number.")
