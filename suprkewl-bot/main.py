@@ -328,6 +328,13 @@ class theBot(commands.Bot):
 
         traceback.print_exception(type(error), error, error.__traceback__)
 
+    async def logout(self):
+        if not self.http2.closed:
+            await self.http2.close()
+            await asyncio.sleep(0)
+
+        await super().logout()
+
 
 async def get_pre(bot, message):
     pre = [config.prefix]
