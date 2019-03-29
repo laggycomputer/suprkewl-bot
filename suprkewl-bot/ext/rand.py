@@ -588,12 +588,16 @@ class Random(commands.Cog):
         if arg is None:
             sent = (await ctx.send(":x: This command requires a subcommand, and you have not speficied one."))
             await ctx.bot.register_response(sent, ctx.message)
+            return
         if arg == "get":
-            await self.xkcd_get.invoke(ctx, num=arg2)
+            await self.xkcd_get.invoke(ctx)
+            return
         elif arg == "rand":
             await self.xkcd_rand.invoke(ctx)
+            return
         elif arg == "latest":
             await self.xkcd_latest.invoke(ctx)
+            return
         else:
             sent = (await ctx.send(":x: This command requires a subcommand, and you have specified an invalid one."))
             await ctx.bot.register_response(sent, ctx.message)
