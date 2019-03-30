@@ -121,7 +121,7 @@ L
 
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.group(
-        description="Gives the data under a message, channel, or member in a JSON format, as recived from the Discord API."
+        description="Gives the data under a message, channel, or member in a JSON format, as recieved from the Discord API."
     )
     async def raw(self, ctx):
         """Returns a dict version of some objects."""
@@ -166,8 +166,11 @@ L
         await ctx.bot.register_response(sent, ctx.message)
 
     @raw.command()
-    async def channel(self, ctx,
-                      channel: typing.Union[discord.TextChannel, discord.VoiceChannel, discord.CategoryChannel] = None):
+    async def channel(
+            self, ctx, channel: typing.Union[
+                discord.TextChannel, discord.VoiceChannel, discord.CategoryChannel
+            ]=None
+    ):
         """Return a channel as a dict."""
 
         if channel is None:
