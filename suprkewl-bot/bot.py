@@ -21,7 +21,6 @@ DEALINGS IN THE SOFTWARE.
 """
 
 import asyncio
-import logging
 import platform
 import random
 import traceback
@@ -34,15 +33,6 @@ from ext.utils import apiToHuman, plural
 
 import config
 import redis
-
-logger = logging.getLogger("discord")
-logger.setLevel(config.loglevel)
-if config.clearLog:
-    handler = logging.FileHandler(filename=config.logpath, encoding="utf-8", mode="w")
-else:
-    handler = logging.FileHandler(filename=config.logpath, encoding="utf-8", mode="a")
-handler.setFormatter(logging.Formatter("%(asctime)s: %(levelname)s: %(name)s: %(message)s"))
-logger.addHandler(handler)
 
 
 class theBot(commands.Bot):
@@ -74,7 +64,7 @@ class theBot(commands.Bot):
         if not self.http2:
             self.http2 = aiohttp.ClientSession()
 
-        print(f"Logged in as {self.user.name} (UID {self.user.id}) | Connected to {len(self.guilds)} servers and their combined {len(set(client.get_all_members()))} members")
+        print(f"Logged in as {self.user.name} (UID {self.user.id}) | Connected to {len(self.guilds)} servers and their combined {len(set(self.get_all_members()))} members")
         print("-" * 8)
         print(f"Current discord.py version: {discord.__version__} | Current Python version: {platform.python_version()}")
         print("-" * 8)
@@ -229,7 +219,7 @@ class theBot(commands.Bot):
             "with the Discord API"
         ]
 
-        while client.is_ready():
+        while self.is_ready():
             status = f"{random.choice(playing_statuses)} | lurking in {len(self.guilds)} servers and watching over {len(self.users)} users..."
 
             await self.change_presence(activity=discord.Game(name=status))
@@ -348,17 +338,3 @@ async def get_pre(bot, message):
                 pre.append(fetched[0][0])
 
     return pre
-
-client = theBot(
-    status=discord.Status.idle,
-    command_prefix=get_pre,
-    description="Did you know? If you are in a DM with me, you don't need a prefix!",
-)
-
-if config.token == "":
-    raise ValueError("Please set your token in the config file.")
-else:
-    try:
-        client.run(config.token)
-    except discord.LoginFailure:
-        print("Invalid token passed, exiting.")
