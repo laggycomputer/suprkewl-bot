@@ -197,9 +197,11 @@ L
             sent = (await ctx.send(file=discord.File(fp, filename="love_letter.txt")))
         await ctx.bot.register_response(sent, ctx.message)
 
-    @commands.command(description="Make text L O N G E R.")
+    @commands.command()
     @commands.cooldown(1, 2, commands.BucketType.channel)
     async def stretch(self, ctx, *, text):
+        """Make text L O N G E R."""
+        
         ret = ""
 
         for i in range(1, 10):
@@ -221,9 +223,11 @@ L
             sent = (await ctx.send(ret))
             await ctx.bot.register_response(sent, ctx.message)
 
-    @commands.command(description="Print text in a circle.")
+    @commands.command()
     @commands.cooldown(1, 2, commands.BucketType.channel)
     async def circle(self, ctx, radius: int, *, string):
+        """Print text in a circle."""
+        
         ranges = list(range(1, radius + 1)) + list(range(radius, 0, -1))
         
         ret = "\n".join((string * c).center(len(radius * string)) for c in ranges)
