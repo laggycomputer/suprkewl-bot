@@ -20,6 +20,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+import io
 import os
 import random
 import typing
@@ -195,6 +196,52 @@ L
         with open(os.getcwd() + f"..\\..\\assets\\{random.choice(files)}", "rb") as fp:
             sent = (await ctx.send(file=discord.File(fp, filename="love_letter.txt")))
         await ctx.bot.register_response(sent, ctx.message)
+
+    @commands.command(description="Make text L O N G E R.")
+    @commands.cooldown(1, 2, commands.BucketType.channel)
+    async def stretch(self, ctx, *, text):
+        ret = ""
+
+        for i in range(1, 10):
+            spaces = " " * i
+            ret += f"\n{spaces.join((letter for letter in text))}"
+
+        for i in range(1, 10):
+            spaces = " " * abs(i - 10)
+            ret += f"\n{spaces.join((letter for letter in text))}"
+
+        if len(ret) > 2000:
+            fp = io.BytesIO(ret.encode("utf-8"))
+            
+            sent = (await ctx.send(
+                content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this file:",
+                file=discord.File(fp, "stretch.txt")
+            ))
+        else:
+            sent = (await ctx.send(ret))
+            await ctx.bot.register_response(sent, ctx.message)
+
+    @commands.command(description="Print text in a circle.")
+    @commands.cooldown(1, 2, commands.BucketType.channel)
+    async def circle(self, ctx, radius: int, *, string):
+        ranges = list(range(1, radius + 1)) + list(range(radius, 0, -1))
+        
+        ret = "\n".join((string * c).center(len(radius * string)) for c in ranges)
+
+        ret = "```\n%s\n```" % ret
+
+        if len(ret) > 2000:
+            fp = io.BytesIO(ret.encode("utf-8"))
+            
+            sent = (await ctx.send(
+                content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this file:",
+                file=discord.File(fp, "circle.txt")
+            ))
+            await ctx.bot.register_response(sent, ctx.message)
+        else:
+            sent = (await ctx.send(ret))
+            await ctx.bot.register_response(sent, ctx.message)
+
 
 def setup(bot):
     bot.add_cog(Text())
