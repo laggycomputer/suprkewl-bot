@@ -601,7 +601,7 @@ class Random(commands.Cog):
         else:
             sent = (await ctx.send(":x: This command requires a subcommand, and you have specified an invalid one."))
             await ctx.bot.register_response(sent, ctx.message)
-    
+
     @xkcd.command(name="get", description="Get an xkcd comic by number.")
     async def xkcd_get(self, ctx, number):
         if not ctx.command.parent.can_run(ctx):
@@ -623,7 +623,7 @@ class Random(commands.Cog):
                 return
             text = await resp.text()
         text = json.loads(text)
-        
+
         emb = discord.Embed(
             color=0xf92f2f,
             description=f"Here you are! xkcd comic #{number}. Credits to [xkcd](https://xkcd.com/{number})."
