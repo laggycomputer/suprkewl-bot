@@ -201,7 +201,7 @@ L
     @commands.cooldown(1, 2, commands.BucketType.channel)
     async def stretch(self, ctx, *, text):
         """Make text L O N G E R."""
-        
+
         ret = ""
 
         for i in range(1, 10):
@@ -214,7 +214,7 @@ L
 
         if len(ret) > 2000:
             fp = io.BytesIO(ret.encode("utf-8"))
-            
+
             sent = (await ctx.send(
                 content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this file:",
                 file=discord.File(fp, "stretch.txt")
@@ -227,16 +227,16 @@ L
     @commands.cooldown(1, 2, commands.BucketType.channel)
     async def circle(self, ctx, radius: int, *, string):
         """Print text in a circle."""
-        
+
         ranges = list(range(1, radius + 1)) + list(range(radius, 0, -1))
-        
+
         ret = "\n".join((string * c).center(len(radius * string)) for c in ranges)
 
         ret = "```\n%s\n```" % ret
 
         if len(ret) > 2000:
             fp = io.BytesIO(ret.encode("utf-8"))
-            
+
             sent = (await ctx.send(
                 content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this file:",
                 file=discord.File(fp, "circle.txt")
