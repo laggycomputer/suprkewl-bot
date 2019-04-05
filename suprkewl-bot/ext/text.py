@@ -220,7 +220,7 @@ L
                 file=discord.File(fp, "stretch.txt")
             ))
         else:
-            sent = (await ctx.send(ret))
+            sent = (await ctx.send("```\n%s\n```" % ret))
             await ctx.bot.register_response(sent, ctx.message)
 
     @commands.command()
@@ -232,8 +232,6 @@ L
 
         ret = "\n".join((string * c).center(len(radius * string)) for c in ranges)
 
-        ret = "```\n%s\n```" % ret
-
         if len(ret) > 2000:
             fp = io.BytesIO(ret.encode("utf-8"))
 
@@ -243,7 +241,7 @@ L
             ))
             await ctx.bot.register_response(sent, ctx.message)
         else:
-            sent = (await ctx.send(ret))
+            sent = (await ctx.send("```\n%s\n```" % ret))
             await ctx.bot.register_response(sent, ctx.message)
 
 
