@@ -225,8 +225,8 @@ L
 
     @commands.command()
     @commands.cooldown(1, 2, commands.BucketType.channel)
-    async def circle(self, ctx, radius: int, *, string):
-        """Print text in a circle."""
+    async def square(self, ctx, radius: int, *, string):
+        """Print text in a square."""
 
         ranges = list(range(1, radius + 1)) + list(range(radius, 0, -1))
 
@@ -239,7 +239,7 @@ L
 
             sent = (await ctx.send(
                 content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this file:",
-                file=discord.File(fp, "circle.txt")
+                file=discord.File(fp, "square.txt")
             ))
             await ctx.bot.register_response(sent, ctx.message)
         else:
