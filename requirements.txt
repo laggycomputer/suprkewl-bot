@@ -1,4 +1,4 @@
 aioredis
-git+http://github.com/Rapptz/discord.py.git@rewrite@egg=discord.py
+discord.py
 jishaku
 aiosqlite
