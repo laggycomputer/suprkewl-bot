@@ -113,6 +113,12 @@ class theBot(commands.Bot):
 
                         await message.channel.send(embed=emb)
 
+                    owner = (await self.application_info()).owner
+                    m1 = f"<@!{owner.id}>"
+                    m2 = f"<@{owner.id}>"
+                    if (message.content.startswith(m1) or message.content.startswith(m2)) and message.author != owner:
+                        await message.channel.send("<:angryping:564532599918297117>")
+
                     await self.process_commands(message)
 
                 else:

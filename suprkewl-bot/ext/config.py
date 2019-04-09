@@ -10,6 +10,8 @@ class Config(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
     async def prefix(self, ctx, subc=None, subcarg=None):
+        """Perform operations on the guild custom prefix."""
+
         if subc is None:
             sent = (await ctx.send(":x: This command requires a subcommand!"))
             await ctx.bot.register_response(sent, ctx.message)
@@ -24,6 +26,8 @@ class Config(commands.Cog):
 
     @prefix.command(name="get")
     async def prefix_get(self, ctx):
+        """Query the guild custom prefix."""
+        
         if not await ctx.command.parent.can_run(ctx):
             return
         async with aiosqlite.connect(config.db_path) as db:
@@ -35,6 +39,8 @@ class Config(commands.Cog):
 
     @prefix.command(name="set", description="Sets your prefix. Limit 10 characters.")
     async def prefix_set(self, ctx, prefix):
+        """Set the custom guild prefix."""
+        
         if not await ctx.command.parent.can_run(ctx):
             return
         if len(prefix) <= 10:
