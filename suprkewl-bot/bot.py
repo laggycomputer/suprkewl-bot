@@ -97,7 +97,6 @@ class theBot(commands.Bot):
 
             if isinstance(message.channel, discord.abc.GuildChannel):
                 if message.channel.permissions_for(message.guild.me).send_messages:
-
                     if message.content.startswith(message.guild.me.mention):
                         ping_images = [
                             "https://cdn.discordapp.com/emojis/389570423450370048.png",
@@ -222,7 +221,7 @@ class theBot(commands.Bot):
         while self.is_ready():
             status = f"{random.choice(playing_statuses)} | lurking in {len(self.guilds)} servers and watching over {len(self.users)} users..."
 
-            await self.change_presence(activity=discord.Game(name=status))
+            await self.change_presence(activity=discord.Game(name=status), status=discord.Status.idle)
             await asyncio.sleep(120)
 
     async def on_command_error(self, ctx, error):
