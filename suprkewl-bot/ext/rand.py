@@ -554,7 +554,7 @@ class Random(commands.Cog):
                 sent = (await ctx.send(":x: Invalid comic number."))
                 await ctx.bot.register_response(sent, ctx.message)
                 return
-            
+
             await self.xkcd_get(ctx, arg)
 
     async def xkcd_get(self, ctx, number):

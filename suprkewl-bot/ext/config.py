@@ -49,7 +49,7 @@ class Config(commands.Cog):
     @prefix.command(name="get")
     async def prefix_get(self, ctx):
         """Query the guild custom prefix."""
-        
+
         if not await ctx.command.parent.can_run(ctx):
             return
         async with aiosqlite.connect(config.db_path) as db:
@@ -62,7 +62,7 @@ class Config(commands.Cog):
     @prefix.command(name="set", description="Sets your prefix. Limit 10 characters.")
     async def prefix_set(self, ctx, prefix):
         """Set the custom guild prefix."""
-        
+
         if not await ctx.command.parent.can_run(ctx):
             return
         if len(prefix) <= 10:
