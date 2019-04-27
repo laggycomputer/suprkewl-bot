@@ -169,43 +169,6 @@ class Random(commands.Cog):
 
             await msg.edit(content=content)
 
-    @commands.command(
-        aliases=["laugh"],
-        description="Browse a ridiculously tiny collection of funny images. Has a 2 second per-channel cooldown."
-    )
-    @commands.cooldown(1, 2, commands.BucketType.channel)
-    async def funny(self, ctx):
-        """Haha. Very funny."""
-
-        images = [
-            "https://image.ibb.co/f57pL7/Bill.png",
-            "https://image.ibb.co/hHM27n/yey.jpg",
-            "https://image.ibb.co/dWRS7n/bruh1.gif",
-            "https://image.ibb.co/kpUx7n/u_mad_broo.jpg",
-            "https://image.ibb.co/nKTX7n/jumped_Off.jpg",
-            "https://image.ibb.co/i76wYS/uwut.jpg",
-            "https://image.ibb.co/edp0tS/uhhh.jpg",
-            "https://image.ibb.co/gknDF7/no_Briefcase.jpg",
-            "https://image.ibb.co/hFF3hn/any_More_Weekend.jpg",
-            "https://image.ibb.co/hc9Re7/llama.jpg",
-            "https://image.ibb.co/jOuOsS/llamaart.jpg",
-            "https://image.ibb.co/bytavf/justspamf.png"
-        ]
-
-        emb = discord.Embed(
-            name="This is", title="something funny",
-            description="Don't die of laughter", color=0xf92f2f
-        )
-
-        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
-        emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
-        emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
-
-        emb.set_image(url=random.choice(images))
-
-        sent = await ctx.send(embed=emb)
-        await ctx.bot.register_response(sent, ctx.message)
-
     @commands.group(
         aliases=["roll"],
         description="Rolls the dice specified, in AdB format. For example, 'dice 3d6' would roll 3 six-sided dice.",
