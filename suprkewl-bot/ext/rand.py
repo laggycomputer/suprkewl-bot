@@ -22,7 +22,6 @@ DEALINGS IN THE SOFTWARE.
 
 import asyncio
 import io
-import json
 import math
 import random
 
@@ -587,15 +586,13 @@ class Random(commands.Cog):
             return
 
         async with ctx.bot.http2.get("https://xkcd.com/info.0.json") as resp:
-            text = await resp.text()
-        text = json.loads(text)
+            text = await resp.json()
         latest_comic = text["num"]
 
         comic_to_get = random.randint(0, int(latest_comic))
 
         async with ctx.bot.http2.get(f"https://xkcd.com/{comic_to_get}/info.0.json") as resp:
-            text = await resp.text()
-        text = json.loads(text)
+            text = await resp.json()
 
         emb = discord.Embed(
             color=0xf92f2f,
