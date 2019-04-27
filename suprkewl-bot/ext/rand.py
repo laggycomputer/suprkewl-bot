@@ -547,45 +547,24 @@ class Random(commands.Cog):
 
     @commands.group(description="Gets an xkcd comic.", invoke_without_command=True)
     @commands.cooldown(1, 3, commands.BucketType.channel)
-    async def xkcd(self, ctx, arg=None, arg2=None):
+    async def xkcd(self, ctx, arg: int=None):
         if arg is None:
-            sent = (await ctx.send(":x: This command requires a subcommand, and you have not speficied one."))
-            await ctx.bot.register_response(sent, ctx.message)
-            return
-        if arg == "get":
-            await self.xkcd_get.invoke(ctx)
-            return
-        elif arg == "rand":
-            await self.xkcd_rand.invoke(ctx)
-            return
-        elif arg == "latest":
-            await self.xkcd_latest.invoke(ctx)
-            return
+            await self.xkcd_latest(ctx)
         else:
-            sent = (await ctx.send(":x: This command requires a subcommand, and you have specified an invalid one."))
-            await ctx.bot.register_response(sent, ctx.message)
+            if arg <= 0:
+                sent = (await ctx.send(":x: Invalid comic number."))
+                await ctx.bot.register_response(sent, ctx.message)
+                return
+            
+            await self.xkcd_get(ctx, arg)
 
-    @xkcd.command(name="get", description="Get an xkcd comic by number.")
     async def xkcd_get(self, ctx, number):
-        if not ctx.command.parent.can_run(ctx):
-            return
-
-        try:
-            number = int(number)
-            if number > 0:
-                pass
-        except ValueError:
-            sent = (await ctx.send(":x: Invalid number!"))
-            await ctx.bot.register_response(sent, ctx.message)
-            return
-
         async with ctx.bot.http2.get(f"https://xkcd.com/{number}/info.0.json") as resp:
             if resp.status == 404:
                 sent = (await ctx.send(":x: Comic not found!"))
                 await ctx.bot.register_response(sent, ctx.message)
                 return
-            text = await resp.text()
-        text = json.loads(text)
+            text = await resp.json()
 
         emb = discord.Embed(
             color=0xf92f2f,
@@ -636,15 +615,9 @@ class Random(commands.Cog):
         sent = (await ctx.send(embed=emb))
         await ctx.bot.register_response(sent, ctx.message)
 
-    @xkcd.command(name="latest", description="Get the latest xkcd comic.")
     async def xkcd_latest(self, ctx):
-        if not ctx.command.parent.can_run(ctx):
-            return
-
         async with ctx.bot.http2.get("https://xkcd.com/info.0.json") as resp:
-            text = await resp.text()
-
-        text = json.loads(text)
+            text = await resp.json()
 
         num = text["num"]
 
