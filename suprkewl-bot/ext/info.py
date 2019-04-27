@@ -20,11 +20,13 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+import os
 import pkg_resources
 import platform
 import time
 
 import discord
+import matplotlib.pyplot as plt
 from discord.ext import commands
 
 from .utils import apiToHuman
@@ -150,6 +152,44 @@ class Info(commands.Cog):
         sent = (await ctx.send(embed=emb))
         await ctx.bot.register_response(sent, ctx.message)
 
+    def _piegenerate(self, name1, name2, prc, fname):
+        labels = [name1, name2]
+        sizes = [prc, 100 - prc]
+        colors = ["lightcoral", "lightskyblue"]
+        patches, _ = plt.pie(sizes, colors=colors, startangle=90)
+        plt.legend(patches, labels, loc="best")
+        plt.axis('equal')
+        plt.tight_layout()
+        fname += ".png"
+        plt.savefig(fname)
+
+        return fname
+    @commands.command(description="Generates a pie chart of those with a role and those without")
+    @commands.cooldown(1, 3, commands.BucketType.default)
+    async def rolepie(self, ctx, role_id: int):
+        """Generate a piechart of those who have <role>."""
+        role = ctx.guild.get_role(role_id)
+
+        if role is None:
+            sent = (await ctx.send(":x: Role not found! The ID must match a role in the current server."))
+            await ctx.bot.register_response(sent, ctx.message)
+            return
+
+        if ctx.guild.large:
+            await ctx.bot.request_offline_members(ctx.guild)
+
+        m = ctx.guild.members
+        prc = (sum(m._roles.has(role_id) for m in m) / len(m)) * 100
+
+        names = [f"Members with '{role.name}' role", f"Members without '{role.name}' role"]
+        fname = str(ctx.message.id)
+        img_out = self._piegenerate(names[0], names[1], prc, fname)
+
+        fp = discord.File(img_out, filename="piechart.png")
+
+        sent = (await ctx.send(":white_check_mark:", file=fp))
+        os.delete(img_out)
+        await ctx.bot.register_response(sent, ctx.message)
 
 def setup(bot):
     bot.add_cog(Info())
