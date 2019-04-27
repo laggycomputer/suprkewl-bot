@@ -1,4 +1,5 @@
 aioredis
-discord.py
-jishaku
 aiosqlite
+discord.py
+matplotlib
+jishaku
