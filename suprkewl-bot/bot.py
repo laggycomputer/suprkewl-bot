@@ -77,18 +77,19 @@ class theBot(commands.Bot):
             return
         try:
             print(f"Got message '{message.content}'")
+            print(f"From @{message.author}")
+            print(f"From @{message.author}")
+            print(f"In server {message.guild}")
+            print(f"In channel {message.channel}")
+
         except UnicodeDecodeError:
-            print("Message content not printable")
+            print("Message properties not printable")
 
         if len(message.embeds) > 0:
             embeds = ""
             for emb in message.embeds:
                 embeds += str(emb.to_dict())
             print(f"With embed(s):\n{embeds}")
-
-        print(f"From @{message.author}")
-        print(f"In server {message.guild}")
-        print(f"In channel {message.channel}")
 
         if message.author.bot:
             return
