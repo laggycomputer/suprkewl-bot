@@ -166,14 +166,8 @@ class Info(commands.Cog):
         return fname
     @commands.command(description="Generates a pie chart of those with a role and those without")
     @commands.cooldown(1, 3, commands.BucketType.default)
-    async def rolepie(self, ctx, role_id: int):
+    async def rolepie(self, ctx, role_id: discord.Role):
         """Generate a piechart of those who have <role>."""
-        role = ctx.guild.get_role(role_id)
-
-        if role is None:
-            sent = (await ctx.send(":x: Role not found! The ID must match a role in the current server."))
-            await ctx.bot.register_response(sent, ctx.message)
-            return
 
         if ctx.guild.large:
             await ctx.bot.request_offline_members(ctx.guild)
