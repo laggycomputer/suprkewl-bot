@@ -44,6 +44,7 @@ class theBot(commands.Bot):
         self.http2 = None
 
         self.bg_task = self.loop.create_task(self.playingstatus())
+        self.change_status = True
 
         startup_extensions = [
             "jishaku", "ext.text", "ext.rand", "ext.docs", "ext.mod", "ext.info", "ext.help", "ext.config", "ext.admin"
@@ -225,7 +226,7 @@ class theBot(commands.Bot):
             "with the Discord API"
         ]
 
-        while self.is_ready():
+        while self.is_ready() and self.change_status:
             status = f"{random.choice(playing_statuses)} | lurking in {len(self.guilds)} servers and watching over {len(self.users)} users..."
 
             await self.change_presence(activity=discord.Game(name=status), status=discord.Status.idle)

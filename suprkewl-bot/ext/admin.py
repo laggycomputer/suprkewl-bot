@@ -49,6 +49,23 @@ class Admin(commands.Cog):
         finally:
             await ctx.bot.register_response(sent, ctx.message)
 
+    @commands.command(hidden=True)
+    async def statustoggle(self, ctx):
+        if ctx.bot.change_status:
+            resp = "Disabling status change."
+        else:
+            resp = "Enabling status change."
+        ctx.bot.change_status = not ctx.bot.change_status
+
+        sent = (await ctx.send(resp))
+        await ctx.bot.register_response(sent, ctx.message)
+
+    @commands.command(hidden=True)
+    async def statuschange(self, ctx, *, status):
+        await ctx.bot.change_presence(activity=discord.Game(name=status), status=discord.Status.idle)
+        sent = (await ctx.send(f":white_check_mark: Changed to `{status}`"))
+        await ctx.bot.register_response(sent, ctx.message)
+
 
 def setup(bot):
     bot.add_cog(Admin())
