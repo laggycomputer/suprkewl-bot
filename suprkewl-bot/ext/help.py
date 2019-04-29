@@ -100,7 +100,7 @@ class HelpCommand(commands.HelpCommand):
 
     async def send_group_help(self, group):
         embedinator = self.create_embedinator(
-            title=self.get_commands(group),
+            title=self.get_command_name(group),
             description=group.short_doc or "No description",
             max_fields=4
         )
