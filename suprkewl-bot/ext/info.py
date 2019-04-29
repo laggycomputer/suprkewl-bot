@@ -166,14 +166,14 @@ class Info(commands.Cog):
         return fname
     @commands.command(description="Generates a pie chart of those with a role and those without")
     @commands.cooldown(1, 3, commands.BucketType.default)
-    async def rolepie(self, ctx, role_id: discord.Role):
+    async def rolepie(self, ctx, role: discord.Role):
         """Generate a piechart of those who have <role>."""
 
         if ctx.guild.large:
             await ctx.bot.request_offline_members(ctx.guild)
 
         m = ctx.guild.members
-        prc = (sum(m._roles.has(role_id) for m in m) / len(m)) * 100
+        prc = (sum(m._roles.has(role) for m in m) / len(m)) * 100
 
         names = [f"Members with '{role.name}' role", f"Members without '{role.name}' role"]
         fname = str(ctx.message.id)
