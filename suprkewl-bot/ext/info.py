@@ -152,41 +152,75 @@ class Info(commands.Cog):
         sent = (await ctx.send(embed=emb))
         await ctx.bot.register_response(sent, ctx.message)
 
-    def _piegenerate(self, name1, name2, prc, fname):
-        labels = [name1, name2]
-        sizes = [prc, 100 - prc]
-        colors = ["lightcoral", "lightskyblue"]
-        patches, _ = plt.pie(sizes, colors=colors, startangle=90)
-        plt.legend(patches, labels, loc="best")
-        plt.axis('equal')
-        plt.tight_layout()
-        fname += ".png"
-        plt.savefig(fname)
 
-        return fname
     @commands.command(description="Generates a pie chart of those with a role and those without. Defaults to guild's highest role.")
     @commands.cooldown(1, 3, commands.BucketType.default)
     async def rolepie(self, ctx, *, role: discord.Role=None):
         """Generate a piechart of those who have <role>."""
 
-        if role is None:
-            role = ctx.guild.roles[-1]
-
         if ctx.guild.large:
             await ctx.bot.request_offline_members(ctx.guild)
 
         m = ctx.guild.members
-        prc = (sum(m._roles.has(role.id) for m in m) / len(m)) * 100
+        guild_size = len(m)
 
-        names = [f"Members with '{role.name}' role", f"Members without '{role.name}' role"]
-        fname = str(ctx.message.id)
-        img_out = self._piegenerate(names[0], names[1], prc, fname)
+        if role is not None:
+            def _piegenerate(name1, name2, prc, fname):
+                labels = [name1, name2]
+                sizes = [prc, 100 - prc]
+                colors = ["lightcoral", "lightskyblue"]
+                patches, _ = plt.pie(sizes, colors=colors, startangle=90)
+                plt.legend(patches, labels, loc="best")
+                plt.axis("equal")
+                plt.tight_layout()
+                fname += ".png"
+                plt.savefig(fname)
 
-        fp = discord.File(img_out, filename="piechart.png")
+                return fname
 
-        sent = (await ctx.send(f":white_check_mark: {prc}% of the server has the chosen role.", file=fp))
-        os.remove(img_out)
-        await ctx.bot.register_response(sent, ctx.message)
+            prc = (sum(member._roles.has(role.id) for member in m) / guild_size) * 100
+
+            names = [f"Members with '{role.name}' role", f"Members without '{role.name}' role"]
+            fname = str(ctx.message.id)
+            img_out = _piegenerate(names[0], names[1], prc, fname)
+
+            fp = discord.File(img_out, filename="piechart.png")
+
+            sent = (await ctx.send(f":white_check_mark: {prc}% of the server has the chosen role.", file=fp))
+            os.remove(img_out)
+            await ctx.bot.register_response(sent, ctx.message)
+        else:
+            roles = list(reversed(ctx.guild.roles))
+            m_sorted = {}
+
+            for r in roles:
+                m_sorted[r] = 0
+
+            for member in m:
+                m_sorted[member.top_role] += 1
+            
+            prc = list(m_sorted[r] / guild_size * 100 for r in m_sorted)
+            user_friendly_prc = list(f"{r.name}: {prc[list(m_sorted.keys()).index(r)]}%" for r in m_sorted)
+
+            labels = list(r.name for r in roles)
+            sizes = prc
+            patches, _ = plt.pie(sizes, startangle=90)
+            plt.legend(patches, labels, loc="best")
+            plt.axis("equal")
+            plt.tight_layout()
+
+            fname = str(ctx.message.id) + ".png"
+
+            plt.savefig(fname)
+
+            fp = discord.File(fname, filename="piechart.png")
+
+            fmt = "\n" + "\n".join(user_friendly_prc)
+            fmt = fmt.replace("@everyone", "\\@everyone")
+            sent = (await ctx.send(":white_check_mark: Here is a pie-chart of members by top role." + fmt, file=fp))
+            os.remove(fname)
+            await ctx.bot.register_response(sent, ctx.message)
+
 
 def setup(bot):
     bot.add_cog(Info())
