@@ -164,10 +164,13 @@ class Info(commands.Cog):
         plt.savefig(fname)
 
         return fname
-    @commands.command(description="Generates a pie chart of those with a role and those without")
+    @commands.command(description="Generates a pie chart of those with a role and those without. Defaults to guild's highest role.")
     @commands.cooldown(1, 3, commands.BucketType.default)
-    async def rolepie(self, ctx, *, role: discord.Role):
+    async def rolepie(self, ctx, *, role: discord.Role=None):
         """Generate a piechart of those who have <role>."""
+
+        if role is None:
+            role = ctx.guild.roles[-1]
 
         if ctx.guild.large:
             await ctx.bot.request_offline_members(ctx.guild)
