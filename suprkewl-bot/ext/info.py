@@ -238,7 +238,32 @@ class Info(commands.Cog):
             sent = (await ctx.send(f":white_check_mark: {prc}% of the server has the chosen role.", file=fp))
             os.remove(img_out)
             await ctx.bot.register_response(sent, ctx.message)
+
+    @commands.command(description="Sends a pie chart of users that are bots and those that are otherwise.")
+    @commands.cooldown(1, 3, commands.BucketType.guild)
+    async def botpie(self, ctx):
+        """Make a pie chart of server bots."""
+
+        if ctx.guild.large:
             await ctx.bot.request_offline_members(ctx.guild)
+
+        prc = sum(m.bot for m in ctx.guild.members) / len(ctx.guild.members) * 100
+
+        labels = ["Bots", "Non-Bots"]
+        sizes = [prc, 100 - prc]
+        colors = ["lightcoral", "lightskyblue"]
+        patches, _ = plt.pie(sizes, colors=colors, startangle=90)
+        plt.legend(patches, labels, loc="best")
+        plt.axis("equal")
+        plt.tight_layout()
+        fname = str(ctx.message.id) + ".png"
+        plt.savefig(fname)
+
+        fp = discord.File(fname, filename="piechart.png")
+
+        sent = (await ctx.send(f":white_check_mark: {prc}% of the server's members are bots.", file=fp))
+        os.remove(img_out)
+        await ctx.bot.register_response(sent, ctx.message)
 
 
 def setup(bot):
