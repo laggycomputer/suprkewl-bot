@@ -181,7 +181,7 @@ class Info(commands.Cog):
 
         fp = discord.File(img_out, filename="piechart.png")
 
-        sent = (await ctx.send(":white_check_mark:", file=fp))
+        sent = (await ctx.send(f":white_check_mark: {prc}% of the server has the chosen role.", file=fp))
         os.remove(img_out)
         await ctx.bot.register_response(sent, ctx.message)
 
