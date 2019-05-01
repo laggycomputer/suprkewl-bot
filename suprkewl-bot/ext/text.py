@@ -193,7 +193,7 @@ L
     @commands.cooldown(1, 120, commands.BucketType.channel)
     async def text(self, ctx):
         """Don't ask what this does."""
-        
+
         files = ["bee.txt", "uwu.txt"]
         with open(os.getcwd() + f"..\\..\\assets\\{random.choice(files)}", "rb") as fp:
             sent = (await ctx.send(file=discord.File(fp, filename="love_letter.txt")))
