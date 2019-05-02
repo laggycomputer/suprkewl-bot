@@ -253,22 +253,27 @@ class Info(commands.Cog):
         if ctx.guild.large:
             await ctx.bot.request_offline_members(ctx.guild)
 
-        prc = sum(m.bot for m in ctx.guild.members) / len(ctx.guild.members) * 100
+        def pie_gen():
+            prc = sum(m.bot for m in ctx.guild.members) / len(ctx.guild.members) * 100
 
-        labels = ["Bots", "Non-Bots"]
-        sizes = [prc, 100 - prc]
-        colors = ["lightcoral", "lightskyblue"]
-        patches, _ = plt.pie(sizes, colors=colors, startangle=90)
-        plt.legend(patches, labels, loc="best")
-        plt.axis("equal")
-        plt.tight_layout()
-        fname = str(ctx.message.id) + ".png"
-        plt.savefig(fname)
+            labels = ["Bots", "Non-Bots"]
+            sizes = [prc, 100 - prc]
+            colors = ["lightcoral", "lightskyblue"]
+            patches, _ = plt.pie(sizes, colors=colors, startangle=90)
+            plt.legend(patches, labels, loc="best")
+            plt.axis("equal")
+            plt.tight_layout()
+            fname = str(ctx.message.id) + ".png"
+            plt.savefig(fname)
+
+            return [fname, prc]
+
+        fname, prc = await ctx.bot.loop.run_in_executor(None, pie_gen)
 
         fp = discord.File(fname, filename="piechart.png")
 
         sent = (await ctx.send(f":white_check_mark: {prc}% of the server's members are bots.", file=fp))
-        os.remove(img_out)
+        os.remove(fname)
         await ctx.bot.register_response(sent, ctx.message)
 
 
