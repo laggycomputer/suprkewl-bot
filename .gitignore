@@ -5,3 +5,5 @@ token
 *.log
 .idea/*
 *.db
+/suprkewl-bot/config.py
+!/suprkewl-bot/config.py.example
