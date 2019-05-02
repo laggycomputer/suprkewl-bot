@@ -203,7 +203,7 @@ class Info(commands.Cog):
             fmt = "\n" + "\n".join(user_friendly_prc)
             fmt = fmt.replace("@everyone", "\\@everyone")
 
-            if len(fmt > 2000):
+            if len(fmt) > 2000:
                 fmt = io.BytesIO(fmt.encode("utf-8"))
                 fp2 = discord.File(fmt, "key.txt")
 
