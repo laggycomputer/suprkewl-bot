@@ -156,6 +156,7 @@ class Info(commands.Cog):
 
     @commands.command(description="Generates a pie chart of those with a role and those without. If no role is specified, a pie-chart is generated of members by their top role.")
     @commands.cooldown(1, 3, commands.BucketType.guild)
+    @commands.guild_only()
     async def rolepie(self, ctx, *, role: discord.Role=None):
         """Generate a piechart of those who have <role>."""
 
@@ -245,6 +246,7 @@ class Info(commands.Cog):
 
     @commands.command(description="Sends a pie chart of users that are bots and those that are otherwise.")
     @commands.cooldown(1, 3, commands.BucketType.guild)
+    @commands.guild_only()
     async def botpie(self, ctx):
         """Make a pie chart of server bots."""
 
