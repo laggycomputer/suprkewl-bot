@@ -10,6 +10,8 @@ def plural(values):
         ret += f", {values[-2]}, and {values[-1]}"
         return ret
 
+# From R. Danny.
+
 class Plural:
     def __init__(self, value):
         self.value = value
