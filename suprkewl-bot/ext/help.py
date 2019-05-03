@@ -92,6 +92,7 @@ class HelpCommand(commands.HelpCommand):
         embed = self.create_embed()
         embed.title = self.get_command_name(command)
         embed.description = command.short_doc or "No description"
+        embed.add_field(name="Extended info", value=command.description or "No further info", inline=False)
         embed.set_footer(text=f"Category: {command.cog_name}")
 
         destination = self.get_destination()
