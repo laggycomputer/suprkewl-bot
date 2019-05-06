@@ -38,23 +38,6 @@ from .utils import time as t_utils
 
 class About(commands.Cog):
 
-    @commands.command()
-    async def invite(self, ctx):
-        """Invite to the support server."""
-
-        emb = discord.Embed(author="Join our Discord server!", color=0xf92f2f)
-
-        emb.add_field(name="\u200b", value="https://www.discord.gg/CRBBJVY")
-
-        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
-        emb.set_author(name=ctx.bot.user.name,
-                       icon_url=ctx.bot.user.avatar_url)
-        emb.set_footer(
-            text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
-
-        sent = (await ctx.send(embed=emb))
-        await ctx.bot.register_response(sent, ctx.message)
-
     # Largely from R. Danny.
     def format_commit(self, commit):
         short, _, _ = commit.message.partition("\n")
@@ -116,6 +99,7 @@ class About(commands.Cog):
             description=self._get_last_commits()
         )
 
+        emb.add_field(name="Support Server", value="https://www.discord.gg/CRBBJVY")
         emb.add_field(name="Line count", value=self._linecount())
         emb.add_field(name="System Time", value=self._current_time())
         emb.add_field(name="Processor Type", value=platform.machine().lower())
