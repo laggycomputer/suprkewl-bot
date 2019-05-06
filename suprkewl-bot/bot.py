@@ -26,7 +26,6 @@ import random
 import traceback
 
 import aiohttp
-import aiosqlite
 import discord
 from discord.ext import commands
 from ext.utils import apiToHuman, plural
@@ -49,7 +48,6 @@ class theBot(commands.Bot):
         startup_extensions = [
             "ext.about",
             "ext.admin",
-            "ext.config",
             "ext.help",
             "ext.info",
             "ext.mod",
@@ -194,14 +192,6 @@ class theBot(commands.Bot):
                 f"{response.channel.id}:{response.id}"
             )
 
-    async def on_guild_join(self, guild):
-        async with aiosqlite.connect(config.db_path) as db:
-            await db.execute(f"INSERT INTO guilds (id, prefix) VALUES ({guild.id}, '{config.prefix}');")
-
-    async def on_guild_remove(self, guild):
-        async with aiosqlite.connect(config.db_path) as db:
-            await db.execute(f"DELETE FROM guilds WHERE id = {guild.id};")
-
     async def playingstatus(self):
 
         await self.wait_until_ready()
@@ -345,11 +335,5 @@ async def get_pre(bot, message):
     pre = [config.prefix]
     if isinstance(message.channel, discord.DMChannel):
         pre.append("")
-    elif isinstance(message.channel, discord.TextChannel):
-        async with aiosqlite.connect(config.db_path) as db:
-            async with db.execute(f"SELECT prefix FROM guilds WHERE id = {message.guild.id};") as cur:
-                fetched = (await cur.fetchall())[0][0]
-            if fetched not in pre:
-                pre.append(fetched[0][0])
 
     return pre
