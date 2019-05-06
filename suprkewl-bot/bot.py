@@ -47,7 +47,15 @@ class theBot(commands.Bot):
         self.change_status = True
 
         startup_extensions = [
-            "jishaku", "ext.text", "ext.rand", "ext.docs", "ext.mod", "ext.info", "ext.help", "ext.config", "ext.admin"
+            "ext.about",
+            "ext.admin",
+            "ext.config",
+            "ext.help",
+            "ext.info",
+            "ext.mod",
+            "ext.rand",
+            "ext.text",
+            "jishaku"
         ]
 
         for extension in startup_extensions:

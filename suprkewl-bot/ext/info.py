@@ -22,9 +22,6 @@ DEALINGS IN THE SOFTWARE.
 
 import io
 import os
-import pkg_resources
-import platform
-import time
 
 import discord
 import matplotlib.pyplot as plt
@@ -96,63 +93,6 @@ class Info(commands.Cog):
 
         sent = (await ctx.send(embed=emb))
         await ctx.bot.register_response(sent, ctx.message)
-
-    @commands.command(
-        aliases=["about"], description="Gets some stats about the bot. Has a 5-second cooldown per channel.."
-    )
-    @commands.cooldown(1, 5, commands.BucketType.channel)
-    async def botstats(self, ctx):
-        """Give some system info for the bot."""
-
-        emb = discord.Embed(title="Bot info", color=0xf92f2f)
-        year, month, dayofmonth, hour, minute, second, dayofweek, _, isdst = time.localtime()
-        week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-        dayofweek = week[dayofweek]
-        months = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "November", "December"
-        ]
-        month = months[month]
-        disptime = f"{dayofweek}, {month} {dayofmonth}, {year}; {hour}:{minute}:{second}, Pacific Standard Time"
-        if isdst:
-            disptime += " (DST)"
-
-        emb.add_field(name="System Time", value=disptime)
-        emb.add_field(name="Processor Type", value=platform.machine().lower())
-        emb.add_field(name="OS version (short)", value=platform.system() + " " + platform.release())
-        emb.add_field(name="OS version (long)", value=platform.platform(aliased=True))
-        emb.add_field(
-            name="Python Version", value=f"Python {platform.python_branch()}, build date {platform.python_build()[1]}"
-        )
-        emb.add_field(name="discord.py version", value=pkg_resources.get_distribution("discord.py").version)
-        emb.add_field(name="Jishaku version", value=pkg_resources.get_distribution("jishaku").version)
-        emb.add_field(name="Processor name", value=platform.processor())
-        emb.add_field(name="Current server count", value=str(len(ctx.bot.guilds)))
-        emb.add_field(name="Total Users", value=str(len(ctx.bot.users)))
-
-        emb.add_field(name=f"See `{ctx.prefix}git` for source code.", value="\u200b")
-
-        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
-        emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
-        emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
-
-        sent = (await ctx.send(embed=emb))
-        await ctx.bot.register_response(sent, ctx.message)
-
-    @commands.command()
-    async def ping(self, ctx):
-        """Check the bot's latency."""
-
-        latency = ctx.bot.latency * 1000
-        latency = round(latency, 4)
-        emb = discord.Embed(description=f":ping_pong: My current latency is {latency} milliseconds.", color=0xf92f2f)
-        emb.set_image(
-            url="https://images-ext-2.discordapp.net/external/pKGlPehvn1NTxya18d7ZyggEm4pKFakjbO_sYS-pagM/https/media.giphy.com/media/nE8wBpOIfKJKE/giphy.gif"
-        )
-
-        sent = (await ctx.send(embed=emb))
-        await ctx.bot.register_response(sent, ctx.message)
-
 
     @commands.command(description="Generates a pie chart of those with a role and those without. If no role is specified, a pie-chart is generated of members by their top role.")
     @commands.cooldown(1, 3, commands.BucketType.guild)
