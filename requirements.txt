@@ -1,5 +1,4 @@
 aioredis
-aiosqlite
 python-dateutil
 discord.py
 matplotlib
