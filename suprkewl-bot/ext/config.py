@@ -28,6 +28,7 @@ from discord.ext import commands
 import config
 
 class Config(commands.Cog):
+
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)

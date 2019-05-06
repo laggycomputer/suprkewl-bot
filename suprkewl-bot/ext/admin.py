@@ -25,6 +25,7 @@ from discord.ext import commands
 
 
 class Admin(commands.Cog):
+
     async def cog_check(self, ctx):
         return await ctx.bot.is_owner(ctx.author)
 
