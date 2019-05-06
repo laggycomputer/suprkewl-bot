@@ -162,6 +162,7 @@ class HelpCommand(commands.HelpCommand):
 
 
 class Help(commands.Cog):
+
     def __init__(self, bot):
         self.bot = bot
         self.original_help_command = bot.help_command
