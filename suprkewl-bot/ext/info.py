@@ -94,7 +94,10 @@ class Info(commands.Cog):
         sent = (await ctx.send(embed=emb))
         await ctx.bot.register_response(sent, ctx.message)
 
-    @commands.command(description="Generates a pie chart of those with a role and those without. If no role is specified, a pie-chart is generated of members by their top role.")
+    @commands.command(
+        description="Generates a pie chart of those with a role and those without. If no role is specified, a pie-chart"
+                    " is generated of members by their top role."
+    )
     @commands.cooldown(1, 3, commands.BucketType.guild)
     @commands.guild_only()
     async def rolepie(self, ctx, *, role: discord.Role=None):
@@ -161,7 +164,7 @@ class Info(commands.Cog):
                 prc = (sum(member._roles.has(role.id) for member in m) / guild_size) * 100
 
                 names = [f"Members with '{role.name}' role",
-                        f"Members without '{role.name}' role"]
+                         f"Members without '{role.name}' role"]
                 fname = str(ctx.message.id)
                 img_out = _piegenerate(names[0], names[1], prc, fname)
                 fmt = f":white_check_mark: {prc}% of the server has the chosen role."

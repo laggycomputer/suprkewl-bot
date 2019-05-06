@@ -30,17 +30,20 @@ import discord
 from discord.ext import commands
 
 
-class _fighter:
+class Fighter:
     def __init__(self, user):
         self.user = user
         self.health = 100
         self.turn = False
         self.won = False
         self.blocking = False
-class _fdata:
+
+
+class FighterData:
     def __init__(self, p1, p2):
         self.p1 = p1
         self.p2 = p2
+
 
 class Random(commands.Cog):
 
@@ -189,7 +192,8 @@ class Random(commands.Cog):
             count, limit = map(int, dice.split("d"))
         except ValueError:
             await msg.edit(
-                content=f":x: Your input must be of the form `AdB`! Please check `{ctx.prefix}{ctx.invoked_with} info` for more info."
+                content=f":x: Your input must be of the form `AdB`! Please check `{ctx.prefix}{ctx.invoked_with}"
+                f" info` for more info."
             )
             await ctx.bot.register_response(msg, ctx.message)
             return
@@ -219,7 +223,8 @@ class Random(commands.Cog):
                 file_content = "Rolls: {0}Total: {2}{1}Average:{3}".format("\n".join(rolls), "\n", total, avg)
                 fp = io.BytesIO(file_content.encode("utf-8"))
                 sent = (await ctx.send(
-                    content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this file:",
+                    content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed"
+                            " in this file:",
                     file=discord.File(fp, "rolls.txt")
                 ))
                 await ctx.bot.register_response(sent, ctx.message)
@@ -231,14 +236,16 @@ class Random(commands.Cog):
                 await ctx.bot.register_response(msg, ctx.message)
         else:
             await msg.edit(
-                content=f"Your syntax was correct, however one of your arguments were invalid. See `{ctx.prefix}{ctx.invoked_with} info.`"
+                content=f"Your syntax was correct, however one of your arguments were invalid. See"
+                f" `{ctx.prefix}{ctx.invoked_with} info.`"
             )
             await ctx.bot.register_response(msg, ctx.message)
 
     @dice.command(description="Show info for dice command.", name="info")
     async def dice_info(self, ctx):
         sent = (await ctx.send(
-            "Your argument must be of the form AdB, where A is the number of dice to roll and B is the number of sides on each die. A and B must be postive integers between 1 and 1000."
+            "Your argument must be of the form AdB, where A is the number of dice to roll and B is the number of sides"
+            " on each die. A and B must be positive integers between 1 and 1000."
         ))
         await ctx.bot.register_response(sent, ctx.message)
 
@@ -300,7 +307,8 @@ class Random(commands.Cog):
         if (await ctx.bot.redis.exists(f"{target.id}:fighting")):
             emb = discord.Embed(
                 color=0xf92f2f,
-                description=f"{ctx.author.mention} :x: Don't make {target.mention} fight multiple people at once! They're' not Bruce Lee."
+                description=f"{ctx.author.mention} :x: Don't make {target.mention} fight multiple people at once!"
+                f" They're not Bruce Lee."
             )
             emb.set_image(
                 url="https://media1.tenor.com/images/8c69a1095f5d7745fabbdedf569644e7/tenor.gif?itemid=13291191"
@@ -321,8 +329,8 @@ class Random(commands.Cog):
         async with ctx.channel.typing():
             await asyncio.sleep(1)
 
-            p1 = _fighter(ctx.author)
-            p2 = _fighter(target)
+            p1 = Fighter(ctx.author)
+            p2 = Fighter(target)
 
             def find_turn():
                 if p1.turn:
@@ -419,8 +427,9 @@ class Random(commands.Cog):
             }
 
             connectedrooms = {
-                "Laundry Room":["Backyard","Kitchen"], "Dining Room":["Kitchen","Backyard"], "Kitchen":["Dining Room","Living Room"],
-                "Bedroom":["Living Room"], "Living Room":["Kitchen","Bedroom"], "Backyard":["Laundry Room","Laundry Room"]
+                "Laundry Room": ["Backyard", "Kitchen"], "Dining Room": ["Kitchen", "Backyard"],
+                "Kitchen": ["Dining Room", "Living Room"], "Bedroom": ["Living Room"],
+                "Living Room": ["Kitchen", "Bedroom"], "Backyard": ["Laundry Room", "Laundry Room"]
             }
 
             setting = random.choice(fightplaces)
@@ -441,7 +450,7 @@ class Random(commands.Cog):
 
             usrinput = await ctx.bot.wait_for("message", check=check)
 
-            if usrinput == None:
+            if usrinput is None:
                 await ctx.send("it timed out noobs")
                 return
             else:
@@ -449,7 +458,6 @@ class Random(commands.Cog):
                 if usrinput.content.lower().startswith("block"):
                     currentaction = f"{find_turn().user.mention} is bloccing"
                     find_turn().blocking = True
-
 
                 elif usrinput.content.lower().startswith("hit"):
                     damage = 0
@@ -485,14 +493,17 @@ class Random(commands.Cog):
                 elif usrinput.content.lower().startswith("run"):
                     newsetting = random.choice(connectedrooms[setting])
 
-                    currentaction = f"{find_turn().user.mention} kicks {find_not_turn().user.mention} in the shins and runs as fast as he/she can out of the {setting} and into the {newsetting}. {find_turn().user.mention} gives chase."
+                    currentaction = f"{find_turn().user.mention} kicks {find_not_turn().user.mention} in the" \
+                        f" shins and runs as fast as he/she can out of the {setting} and into the" \
+                        f" {newsetting}. {find_turn().user.mention} gives chase."
 
                     setting = newsetting
                     newsetting = ""
 
                 elif usrinput.content.lower().startswith("end"):
                     await ctx.send(
-                        f"{find_turn().user.mention} and {find_not_turn().user.mention} get friendly and the fight's over."
+                        f"{find_turn().user.mention} and {find_not_turn().user.mention} get friendly and the fight's"
+                        f" over."
                     )
                     await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
                     return
@@ -635,6 +646,7 @@ class Random(commands.Cog):
 
         sent = (await ctx.send(embed=emb))
         await ctx.bot.register_response(sent, ctx.message)
+
 
 def setup(bot):
     bot.add_cog(Random(bot))

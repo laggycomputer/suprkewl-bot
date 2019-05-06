@@ -30,14 +30,18 @@ class Admin(commands.Cog):
         return await ctx.bot.is_owner(ctx.author)
 
     @commands.command(hidden=True, name="del")
-    async def deletemsg(self, ctx, id: int):
+    async def deletemsg(self, ctx, message: int):
         try:
-            m = await ctx.fetch_message(id)
+            m = await ctx.fetch_message(message)
             sent = None
         except discord.NotFound:
             sent = (await ctx.send(":x: Message not found. It must be in the current channel."))
+            m = None
         except discord.Forbidden:
-            sent = (await ctx.send(":x: I do not have permission to `Read Message History` here. I cannot fetch the message."))
+            sent = (await ctx.send(
+                ":x: I do not have permission to `Read Message History` here. I cannot fetch the message."
+            ))
+            m = None
         finally:
             if sent is not None:
                 await ctx.bot.register_response(sent, ctx.message)

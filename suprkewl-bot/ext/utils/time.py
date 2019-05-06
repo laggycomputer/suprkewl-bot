@@ -5,7 +5,6 @@ from dateutil.relativedelta import relativedelta
 from .plural import Plural
 
 # From R. Danny.
-
 def human_timedelta(dt, *, source=None, accuracy=None):
     now = source or datetime.datetime.utcnow()
     if dt > now:
