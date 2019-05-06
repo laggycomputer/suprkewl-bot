@@ -135,7 +135,6 @@ class theBot(commands.Bot):
             else:
                 await self.process_commands(message)
 
-
     async def track_message(self, message):
         if await self.redis.exists(message):
             return
@@ -225,7 +224,8 @@ class theBot(commands.Bot):
         ]
 
         while self.is_ready() and self.change_status:
-            status = f"{random.choice(playing_statuses)} | lurking in {len(self.guilds)} servers and watching over {len(self.users)} users..."
+            status = random.choice(playing_statuses)
+            status += f" | lurking in {len(self.guilds)} servers and watching over {len(self.users)} users..."
 
             await self.change_presence(activity=discord.Game(name=status), status=discord.Status.idle)
             await asyncio.sleep(120)
@@ -239,7 +239,7 @@ class theBot(commands.Bot):
 
         error = getattr(error, "original", error)
 
-        def permsList(perms):
+        def perms_list(perms):
 
             if len(perms) == 0:
                 return None
@@ -271,7 +271,10 @@ class theBot(commands.Bot):
         elif isinstance(error, commands.NoPrivateMessage):
 
             emb = discord.Embed(color=0xf92f2f)
-            emb.add_field(name="This command is disabled in DMs", value=f":x: `{ctx.prefix}{ctx.command}` can only be used in servers, not in DMs or DM groups.")
+            emb.add_field(
+                name="This command is disabled in DMs",
+                value=f":x: `{ctx.prefix}{ctx.command}` can only be used in servers, not in DMs or DM groups."
+            )
             emb.set_thumbnail(url=self.user.avatar_url)
             emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
             emb.set_footer(text=f"{self.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
@@ -283,25 +286,26 @@ class theBot(commands.Bot):
             retry = round(error.retry_after, 2)
 
             emb = discord.Embed(color=0xf92f2f)
-            emb.add_field(name="Command on Cooldown",
-                          value=f"Woah there! You just triggered a cooldown trying to run `{ctx.prefix}{ctx.command}`. I'll let you know you can start it after the cooldown of {retry} seconds is over.")
+            emb.add_field(
+                name="Command on Cooldown",
+                value=f"Woah there! You just triggered a cooldown trying to run `{ctx.prefix}{ctx.command}`."
+                f" Wait {retry} seconds."
+            )
             emb.set_thumbnail(url=self.user.avatar_url)
             emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
             emb.set_footer(text=f"{self.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
-            msg = await ctx.send(embed=emb)
-
-            await asyncio.sleep(retry)
-
-            await ctx.send(f"{ctx.author.mention} The cooldown is over!")
-
-            return msg
+            return await ctx.send(embed=emb)
 
         elif isinstance(error, commands.MissingPermissions):
 
             emb = discord.Embed(color=0xf92f2f)
-            missingPerms = permsList(error.missing_perms)
-            emb.add_field(name="User Missing Permissions", value=f":x: Permission denied to run `{ctx.prefix}{ctx.command}`. You need to be able to {missingPerms}.")
+            missing_perms = perms_list(error.missing_perms)
+            emb.add_field(
+                name="User Missing Permissions",
+                value=f":x: Permission denied to run `{ctx.prefix}{ctx.command}`."
+                f" You need to be able to {missing_perms}."
+            )
             emb.set_thumbnail(url=self.user.avatar_url)
             emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
             emb.set_footer(text=f"{self.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
@@ -311,8 +315,12 @@ class theBot(commands.Bot):
         elif isinstance(error, commands.BotMissingPermissions):
 
             emb = discord.Embed(color=0xf92f2f)
-            missingPerms = permsList(error.missing_perms)
-            emb.add_field(name="Bot Missing Permissions", value=f":x: I don't have the proper permissions to run `{ctx.prefix}{ctx.command}`. I need to be allowed to {missingPerms}.")
+            missing_perms = perms_list(error.missing_perms)
+            emb.add_field(
+                name="Bot Missing Permissions",
+                value=f":x: I don't have the proper permissions to run `{ctx.prefix}{ctx.command}`."
+                f" I need to be allowed to {missing_perms}."
+            )
             emb.set_thumbnail(url=self.user.avatar_url)
             emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
             emb.set_footer(text=f"{self.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)

@@ -36,59 +36,63 @@ import pygit2
 from .utils import time as t_utils
 
 
+# Largely from R. Danny.
+def format_commit(commit):
+    short, _, _ = commit.message.partition("\n")
+    short_sha2 = commit.hex[0:6]
+    commit_tz = datetime.timezone(
+        datetime.timedelta(minutes=commit.commit_time_offset))
+    commit_time = datetime.datetime.fromtimestamp(
+        commit.commit_time).replace(tzinfo=commit_tz)
+
+    offset = t_utils.human_timedelta(commit_time.astimezone(
+        datetime.timezone.utc).replace(tzinfo=None), accuracy=1)
+    return f"[`{short_sha2}`](https://github.com/laggycomputer/suprkewl-bot/commit/{commit.hex}) {short} ({offset})"
+
+
+def get_last_commits(count=5):
+    repo = pygit2.Repository("../.git")
+    commits = list(itertools.islice(
+        repo.walk(repo.head.target, pygit2.GIT_SORT_TOPOLOGICAL), count))
+    return "\n".join(format_commit(c) for c in commits)
+
+
+def linecount():
+    path_to_search = "./"
+    total = 0
+    file_amount = 0
+    for path, subdirs, files in os.walk(path_to_search):
+        for name in files:
+            if name.endswith(".py"):
+                file_amount += 1
+                with codecs.open(path_to_search + str(pathlib.PurePath(path, name)), "r", "utf-8") as f:
+                    for i, l in enumerate(f):
+                        if l.strip().startswith("#") or len(l.strip()) is 0:
+                            pass
+                        else:
+                            total += 1
+
+    return f"I am made of {total:,} lines of Python, spread across {file_amount:,} files!"
+
+
+def current_time():
+    year, month, dayofmonth, hour, minute, second, dayofweek, _, isdst = time.localtime()
+    week = ["Sunday", "Monday", "Tuesday",
+            "Wednesday", "Thursday", "Friday", "Saturday"]
+    dayofweek = week[dayofweek]
+    months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "November", "December"
+    ]
+    month = months[month]
+    disptime = f"{dayofweek}, {month} {dayofmonth}, {year}; {hour}:{minute}:{second}, Pacific Standard Time"
+    if isdst:
+        disptime += " (DST)"
+
+    return disptime
+
+
 class About(commands.Cog):
-
-    # Largely from R. Danny.
-    def format_commit(self, commit):
-        short, _, _ = commit.message.partition("\n")
-        short_sha2 = commit.hex[0:6]
-        commit_tz = datetime.timezone(
-            datetime.timedelta(minutes=commit.commit_time_offset))
-        commit_time = datetime.datetime.fromtimestamp(
-            commit.commit_time).replace(tzinfo=commit_tz)
-
-        offset = t_utils.human_timedelta(commit_time.astimezone(
-            datetime.timezone.utc).replace(tzinfo=None), accuracy=1)
-        return f"[`{short_sha2}`](https://github.com/laggycomputer/suprkewl-bot/commit/{commit.hex}) {short} ({offset})"
-
-    def _get_last_commits(self, count=3):
-        repo = pygit2.Repository("../.git")
-        commits = list(itertools.islice(
-            repo.walk(repo.head.target, pygit2.GIT_SORT_TOPOLOGICAL), count))
-        return "\n".join(self.format_commit(c) for c in commits)
-
-    def _linecount(self):
-        path_to_search = "./"
-        total = 0
-        file_amount = 0
-        for path, subdirs, files in os.walk(path_to_search):
-            for name in files:
-                    if name.endswith(".py"):
-                        file_amount += 1
-                        with codecs.open(path_to_search + str(pathlib.PurePath(path, name)), "r", "utf-8") as f:
-                            for i, l in enumerate(f):
-                                if l.strip().startswith("#") or len(l.strip()) is 0:
-                                    pass
-                                else:
-                                    total += 1
-
-        return f"I am made of {total:,} lines of Python, spread across {file_amount:,} files!"
-
-    def _current_time(self):
-        year, month, dayofmonth, hour, minute, second, dayofweek, _, isdst = time.localtime()
-        week = ["Sunday", "Monday", "Tuesday",
-                "Wednesday", "Thursday", "Friday", "Saturday"]
-        dayofweek = week[dayofweek]
-        months = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "November", "December"
-        ]
-        month = months[month]
-        disptime = f"{dayofweek}, {month} {dayofmonth}, {year}; {hour}:{minute}:{second}, Pacific Standard Time"
-        if isdst:
-            disptime += " (DST)"
-
-        return disptime
 
     @commands.command()
     async def about(self, ctx):
@@ -96,12 +100,12 @@ class About(commands.Cog):
 
         emb = discord.Embed(
             name="Bot info", color=0xf92f2f,
-            description=self._get_last_commits()
+            description=get_last_commits()
         )
 
         emb.add_field(name="Support Server", value="https://www.discord.gg/CRBBJVY")
-        emb.add_field(name="Line count", value=self._linecount())
-        emb.add_field(name="System Time", value=self._current_time())
+        emb.add_field(name="Line count", value=linecount())
+        emb.add_field(name="System Time", value=current_time())
         emb.add_field(name="Processor Type", value=platform.machine().lower())
         emb.add_field(
             name="OS version (short)",
@@ -150,11 +154,12 @@ class About(commands.Cog):
         emb = discord.Embed(
             description=f":ping_pong: My current latency is {latency} milliseconds.", color=0xf92f2f)
         emb.set_image(
-            url="https://images-ext-2.discordapp.net/external/pKGlPehvn1NTxya18d7ZyggEm4pKFakjbO_sYS-pagM/https/media.giphy.com/media/nE8wBpOIfKJKE/giphy.gif"
+            url="https://66.media.tumblr.com/tumblr_lfp90xpDTm1qb9w8so1_250.gif"
         )
 
         sent = (await ctx.send(embed=emb))
         await ctx.bot.register_response(sent, ctx.message)
+
 
 def setup(bot):
     bot.add_cog(About())
