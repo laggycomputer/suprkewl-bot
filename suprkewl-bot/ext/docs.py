@@ -48,7 +48,7 @@ class Documentation(commands.Cog):
 
     # Largely from R. Danny.
     def format_commit(self, commit):
-        short, _, _ = commit.message.partition('\n')
+        short, _, _ = commit.message.partition("\n")
         short_sha2 = commit.hex[0:6]
         commit_tz = datetime.timezone(datetime.timedelta(minutes=commit.commit_time_offset))
         commit_time = datetime.datetime.fromtimestamp(commit.commit_time).replace(tzinfo=commit_tz)
