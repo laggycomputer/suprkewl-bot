@@ -32,6 +32,11 @@ class Admin(commands.Cog):
         conv = await CodeblockConverter().convert(ctx, f"/usr/local/bin/supervisorctl {args}")
         await ctx.invoke(ctx.bot.get_command("jsk sh"), argument=conv)
 
+    @commands.command(hidden=True, aliases=["redis-cli"])
+    async def redis(self, ctx, *, args):
+        conv = await CodeblockConverter().convert(ctx, f"/usr/bin/redis-cli {args}")
+        await ctx.invoke(ctx.bot.get_command("jsk sh"), argument=conv)
+
     @commands.command(hidden=True, name="del")
     async def deletemsg(self, ctx, message: int):
         try:
