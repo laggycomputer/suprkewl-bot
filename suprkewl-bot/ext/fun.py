@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import asyncio
+import contextlib
 import io
 import math
 import random
@@ -744,6 +745,28 @@ L
         )
 
         sent = (await ctx.send(embed=emb))
+        await ctx.bot.register_response(sent, ctx.message)
+
+    @commands.command(description="Reacts with a sheep emoji to sheep-related messages. Send 's!stop' to end the sheepiness.")
+    async def sheep(self, ctx):
+        """React to messages with a sheep emoji."""
+
+        c = lambda m: m.channel == ctx.channel
+        m = ctx.message
+
+        with contextlib.suppress(discord.HTTPException):
+            await m.add_reaction(":sheep:")
+
+        while True:
+            m = await ctx.bot.wait_for("message", check=c, timeout=300)
+            if m is None:
+                break
+            if m.content.lower().startswith("s!stop") and m.author == ctx.author:
+                break
+            if sum(i in m.content.lower() for i in ["sheep", "shep", "🐑", "ba", "wool"]):
+                with contextlib.suppress(discord.HTTPException):
+                    await m.add_reaction(":sheep:")
+        sent = (await ctx.send(":white_check_mark: Done."))
         await ctx.bot.register_response(sent, ctx.message)
 
 
