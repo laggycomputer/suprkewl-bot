@@ -204,7 +204,7 @@ L
     async def stretch(self, ctx, *, text):
         """Make text L O N G E R."""
 
-        ret = "\n".join((" "*a).join(list(text)) for a in [*range(0, 5), *range(5, -1, -1)])
+        ret = "\n".join((" " * a).join(list(text)) for a in [*range(0, 5), *range(5, -1, -1)])
 
         if len(ret) > 2000:
             fp = io.BytesIO(ret.encode("utf-8"))
