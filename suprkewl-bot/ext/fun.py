@@ -22,6 +22,7 @@ import contextlib
 import io
 import math
 import random
+import re
 
 import discord
 from discord.ext import commands
@@ -769,6 +770,30 @@ L
         sent = (await ctx.send(":white_check_mark: Done."))
         await ctx.bot.register_response(sent, ctx.message)
 
+    @commands.command(description="Reacts with a duck emoji to duck-related messages. Send 's!stop' to end the quackery.")
+    async def duck(self, ctx):
+        """React to messages with a duck emoji."""
+
+        c = lambda m: m.channel == ctx.channel
+        m = ctx.message
+
+        with contextlib.suppress(discord.HTTPException):
+            await m.add_reaction(":duck:")
+
+        pattern = re.compile("(kw|qu)(ack|ac|ak|cc)")
+
+        while True:
+            m = await ctx.bot.wait_for("message", check=c, timeout=300)
+            if m is None:
+                break
+            if m.content.lower().startswith("s!stop") and m.author == ctx.author:
+                break
+            r = re.search(pattern, m.content.lower())
+            if sum(i in m.content.lower() for i in ["duck", "duk", "🦆", "ducc"]) or r:
+                with contextlib.suppress(discord.HTTPException):
+                    await m.add_reaction(":duck:")
+        sent = (await ctx.send(":white_check_mark: Done."))
+        await ctx.bot.register_response(sent, ctx.message)
 
 def setup(bot):
     bot.add_cog(Fun())
