@@ -107,19 +107,21 @@ class theBot(commands.Bot):
                 if message.channel.permissions_for(message.guild.me).send_messages:
                     if message.content.startswith(message.guild.me.mention):
                         ping_images = [
-                            "https://cdn.discordapp.com/emojis/389570423450370048.png",
-                            "https://cdn.discordapp.com/attachments/541876503814733836/557088019073466408/unknown.png",
-                            "https://media.tenor.com/images/cca1d4bbb1216e46645d368050c020ac/tenor.gif",
-                            "https://media.tenor.com/images/2ccae15299d6f3345a45306214b9baea/tenor.gif"
+                            "../assets/angery,gif",
+                            "../assets/eyes.png",
                         ]
                         desc = plural(await get_pre(self, message))
                         emb = discord.Embed(
                             color=0xf92f2f,
                             description=f":eyes: Who pinged? My prefix(es) is/are `{desc}`. If you are in a DM with me, I do not require a prefix."
                         )
-                        emb.set_image(url=random.choice(ping_images))
+                        fname = random.choice(ping_images)
+                        ext = fname.split(".")[-1]
+                        fname_finished = f"image.{ext}"
+                        fp = discord.File(fname, fname_finished)
+                        emb.set_image(url="attachment://" + fname_finished)
 
-                        await message.channel.send(embed=emb)
+                        await message.channel.send(embed=emb, file=fp)
 
                     owner = (await self.application_info()).owner
                     m1 = f"<@!{owner.id}>"
