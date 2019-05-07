@@ -1,0 +1,23 @@
+os:
+  - linux
+
+language:
+  - python
+
+python:
+  - "3.6"
+
+install:
+  - pip install -r requirements.txt
+  - pip install pyflakes
+
+script:
+  - find . | grep -E "\.py$" | xargs python -m compileall
+  - find . | grep -E "\.py$" | xargs pyflakes
+
+cache:
+  - pip
+
+notifications:
+  email:
+    - false
