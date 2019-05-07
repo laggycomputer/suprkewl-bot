@@ -3,8 +3,8 @@
 <p align="center">
 <a href="https://discord.gg/CRBBJVY"><img src="https://img.shields.io/discord/498185249952366602.svg"></a>
 <a href="./LICENSE-gpl3.txt"><img src="https://img.shields.io/github/license/laggycomputer/suprkewl-bot.svg?style=flat-square"></a>
+<a href=https://travis-ci.com/laggycomputer/suprkewl-bot><img src=https://travis-ci.com/laggycomputer/suprkewl-bot.svg?branch=master></a>
 </p>
-
 
 An open-sourced Discord bot. Features such as moderation, just-for-fun, user info and more will be implemented at a later date.  
 
