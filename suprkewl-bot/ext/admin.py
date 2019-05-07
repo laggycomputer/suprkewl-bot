@@ -22,12 +22,18 @@ DEALINGS IN THE SOFTWARE.
 
 import discord
 from discord.ext import commands
+from jishaku.codeblocks import CodeblockConverter
 
 
 class Admin(commands.Cog):
 
     async def cog_check(self, ctx):
         return await ctx.bot.is_owner(ctx.author)
+
+    @commands.command(hidden=True, aliases=["procm", "procmanager", "supervisor", "supervisorctl"])
+    async def proc(self, ctx, *, args):
+        conv = await CodeblockConverter().convert(ctx, f"/usr/local/bin/supervisorctl {args}")
+        await ctx.invoke(ctx.bot.get_command("jsk sh"), argument=conv)
 
     @commands.command(hidden=True, name="del")
     async def deletemsg(self, ctx, message: int):
