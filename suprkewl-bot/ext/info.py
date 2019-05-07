@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import io
 import os
+from urllib.parse import quote as urlquote
 
 import discord
 import matplotlib.pyplot as plt
@@ -215,6 +216,31 @@ class Info(commands.Cog):
         sent = (await ctx.send(f":white_check_mark: {prc}% of the server's members are bots.", file=fp))
         os.remove(fname)
         await ctx.bot.register_response(sent, ctx.message)
+
+    # Thanks to Takaru, PendragonLore/TakaruBot
+    @commands.command()
+    async def pypi(self, ctx, *, name):
+        data = await (await ctx.bot.http2.get(f"https://pypi.org/pypi/{urlquote(name, safe='')}/json")).json()
+
+        embed = discord.Embed(
+            title=data["info"]["name"],
+            url=data["info"]["package_url"],
+            color=discord.Color.dark_blue()
+        )
+        embed.set_author(name=data["info"]["author"])
+        embed.description = data["info"]["summary"] or "No short description."
+        embed.add_field(
+            name="Classifiers",
+            value="\n".join(data["info"]["classifiers"]) or "No classifiers.")
+        embed.set_footer(
+            text=f"Latest: {data['info']['version']} |"
+                 f" Keywords: {data['info']['keywords'] or 'No keywords.'}"
+        )
+        embed.set_thumbnail(
+            url="https://cdn-images-1.medium.com/max/1200/1*2FrV8q6rPdz6w2ShV6y7bw.png"
+        )
+
+        await ctx.send(embed=embed)
 
 
 def setup(bot):
