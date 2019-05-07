@@ -42,9 +42,95 @@ class FighterData:
         self.p2 = p2
 
 
-class Random(commands.Cog):
+class Fun(commands.Cog):
 
-    @commands.command(aliases=["burn"])
+    @commands.command(
+        description="A bunch of lenny faces."
+    )
+    @commands.cooldown(1, 10, commands.BucketType.channel)
+    async def lenny(self, ctx):
+        """( ͡° ͜ʖ ͡°) """
+
+        msg = """**LENNY FACES**
+Regular:( ͡° ͜ʖ ͡°)
+Eyebrow Lenny: ( ͠° ͜ʖ ͡°)
+chienese lenny: （͡°͜ʖ͡°）
+TAKE THAT: ( ͡0 ͜ʖ ͡ 0)----@-
+The generic tf2 pyro lenny:( ͡w ͜+ ͡m1)
+2long4u:( ͡0 ͜ʖ ͡ 0)
+Confused:( ͠° ͟ʖ ͡°)
+Jew Lenny: (͡ ͡° ͜ つ ͡͡°)
+Strong:ᕦ( ͡° ͜ʖ ͡°)ᕤ
+The Mino Lenny: ˙͜>˙
+Nazi Lenny: ( ͡卐 ͜ʖ ͡卐)
+Cat Lenny:( ͡° ᴥ ͡°)
+Praise the sun!: [T]/﻿
+Dorito Lenny: ( ͡V ͜ʖ ͡V )
+Wink:( ͡~ ͜ʖ ͡°)
+swiggity swootey:( ͡o ͜ʖ ͡o)
+ynneL:( ͜。 ͡ʖ ͜。)﻿
+Wink 2: ͡° ͜ʖ ͡ -
+I see u:( ͡͡ ° ͜ ʖ ͡ °)﻿
+Alien:( ͡ ͡° ͡° ʖ ͡° ͡°)
+U WOT M8:(ง ͠° ͟ل͜ ͡°)ง
+Lenny Gang: ( ͡°( ͡° ͜ʖ( ͡° ͜ʖ ͡°)ʖ ͡°) ͡°)
+dErP:( ͡° ͜ʖ ͡ °)
+Kitty?:(ʖ ͜° ͜ʖ)
+monster lenny: ( ͜。 ͡ʖ ͡O)
+Square:[ ͡° ͜ʖ ͡°]
+Raise Your Donger:ヽ༼ຈل͜ຈ༽ﾉ
+Imposter:{ ͡• ͜ʖ ͡•}
+Voldemort:( ͡° ͜V ͡°)
+Happy:( ͡^ ͜ʖ ͡^)
+Satisfied:( ‾ʖ̫‾)
+Sensei dong:( ͡°╭͜ʖ╮͡° )
+Sensei doing Dong dong woo:ᕦ( ͡°╭͜ʖ╮͡° )ᕤ
+Donger bill:[̲̅$̲̅(̲̅ ͡° ͜ʖ ͡°̲̅)̲̅$̲̅]
+Spider lenny://( ͡°͡° ͜ʖ ͡°͡°)/\
+The noseless lenny:( ͡° ͜ ͡°)
+Cool lenny: (⌐■_■)
+Cheeky Lenny:: (͡o‿O͡)
+Arrow Lenny: ⤜( ͠° ͜ʖ °)⤏
+Table Lenny: (╯°□°)╯︵ ┻━┻
+cONFUSED lenny乁( ⁰͡ Ĺ̯ ⁰͡ ) ㄏ
+nazi lennys: ( ͡° ͜ʖ ͡°)/ ( ͡° ͜ʖ ͡°)/ ( ͡° ͜ʖ ͡°)/ ( ͡° ͜ʖ ͡°)/ 卐卐卐
+Oh hay: (◕ ◡ ◕)
+Manly Lenny: ᕦ( ͡͡~͜ʖ ͡° )ᕤ
+Put ur dongers up or I'll shoot:(ง ͡° ͜ʖ ͡°)=/̵͇̿/'̿'̿̿̿ ̿ ̿̿
+Badass Lenny: ̿ ̿'̿'̵͇̿з=(⌐■ʖ■)=ε/̵͇̿/'̿̿ ̿
+"""
+        sent = (await ctx.send(msg))
+        await ctx.bot.register_response(sent, ctx.message)
+
+    @commands.command(description="LMAO! Has a 5-second channel cooldown to keep things calm.")
+    @commands.cooldown(1, 5, commands.BucketType.channel)
+    async def lmao(self, ctx):
+        """A nice and long lmao"""
+        msg = """
+L
+    M
+        A
+          O
+            o
+           o
+          o
+         。
+        。
+       ."""
+
+        sent = (await ctx.send(msg))
+        await ctx.bot.register_response(sent, ctx.message)
+
+    @commands.command(
+        description="Make the bot say something. Watch what you say. Has a 5 second user cooldown."
+    )
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def say(self, ctx, *, message: str):
+        """Make the bot say something."""
+
+        sent = (await ctx.send(f"{ctx.author.mention} wants me to say '{message}'"))
+        await ctx.bot.register_response(sent, ctx.message)    @commands.command(aliases=["burn"])
+
     async def roast(self, ctx, target: discord.Member):
         """Roast someone. ⌐■_■"""
 
@@ -217,7 +303,8 @@ class Random(commands.Cog):
 
             if len(content) > 2000:
                 # Yes, this is blocking, but given current limits responses are almost always ~4000 characters max.
-                file_content = "Rolls: {0}Total: {2}{1}Average:{3}".format("\n".join(rolls), "\n", total, avg)
+                file_content = "Rolls: {0}Total: {2}{1}Average:{3}".format(
+                    "\n".join(rolls), "\n", total, avg)
                 fp = io.BytesIO(file_content.encode("utf-8"))
                 sent = (await ctx.send(
                     content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed"
@@ -290,14 +377,19 @@ class Random(commands.Cog):
                 color=0xf92f2f,
                 description=f"{ctx.author.mention} :x: You can't fight multiple people at once! You're not Bruce Lee."
             )
+            fp = discord.File("../assets/brucelee.gif", "image.gif")
             emb.set_image(
-                url="https://media1.tenor.com/images/8c69a1095f5d7745fabbdedf569644e7/tenor.gif?itemid=13291191"
+                url="attachment://image.gif"
             )
             emb.set_thumbnail(url=ctx.guild.me.avatar_url)
-            emb.set_author(name=ctx.guild.me.name, icon_url=ctx.guild.me.avatar_url)
-            emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            emb.set_author(
+                name=ctx.guild.me.name,
+                icon_url=ctx.guild.me.avatar_url
+            )
+            emb.set_footer(
+                text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
-            sent = (await ctx.send(embed=emb))
+            sent = (await ctx.send(embed=emb, file=fp))
             await ctx.bot.register_response(sent, ctx.message)
 
             return
@@ -307,14 +399,19 @@ class Random(commands.Cog):
                 description=f"{ctx.author.mention} :x: Don't make {target.mention} fight multiple people at once!"
                 f" They're not Bruce Lee."
             )
+            fp = discord.File("../assets/brucelee.gif", "image.gif")
             emb.set_image(
-                url="https://media1.tenor.com/images/8c69a1095f5d7745fabbdedf569644e7/tenor.gif?itemid=13291191"
+                url="attachment://image.gif"
             )
             emb.set_thumbnail(url=ctx.guild.me.avatar_url)
-            emb.set_author(name=ctx.guild.me.name, icon_url=ctx.guild.me.avatar_url)
-            emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            emb.set_author(
+                name=ctx.guild.me.name,
+                icon_url=ctx.guild.me.avatar_url
+            )
+            emb.set_footer(
+                text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
-            sent = (await ctx.send(embed=emb))
+            sent = (await ctx.send(embed=emb, file=fp))
             await ctx.bot.register_response(sent, ctx.message)
 
             return
@@ -441,7 +538,7 @@ class Random(commands.Cog):
             def check(m):
                 if m.channel == ctx.channel and m.author == find_turn().user:
                     return m.content.lower().startswith("hit") or m.content.lower().startswith("run")\
-                           or m.content.lower().startswith("block") or m.content.lower().startswith("end")
+                        or m.content.lower().startswith("block") or m.content.lower().startswith("end")
                 else:
                     return False
 
@@ -460,16 +557,19 @@ class Random(commands.Cog):
                     damage = 0
                     rand = random.randint(1, 15)
                     if rand == 1:
-                        blow = deathblows[setting].format(find_turn().user, find_not_turn().user)
+                        blow = deathblows[setting].format(
+                            find_turn().user, find_not_turn().user)
                         blow += " (DEATHBLOW)"
                         damage = 100
 
                     elif rand > 9:
-                        blow = random.choice(universalactions).format(find_turn().user, find_not_turn().user)
+                        blow = random.choice(universalactions).format(
+                            find_turn().user, find_not_turn().user)
                         damage = random.randint(1, 50)
 
                     else:
-                        blow = random.choice(fightactions[setting]).format(find_turn().user, find_not_turn().user)
+                        blow = random.choice(fightactions[setting]).format(
+                            find_turn().user, find_not_turn().user)
                         damage = random.randint(1, 50)
 
                     if find_not_turn().blocking:
@@ -509,7 +609,8 @@ class Random(commands.Cog):
                 if find_not_turn().health < 0:
                     find_not_turn().health = 0
 
-                emb = discord.Embed(name="FIGHT", color=find_turn().user.colour)
+                emb = discord.Embed(
+                    name="FIGHT", color=find_turn().user.colour)
 
                 emb.add_field(name="Current Setting", value=f"`{setting}`")
                 emb.add_field(name="Player 1 health", value=f"**{p1.health}**")
@@ -517,7 +618,8 @@ class Random(commands.Cog):
                 emb.add_field(name="Current action", value=currentaction)
 
                 emb.set_thumbnail(url=ctx.bot.user.avatar_url)
-                emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+                emb.set_author(name=ctx.bot.user.name,
+                               icon_url=ctx.bot.user.avatar_url)
                 emb.set_footer(
                     text=f"{ctx.bot.description} Requested by {ctx.author}",
                     icon_url=ctx.author.avatar_url
@@ -554,7 +656,7 @@ class Random(commands.Cog):
 
     @commands.group(description="Gets an xkcd comic.", invoke_without_command=True)
     @commands.cooldown(1, 3, commands.BucketType.channel)
-    async def xkcd(self, ctx, arg: int=None):
+    async def xkcd(self, ctx, arg: int = None):
         if arg is None:
             await self.xkcd_latest(ctx)
         else:
@@ -579,7 +681,8 @@ class Random(commands.Cog):
         )
         emb.set_image(url=text["img"])
 
-        emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+        emb.set_author(name=ctx.bot.user.name,
+                       icon_url=ctx.bot.user.avatar_url)
         emb.set_footer(
             text=f"{ctx.bot.description} Requested by {ctx.author}",
             icon_url=ctx.author.avatar_url
@@ -646,4 +749,4 @@ class Random(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Random(bot))
+    bot.add_cog(Fun())
