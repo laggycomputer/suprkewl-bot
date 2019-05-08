@@ -15,3 +15,5 @@ If you want to host this bot:
 * Then, install Redis on your host of choice, and set it up with the same password that you configured.
 * Create a SQLite3 database, and specify its path (remember to use `\\` in place of `\`) in the config file.
 * Finally, you can use `pip3 install -r requirements.txt` at the root of this repo to install the requirements.
+
+Oh and hey, if you wanna PR this bot, I'm not merging/rebasing until the build passes. Thanks anyway.
