@@ -764,7 +764,7 @@ L
                 break
             if m.content.lower().startswith("s!stop") and m.author == ctx.author:
                 break
-            if sum(i in m.content.lower() for i in ["sheep", "shep", "🐑", "ba", "wool"]):
+            if any(i in m.content.lower() for i in ["sheep", "shep", "🐑", "ba", "wool"]):
                 with contextlib.suppress(discord.HTTPException):
                     await m.add_reaction(":sheep:")
         sent = (await ctx.send(":white_check_mark: Done."))
@@ -789,11 +789,12 @@ L
             if m.content.lower().startswith("s!stop") and m.author == ctx.author:
                 break
             r = re.search(pattern, m.content.lower())
-            if sum(i in m.content.lower() for i in ["duck", "duk", "🦆", "ducc"]) or r:
+            if any(i in m.content.lower() for i in ["duck", "duk", "🦆", "ducc"]) or r:
                 with contextlib.suppress(discord.HTTPException):
                     await m.add_reaction(":duck:")
         sent = (await ctx.send(":white_check_mark: Done."))
         await ctx.bot.register_response(sent, ctx.message)
+
 
 def setup(bot):
     bot.add_cog(Fun())
