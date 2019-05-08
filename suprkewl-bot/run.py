@@ -40,10 +40,13 @@ client = bot.theBot(
     description="Did you know? If you are in a DM with me, you don't need a prefix!",
 )
 
-if config.token == "":
-    raise ValueError("Please set your token in the config file.")
+if __name__ == "__main__":
+    if config.token == "":
+        raise ValueError("Please set your token in the config file.")
+    else:
+        try:
+            client.run(config.token)
+        except discord.LoginFailure:
+            print("Invalid token passed, exiting.")
 else:
-    try:
-        client.run(config.token)
-    except discord.LoginFailure:
-        print("Invalid token passed, exiting.")
+    print("Please don't import me!")
