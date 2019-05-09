@@ -140,8 +140,11 @@ class HelpCommand(commands.HelpCommand):
         )
 
         for cog, cog_commands in mapping.items():
-            for command in cog_commands:
-                self.add_command_field(embedinator, command)
+            filtered = await self.filter_commands(cog_commands)
+
+            if filtered:
+                for command in filtered:
+                    self.add_command_field(embedinator, command)
 
         sent = (await embedinator.send())
         await self.context.bot.register_response(sent, self.context.message)
