@@ -41,16 +41,9 @@ class Text(commands.Cog):
             sent = (await ctx.send(":x: Please give a subcommand!"))
             await ctx.bot.register_response(sent, ctx.message)
 
-    @raw.command(aliases=["msg"])
-    async def message(self, ctx, message_id: int):
+    @raw.command(name="message", aliases=["msg"])
+    async def raw_message(self, ctx, message: discord.Message):
         """Return a message as a dict."""
-
-        message = await ctx.channel.fetch_message(message_id)
-        if message is None:
-            sent = (await ctx.send(
-                ":x: You gave an invalid message ID! If that message is not in this channel, try this command in the channel it belongs to."
-            ))
-            await ctx.bot.register_response(sent, ctx.message)
 
         raw = await ctx.bot.http.get_message(message.channel.id, message.id)
 
@@ -64,8 +57,8 @@ class Text(commands.Cog):
             await ctx.send(raw_string[0])
             await ctx.send(raw_string[1])
 
-    @raw.command(aliases=["user"])
-    async def member(self, ctx, user: discord.User = None):
+    @raw.command(name="member", aliases=["user"])
+    async def raw_member(self, ctx, user: discord.User = None):
         """Return a member as a dict."""
         if user is None:
             user = ctx.author
@@ -76,8 +69,8 @@ class Text(commands.Cog):
         sent = (await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```"))
         await ctx.bot.register_response(sent, ctx.message)
 
-    @raw.command()
-    async def channel(
+    @raw.command(name="channel")
+    async def raw_channel(
             self, ctx, channel: typing.Union[
                 discord.TextChannel, discord.VoiceChannel, discord.CategoryChannel
             ]=None
