@@ -354,6 +354,7 @@ class theBot(commands.Bot):
             "Don't run the code and no errors will appear.",
             "If you work 8 hours a day as a regular worker, you may one day be promoted to boss and work 12 hours a"
             " day.",
+            "If nobody is perfect, and I am nobody, am I perfect?",
             "It's called a miracle because it doesn't happen.",
             "May all your bacon burn.",
             "The word utopia is derived from the Latin 'Utopia', meaning 'nothing, impossible'.",
