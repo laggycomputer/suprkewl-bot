@@ -300,11 +300,12 @@ class Info(commands.Cog):
             text=f"Latest: {data['info']['version']} |"
                  f" Keywords: {data['info']['keywords'] or 'No keywords.'}"
         )
+        fp = discord.File("../assets/pypi.png", "image.png")
         embed.set_thumbnail(
-            url="https://cdn-images-1.medium.com/max/1200/1*2FrV8q6rPdz6w2ShV6y7bw.png"
+            url="attachment://image.png"
         )
 
-        await ctx.send(embed=embed)
+        await ctx.send(embed=embed, file=fp)
 
 
 def setup(bot):
