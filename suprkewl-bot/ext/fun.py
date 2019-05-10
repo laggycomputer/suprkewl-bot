@@ -375,7 +375,7 @@ L
             return
         if (await ctx.bot.redis.exists(f"{ctx.author.id}:fighting")):
             emb = discord.Embed(
-                color=0xf92f2f,
+                color=ctx.bot.embed_color,
                 description=f"{ctx.author.mention} :x: You can't fight multiple people at once! You're not Bruce Lee."
             )
             fp = discord.File("../assets/brucelee.gif", "image.gif")
@@ -396,7 +396,7 @@ L
             return
         if (await ctx.bot.redis.exists(f"{target.id}:fighting")):
             emb = discord.Embed(
-                color=0xf92f2f,
+                color=ctx.bot.embed_color,
                 description=f"{ctx.author.mention} :x: Don't make {target.mention} fight multiple people at once!"
                 f" They're not Bruce Lee."
             )
@@ -677,7 +677,7 @@ L
             text = await resp.json()
 
         emb = discord.Embed(
-            color=0xf92f2f,
+            color=ctx.bot.embed_color,
             description=f"Here you are! xkcd comic #{number}. Credits to [xkcd](https://xkcd.com/{number})."
         )
         emb.set_image(url=text["img"])
@@ -707,7 +707,7 @@ L
             text = await resp.json()
 
         emb = discord.Embed(
-            color=0xf92f2f,
+            color=ctx.bot.embed_color,
             description=f"Here you are! xkcd comic #{comic_to_get}. Credits to [xkcd](https://xkcd.com/{comic_to_get})."
         )
         emb.set_image(url=text["img"])
@@ -731,7 +731,7 @@ L
         num = text["num"]
 
         emb = discord.Embed(
-            color=0xf92f2f,
+            color=ctx.bot.embed_color,
             description=f"Here you are! xkcd comic #{num}. Credits to [xkcd](https://xkcd.com/{num})."
         )
         emb.set_image(url=text["img"])

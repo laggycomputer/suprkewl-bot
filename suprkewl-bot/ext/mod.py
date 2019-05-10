@@ -278,7 +278,7 @@ class Moderation(commands.Cog):
     async def banlist(self, ctx):
         """Gives a list of banned users."""
 
-        emb = discord.Embed(color=0xf92f2f)
+        emb = discord.Embed(color=ctx.bot.embed_color)
         bans = []
         banlist = await ctx.guild.bans()
         if not any(banlist):

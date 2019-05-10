@@ -36,6 +36,8 @@ class theBot(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.embed_color = 0xf92f2f
+
         self.redis = None
         self.http2 = None
 
@@ -109,7 +111,7 @@ class theBot(commands.Bot):
                         ]
                         desc = plural(await get_pre(self, message))
                         emb = discord.Embed(
-                            color=0xf92f2f,
+                            color=self.embed_color,
                             description=f":eyes: Who pinged? My prefix(es) is/are `{desc}`. If you are in a DM with me, I do not require a prefix."
                         )
                         fname = random.choice(ping_images)
@@ -195,7 +197,7 @@ class theBot(commands.Bot):
 
         elif isinstance(error, commands.DisabledCommand):
 
-            emb = discord.Embed(color=0xf92f2f)
+            emb = discord.Embed(color=self.embed_color)
             emb.add_field(name="Disabled Command", value=f":x: `{ctx.prefix}{ctx.command}` has been disabled!")
             emb.set_thumbnail(url=self.user.avatar_url)
             emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
@@ -205,7 +207,7 @@ class theBot(commands.Bot):
 
         elif isinstance(error, commands.NoPrivateMessage):
 
-            emb = discord.Embed(color=0xf92f2f)
+            emb = discord.Embed(color=self.embed_color)
             emb.add_field(
                 name="This command is disabled in DMs",
                 value=f":x: `{ctx.prefix}{ctx.command}` can only be used in servers, not in DMs or DM groups."
@@ -220,7 +222,7 @@ class theBot(commands.Bot):
 
             retry = round(error.retry_after, 2)
 
-            emb = discord.Embed(color=0xf92f2f)
+            emb = discord.Embed(color=self.embed_color)
             emb.add_field(
                 name="Command on Cooldown",
                 value=f"Woah there! You just triggered a cooldown trying to run `{ctx.prefix}{ctx.command}`."
@@ -234,7 +236,7 @@ class theBot(commands.Bot):
 
         elif isinstance(error, commands.MissingPermissions):
 
-            emb = discord.Embed(color=0xf92f2f)
+            emb = discord.Embed(color=self.embed_color)
             missing_perms = perms_list(error.missing_perms)
             emb.add_field(
                 name="User Missing Permissions",
@@ -249,7 +251,7 @@ class theBot(commands.Bot):
 
         elif isinstance(error, commands.BotMissingPermissions):
 
-            emb = discord.Embed(color=0xf92f2f)
+            emb = discord.Embed(color=self.embed_color)
             missing_perms = perms_list(error.missing_perms)
             emb.add_field(
                 name="Bot Missing Permissions",

@@ -26,7 +26,7 @@ from .utils import Embedinator
 class HelpCommand(commands.HelpCommand):
     def __init__(self):
         super().__init__()
-        self.color = 0xf92f2f
+        self.color = self.context.bot.embed_color
 
     def command_not_found(self, string):
         return f"Command or category `{self.context.prefix}{string}` not found. Try again..."
