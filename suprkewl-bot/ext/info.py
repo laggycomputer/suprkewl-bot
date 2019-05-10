@@ -130,7 +130,7 @@ class Info(commands.Cog):
     async def roleperms(self, ctx, role: discord.Role):
         """Get permissions for a role"""
 
-        emb = discord.Embed(title=f"Perms for '{role}', a role in '{ctx.guild}'", color=0xf92f2f)
+        emb = discord.Embed(title=f"Perms for '{role}', a role in '{ctx.guild}'", color=ctx.bot.embed_color)
         emb.set_thumbnail(url=ctx.bot.user.avatar_url)
         emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
         emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
