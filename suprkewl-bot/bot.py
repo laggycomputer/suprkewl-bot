@@ -349,7 +349,7 @@ class theBot(commands.Bot):
 
     @property
     def embed_footer(self):
-        return random.choice({
+        return random.choice((
             "Did you know? If you are in a DM with me, you don't need to use a prefix.",
             "Don't run the code and no errors will appear.",
             "I am Nobody, nobody is perfect, therefore I am perfect. - Dandi Daley Mackall",
@@ -361,7 +361,7 @@ class theBot(commands.Bot):
             "The word utopia is derived from the Latin 'Utopia', meaning 'nothing, impossible'.",
             "To succeed in life, you need three things; a wishbone, a backbone and a funny bone. - Reba McEntire",
             linecount()
-        })
+        ))
 
 
 
