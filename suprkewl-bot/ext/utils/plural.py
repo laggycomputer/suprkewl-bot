@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+
 def plural(values):
     if len(values) == 0:
         return ""
@@ -29,8 +30,9 @@ def plural(values):
         ret += f", {values[-2]}, and {values[-1]}"
         return ret
 
-# From R. Danny.
-class Plural:
+
+class Plural:  # From R. Danny.
+
     def __init__(self, value):
         self.value = value
 

@@ -136,14 +136,17 @@ L
         """Roast someone. ⌐■_■"""
 
         roasts = [
-            f"You spend your time on this thingy {target.mention}? I bet you don't even know what it does. By the way, can you even read this?",
+            f"You spend your time on this thingy {target.mention}? I bet you don't even know what it does. By the way,"
+            f" can you even read this?",
             f"{target.mention}, I fart to make you smell better.",
-            f"{target.mention}, Your parents hated you so much your bath toys were an iron and a toaster. ~~go commit toaster bath~~",
+            f"{target.mention}, Your parents hated you so much your bath toys were an iron and a toaster. ~~go commit"
+            f" toaster bath~~",
             f"{target.mention}, Why don't you check eBay and see if they have a life for sale?",
             f"{target.mention}, You bring everyone a lot of joy, when you leave the room.",
             f"{target.mention}, you're as bright as a black hole, and twice as dense.",
             f"{target.mention}, what'll you do to get a face after that baboon wants his face back?",
-            f"{target.mention}, I don't exactly hate you, but if you were on fire and I had water, I'd drink the water.",
+            f"{target.mention}, I don't exactly hate you, but if you were on fire and I had water, I'd drink the"
+            f" water.",
             f"{target.mention}, I'll never forget the first time we met, although I'll keep trying.",
             f"{target.mention}, I don't I can think of an insult bad enough for you.",
             f"{target.mention}, There are more calories in your stomach than in the local supermarket!",
@@ -748,18 +751,19 @@ L
         sent = (await ctx.send(embed=emb))
         await ctx.bot.register_response(sent, ctx.message)
 
-    @commands.command(description="Reacts with a sheep emoji to sheep-related messages. Send 's!stop' to end the sheepiness.")
+    @commands.command(
+        description="Reacts with a sheep emoji to sheep-related messages. Send 's!stop' to end the sheepiness."
+    )
     async def sheep(self, ctx):
         """React to messages with a sheep emoji."""
 
-        c = lambda m: m.channel == ctx.channel
         m = ctx.message
 
         with contextlib.suppress(discord.HTTPException):
             await m.add_reaction(":sheep:")
 
         while True:
-            m = await ctx.bot.wait_for("message", check=c, timeout=300)
+            m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
             if m is None:
                 break
             if m.content.lower().startswith("s!stop") and m.author == ctx.author:
@@ -770,11 +774,12 @@ L
         sent = (await ctx.send(":white_check_mark: Done."))
         await ctx.bot.register_response(sent, ctx.message)
 
-    @commands.command(description="Reacts with a duck emoji to duck-related messages. Send 's!stop' to end the quackery.")
+    @commands.command(
+        description="Reacts with a duck emoji to duck-related messages. Send 's!stop' to end the quackery."
+    )
     async def duck(self, ctx):
         """React to messages with a duck emoji."""
 
-        c = lambda m: m.channel == ctx.channel
         m = ctx.message
 
         with contextlib.suppress(discord.HTTPException):
@@ -783,7 +788,7 @@ L
         pattern = re.compile("(kw|qu)(ack|ac|ak|cc)")
 
         while True:
-            m = await ctx.bot.wait_for("message", check=c, timeout=300)
+            m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
             if m is None:
                 break
             if m.content.lower().startswith("s!stop") and m.author == ctx.author:

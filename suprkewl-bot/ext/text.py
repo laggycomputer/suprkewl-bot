@@ -48,7 +48,8 @@ class Text(commands.Cog):
             fp = io.BytesIO(ret.encode("utf-8"))
 
             sent = (await ctx.send(
-                content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this file:",
+                content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in"
+                        " this file:",
                 file=discord.File(fp, "stretch.txt")
             ))
         else:
@@ -68,7 +69,8 @@ class Text(commands.Cog):
             fp = io.BytesIO(ret.encode("utf-8"))
 
             sent = (await ctx.send(
-                content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this file:",
+                content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in"
+                        " this file:",
                 file=discord.File(fp, "square.txt")
             ))
             await ctx.bot.register_response(sent, ctx.message)

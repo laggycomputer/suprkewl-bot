@@ -48,7 +48,7 @@ class Moderation(commands.Cog):
             try:
                 await message.delete()
                 deleted += 1
-            except:
+            except discord.HTTPException:
                 errorcnt += 1
 
         sent = (await ctx.send(
@@ -91,7 +91,7 @@ class Moderation(commands.Cog):
             if message.author == user:
                 try:
                     await message.delete()
-                except:
+                except discord.HTTPException:
                     errorcnt += 1
                 total += 1
 
@@ -124,7 +124,7 @@ class Moderation(commands.Cog):
             if message.author in role.members:
                 try:
                     await message.delete()
-                except:
+                except discord.HTTPException:
                     errorcnt += 1
                 total += 1
 
@@ -258,7 +258,7 @@ class Moderation(commands.Cog):
             try:
                 await target.send(f":thumbs_up: You've been unbanned from {ctx.guild}! If you still have a valid"
                                   f" invite, you can use it to rejoin.")
-            except:
+            except discord.HTTPException:
                 await sent.edit(
                     content=f"{ctx.author.mention} The unbanned user's priviacy settings prevent me from notofying them"
                     f" of their unbanning."

@@ -70,9 +70,14 @@ class theBot(commands.Bot):
         if not self.http2:
             self.http2 = aiohttp.ClientSession()
 
-        print(f"Logged in as {self.user.name} (UID {self.user.id}) | Connected to {len(self.guilds)} servers and their combined {len(set(self.get_all_members()))} members")
+        print(
+            f"Logged in as {self.user.name} (UID {self.user.id}) | Connected to {len(self.guilds)} servers and their "
+            f"combined {len(set(self.get_all_members()))} members"
+        )
         print("-" * 8)
-        print(f"Current discord.py version: {discord.__version__} | Current Python version: {platform.python_version()}")
+        print(
+            f"Current discord.py version: {discord.__version__} | Current Python version: {platform.python_version()}"
+        )
         print("-" * 8)
         print(f"Use this link to invite this bot:")
         print(f"https://discordapp.com/oauth2/authorize?client_id={self.user.id}&scope=bot&permissions=8")

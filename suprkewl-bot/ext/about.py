@@ -17,11 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import codecs
 import datetime
 import itertools
-import os
-import pathlib
 import pkg_resources
 import platform
 import time
@@ -48,7 +45,7 @@ def format_commit(commit):
     return f"[`{short_sha2}`](https://github.com/laggycomputer/suprkewl-bot/commit/{commit.hex}) {short} ({offset})"
 
 
-def get_last_commits(count=5):
+def get_last_commits(count = 5):
     try:
         repo = pygit2.Repository("../.git")
     except pygit2.GitError:
@@ -56,6 +53,7 @@ def get_last_commits(count=5):
     commits = list(itertools.islice(
         repo.walk(repo.head.target, pygit2.GIT_SORT_TOPOLOGICAL), count))
     return "\n".join(format_commit(c) for c in commits)
+
 
 def current_time():
     year, month, dayofmonth, hour, minute, second, dayofweek, _, isdst = time.localtime()

@@ -33,7 +33,8 @@ class Info(commands.Cog):
 
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.group(
-        description="Gives the data under a message, channel, or member in a JSON format, as recieved from the Discord API."
+        description="Gives the data under a message, channel, or member in a JSON format, as recieved from the"
+                    " Discord API."
     )
     async def raw(self, ctx):
         """Returns a dict version of some objects."""
@@ -41,7 +42,6 @@ class Info(commands.Cog):
         if ctx.invoked_subcommand is None:
             sent = (await ctx.send(":x: Please give a subcommand!"))
             await ctx.bot.register_response(sent, ctx.message)
-
 
     @raw.command(name="message", aliases=["msg"])
     async def raw_message(self, ctx, message: discord.Message):
@@ -59,7 +59,6 @@ class Info(commands.Cog):
             await ctx.send(raw_string[0])
             await ctx.send(raw_string[1])
 
-
     @raw.command(name="member", aliases=["user"])
     async def raw_member(self, ctx, user: discord.User = None):
         """Return a member as a dict."""
@@ -71,7 +70,6 @@ class Info(commands.Cog):
 
         sent = (await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```"))
         await ctx.bot.register_response(sent, ctx.message)
-
 
     @raw.command(name="channel")
     async def raw_channel(
@@ -164,7 +162,7 @@ class Info(commands.Cog):
     )
     @commands.cooldown(1, 3, commands.BucketType.guild)
     @commands.guild_only()
-    async def rolepie(self, ctx, *, role: discord.Role=None):
+    async def rolepie(self, ctx, *, role: discord.Role = None):
         """Generate a piechart of those who have <role>."""
 
         if ctx.guild.large:
