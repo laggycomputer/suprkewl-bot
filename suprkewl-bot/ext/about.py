@@ -49,7 +49,10 @@ def format_commit(commit):
 
 
 def get_last_commits(count=5):
-    repo = pygit2.Repository("../.git")
+    try:
+        repo = pygit2.Repository("../.git")
+    except pygit2.GitError:
+        repo = pygit2.Repository(".git")
     commits = list(itertools.islice(
         repo.walk(repo.head.target, pygit2.GIT_SORT_TOPOLOGICAL), count))
     return "\n".join(format_commit(c) for c in commits)
