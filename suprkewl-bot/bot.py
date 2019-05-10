@@ -201,7 +201,7 @@ class theBot(commands.Bot):
             emb.add_field(name="Disabled Command", value=f":x: `{ctx.prefix}{ctx.command}` has been disabled!")
             emb.set_thumbnail(url=self.user.avatar_url)
             emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
-            emb.set_footer(text=f"{self.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            emb.set_footer(text=f"{self.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             return await ctx.send(embed=emb)
 
@@ -214,7 +214,7 @@ class theBot(commands.Bot):
             )
             emb.set_thumbnail(url=self.user.avatar_url)
             emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
-            emb.set_footer(text=f"{self.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            emb.set_footer(text=f"{self.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             return await ctx.send(embed=emb)
 
@@ -230,7 +230,7 @@ class theBot(commands.Bot):
             )
             emb.set_thumbnail(url=self.user.avatar_url)
             emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
-            emb.set_footer(text=f"{self.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            emb.set_footer(text=f"{self.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             return await ctx.send(embed=emb)
 
@@ -245,7 +245,7 @@ class theBot(commands.Bot):
             )
             emb.set_thumbnail(url=self.user.avatar_url)
             emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
-            emb.set_footer(text=f"{self.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            emb.set_footer(text=f"{self.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             return await ctx.send(embed=emb)
 
@@ -260,7 +260,7 @@ class theBot(commands.Bot):
             )
             emb.set_thumbnail(url=self.user.avatar_url)
             emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
-            emb.set_footer(text=f"{self.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            emb.set_footer(text=f"{self.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             return await ctx.send(embed=emb)
 
@@ -343,7 +343,7 @@ class theBot(commands.Bot):
 
 
     @property
-    def description(self):
+    def embed_footer(self):
         return random.choice([
             "Did you know? If you are in a DM with me, you don't need to use a prefix.",
             "Don't run the code and no errors will appear.",

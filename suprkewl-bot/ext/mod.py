@@ -293,7 +293,7 @@ class Moderation(commands.Cog):
         emb.set_thumbnail(url=ctx.bot.user.avatar_url)
         emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
         emb.set_footer(
-            text=f"{ctx.bot.description} Requested by {ctx.author}",
+            text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
             icon_url=ctx.author.avatar_url
         )
 

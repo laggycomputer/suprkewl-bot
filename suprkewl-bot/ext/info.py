@@ -110,7 +110,7 @@ class Info(commands.Cog):
 
         emb.set_thumbnail(url=ctx.bot.user.avatar_url)
         emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
-        emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        emb.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         disp_hoist = "No"
         if role.hoist:
@@ -133,7 +133,7 @@ class Info(commands.Cog):
         emb = discord.Embed(title=f"Perms for '{role}', a role in '{ctx.guild}'", color=ctx.bot.embed_color)
         emb.set_thumbnail(url=ctx.bot.user.avatar_url)
         emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
-        emb.set_footer(text=f"{ctx.bot.description} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        emb.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         perms = role.permissions
 

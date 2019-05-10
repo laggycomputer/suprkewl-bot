@@ -26,7 +26,7 @@ from .utils import Embedinator
 class HelpCommand(commands.HelpCommand):
     def __init__(self):
         super().__init__()
-        self.color = self.context.bot.embed_color
+
 
     def command_not_found(self, string):
         return f"Command or category `{self.context.prefix}{string}` not found. Try again..."
@@ -50,14 +50,14 @@ class HelpCommand(commands.HelpCommand):
         return name
 
     def create_embed(self):
-        embed = discord.Embed(colour=self.color)
+        embed = discord.Embed(colour=self.context.bot.embed_color)
         embed.set_author(
             name=self.context.bot.user.name,
             icon_url=self.context.bot.user.avatar_url
         )
         embed.set_thumbnail(url=self.context.bot.user.avatar_url)
         embed.set_footer(
-            text=f"{self.context.bot.description} Requested by {self.context.author}",
+            text=f"{self.context.bot.embed_footer} Requested by {self.context.author}",
             icon_url=self.context.author.avatar_url
         )
 
@@ -69,7 +69,7 @@ class HelpCommand(commands.HelpCommand):
             self.context.bot,
             destination,
             self.context.author,
-            color=self.color,
+            color=self.context.bot.embed_color,
             **kwargs
         )
 
@@ -79,7 +79,7 @@ class HelpCommand(commands.HelpCommand):
         )
         embedinator.set_thumbnail(url=self.context.bot.user.avatar_url)
         embedinator.base_embed.set_footer(
-            text=f"{self.context.bot.description} Requested by {self.context.author}",
+            text=f"{self.context.bot.embed_footer} Requested by {self.context.author}",
             icon_url=self.context.author.avatar_url
         )
 
