@@ -785,7 +785,7 @@ L
         with contextlib.suppress(discord.HTTPException):
             await m.add_reaction(":duck:")
 
-        pattern = re.compile("(kw|qu)(ack|ac|ak|cc)")
+        pattern = re.compile("(kw|qu)a(c|k|ck|cc)")
 
         while True:
             m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
