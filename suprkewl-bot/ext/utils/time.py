@@ -23,8 +23,8 @@ from dateutil.relativedelta import relativedelta
 
 from .plural import Plural
 
-# From R. Danny.
-def human_timedelta(dt, *, source=None, accuracy=None):
+
+def human_timedelta(dt, *, source=None, accuracy=None):  # From R. Danny.
     now = source or datetime.datetime.utcnow()
     if dt > now:
         delta = relativedelta(dt, now)

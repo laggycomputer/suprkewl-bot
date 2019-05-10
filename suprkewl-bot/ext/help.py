@@ -27,7 +27,6 @@ class HelpCommand(commands.HelpCommand):
     def __init__(self):
         super().__init__()
 
-
     def command_not_found(self, string):
         return f"Command or category `{self.context.prefix}{string}` not found. Try again..."
 
