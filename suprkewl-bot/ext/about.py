@@ -150,11 +150,12 @@ class About(commands.Cog):
         latency = round(latency, 4)
         emb = discord.Embed(
             description=f":ping_pong: My current latency is {latency} milliseconds.", color=0xf92f2f)
+        fp = discord.File("../../assets/catping.gif", "image.gif")
         emb.set_image(
-            url="https://66.media.tumblr.com/tumblr_lfp90xpDTm1qb9w8so1_250.gif"
+            url="attachment://image.gif"
         )
 
-        sent = (await ctx.send(embed=emb))
+        sent = (await ctx.send(embed=emb, file=fp))
         await ctx.bot.register_response(sent, ctx.message)
 
 
