@@ -25,7 +25,7 @@ import traceback
 import aiohttp
 import discord
 from discord.ext import commands
-from ext.utils import apiToHuman, plural
+from ext.utils import apiToHuman, linecount, plural
 
 import config
 import redis
@@ -340,6 +340,21 @@ class theBot(commands.Bot):
             await asyncio.sleep(0)
 
         await super().logout()
+
+
+    @property
+    def description(self):
+        return random.choice([
+            "Did you know? If you are in a DM with me, you don't need to use a prefix.",
+            "Don't run the code and no errors will appear.",
+            "If you work 8 hours a day as a regular worker, you may one day be promoted to boss and work 12 hours a"
+            " day.",
+            "It's called a miracle because it doesn't happen.",
+            "May all your bacon burn.",
+            "The word utopia is derived from the Latin 'Utopia', meaning 'nothing, impossible'.",
+            linecount()
+        ])
+
 
 
 async def get_pre(bot, message):

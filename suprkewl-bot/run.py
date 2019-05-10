@@ -36,8 +36,7 @@ logger.addHandler(handler)
 
 client = bot.theBot(
     status=discord.Status.idle,
-    command_prefix=bot.get_pre,
-    description="Did you know? If you are in a DM with me, you don't need a prefix!",
+    command_prefix=bot.get_pre
 )
 
 if __name__ == "__main__":

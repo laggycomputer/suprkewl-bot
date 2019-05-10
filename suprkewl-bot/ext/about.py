@@ -30,6 +30,7 @@ import discord
 from discord.ext import commands
 import pygit2
 
+from .utils import linecount
 from .utils import time as t_utils
 
 
@@ -52,25 +53,6 @@ def get_last_commits(count=5):
     commits = list(itertools.islice(
         repo.walk(repo.head.target, pygit2.GIT_SORT_TOPOLOGICAL), count))
     return "\n".join(format_commit(c) for c in commits)
-
-
-def linecount():
-    path_to_search = "./"
-    total = 0
-    file_amount = 0
-    for path, subdirs, files in os.walk(path_to_search):
-        for name in files:
-            if name.endswith(".py"):
-                file_amount += 1
-                with codecs.open(path_to_search + str(pathlib.PurePath(path, name)), "r", "utf-8") as f:
-                    for i, l in enumerate(f):
-                        if l.strip().startswith("#") or len(l.strip()) is 0:
-                            pass
-                        else:
-                            total += 1
-
-    return f"I am made of {total:,} lines of Python, spread across {file_amount:,} files!"
-
 
 def current_time():
     year, month, dayofmonth, hour, minute, second, dayofweek, _, isdst = time.localtime()
