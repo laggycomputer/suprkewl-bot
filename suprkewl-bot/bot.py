@@ -134,13 +134,6 @@ class theBot(commands.Bot):
             else:
                 await self.process_commands(message)
 
-    async def track_message(self, message):
-        if await self.redis.exists(message):
-            return
-
-        await self.redis.rpush(message, 0)
-        await self.redis.expire(message, 3600)
-
     async def on_raw_message_edit(self, payload):
         if not self.is_ready():
             return
@@ -171,63 +164,6 @@ class theBot(commands.Bot):
         if await self.redis.exists(payload.message_id):
             await self.clear_messages(payload.message_id)
             await self.redis.delete(payload.message_id)
-
-    async def clear_messages(self, tracked_message):
-        for message_data in await self.redis.lrange(tracked_message, 1, -1):
-            channel_id, message_id = message_data.split(":")
-            try:
-                await self.http.delete_message(
-                    int(channel_id), int(message_id))
-            except discord.NotFound:
-                pass
-
-        await self.redis.execute("LTRIM", tracked_message, 0, 0)
-
-    async def register_response(self, response, request):
-        if await self.redis.exists(f"tracked_message {request.id}"):
-            await self.redis.rpush(
-                f"tracked_message {request.id}",
-                f"{response.channel.id}:{response.id}"
-            )
-
-    async def playingstatus(self):
-
-        await self.wait_until_ready()
-
-        playing_statuses = [
-            " ",
-            "and plotting pranks",
-            "at a robot party, brb in a bit",
-            "being improved!",
-            "being open source",
-            "being SuprKewl!",
-            "chess with Kasparov",
-            "creeping through the shadows",
-            "eating robot food, brb",
-            "github.com/laggycomputer/suprkewl-bot",
-            "helping the community",
-            "I don't game...",
-            "idling",
-            "living under the GPL3!",
-            "mafia",
-            "meme-scrolling",
-            "ping and run",
-            "tag with other robots",
-            "the attention game",
-            "waiting for you to call me!",
-            "werewolf",
-            "with my dad, Too Laggy",
-            "with my Raspberry Pi",
-            "with the community",
-            "with the Discord API"
-        ]
-
-        while self.is_ready() and self.change_status:
-            status = random.choice(playing_statuses)
-            status += f" | lurking in {len(self.guilds)} servers and watching over {len(self.users)} users..."
-
-            await self.change_presence(activity=discord.Game(name=status), status=discord.Status.idle)
-            await asyncio.sleep(120)
 
     async def on_command_error(self, ctx, error):
 
@@ -329,6 +265,72 @@ class theBot(commands.Bot):
         print(f"Ignoring exception in command {ctx.prefix}{ctx.command}:")
 
         traceback.print_exception(type(error), error, error.__traceback__)
+
+
+    async def track_message(self, message):
+        if await self.redis.exists(message):
+            return
+
+        await self.redis.rpush(message, 0)
+        await self.redis.expire(message, 3600)
+
+    async def clear_messages(self, tracked_message):
+        for message_data in await self.redis.lrange(tracked_message, 1, -1):
+            channel_id, message_id = message_data.split(":")
+            try:
+                await self.http.delete_message(
+                    int(channel_id), int(message_id))
+            except discord.NotFound:
+                pass
+
+        await self.redis.execute("LTRIM", tracked_message, 0, 0)
+
+    async def register_response(self, response, request):
+        if await self.redis.exists(f"tracked_message {request.id}"):
+            await self.redis.rpush(
+                f"tracked_message {request.id}",
+                f"{response.channel.id}:{response.id}"
+            )
+
+    async def playingstatus(self):
+
+        await self.wait_until_ready()
+
+        playing_statuses = [
+            " ",
+            "and plotting pranks",
+            "at a robot party, brb in a bit",
+            "being improved!",
+            "being open source",
+            "being SuprKewl!",
+            "chess with Kasparov",
+            "creeping through the shadows",
+            "eating robot food, brb",
+            "github.com/laggycomputer/suprkewl-bot",
+            "helping the community",
+            "I don't game...",
+            "idling",
+            "living under the GPL3!",
+            "mafia",
+            "meme-scrolling",
+            "ping and run",
+            "tag with other robots",
+            "the attention game",
+            "waiting for you to call me!",
+            "werewolf",
+            "with my dad, Too Laggy",
+            "with my Raspberry Pi",
+            "with the community",
+            "with the Discord API"
+        ]
+
+        while self.is_ready() and self.change_status:
+            status = random.choice(playing_statuses)
+            status += f" | lurking in {len(self.guilds)} servers and watching over {len(self.users)} users..."
+
+            await self.change_presence(activity=discord.Game(name=status), status=discord.Status.idle)
+            await asyncio.sleep(120)
+
 
     async def logout(self):
         if not self.http2.closed:
