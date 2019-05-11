@@ -1,6 +1,6 @@
 aioredis
 python-dateutil
-git+https://github.com/Rapptz/discord.py@master
+discord.py
 matplotlib
 jishaku
 pygit2
