@@ -33,7 +33,7 @@ class Info(commands.Cog):
 
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.group(
-        description="Gives the data under a message, channel, or member in a JSON format, as recieved from the"
+        description="Gives the data under a message, channel, or member in a JSON format, as received from the"
                     " Discord API."
     )
     async def raw(self, ctx):
