@@ -227,11 +227,22 @@ class theBot(commands.Bot):
 
             retry = round(error.retry_after, 2)
 
+            human_readable_cooldown = {
+                commands.BucketType.default: "bot-wide",
+                commands.BucketType.user: "per-user",
+                commands.BucketType.guild: "server-wide",
+                commands.BucketType.channel: "per-channel",
+                commands.BucketType.member: "per-server, per-user",
+                commands.BucketType.category: "per-category"
+            }
+
+            cooldown_type = human_readable_cooldown[error.cooldown.type]
+
             emb = discord.Embed(color=self.embed_color)
             emb.add_field(
                 name="Command on Cooldown",
-                value=f"Woah there! You just triggered a cooldown trying to run `{ctx.prefix}{ctx.command}`."
-                f" Wait {retry} seconds."
+                value=f"Woah there! You just triggered a {cooldown_type} cooldown trying to run "
+                f"`{ctx.prefix}{ctx.command}`. Wait {retry} seconds."
             )
             emb.set_thumbnail(url=self.user.avatar_url)
             emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
