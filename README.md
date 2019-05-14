@@ -6,7 +6,7 @@
 <a href=https://travis-ci.com/laggycomputer/suprkewl-bot><img src=https://travis-ci.com/laggycomputer/suprkewl-bot.svg?branch=master></a>
 </p>
 
-An open-sourced Discord bot, written with `discord.py==1.1.0`. Features such as moderation, just-for-fun, user info and more will be implemented at a later date.  
+An open-sourced Discord bot, written with `discord.py==1.1.0`. 
 
 If you want to host this bot:
 
