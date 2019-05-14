@@ -47,6 +47,7 @@ class theBot(commands.Bot):
         startup_extensions = [
             "ext.about",
             "ext.admin",
+            "ext.crypto",
             "ext.fun",
             "ext.help",
             "ext.info",
