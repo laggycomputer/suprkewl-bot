@@ -23,8 +23,8 @@ import typing
 from urllib.parse import quote as urlquote
 
 import discord
-import matplotlib.pyplot as plt
 from discord.ext import commands
+import matplotlib.pyplot as plt
 
 from .utils import apiToHuman, escape_codeblocks, format_json
 
