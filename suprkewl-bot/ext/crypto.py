@@ -88,6 +88,14 @@ def crack_caesar(string):
 
 
 def keyword_expand(keyword):
+
+    kw_stripped = ""
+    for letter in keyword.upper():
+        if letter in abc_list:
+            kw_stripped += letter
+
+    keyword = kw_stripped
+
     last_letter_index = abc_list.index(keyword.upper()[-1])
     abc_sliced = list(abc_list[last_letter_index:])
     abc_sliced = abc_sliced + list(abc_list[:last_letter_index])
@@ -115,20 +123,34 @@ def decode_sub(ciphertext, keyword):
     key = keyword_expand(keyword)
     decoded = ""
 
-    for letter in ciphertext.upper():
-        decoded += abc_list[key.index(letter)]
+    for letter in ciphertext:
+        if letter.isalpha():
+            is_upper = letter.isupper()
+            to_append = abc_list[key.index(letter.upper())]
+            if is_upper:
+                decoded += to_append
+            else:
+                decoded += to_append.lower()
 
-    return decoded.lower()
+    return decoded
 
 
 def encode_sub(plaintext, keyword):
     key = keyword_expand(keyword)
     encoded = ""
 
-    for letter in plaintext.upper():
-        encoded += key[abc_list.index(letter)]
+    for letter in plaintext:
+        if letter.isalpha():
+            is_upper = letter.isupper()
+            to_append = key[abc_list.index(letter.upper())]
+            if is_upper:
+                encoded = to_append
+            else:
+                encoded = to_append.lower()
+        else:
+            encoded += letter
 
-    return encoded.upper()
+    return encoded
 
 
 class Cryptography(commands.Cog):
@@ -225,11 +247,6 @@ class Cryptography(commands.Cog):
     @substitution.command(name="keyword", aliases=["k", "key", "keywords", "kw"])
     async def substitution_keyword(self, ctx, *, kw):
         """Transforms a keyword into a full key."""
-
-        kw_stripped = ""
-        for letter in kw.upper():
-            if letter in abc_list:
-                kw_stripped += letter
 
         if len(kw_stripped) < 1 or len(kw_stripped) > 26:
             sent = (await ctx.send(
