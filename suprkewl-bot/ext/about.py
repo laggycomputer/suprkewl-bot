@@ -45,7 +45,7 @@ def format_commit(commit):
     return f"[`{short_sha2}`](https://github.com/laggycomputer/suprkewl-bot/commit/{commit.hex}) {short} ({offset})"
 
 
-def get_last_commits(count = 5):
+def get_last_commits(count=5):
     try:
         repo = pygit2.Repository("../.git")
     except pygit2.GitError:

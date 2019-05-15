@@ -467,13 +467,8 @@ L
                 p2.turn = not p2.turn
                 p1.blocking = False
                 p2.blocking = False
-                damage = 0
-                currentaction = ""
-                blow = ""
 
             currentaction = ""
-            newsetting = ""
-            blow = ""
             damage = 0
             sent = None
 
@@ -520,7 +515,8 @@ L
                 "Dining Room": "{0.mention} pins {1.mention} agianst the table",
                 "Kitchen": "{0.mention} uses top-notch ninja skills on {1.mention}, many of which involve the knives",
                 "Bedroom": "{0.mention} gets a l33t hit om {1.mention} involving throwing the bedstand",
-                "Living Room": "{0.mention} narrowly beats {1.mention} in a sword-fight using the Dolby 7:1 surround speakers",
+                "Living Room": "{0.mention} narrowly beats {1.mention} in a sword-fight using the Dolby 7:1 surround"
+                               " speakers",
                 "Backyard": "{0.mention} throws some hot coals from the backyard stove at {1.mention}"
             }
 
@@ -599,7 +595,6 @@ L
                         f" {newsetting}. {find_turn().user.mention} gives chase."
 
                     setting = newsetting
-                    newsetting = ""
 
                 elif usrinput.content.lower().startswith("end"):
                     await ctx.send(
