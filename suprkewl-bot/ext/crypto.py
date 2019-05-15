@@ -31,7 +31,7 @@ def caesar_translate(message, shift):
     translated = ""
 
     for symbol in message:
-        if symbol.isalpha():
+        if symbol.upper() in abc_list:
             num = ord(symbol)
             num += shift % 26
             if symbol.isupper():
@@ -74,7 +74,7 @@ def crack_caesar(string):
     s = c[:]
 
     for i in string:
-        if i.isalpha():
+        if i.upper() in abc_list:
             x = (ord(i) | 32) - 97
             if 0 <= x < 26:
                 c[x] += 1
@@ -124,7 +124,7 @@ def decode_sub(ciphertext, keyword):
     decoded = ""
 
     for letter in ciphertext:
-        if letter.isalpha():
+        if letter.upper() in abc_list:
             is_upper = letter.isupper()
             to_append = abc_list[key.index(letter.upper())]
             if is_upper:
@@ -140,7 +140,7 @@ def encode_sub(plaintext, keyword):
     encoded = ""
 
     for letter in plaintext:
-        if letter.isalpha():
+        if letter.upper() in abc_list:
             is_upper = letter.isupper()
             to_append = key[abc_list.index(letter.upper())]
             if is_upper:
