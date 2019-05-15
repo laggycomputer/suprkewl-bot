@@ -248,13 +248,7 @@ class Cryptography(commands.Cog):
     async def substitution_keyword(self, ctx, *, kw):
         """Transforms a keyword into a full key."""
 
-        if len(kw_stripped) < 1 or len(kw_stripped) > 26:
-            sent = (await ctx.send(
-                ":x: Your keyword must be between 1 and 26 in length."
-            ))
-            return await ctx.bot.register_response(sent, ctx.message)
-
-        full_key = keyword_expand(kw_stripped)
+        full_key = keyword_expand(kw)
 
         sent = (await ctx.send(f":white_check_mark: Your keyword was expanded to `{full_key}`."))
         await ctx.bot.register_response(sent, ctx.message)
