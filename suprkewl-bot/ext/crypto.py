@@ -236,7 +236,7 @@ class Cryptography(commands.Cog):
                 ":x: Your keyword must be between 1 and 26 in length."
             ))
             return await ctx.bot.register_response(sent, ctx.message)
-        
+
         full_key = keyword_expand(kw_stripped)
 
         sent = (await ctx.send(f":white_check_mark: Your keyword was expanded to `{full_key}`."))

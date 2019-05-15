@@ -31,7 +31,7 @@ import config
 import redis
 
 
-class theBot(commands.Bot):
+class suprkewl_bot(commands.Bot):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -118,7 +118,8 @@ class theBot(commands.Bot):
                         desc = plural(await get_pre(self, message))
                         emb = discord.Embed(
                             color=self.embed_color,
-                            description=f":eyes: Who pinged? My prefix(es) is/are `{desc}`. If you are in a DM with me, I do not require a prefix."
+                            description=f":eyes: Who pinged? My prefix(es) is/are `{desc}`. If you are in a DM with"
+                                        f" me, I do not require a prefix."
                         )
                         fname = random.choice(ping_images)
                         ext = fname.split(".")[-1]
@@ -285,7 +286,6 @@ class theBot(commands.Bot):
 
         traceback.print_exception(type(error), error, error.__traceback__)
 
-
     async def track_message(self, message):
         if await self.redis.exists(message):
             return
@@ -350,14 +350,12 @@ class theBot(commands.Bot):
             await self.change_presence(activity=discord.Game(name=status), status=discord.Status.idle)
             await asyncio.sleep(120)
 
-
     async def logout(self):
         if not self.http2.closed:
             await self.http2.close()
             await asyncio.sleep(0)
 
         await super().logout()
-
 
     @property
     def embed_footer(self):
@@ -374,7 +372,6 @@ class theBot(commands.Bot):
             "To succeed in life, you need three things; a wishbone, a backbone and a funny bone. - Reba McEntire",
             linecount()
         ))
-
 
 
 async def get_pre(bot, message):

@@ -1,7 +1,8 @@
-from .apiToHuman import apiToHuman
-from .codeblock import escape_codeblocks
-from .embedinator import Embedinator
-from .jsonfmt import format_json
-from .linecount import linecount
-from .plural import plural, Plural
-from .time import human_timedelta
+# Sorry about the ignore tactics, this really is my way of doing it.
+
+from .codeblock import escape_codeblocks  # noqa
+from .embedinator import Embedinator  # noqa
+from .jsonfmt import format_json  # noqa
+from .linecount import linecount  # noqa
+from .plural import plural, Plural  # noqa
+from .time import human_timedelta  # noqa
