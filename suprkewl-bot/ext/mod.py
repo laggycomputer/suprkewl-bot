@@ -72,7 +72,7 @@ class Moderation(commands.Cog):
         description="Delete messages within the past <count> messages, but only if they are from <user>."
                     " See the info subcommand of clear for more info."
     )
-    async def clear_user(self, ctx, user: discord.Member, count: int):
+    async def clear_user(self, ctx, count: int, *, user: discord.Member):
         """Clear messages by user."""
 
         if not await ctx.command.parent.can_run(ctx):
@@ -105,7 +105,7 @@ class Moderation(commands.Cog):
         description="Delete all messages within the given limit that were sent by members with the given role. See the"
                     " info subcommand of clear for more info."
     )
-    async def clear_role(self, ctx, role: discord.Role, count: int):
+    async def clear_role(self, ctx, count: int, *, role: discord.Role):
         """Clear messages by role."""
 
         if not await ctx.command.parent.can_run(ctx):
@@ -139,7 +139,7 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(kick_members=True)
     @commands.has_permissions(kick_members=True)
-    async def kick(self, ctx, target: discord.Member):
+    async def kick(self, ctx, *, target: discord.Member):
         """Kick someone. See full help command."""
 
         if target == ctx.guild.owner:
@@ -185,7 +185,7 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @commands.has_permissions(ban_members=True)
-    async def ban(self, ctx, target: discord.Member, deletedays: int, reason: str):
+    async def ban(self, ctx, target: discord.Member, deletedays: int, *, reason: str):
         """Ban someone. See main help dialog."""
 
         if isinstance(ctx.channel, discord.abc.GuildChannel):
@@ -242,7 +242,7 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @commands.has_permissions(ban_members=True)
-    async def unban(self, ctx, target: discord.User):
+    async def unban(self, ctx, *, target: discord.User):
         """Unbans someone. Please refer to the main help dialog."""
 
         target_banned = False
