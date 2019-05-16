@@ -366,7 +366,10 @@ class suprkewl_bot(commands.Bot):
             "If you work 8 hours a day as a regular worker, you may one day be promoted to boss and work 12 hours a"
             " day.",
             "Instant gratification takes too long - Carrie Fisher",
+            "Interestingly enough, Moses owned the first cloud-synced tablet.",
             "It's called a miracle because it doesn't happen.",
+            "Just read that 4,153,237 people got married last year, not to cause any trouble but shouldn't that be an"
+            " even number?",
             "Man cannot live by bread alone; he must have peanut butter.",
             "May all your bacon burn.",
             "The word utopia is derived from the Latin 'Utopia', meaning 'nothing, impossible'.",
