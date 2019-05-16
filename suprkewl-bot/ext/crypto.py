@@ -346,67 +346,35 @@ class Cryptography(commands.Cog):
             sent = (await ctx.send(msg))
             await ctx.bot.register_response(sent, ctx.message)
 
-    @commands.group(
-        aliases=["cs"], description="Generate a checksum for your message. Files are currently unsupported."
+    @commands.command(
+        aliases=["cs"],
+        description="Generate a checksum using <alg> for your <message>. Files are currently unsupported. Use the"
+                    " algorithm `list` with no message to list available algorithms."
     )
-    async def checksum(self, ctx):
+    async def checksum(self, ctx, algorithm, *, message=None):
         """Generate cryptographic checksums."""
 
-        if ctx.invoked_subcommand is None:
-            sent = (await ctx.send(":x: Please provide a valid subcommand!"))
+        allowed_alg = hashlib.algorithms_available
+
+        if algorithm == "list" and message is None:
+            algorithms = ", ".join(f"`{alg}`" for alg in allowed_alg)
+            sent = (await ctx.send(":white_check_mark: The allowed algorithms are as follows: \n" + algorithms))
+            return await ctx.bot.register_response(sent, ctx.message)
+
+        if algorithm in allowed_alg:
+            message = message.encode("utf-8")
+            m = getattr(hashlib, algorithm)()
+            m.update(message)
+            hash = m.hexdigest()
+
+            sent = (await ctx.send(f":white_check_mark: The hash of your message is `{hash}`."))
             await ctx.bot.register_response(sent, ctx.message)
-
-    @checksum.command(name="sha1", aliases=["s1"])
-    async def checksum_sha1(self, ctx, *, message):
-        """Generate a SHA1 hash."""
-
-        message = message.encode("utf-8")
-        m = hashlib.sha1()
-        m.update(message)
-
-        hash = m.hexdigest()
-
-        sent = (await ctx.send(f":white_check_mark: The hash of your message is `{hash}`."))
-        await ctx.bot.register_response(sent, ctx.message)
-
-    @checksum.command(name="sha256", aliases=["s256"])
-    async def checksum_sha256(self, ctx, *, message):
-        """Generate a SHA256 hash."""
-
-        message = message.encode("utf-8")
-        m = hashlib.sha256()
-        m.update(message)
-
-        hash = m.hexdigest()
-
-        sent = (await ctx.send(f":white_check_mark: The hash of your message is `{hash}`."))
-        await ctx.bot.register_response(sent, ctx.message)
-
-    @checksum.command(name="sha512", aliases=["s512"])
-    async def checksum_sha512(self, ctx, *, message):
-        """Generate a SHA512 hash."""
-
-        message = message.encode("utf-8")
-        m = hashlib.sha512()
-        m.update(message)
-
-        hash = m.hexdigest()
-
-        sent = (await ctx.send(f":white_check_mark: The hash of your message is `{hash}`."))
-        await ctx.bot.register_response(sent, ctx.message)
-
-    @checksum.command(name="md5")
-    async def checksum_md5(self, ctx, *, message):
-        """Generate an MD5 hash."""
-
-        message = message.encode("utf-8")
-        m = hashlib.md5()
-        m.update(message)
-
-        hash = m.hexdigest()
-
-        sent = (await ctx.send(f":white_check_mark: The hash of your message is `{hash}`."))
-        await ctx.bot.register_response(sent, ctx.message)
+        else:
+            sent = (await ctx.send(
+                f":x: Invalid algorithm. Remember that algorithm names are case-sensitive. See"
+                f" `{ctx.prefix}{ctx.invoked_with} list` for the list of available algorithms."
+            ))
+            await ctx.bot.register_response(sent, ctx.message)
 
 
 def setup(bot):
