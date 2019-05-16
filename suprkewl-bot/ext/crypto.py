@@ -354,7 +354,7 @@ class Cryptography(commands.Cog):
     async def checksum(self, ctx, algorithm, *, message=None):
         """Generate cryptographic checksums."""
 
-        allowed_alg = hashlib.algorithms_available
+        allowed_alg = hashlib.algorithms_guaranteed
 
         if algorithm == "list" and message is None:
             algorithms = ", ".join(f"`{alg}`" for alg in allowed_alg)
