@@ -305,7 +305,7 @@ class Cryptography(commands.Cog):
             sent = (await ctx.send(":x: Please provide a valid subcommand!"))
             await ctx.bot.register_response(sent, ctx.message)
 
-    @atbash.command(name="encode", aliases=["e"])
+    @atbash.command(name="encode", aliases=["e", "encipher", "encrypt"])
     async def atbash_encode(self, ctx, *, message):
         """Encodes a message with Atbash."""
 
@@ -325,7 +325,7 @@ class Cryptography(commands.Cog):
             sent = (await ctx.send(msg))
             await ctx.bot.register_response(sent, ctx.message)
 
-    @atbash.command(name="decode", aliases=["d"])
+    @atbash.command(name="decode", aliases=["d", "decrypt", "decipher"])
     async def atbash_decode(self, ctx, *, message):
         """Decodes a message with Atbash."""
 
