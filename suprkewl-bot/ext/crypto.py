@@ -25,6 +25,7 @@ from discord.ext import commands
 
 
 abc_list = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+abc_list_backward = list(reversed(abc_list))
 
 
 def caesar_translate(message, shift):
@@ -144,9 +145,9 @@ def encode_sub(plaintext, keyword):
             is_upper = letter.isupper()
             to_append = key[abc_list.index(letter.upper())]
             if is_upper:
-                encoded = to_append
+                encoded += to_append
             else:
-                encoded = to_append.lower()
+                encoded += to_append.lower()
         else:
             encoded += letter
 
@@ -304,11 +305,11 @@ class Cryptography(commands.Cog):
             sent = (await ctx.send(":x: Please give a subcommand!"))
             await ctx.bot.register_response(sent, ctx.message)
 
-    @atbash.command(name="encode")
+    @atbash.command(name="encode", aliases=["e"])
     async def atbash_encode(self, ctx, *, message):
         """Encodes a message with Atbash."""
 
-        encoded = encode_sub(message, "".join(reversed(abc_list)))
+        encoded = encode_sub(message, str(abc_list_backward))
 
         msg = f":white_check_mark: Your message encodes to: ```\n{encoded}```"
         if len(msg) > 2000:
@@ -324,11 +325,11 @@ class Cryptography(commands.Cog):
             sent = (await ctx.send(msg))
             await ctx.bot.register_response(sent, ctx.message)
 
-    @atbash.command(name="decode")
+    @atbash.command(name="decode", aliases=["d"])
     async def atbash_decode(self, ctx, *, message):
         """Decodes a message with Atbash."""
 
-        decoded = decode_sub(message, "".join(reversed(abc_list)))
+        decoded = decode_sub(message, str(abc_list_backward))
 
         msg = f":white_check_mark: Your message decodes to: ```\n{decoded}```"
         if len(msg) > 2000:
