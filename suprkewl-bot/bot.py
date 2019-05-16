@@ -374,7 +374,8 @@ class suprkewl_bot(commands.Bot):
             "May all your bacon burn.",
             "The word utopia is derived from the Latin 'Utopia', meaning 'nothing, impossible'.",
             "To succeed in life, you need three things; a wishbone, a backbone and a funny bone. - Reba McEntire",
-            linecount()
+            linecount(),
+            "You can edit a command invocation to change my response."
         ))
 
 
