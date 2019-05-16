@@ -164,7 +164,7 @@ class Cryptography(commands.Cog):
         """Perform operations with the Caesar cipher."""
 
         if ctx.invoked_subcommand is None:
-            sent = (await ctx.send(":x: Please give a subcommand!"))
+            sent = (await ctx.send(":x: Please provide a valid subcommand!"))
             await ctx.bot.register_response(sent, ctx.message)
 
     @caesar.command(name="encode", aliases=["e", "encipher", "encrypt"])
@@ -242,7 +242,7 @@ class Cryptography(commands.Cog):
         """Perform operations with a substitution cipher."""
 
         if ctx.invoked_subcommand is None:
-            sent = (await ctx.send(":x: Please give a subcommand!"))
+            sent = (await ctx.send(":x: Please provide a valid subcommand!"))
             await ctx.bot.register_response(sent, ctx.message)
 
     @substitution.command(name="keyword", aliases=["k", "key", "keywords", "kw"])
@@ -302,7 +302,7 @@ class Cryptography(commands.Cog):
         """Operates with the Atbash cipher."""
 
         if ctx.invoked_subcommand is None:
-            sent = (await ctx.send(":x: Please give a subcommand!"))
+            sent = (await ctx.send(":x: Please provide a valid subcommand!"))
             await ctx.bot.register_response(sent, ctx.message)
 
     @atbash.command(name="encode", aliases=["e"])

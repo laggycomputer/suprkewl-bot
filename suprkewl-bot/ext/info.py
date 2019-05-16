@@ -40,7 +40,7 @@ class Info(commands.Cog):
         """Returns a dict version of some objects."""
 
         if ctx.invoked_subcommand is None:
-            sent = (await ctx.send(":x: Please give a subcommand!"))
+            sent = (await ctx.send(":x: Please provide a valid subcommand!"))
             await ctx.bot.register_response(sent, ctx.message)
 
     @raw.command(name="message", aliases=["msg"])
