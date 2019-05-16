@@ -367,6 +367,7 @@ class suprkewl_bot(commands.Bot):
             " day.",
             "Instant gratification takes too long - Carrie Fisher",
             "It's called a miracle because it doesn't happen.",
+            "Man cannot live by bread alone; he must have peanut butter.",
             "May all your bacon burn.",
             "The word utopia is derived from the Latin 'Utopia', meaning 'nothing, impossible'.",
             "To succeed in life, you need three things; a wishbone, a backbone and a funny bone. - Reba McEntire",
