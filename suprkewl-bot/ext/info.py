@@ -44,7 +44,7 @@ class Info(commands.Cog):
             await ctx.bot.register_response(sent, ctx.message)
 
     @raw.command(name="message", aliases=["msg"])
-    async def raw_message(self, ctx, message: discord.Message):
+    async def raw_message(self, ctx, *, message: discord.Message):
         """Return a message as a dict."""
 
         raw = await ctx.bot.http.get_message(message.channel.id, message.id)
@@ -60,7 +60,7 @@ class Info(commands.Cog):
             await ctx.send(raw_string[1])
 
     @raw.command(name="member", aliases=["user"])
-    async def raw_member(self, ctx, user: discord.User = None):
+    async def raw_member(self, ctx, *, user: discord.User = None):
         """Return a member as a dict."""
         if user is None:
             user = ctx.author
@@ -73,7 +73,7 @@ class Info(commands.Cog):
 
     @raw.command(name="channel")
     async def raw_channel(
-            self, ctx, channel: typing.Union[
+            self, ctx, *, channel: typing.Union[
                 discord.TextChannel, discord.VoiceChannel, discord.CategoryChannel
             ] = None
     ):
@@ -97,7 +97,7 @@ class Info(commands.Cog):
     @commands.command(description="Gives info on role <permsRole> in server (ping the role).")
     @commands.guild_only()
     @commands.bot_has_permissions(manage_roles=True)
-    async def roleinfo(self, ctx, role: discord.Role):
+    async def roleinfo(self, ctx, *, role: discord.Role):
         """Gives info on a passed role."""
 
         emb = discord.Embed(title=f"Info for '{role}', a role in '{ctx.guild}'", color=role.color)
@@ -125,7 +125,7 @@ class Info(commands.Cog):
     @commands.guild_only()
     @commands.has_any_role("suprkewl-viewPerms")
     @commands.bot_has_permissions(manage_roles=True)
-    async def roleperms(self, ctx, role: discord.Role):
+    async def roleperms(self, ctx, *, role: discord.Role):
         """Get permissions for a role"""
 
         emb = discord.Embed(title=f"Perms for '{role}', a role in '{ctx.guild}'", color=ctx.bot.embed_color)

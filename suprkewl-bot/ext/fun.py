@@ -132,7 +132,7 @@ L
         sent = (await ctx.send(f"{ctx.author.mention} wants me to say '{message}'"))
         await ctx.bot.register_response(sent, ctx.message)    @commands.command(aliases=["burn"])
 
-    async def roast(self, ctx, target: discord.Member):
+    async def roast(self, ctx, *, target: discord.Member):
         """Roast someone. ⌐■_■"""
 
         roasts = [
@@ -264,7 +264,7 @@ L
         invoke_without_subcommand=True
     )
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def dice(self, ctx, dice: str):
+    async def dice(self, ctx, *, dice: str):
         """Now you can roll 1000-sided dice!"""
 
         if dice == "info":
