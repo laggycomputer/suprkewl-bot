@@ -21,6 +21,3 @@ redis_port = "6379"
 # Again, this is insecure
 # CHANGE IT
 redis_password = "testing"
-
-# This is intentionally useless without being set. SET IT
-db_path = "C:\\Users\\WindowsUser\\Documents\\suprkewl-bot\\skbot.db"
