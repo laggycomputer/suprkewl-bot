@@ -84,16 +84,19 @@ async def get_build_status(cs):
     for branch in branches:
         key = branch["name"]
         duration = branch["last_build"]["duration"]
-        if duration >= 60:
-            minutes, seconds = divmod(duration, 60)
-            duration = f"{minutes} minutes"
-            if seconds:
-                duration += f" and {seconds} seconds"
+        if duration is not None:
+            if duration >= 60:
+                minutes, seconds = divmod(duration, 60)
+                duration = f"{minutes} minutes"
+                if seconds:
+                    duration += f" and {seconds} seconds"
+            else:
+                duration = str(duration) + " seconds"
+            build_status = branch["last_build"]["state"].title()
+            val = f"{build_status} after {duration}"
+            ret[key] = val
         else:
-            duration = str(duration) + " seconds"
-        build_status = branch["last_build"]["state"].title()
-        val = f"{build_status} after {duration}"
-        ret[key] = val
+            ret[key] = "Build in progress"
     return ret
 
 
