@@ -752,22 +752,32 @@ L
     async def sheep(self, ctx):
         """React to messages with a sheep emoji."""
 
-        m = ctx.message
+        if not (await ctx.bot.redis.exists(f"{ctx.channel.id}:sheep")):
+            await ctx.bot.redis.execute("SET", f"{ctx.channel.id}:sheep", "baa")
+            m = ctx.message
 
-        with contextlib.suppress(discord.HTTPException):
-            await m.add_reaction("\U0001F411")
+            with contextlib.suppress(discord.HTTPException):
+                await m.add_reaction("\U0001F411")
 
-        while True:
-            m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
-            if m is None:
-                break
-            if m.content.lower().startswith("s!stop") and m.author == ctx.author:
-                break
-            if any(i in m.content.lower() for i in ["sheep", "shep", "🐑", "ba", "wool"]):
-                with contextlib.suppress(discord.HTTPException):
-                    await m.add_reaction("\U0001F411")
-        sent = (await ctx.send(":white_check_mark: Done."))
-        await ctx.bot.register_response(sent, ctx.message)
+            while True:
+                m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
+                if m is None:
+                    break
+                if m.content.lower().startswith("s!stop") and m.author == ctx.author:
+                    break
+                if any(i in m.content.lower() for i in ["sheep", "shep", "🐑", "ba", "wool"]):
+                    with contextlib.suppress(discord.HTTPException):
+                        await m.add_reaction("\U0001F411")
+
+            await ctx.bot.redis.delete(f"{ctx.channel.id}:sheep")
+
+            sent = (await ctx.send(":white_check_mark: Done."))
+            await ctx.bot.register_response(sent, ctx.message)
+        else:
+            sent = (await ctx.send(
+                ":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command."
+            ))
+            await ctx.bot.register_response(sent, ctx.message)
 
     @commands.command(
         description="Reacts with a duck emoji to duck-related messages. Send 's!stop' to end the quackery."
@@ -775,23 +785,33 @@ L
     async def duck(self, ctx):
         """React to messages with a duck emoji."""
 
-        m = ctx.message
+        if not (await ctx.bot.redis.exists(f"{ctx.channel.id}:duck")):
+            await ctx.bot.redis.execute("SET", f"{ctx.channel.id}:duck", "kwack")
+            m = ctx.message
 
-        await m.add_reaction("\U0001F986")
+            await m.add_reaction("\U0001F986")
 
-        pattern = re.compile("(kw|qu)a+c+k?")
+            pattern = re.compile("(kw|qu)a+c+k?")
 
-        while True:
-            m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
-            if m is None:
-                break
-            if m.content.lower().startswith("s!stop") and m.author == ctx.author:
-                break
-            r = re.search(pattern, m.content.lower())
-            if any(i in m.content.lower() for i in ["duck", "duk", "🦆", "ducc"]) or r:
-                await m.add_reaction("\U0001F986")
-        sent = (await ctx.send(":white_check_mark: Done."))
-        await ctx.bot.register_response(sent, ctx.message)
+            while True:
+                m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
+                if m is None:
+                    break
+                if m.content.lower().startswith("s!stop") and m.author == ctx.author:
+                    break
+                r = re.search(pattern, m.content.lower())
+                if any(i in m.content.lower() for i in ["duck", "duk", "🦆", "ducc"]) or r:
+                    await m.add_reaction("\U0001F986")
+
+            await ctx.bot.redis.delete(f"{ctx.channel.id}:duck")
+
+            sent = (await ctx.send(":white_check_mark: Done."))
+            await ctx.bot.register_response(sent, ctx.message)
+        else:
+            sent = (await ctx.send(
+                ":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command."
+            ))
+            await ctx.bot.register_response(sent, ctx.message)
 
     @commands.command(
         description="Reacts with a dog emoji to dog-related messages. Send 's!stop' to end the borkiness."
@@ -799,26 +819,36 @@ L
     async def dog(self, ctx):
         """React to messages with a dog emoji."""
 
-        m = ctx.message
+        if not (await ctx.bot.redis.exists(f"{ctx.channel.id}:dog")):
+            await ctx.bot.redis.execute("SET", f"{ctx.channel.id}:dog", "bork")
+            m = ctx.message
 
-        with contextlib.suppress(discord.HTTPException):
-            await m.add_reaction("\U0001f436")
+            with contextlib.suppress(discord.HTTPException):
+                await m.add_reaction("\U0001f436")
 
-        patterns = [re.compile("b[oa]+r+[ck]+"), re.compile("w+o+f+"),
-                    re.compile("a+r+f+"), re.compile("do+g+e?o?")]
+            patterns = [re.compile("b[oa]+r+[ck]+"), re.compile("w+o+f+"),
+                        re.compile("a+r+f+"), re.compile("do+g+e?o?")]
 
-        while True:
-            m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
-            if m is None:
-                break
-            if m.content.lower().startswith("s!stop") and m.author == ctx.author:
-                break
-            r = any(re.search(p, m.content.lower()) is not None for p in patterns)
-            if r:
-                with contextlib.suppress(discord.HTTPException):
-                    await m.add_reaction("\U0001f436")
-        sent = (await ctx.send(":white_check_mark: Done."))
-        await ctx.bot.register_response(sent, ctx.message)
+            while True:
+                m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
+                if m is None:
+                    break
+                if m.content.lower().startswith("s!stop") and m.author == ctx.author:
+                    break
+                r = any(re.search(p, m.content.lower()) is not None for p in patterns)
+                if r:
+                    with contextlib.suppress(discord.HTTPException):
+                        await m.add_reaction("\U0001f436")
+
+            await ctx.bot.redis.delete(f"{ctx.channel.id}:dog")
+
+            sent = (await ctx.send(":white_check_mark: Done."))
+            await ctx.bot.register_response(sent, ctx.message)
+        else:
+            sent = (await ctx.send(
+                ":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command."
+            ))
+            await ctx.bot.register_response(sent, ctx.message)
 
 def setup(bot):
     bot.add_cog(Fun())
