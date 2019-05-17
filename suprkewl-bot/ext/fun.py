@@ -850,5 +850,6 @@ L
             ))
             await ctx.bot.register_response(sent, ctx.message)
 
+
 def setup(bot):
     bot.add_cog(Fun())
