@@ -21,3 +21,7 @@ redis_port = "6379"
 # Again, this is insecure
 # CHANGE IT
 redis_password = "testing"
+
+# Travis CI Config.
+travis_repo_id = 9109252  # For laggycomputer/suprkewl-bot.
+travis_token = ""
