@@ -29,6 +29,7 @@ import pygit2
 
 from .utils import linecount
 from .utils import time as t_utils
+import config
 
 
 # Largely from R. Danny.
@@ -72,6 +73,30 @@ def current_time():
     return disptime
 
 
+async def get_build_status(cs):
+    repo_id = config.travis_repo_id
+    token = config.travis_token
+    headers = {"Travis-API-Version": "3", "Authorization": f"token {token}"}
+    async with cs.get(f"https://api.travis-ci.com/repo/{repo_id}/branches", headers=headers) as resp:
+        text = await resp.json()
+    branches = text["branches"]
+    ret = {}
+    for branch in branches:
+        key = branch["name"]
+        duration = branch["last_build"]["duration"]
+        if duration >= 60:
+            minutes, seconds = divmod(duration, 60)
+            duration = f"{minutes} minutes"
+            if seconds:
+                duration += f" and {seconds} seconds"
+        else:
+            duration = str(duration) + " seconds"
+        build_status = branch["last_build"]["state"].title()
+        val = f"{build_status} after {duration}"
+        ret[key] = val
+    return ret
+
+
 class About(commands.Cog):
 
     @commands.command()
@@ -82,6 +107,11 @@ class About(commands.Cog):
             name="Bot info", color=ctx.bot.embed_color,
             description=get_last_commits()
         )
+        fieldval = []
+        build_status = await get_build_status(ctx.bot.http2)
+        for branch_name in build_status:
+            fieldval.append(f"`{branch_name}`: {build_status[branch_name]}")
+        emb.add_field(name="Build status", value="\n".join(fieldval))
 
         emb.add_field(name="Support Server", value="https://www.discord.gg/CRBBJVY")
         emb.add_field(name="Line count", value=linecount())
