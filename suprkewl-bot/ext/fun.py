@@ -793,6 +793,32 @@ L
         sent = (await ctx.send(":white_check_mark: Done."))
         await ctx.bot.register_response(sent, ctx.message)
 
+    @commands.command(
+        description="Reacts with a dog emoji to dog-related messages. Send 's!stop' to end the borkiness."
+    )
+    async def dog(self, ctx):
+        """React to messages with a dog emoji."""
+
+        m = ctx.message
+
+        with contextlib.suppress(discord.HTTPException):
+            await m.add_reaction("\U0001f436")
+
+        patterns = [re.compile("b[oa]+r+[ck]+"), re.compile("w+o+f+"),
+                    re.compile("a+r+f+"), re.compile("do+g+e?o?")]
+
+        while True:
+            m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
+            if m is None:
+                break
+            if m.content.lower().startswith("s!stop") and m.author == ctx.author:
+                break
+            r = any(re.search(p, m.content.lower()) is not None for p in patterns)
+            if r:
+                with contextlib.suppress(discord.HTTPException):
+                    await m.add_reaction("\U0001f436")
+        sent = (await ctx.send(":white_check_mark: Done."))
+        await ctx.bot.register_response(sent, ctx.message)
 
 def setup(bot):
     bot.add_cog(Fun())
