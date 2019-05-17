@@ -755,7 +755,7 @@ L
         m = ctx.message
 
         with contextlib.suppress(discord.HTTPException):
-            await m.add_reaction(":sheep:")
+            await m.add_reaction("\U0001F411")
 
         while True:
             m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
@@ -765,7 +765,7 @@ L
                 break
             if any(i in m.content.lower() for i in ["sheep", "shep", "🐑", "ba", "wool"]):
                 with contextlib.suppress(discord.HTTPException):
-                    await m.add_reaction(":sheep:")
+                    await m.add_reaction("\U0001F411")
         sent = (await ctx.send(":white_check_mark: Done."))
         await ctx.bot.register_response(sent, ctx.message)
 
@@ -777,10 +777,9 @@ L
 
         m = ctx.message
 
-        with contextlib.suppress(discord.HTTPException):
-            await m.add_reaction(":duck:")
+        await m.add_reaction("\U0001F986")
 
-        pattern = re.compile("(kw|qu)a(c|k|ck|cc)")
+        pattern = re.compile("(kw|qu)a+c+k?")
 
         while True:
             m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
@@ -790,8 +789,7 @@ L
                 break
             r = re.search(pattern, m.content.lower())
             if any(i in m.content.lower() for i in ["duck", "duk", "🦆", "ducc"]) or r:
-                with contextlib.suppress(discord.HTTPException):
-                    await m.add_reaction(":duck:")
+                await m.add_reaction("\U0001F986")
         sent = (await ctx.send(":white_check_mark: Done."))
         await ctx.bot.register_response(sent, ctx.message)
 
