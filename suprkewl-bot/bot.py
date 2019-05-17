@@ -282,6 +282,18 @@ class suprkewl_bot(commands.Bot):
 
             return await ctx.send(embed=emb)
 
+        elif isinstance(error, commands.NotOwner):
+            emb = discord.Embed(color=self.embed_color)
+            emb.add_field(
+                name="Permission denied",
+                value=f":x: You must be a bot owner to run `{ctx.prefix}{ctx.command}`."
+            )
+            emb.set_thumbnail(url=self.user.avatar_url)
+            emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
+            emb.set_footer(text=f"{self.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+
+            return await ctx.send(embed=emb)
+
         print(f"Ignoring exception in command {ctx.prefix}{ctx.command}:")
 
         traceback.print_exception(type(error), error, error.__traceback__)
