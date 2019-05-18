@@ -154,7 +154,10 @@ class About(commands.Cog):
         )
         emb.add_field(name="Total Users", value=str(len(ctx.bot.users)))
         owner_id = ctx.bot.owner_id
-        owner = await ctx.guild.fetch_member(owner_id)
+        if ctx.guild is not None:
+            owner = await ctx.guild.fetch_member(owner_id)
+        else:
+            owner = None
         if owner is not None:
             emb.add_field(name="Bot owner", value=f"<@{owner_id}>")
         emb.set_thumbnail(url=ctx.bot.user.avatar_url)
