@@ -43,7 +43,7 @@ def format_commit(commit):
 
     offset = t_utils.human_timedelta(commit_time.astimezone(
         datetime.timezone.utc).replace(tzinfo=None), accuracy=1)
-    return f"[`{short_sha2}`](https://github.com/laggycomputer/suprkewl-bot/commit/{commit.hex}) {short} ({offset})"
+    return f"[`{short_sha2}`](https://github.com/laggycomputer/suprkewl-bot/commit/{commit.hex} \"Boo!\") {short} ({offset})"
 
 
 def get_last_commits(count=5):
