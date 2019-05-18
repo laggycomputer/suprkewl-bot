@@ -83,6 +83,7 @@ async def get_build_status(cs):
     ret = {}
     for branch in branches:
         key = branch["name"]
+        ret[key] = {}
         duration = branch["last_build"]["duration"]
         if duration is not None:
             if duration >= 60:
@@ -94,9 +95,10 @@ async def get_build_status(cs):
                 duration = str(duration) + " seconds"
             build_status = branch["last_build"]["state"].title()
             val = f"{build_status} after {duration}"
-            ret[key] = val
+            ret[key]["status"] = val
         else:
-            ret[key] = "Build in progress"
+            ret[key]["status"] = "Build in progress"
+        ret[key]["id"] = branch["last_build"]["id"]
     return ret
 
 
@@ -113,7 +115,10 @@ class About(commands.Cog):
         fieldval = []
         build_status = await get_build_status(ctx.bot.http2)
         for branch_name in build_status:
-            fieldval.append(f"`{branch_name}`: {build_status[branch_name]}")
+            fieldval.append(
+                f"`{branch_name}`: [{build_status[branch_name]['status']}]"
+                f"(https://travis-ci.com/laggycomputer/suprkewl-bot/builds/{build_status[branch_name]['id']} \"Boo!\")"
+            )
         emb.add_field(name="Build status", value="\n".join(fieldval))
 
         emb.add_field(name="Support Server", value="https://www.discord.gg/CRBBJVY")
