@@ -108,6 +108,9 @@ class About(commands.Cog):
     async def about(self, ctx):
         """Give some bot info."""
 
+        sent = (await ctx.send(":thinking:"))
+        await ctx.bot.register_response(sent, ctx.message)
+
         emb = discord.Embed(
             name="Bot info", color=ctx.bot.embed_color,
             description=get_last_commits()
@@ -160,8 +163,7 @@ class About(commands.Cog):
             icon_url=ctx.author.avatar_url
         )
 
-        sent = (await ctx.send(embed=emb))
-        await ctx.bot.register_response(sent, ctx.message)
+        await sent.edit(content="", embed=emb)
 
     @commands.command()
     async def ping(self, ctx):
