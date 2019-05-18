@@ -110,65 +110,65 @@ class About(commands.Cog):
 
         sent = (await ctx.send(":thinking:"))
         await ctx.bot.register_response(sent, ctx.message)
-
-        emb = discord.Embed(
-            name="Bot info", color=ctx.bot.embed_color,
-            description=get_last_commits()
-        )
-        fieldval = []
-        build_status = await get_build_status(ctx.bot.http2)
-        for branch_name in build_status:
-            fieldval.append(
-                f"`{branch_name}`: [{build_status[branch_name]['status']}]"
-                f"(https://travis-ci.com/laggycomputer/suprkewl-bot/builds/{build_status[branch_name]['id']} \"Boo!\")"
+        async with ctx.typing():
+            emb = discord.Embed(
+                name="Bot info", color=ctx.bot.embed_color,
+                description=get_last_commits()
             )
-        emb.add_field(name="Build status", value="\n".join(fieldval))
+            fieldval = []
+            build_status = await get_build_status(ctx.bot.http2)
+            for branch_name in build_status:
+                fieldval.append(
+                    f"`{branch_name}`: [{build_status[branch_name]['status']}]"
+                    f"(https://travis-ci.com/laggycomputer/suprkewl-bot/builds/{build_status[branch_name]['id']} \"Boo!\")"
+                )
+            emb.add_field(name="Build status", value="\n".join(fieldval))
 
-        emb.add_field(name="Support Server", value="[Here](https://www.discord.gg/CRBBJVY \"Boo!\")")
-        emb.add_field(name="Line count", value=linecount())
-        emb.add_field(name="System Time", value=current_time())
-        emb.add_field(name="Processor Type", value=platform.machine().lower())
-        emb.add_field(
-            name="OS version (short)",
-            value=platform.system() + " " + platform.release()
-        )
-        emb.add_field(
-            name="OS version (long)",
-            value=platform.platform(aliased=True)
-        )
-        emb.add_field(
-            name="Python Version", value=f"Python {platform.python_branch()}, build date {platform.python_build()[1]}"
-        )
-        emb.add_field(
-            name="discord.py version",
-            value=pkg_resources.get_distribution("discord.py").version
-        )
-        emb.add_field(
-            name="Jishaku version",
-            value=pkg_resources.get_distribution("jishaku").version
-        )
-        emb.add_field(name="Processor name", value=platform.processor())
-        emb.add_field(
-            name="Current server count",
-            value=str(len(ctx.bot.guilds))
-        )
-        emb.add_field(name="Total Users", value=str(len(ctx.bot.users)))
-        owner_id = ctx.bot.owner_id
-        if ctx.guild is not None:
-            owner = await ctx.guild.fetch_member(owner_id)
-        else:
-            owner = None
-        if owner is not None:
-            emb.add_field(name="Bot owner", value=f"<@{owner_id}>")
-        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
-        emb.set_author(
-            name=ctx.bot.user.name,
-            icon_url=ctx.bot.user.avatar_url
-        )
-        emb.set_footer(
-            text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
-            icon_url=ctx.author.avatar_url
-        )
+            emb.add_field(name="Support Server", value="[Here](https://www.discord.gg/CRBBJVY \"Boo!\")")
+            emb.add_field(name="Line count", value=linecount())
+            emb.add_field(name="System Time", value=current_time())
+            emb.add_field(name="Processor Type", value=platform.machine().lower())
+            emb.add_field(
+                name="OS version (short)",
+                value=platform.system() + " " + platform.release()
+            )
+            emb.add_field(
+                name="OS version (long)",
+                value=platform.platform(aliased=True)
+            )
+            emb.add_field(
+                name="Python Version", value=f"Python {platform.python_branch()}, build date {platform.python_build()[1]}"
+            )
+            emb.add_field(
+                name="discord.py version",
+                value=pkg_resources.get_distribution("discord.py").version
+            )
+            emb.add_field(
+                name="Jishaku version",
+                value=pkg_resources.get_distribution("jishaku").version
+            )
+            emb.add_field(name="Processor name", value=platform.processor())
+            emb.add_field(
+                name="Current server count",
+                value=str(len(ctx.bot.guilds))
+            )
+            emb.add_field(name="Total Users", value=str(len(ctx.bot.users)))
+            owner_id = ctx.bot.owner_id
+            if ctx.guild is not None:
+                owner = await ctx.guild.fetch_member(owner_id)
+            else:
+                owner = None
+            if owner is not None:
+                emb.add_field(name="Bot owner", value=f"<@{owner_id}>")
+            emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+            emb.set_author(
+                name=ctx.bot.user.name,
+                icon_url=ctx.bot.user.avatar_url
+            )
+            emb.set_footer(
+                text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
+                icon_url=ctx.author.avatar_url
+            )
 
         await sent.edit(content="", embed=emb)
 
