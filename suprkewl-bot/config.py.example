@@ -2,7 +2,6 @@ import logging
 
 # Your Discord bot token here:
 token = ""
-prefix = "s!"
 # Logging path and level.
 logpath = "../suprkewl.log"
 loglevels = (logging.CRITICAL, logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG)
