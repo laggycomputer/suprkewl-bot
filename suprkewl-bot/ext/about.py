@@ -124,7 +124,7 @@ class About(commands.Cog):
             )
         emb.add_field(name="Build status", value="\n".join(fieldval))
 
-        emb.add_field(name="Support Server", value="https://www.discord.gg/CRBBJVY")
+        emb.add_field(name="Support Server", value="[Here](https://www.discord.gg/CRBBJVY \"Boo!\")")
         emb.add_field(name="Line count", value=linecount())
         emb.add_field(name="System Time", value=current_time())
         emb.add_field(name="Processor Type", value=platform.machine().lower())
