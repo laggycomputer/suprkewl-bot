@@ -27,7 +27,6 @@ import discord
 from discord.ext import commands
 from ext.utils import apiToHuman, linecount, plural
 
-import config
 import redis
 
 
@@ -138,7 +137,7 @@ class suprkewl_bot(commands.Bot):
                     await self.process_commands(message)
 
                 else:
-                    if message.content.startswith(config.prefix):
+                    if message.content.startswith("s!"):
                         await message.author.send(":x: I can't send messages there! Perhaps try again elsewhere?")
             else:
                 await self.process_commands(message)
@@ -393,7 +392,7 @@ class suprkewl_bot(commands.Bot):
 
 
 async def get_pre(bot, message):
-    pre = [config.prefix]
+    pre = ["s!"]
     is_owner = (await bot.is_owner(message.author))
     if isinstance(message.channel, discord.DMChannel) or is_owner:
         pre.append("")
