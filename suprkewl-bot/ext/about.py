@@ -43,7 +43,8 @@ def format_commit(commit):
 
     offset = t_utils.human_timedelta(commit_time.astimezone(
         datetime.timezone.utc).replace(tzinfo=None), accuracy=1)
-    return f"[`{short_sha2}`](https://github.com/laggycomputer/suprkewl-bot/commit/{commit.hex} \"Boo!\") {short} ({offset})"
+    return f"[`{short_sha2}`](https://github.com/laggycomputer/suprkewl-bot/commit/{commit.hex} \"Boo!\")" \
+        f" {short} ({offset})"
 
 
 def get_last_commits(count=5):
@@ -120,7 +121,8 @@ class About(commands.Cog):
             for branch_name in build_status:
                 fieldval.append(
                     f"`{branch_name}`: [{build_status[branch_name]['status']}]"
-                    f"(https://travis-ci.com/laggycomputer/suprkewl-bot/builds/{build_status[branch_name]['id']} \"Boo!\")"
+                    f"(https://travis-ci.com/laggycomputer/suprkewl-bot/builds/{build_status[branch_name]['id']}"
+                    f" \"Boo!\")"
                 )
             emb.add_field(name="Build status", value="\n".join(fieldval))
 
@@ -137,7 +139,8 @@ class About(commands.Cog):
                 value=platform.platform(aliased=True)
             )
             emb.add_field(
-                name="Python Version", value=f"Python {platform.python_branch()}, build date {platform.python_build()[1]}"
+                name="Python Version", value=f"Python {platform.python_branch()},"
+                f" build date {platform.python_build()[1]}"
             )
             emb.add_field(
                 name="discord.py version",
