@@ -366,6 +366,7 @@ L
         """FIGHT"""
 
         # Yes, this entire command is an eyesore. I'll get to it. Soon.
+        current_footer = ctx.bot.embed_footer
         if target.bot:
             sent = (await ctx.send(
                 ":x: Oops! You can't fight a robot; it's robot arms will annihilate you! Perhaps you meant a human?"
@@ -620,7 +621,7 @@ L
                 emb.set_author(name=ctx.bot.user.name,
                                icon_url=ctx.bot.user.avatar_url)
                 emb.set_footer(
-                    text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
+                    text=f"{current_footer} Requested by {ctx.author}",
                     icon_url=ctx.author.avatar_url
                 )
 
@@ -715,7 +716,7 @@ L
             icon_url=ctx.bot.user.avatar_url
         )
         emb.set_footer(
-            text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
+            text=f"{current_footer} Requested by {ctx.author}",
             icon_url=ctx.author.avatar_url
         )
 
