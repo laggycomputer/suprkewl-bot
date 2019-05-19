@@ -611,9 +611,9 @@ L
                 emb = discord.Embed(
                     name="FIGHT", color=find_turn().user.colour)
 
+                emb.add_field(name=f"Player 1 ({ctx.author}) health", value=f"**{p1.health}**")
+                emb.add_field(name=f"Player 2 ({target}) health", value=f"**{p2.health}**")
                 emb.add_field(name="Current Setting", value=f"`{setting}`")
-                emb.add_field(name="Player 1 health", value=f"**{p1.health}**")
-                emb.add_field(name="Player 2 health", value=f"**{p2.health}**")
                 emb.add_field(name="Current action", value=currentaction)
 
                 emb.set_thumbnail(url=ctx.bot.user.avatar_url)
