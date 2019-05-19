@@ -89,7 +89,6 @@ class suprkewl_bot(commands.Bot):
         try:
             print(f"Got message '{message.content}'")
             print(f"From @{message.author}")
-            print(f"From @{message.author}")
             print(f"In server {message.guild}")
             print(f"In channel {message.channel}")
 
