@@ -27,8 +27,8 @@ from discord.ext import commands
 
 class Text(commands.Cog):
 
-    @commands.command(description="Sends text. Strict cooldown.")
-    @commands.cooldown(1, 120, commands.BucketType.channel)
+    @commands.command(description="Sends text.")
+    @commands.cooldown(1, 1, commands.BucketType.member)
     async def text(self, ctx):
         """Don't ask what this does."""
 
