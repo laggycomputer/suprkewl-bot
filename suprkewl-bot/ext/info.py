@@ -26,7 +26,7 @@ import discord
 from discord.ext import commands
 import matplotlib.pyplot as plt
 
-from .utils import apiToHuman, escape_codeblocks, format_json
+from .utils import permissions_converter, escape_codeblocks, format_json
 
 
 class Info(commands.Cog):
@@ -141,7 +141,7 @@ class Info(commands.Cog):
         permtuples = []
 
         for permTuple in iter(perms):
-            readablename = apiToHuman[permTuple[0]]
+            readablename = permissions_converter[permTuple[0]]
             permtuples.append((readablename, permTuple[1]))
 
         for number in order:

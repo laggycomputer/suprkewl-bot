@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-apiToHuman = {
+permissions_converter = {
     "add_reactions": "Add Reactions", "administrator": "Administrator", "attach_files": "Attach Files",
     "ban_members": "Ban Members", "change_nickname": "Can Change Own Nickname", "connect": "Connect to Voice Channels",
     "create_instant_invite": "Create Server Invites", "deafen_members": "Deafen Members", "embed_links": "Embed Links",
