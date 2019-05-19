@@ -25,7 +25,7 @@ import traceback
 import aiohttp
 import discord
 from discord.ext import commands
-from ext.utils import apiToHuman, linecount, plural
+from ext.utils import permissions_converter, linecount, plural
 
 import redis
 
@@ -188,11 +188,11 @@ class suprkewl_bot(commands.Bot):
                 return None
             else:
                 if len(perms) == 1:
-                    return apiToHuman[perms[0]]
+                    return permissions_converter[perms[0]]
                 else:
                     fmt = ""
                     for i in range(0, len(perms)):
-                        fmt += apiToHuman[i]
+                        fmt += permissions_converter[i]
                         fmt += ", "
                         fmt += f"and {perms[-1]}"
 
