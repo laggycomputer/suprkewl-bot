@@ -119,6 +119,15 @@ class About(commands.Cog):
                 f" \"Boo!\")"
             )
         emb.add_field(name="Build status", value="\n".join(fieldval))
+        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+        emb.set_author(
+            name=ctx.bot.user.name,
+            icon_url=ctx.bot.user.avatar_url
+        )
+        emb.set_footer(
+            text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
+            icon_url=ctx.author.avatar_url
+        )
 
         sent = (await ctx.send(embed=emb))
         await ctx.bot.register_response(sent, ctx.message)
