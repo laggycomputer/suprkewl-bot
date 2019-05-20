@@ -27,13 +27,13 @@ from discord.ext import commands
 
 class Text(commands.Cog):
 
-    @commands.command(description="Sends text. Strict cooldown.")
-    @commands.cooldown(1, 120, commands.BucketType.channel)
+    @commands.command(description="Sends text.")
+    @commands.cooldown(1, 1, commands.BucketType.member)
     async def text(self, ctx):
         """Don't ask what this does."""
 
         files = ["bee.txt", "lettuce.txt", "uwu.txt"]
-        with open(os.getcwd() + f"..\\..\\assets\\{random.choice(files)}", "rb") as fp:
+        with open(os.getcwd() + f"/../assets/{random.choice(files)}", "rb") as fp:
             sent = (await ctx.send(file=discord.File(fp, filename="love_letter.txt")))
         await ctx.bot.register_response(sent, ctx.message)
 

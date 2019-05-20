@@ -426,6 +426,7 @@ L
 
         async with ctx.channel.typing():
             await asyncio.sleep(1)
+            current_footer = ctx.bot.embed_footer
 
             p1 = Fighter(ctx.author)
             p2 = Fighter(target)
@@ -611,16 +612,16 @@ L
                 emb = discord.Embed(
                     name="FIGHT", color=find_turn().user.colour)
 
+                emb.add_field(name=f"Player 1 ({ctx.author}) health", value=f"**{p1.health}**")
+                emb.add_field(name=f"Player 2 ({target}) health", value=f"**{p2.health}**")
                 emb.add_field(name="Current Setting", value=f"`{setting}`")
-                emb.add_field(name="Player 1 health", value=f"**{p1.health}**")
-                emb.add_field(name="Player 2 health", value=f"**{p2.health}**")
                 emb.add_field(name="Current action", value=currentaction)
 
                 emb.set_thumbnail(url=ctx.bot.user.avatar_url)
                 emb.set_author(name=ctx.bot.user.name,
                                icon_url=ctx.bot.user.avatar_url)
                 emb.set_footer(
-                    text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
+                    text=f"{current_footer} Requested by {ctx.author}",
                     icon_url=ctx.author.avatar_url
                 )
 

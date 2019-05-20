@@ -106,28 +106,63 @@ async def get_build_status(cs):
 class About(commands.Cog):
 
     @commands.command()
+    async def git(self, ctx):
+        """Get info about the Git repository for this bot."""
+
+        emb = discord.Embed(name="GitHub info", color=ctx.bot.embed_color, description=get_last_commits())
+        fieldval = []
+        build_status = await get_build_status(ctx.bot.http2)
+        for branch_name in build_status:
+            fieldval.append(
+                f"`{branch_name}`: [{build_status[branch_name]['status']}]"
+                f"(https://travis-ci.com/laggycomputer/suprkewl-bot/builds/{build_status[branch_name]['id']}"
+                f" \"Boo!\")"
+            )
+        emb.add_field(name="Build status", value="\n".join(fieldval))
+        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+        emb.set_author(
+            name=ctx.bot.user.name,
+            icon_url=ctx.bot.user.avatar_url
+        )
+        emb.set_footer(
+            text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
+            icon_url=ctx.author.avatar_url
+        )
+
+        sent = (await ctx.send(embed=emb))
+        await ctx.bot.register_response(sent, ctx.message)
+
+    @commands.command()
+    async def stats(self, ctx):
+        """Get some bot stats."""
+
+        emb = discord.Embed(name="Bot status", color=ctx.bot.embed_color)
+        emb.add_field(name="Line count", value=linecount())
+        emb.add_field(name="Total Users", value=str(len(ctx.bot.users)))
+
+        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+        emb.set_author(
+            name=ctx.bot.user.name,
+            icon_url=ctx.bot.user.avatar_url
+        )
+        emb.set_footer(
+            text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
+            icon_url=ctx.author.avatar_url
+        )
+
+        sent = (await ctx.send(embed=emb))
+        await ctx.bot.register_response(sent, ctx.message)
+
+    @commands.command()
     async def about(self, ctx):
-        """Give some bot info."""
+        """Give some general bot info."""
 
         sent = (await ctx.send(":thinking:"))
         await ctx.bot.register_response(sent, ctx.message)
         async with ctx.typing():
-            emb = discord.Embed(
-                name="Bot info", color=ctx.bot.embed_color,
-                description=get_last_commits()
-            )
-            fieldval = []
-            build_status = await get_build_status(ctx.bot.http2)
-            for branch_name in build_status:
-                fieldval.append(
-                    f"`{branch_name}`: [{build_status[branch_name]['status']}]"
-                    f"(https://travis-ci.com/laggycomputer/suprkewl-bot/builds/{build_status[branch_name]['id']}"
-                    f" \"Boo!\")"
-                )
-            emb.add_field(name="Build status", value="\n".join(fieldval))
+            emb = discord.Embed(name="Bot info", color=ctx.bot.embed_color)
 
             emb.add_field(name="Support Server", value="[Here](https://www.discord.gg/CRBBJVY \"Boo!\")")
-            emb.add_field(name="Line count", value=linecount())
             emb.add_field(name="System Time", value=current_time())
             emb.add_field(name="Processor Type", value=platform.machine().lower())
             emb.add_field(
@@ -155,7 +190,6 @@ class About(commands.Cog):
                 name="Current server count",
                 value=str(len(ctx.bot.guilds))
             )
-            emb.add_field(name="Total Users", value=str(len(ctx.bot.users)))
             owner_id = ctx.bot.owner_id
             if ctx.guild is not None:
                 owner = await ctx.guild.fetch_member(owner_id)
