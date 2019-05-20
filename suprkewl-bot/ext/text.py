@@ -32,7 +32,7 @@ class Text(commands.Cog):
     async def text(self, ctx):
         """Don't ask what this does."""
 
-        files = ["bee.txt", "uwu.txt"]
+        files = ["bee.txt", "lettuce.txt", "uwu.txt"]
         with open(os.getcwd() + f"..\\..\\assets\\{random.choice(files)}", "rb") as fp:
             sent = (await ctx.send(file=discord.File(fp, filename="love_letter.txt")))
         await ctx.bot.register_response(sent, ctx.message)
