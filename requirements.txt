@@ -1,6 +1,7 @@
 aioredis
 python-dateutil
 discord.py
+gtts
 matplotlib
 jishaku
 pygit2

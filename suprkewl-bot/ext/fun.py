@@ -21,11 +21,13 @@ import asyncio
 import contextlib
 import io
 import math
+import os
 import random
 import re
 
 import discord
 from discord.ext import commands
+import gtts
 
 
 class Fighter:
@@ -850,6 +852,31 @@ L
                 ":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command."
             ))
             await ctx.bot.register_response(sent, ctx.message)
+
+    @commands.command()
+    @commands.cooldown(1, 3, commands.BucketType.member)
+    async def tts(self, ctx, *, message):
+        """Make me speak a message."""
+
+        try:
+            tts = gtts.gTTS(text=message)
+        except AssertionError:
+            sent = (await ctx.send(":x: There was nothing speakable in that message."))
+            return await ctx.bot.register_response(sent, ctx.message)
+
+        # The actual request happens here:
+        def save():
+            fname = f"{ctx.message.id}.mp3"
+            tts.save(fname)
+            fp = discord.File(fname, "out.mp3")
+            return [fname, fp]
+
+        fname, fp = await ctx.bot.loop.run_in_executor(None, save)
+
+        sent  = (await ctx.send(":white_check_mark:", file=fp))
+        await ctx.bot.register_response(sent, ctx.message)
+
+        os.remove(fname)
 
 
 def setup(bot):
