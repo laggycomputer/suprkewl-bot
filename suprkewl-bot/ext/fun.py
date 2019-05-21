@@ -867,11 +867,12 @@ L
         # The actual request happens here:
         def save():
             fname = f"{ctx.message.id}.mp3"
-            tts.save(fname)
+            tts.save(fname)  # This uses requests, and has to wait for all of the sound output to be streamed.
             fp = discord.File(fname, "out.mp3")
             return [fname, fp]
 
-        fname, fp = await ctx.bot.loop.run_in_executor(None, save)
+        async with ctx.typing():
+            fname, fp = await ctx.bot.loop.run_in_executor(None, save)
 
         sent = (await ctx.send(":white_check_mark:", file=fp))
         await ctx.bot.register_response(sent, ctx.message)
