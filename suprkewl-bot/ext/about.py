@@ -153,7 +153,7 @@ class About(commands.Cog):
         sent = (await ctx.send(embed=emb))
         await ctx.bot.register_response(sent, ctx.message)
 
-    @commands.command()
+    @commands.command(aliases=["info"])
     async def about(self, ctx):
         """Give some general bot info."""
 
