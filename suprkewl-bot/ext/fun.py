@@ -873,7 +873,7 @@ L
 
         fname, fp = await ctx.bot.loop.run_in_executor(None, save)
 
-        sent  = (await ctx.send(":white_check_mark:", file=fp))
+        sent = (await ctx.send(":white_check_mark:", file=fp))
         await ctx.bot.register_response(sent, ctx.message)
 
         os.remove(fname)
