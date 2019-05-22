@@ -75,7 +75,7 @@ def current_time():
 
 
 async def get_build_status(cs):
-    repo_id = config.travis_repo_id
+    repo_id = 9109252
     token = config.travis_token
     headers = {"Travis-API-Version": "3", "Authorization": f"token {token}"}
     async with cs.get(f"https://api.travis-ci.com/repo/{repo_id}/branches", headers=headers) as resp:
