@@ -858,20 +858,20 @@ L
     async def tts(self, ctx, *, message):
         """Make me speak a message."""
 
-        try:
-            tts = gtts.gTTS(text=message)
-        except AssertionError:
-            sent = (await ctx.send(":x: There was nothing speakable in that message."))
-            return await ctx.bot.register_response(sent, ctx.message)
-
-        # The actual request happens here:
-        def save():
-            fname = f"{ctx.message.id}.mp3"
-            tts.save(fname)  # This uses requests, and has to wait for all of the sound output to be streamed.
-            fp = discord.File(fname, "out.mp3")
-            return [fname, fp]
-
         async with ctx.typing():
+            try:
+                tts = gtts.gTTS(text=message)
+            except AssertionError:
+                sent = (await ctx.send(":x: There was nothing speakable in that message."))
+                return await ctx.bot.register_response(sent, ctx.message)
+
+            # The actual request happens here:
+            def save():
+                fname = f"{ctx.message.id}.mp3"
+                tts.save(fname)  # This uses requests, and has to wait for all of the sound output to be streamed.
+                fp = discord.File(fname, "out.mp3")
+                return [fname, fp]
+
             fname, fp = await ctx.bot.loop.run_in_executor(None, save)
 
         sent = (await ctx.send(":white_check_mark:", file=fp))
