@@ -138,7 +138,10 @@ class About(commands.Cog):
 
         emb = discord.Embed(name="Bot status", color=ctx.bot.embed_color)
         emb.add_field(name="Line count", value=linecount())
-        emb.add_field(name="Total Users", value=str(len(ctx.bot.users)))
+        emb.add_field(
+            name="Stats",
+            value=f"{len(ctx.bot.users)} users, {len(ctx.bot.guilds)} guilds, {len(ctx.bot.commands)} commands"
+        )
 
         emb.set_thumbnail(url=ctx.bot.user.avatar_url)
         emb.set_author(
