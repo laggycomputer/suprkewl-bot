@@ -105,7 +105,7 @@ async def get_build_status(cs):
 
 class About(commands.Cog):
 
-    @commands.command()
+    @commands.command(aliases=["github", "branches"])
     async def git(self, ctx):
         """Get info about the Git repository for this bot."""
 
