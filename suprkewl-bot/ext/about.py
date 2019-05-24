@@ -18,7 +18,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import datetime
+import inspect
 import itertools
+import os
 import pkg_resources
 import platform
 import time
@@ -228,6 +230,46 @@ class About(commands.Cog):
         )
 
         sent = (await ctx.send(embed=emb, file=fp))
+        await ctx.bot.register_response(sent, ctx.message)
+
+    # From R. Danny
+    @commands.command(
+        description="Use dots or spaces to find source code for subcommands, e.g. `clear info` or `clear.info`."
+    )
+    async def source(self, ctx, *, command=None):
+        """Find my source code for a specific command."""
+
+        source_url = "https://github.com/laggycomputer/suprkewl-bot/blob/untested"
+        if command is None:
+            sent = (await ctx.send(source_url))
+            return await ctx.bot.register_response(sent, ctx.message)
+
+        if command == "help":
+            src = type(ctx.bot.help_command)
+            module = src.__module__
+            filename = inspect.getsourcefile(src)
+        else:
+            obj = ctx.bot.get_command(command.replace(".", " "))
+            if obj is None:
+                sent = (await ctx.send("Could not find command."))
+                return await ctx.bot.register_response(sent, ctx.message)
+
+            # since we found the command we're looking for, presumably anyway, let's
+            # try to access the code itself
+            src = obj.callback.__code__
+            module = obj.callback.__module__
+            filename = src.co_filename
+
+        lines, firstlineno = inspect.getsourcelines(src)
+        if not module.startswith("discord"):
+            # not a built-in command
+            location = os.path.relpath(filename).replace("\\", "/")
+        else:
+            location = module.replace('.', '/') + '.py'
+            source_url = 'https://github.com/Rapptz/discord.py/blob/master'
+
+        final_url = f"<{source_url}/{location}#L{firstlineno}-L{firstlineno + len(lines) - 1}>"
+        sent = await ctx.send(final_url)
         await ctx.bot.register_response(sent, ctx.message)
 
 
