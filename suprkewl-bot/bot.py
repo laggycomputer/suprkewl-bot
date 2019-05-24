@@ -70,6 +70,8 @@ class suprkewl_bot(commands.Bot):
         if not self.http2:
             self.http2 = aiohttp.ClientSession()
 
+        await self.redis.execute("SET", "commands_used", 0)
+
         print(
             f"Logged in as {self.user.name} (UID {self.user.id}) | Connected to {len(self.guilds)} servers and their "
             f"combined {len(set(self.get_all_members()))} members"
@@ -320,6 +322,7 @@ class suprkewl_bot(commands.Bot):
                 f"tracked_message {request.id}",
                 f"{response.channel.id}:{response.id}"
             )
+            await self.redis.incr("commands_used")
 
     async def playingstatus(self):
 
