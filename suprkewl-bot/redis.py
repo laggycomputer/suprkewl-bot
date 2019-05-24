@@ -29,10 +29,8 @@ class Redis:
         if self.connection is not None and not self.connection.closed:
             return
 
-        if any(config.redis_password):
-            passwd = config.redis_password
-        else:
-            passwd = None
+        passwd = config.redis_password or None
+
         self.connection = await aioredis.create_connection(
             (config.redis_host, config.redis_port),
             password=passwd
