@@ -110,7 +110,7 @@ class suprkewl_bot(commands.Bot):
 
             if isinstance(message.channel, discord.abc.GuildChannel):
                 if message.channel.permissions_for(message.guild.me).send_messages:
-                    if message.content.startswith(message.guild.me.mention):
+                    if message.guild.me in message.mentions:
                         ping_images = [
                             "../assets/angery,gif",
                             "../assets/eyes.png",
