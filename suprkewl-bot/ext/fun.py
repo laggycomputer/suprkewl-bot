@@ -884,10 +884,10 @@ L
     async def star(self, ctx, *, msg):
         """Create a star out of a string 1-25 characters long."""
 
-        if (len(msg) > 25):
+        if len(msg) > 25:
             sent = (await ctx.send("Your message must be shorter than 25 characters."))
             return await ctx.bot.register_response(sent, ctx.message)
-        elif (len(msg) == 0):
+        elif len(msg) == 0:
             sent = (await ctx.send("Your message must have at least 1 character."))
             return await ctx.bot.register_response(sent, ctx.message)
 
