@@ -304,7 +304,7 @@ L
             avg = total / count
             avg = round(avg, 8)
 
-            content = f":game_die: {rolls}. The total was {total}, and the average (mean) was {avg}."
+            content = f":game_die: {', '.join(rolls)}. The total was {total}, and the average (mean) was {avg}."
 
             if len(content) > 2000:
                 # Yes, this is blocking, but given current limits responses are almost always ~4000 characters max.
