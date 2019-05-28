@@ -308,5 +308,6 @@ class Info(commands.Cog):
         sent = await ctx.send(embed=embed, file=fp)
         await ctx.register_response(sent)
 
+
 def setup(bot):
     bot.add_cog(Info())
