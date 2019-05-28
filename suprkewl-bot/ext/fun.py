@@ -102,8 +102,8 @@ Manly Lenny: ᕦ( ͡͡~͜ʖ ͡° )ᕤ
 Put ur dongers up or I'll shoot:(ง ͡° ͜ʖ ͡°)=/̵͇̿/'̿'̿̿̿ ̿ ̿̿
 Badass Lenny: ̿ ̿'̿'̵͇̿з=(⌐■ʖ■)=ε/̵͇̿/'̿̿ ̿
 """
-        sent = (await ctx.send(msg))
-        await ctx.bot.register_response(sent, ctx.message)
+        sent = await ctx.send(msg)
+        await ctx.register_response(sent)
 
     @commands.command(description="LMAO! Has a 5-second channel cooldown to keep things calm.")
     @commands.cooldown(1, 5, commands.BucketType.channel)
@@ -121,8 +121,8 @@ L
         。
        ."""
 
-        sent = (await ctx.send(msg))
-        await ctx.bot.register_response(sent, ctx.message)
+        sent = await ctx.send(msg)
+        await ctx.register_response(sent)
 
     @commands.command(
         description="Make the bot say something. Watch what you say. Has a 5 second user cooldown."
@@ -131,9 +131,10 @@ L
     async def say(self, ctx, *, message: str):
         """Make the bot say something."""
 
-        sent = (await ctx.send(f"{ctx.author.mention} wants me to say '{message}'"))
-        await ctx.bot.register_response(sent, ctx.message)    @commands.command(aliases=["burn"])
+        sent = await ctx.send(f"{ctx.author.mention} wants me to say '{message}'")
+        await ctx.register_response(sent)
 
+    @commands.command(aliases=["burn"])
     async def roast(self, ctx, *, target: discord.Member):
         """Roast someone. ⌐■_■"""
 
@@ -161,7 +162,7 @@ L
         ]
 
         sent = await ctx.send(random.choice(roasts))
-        await ctx.bot.register_response(sent, ctx.message)
+        await ctx.register_response(sent)
 
     @commands.command(aliases=["card"], description="Draw from a standard, 52-card deck, no jokers.")
     async def draw(self, ctx):
@@ -175,7 +176,7 @@ L
         ]
 
         sent = await ctx.send(f"I drew the {random.choice(ranks)} of {random.choice(suits)}")
-        await ctx.bot.register_response(sent, ctx.message)
+        await ctx.register_response(sent)
 
     @commands.command(aliases=["flip", "quarter", "dime", "penny", "nickel"])
     async def coin(self, ctx):
@@ -192,7 +193,7 @@ L
         else:
             await msg.edit(content="It's tails.")
 
-        await ctx.bot.register_response(msg, ctx.message)
+        await ctx.register_response(msg)
 
     @commands.command(
         aliases=["rockpaperscissors"],
@@ -247,7 +248,7 @@ L
         async with ctx.channel.typing():
             await asyncio.sleep(2)
             msg = await ctx.send(f"{ctx.author.mention} :fist: Rock...")
-            await ctx.bot.register_response(msg, ctx.message)
+            await ctx.register_response(msg)
             await asyncio.sleep(1)
 
             await msg.edit(content=f"{ctx.author.mention} :newspaper: Paper...")
@@ -284,7 +285,7 @@ L
                 content=f":x: Your input must be of the form `AdB`! Please check `{ctx.prefix}{ctx.invoked_with}"
                 f" info` for more info."
             )
-            await ctx.bot.register_response(msg, ctx.message)
+            await ctx.register_response(msg)
             return
 
         if 1000 >= count > 0 and 1000 >= limit > 0:
@@ -317,19 +318,17 @@ L
                             " in this file:",
                     file=discord.File(fp, "rolls.txt")
                 ))
-                await ctx.bot.register_response(sent, ctx.message)
+                await ctx.register_response(sent)
 
             else:
-                await msg.edit(
-                    content=content
-                )
-                await ctx.bot.register_response(msg, ctx.message)
+                await msg.edit(content=content)
+                await ctx.register_response(msg)
         else:
             await msg.edit(
                 content=f"Your syntax was correct, however one of your arguments were invalid. See"
                 f" `{ctx.prefix}{ctx.invoked_with} info.`"
             )
-            await ctx.bot.register_response(msg, ctx.message)
+            await ctx.register_response(msg)
 
     @dice.command(description="Show info for dice command.", name="info")
     async def dice_info(self, ctx):
@@ -337,7 +336,7 @@ L
             "Your argument must be of the form AdB, where A is the number of dice to roll and B is the number of sides"
             " on each die. A and B must be positive integers between 1 and 1000."
         ))
-        await ctx.bot.register_response(sent, ctx.message)
+        await ctx.register_response(sent)
 
     @commands.command(
         aliases=["pick", "rand"],
@@ -350,7 +349,7 @@ L
         async with ctx.channel.typing():
             await asyncio.sleep(1)
             msg = await ctx.send("Choosing...")
-            await ctx.bot.register_response(msg, ctx.message)
+            await ctx.register_response(msg)
             await asyncio.sleep(1.5)
             await msg.edit(content="Eeeny, Meeny, Miney, Mo. Catch a tiger by the toe...")
 
@@ -369,14 +368,14 @@ L
 
         # Yes, this entire command is an eyesore. I'll get to it. Soon.
         if target.bot:
-            sent = (await ctx.send(
+            sent = await ctx.send(
                 ":x: Oops! You can't fight a robot; it's robot arms will annihilate you! Perhaps you meant a human?"
-            ))
-            await ctx.bot.register_response(sent, ctx.message)
+            )
+            await ctx.register_response(sent)
             return
         if target == ctx.author:
-            sent = (await ctx.send(":x: You can't fight yourself!"))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(":x: You can't fight yourself!")
+            await ctx.register_response(sent)
             return
         if (await ctx.bot.redis.exists(f"{ctx.author.id}:fighting")):
             emb = discord.Embed(
@@ -395,8 +394,8 @@ L
             emb.set_footer(
                 text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
-            sent = (await ctx.send(embed=emb, file=fp))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(embed=emb, file=fp)
+            await ctx.register_response(sent)
 
             return
         if (await ctx.bot.redis.exists(f"{target.id}:fighting")):
@@ -417,8 +416,8 @@ L
             emb.set_footer(
                 text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
-            sent = (await ctx.send(embed=emb, file=fp))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(embed=emb, file=fp)
+            await ctx.register_response(sent)
 
             return
         await ctx.bot.redis.execute("SET", f"{ctx.author.id}:fighting", "fighting")
@@ -628,8 +627,8 @@ L
                 )
 
                 if sent is None:
-                    sent = (await ctx.send(embed=emb))
-                    await ctx.bot.register_response(sent, ctx.message)
+                    sent = await ctx.send(embed=emb)
+                    await ctx.register_response(sent)
                 else:
                     await sent.edit(embed=emb)
 
@@ -663,8 +662,8 @@ L
             await self.xkcd_latest(ctx)
         else:
             if arg <= 0:
-                sent = (await ctx.send(":x: Invalid comic number."))
-                await ctx.bot.register_response(sent, ctx.message)
+                sent = await ctx.send(":x: Invalid comic number.")
+                await ctx.register_response(sent)
                 return
 
             await self.xkcd_get(ctx, arg)
@@ -672,8 +671,8 @@ L
     async def xkcd_get(self, ctx, number):
         async with ctx.bot.http2.get(f"https://xkcd.com/{number}/info.0.json") as resp:
             if resp.status == 404:
-                sent = (await ctx.send(":x: Comic not found!"))
-                await ctx.bot.register_response(sent, ctx.message)
+                sent = await ctx.send(":x: Comic not found!")
+                await ctx.register_response(sent)
                 return
             text = await resp.json()
 
@@ -690,8 +689,8 @@ L
             icon_url=ctx.author.avatar_url
         )
 
-        sent = (await ctx.send(embed=emb))
-        await ctx.bot.register_response(sent, ctx.message)
+        sent = await ctx.send(embed=emb)
+        await ctx.register_response(sent)
 
     @xkcd.command(name="random", aliases=["rand"], description="Get a random xkcd comic.")
     async def xkcd_random(self, ctx):
@@ -722,8 +721,8 @@ L
             icon_url=ctx.author.avatar_url
         )
 
-        sent = (await ctx.send(embed=emb))
-        await ctx.bot.register_response(sent, ctx.message)
+        sent = await ctx.send(embed=emb)
+        await ctx.register_response(sent)
 
     async def xkcd_latest(self, ctx):
         async with ctx.bot.http2.get("https://xkcd.com/info.0.json") as resp:
@@ -746,8 +745,8 @@ L
             icon_url=ctx.author.avatar_url
         )
 
-        sent = (await ctx.send(embed=emb))
-        await ctx.bot.register_response(sent, ctx.message)
+        sent = await ctx.send(embed=emb)
+        await ctx.register_response(sent)
 
     @commands.command(
         description="Reacts with a sheep emoji to sheep-related messages. Send 's!stop' to end the sheepiness."
@@ -774,13 +773,13 @@ L
 
             await ctx.bot.redis.delete(f"{ctx.channel.id}:sheep")
 
-            sent = (await ctx.send(":white_check_mark: Done."))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(":white_check_mark: Done.")
+            await ctx.register_response(sent)
         else:
-            sent = (await ctx.send(
+            sent = await ctx.send(
                 ":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command."
-            ))
-            await ctx.bot.register_response(sent, ctx.message)
+            )
+            await ctx.register_response(sent)
 
     @commands.command(
         description="Reacts with a duck emoji to duck-related messages. Send 's!stop' to end the quackery."
@@ -808,13 +807,13 @@ L
 
             await ctx.bot.redis.delete(f"{ctx.channel.id}:duck")
 
-            sent = (await ctx.send(":white_check_mark: Done."))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(":white_check_mark: Done.")
+            await ctx.register_response(sent)
         else:
-            sent = (await ctx.send(
+            sent = await ctx.send(
                 ":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command."
-            ))
-            await ctx.bot.register_response(sent, ctx.message)
+            )
+            await ctx.register_response(sent)
 
     @commands.command(
         description="Reacts with a dog emoji to dog-related messages. Send 's!stop' to end the borkiness."
@@ -845,13 +844,13 @@ L
 
             await ctx.bot.redis.delete(f"{ctx.channel.id}:dog")
 
-            sent = (await ctx.send(":white_check_mark: Done."))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(":white_check_mark: Done.")
+            await ctx.register_response(sent)
         else:
-            sent = (await ctx.send(
+            sent = await ctx.send(
                 ":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command."
-            ))
-            await ctx.bot.register_response(sent, ctx.message)
+            )
+            await ctx.register_response(sent)
 
     @commands.command()
     @commands.cooldown(1, 3, commands.BucketType.member)
@@ -862,8 +861,8 @@ L
             try:
                 tts = gtts.gTTS(text=message)
             except AssertionError:
-                sent = (await ctx.send(":x: There was nothing speakable in that message."))
-                return await ctx.bot.register_response(sent, ctx.message)
+                sent = await ctx.send(":x: There was nothing speakable in that message.")
+                return await ctx.register_response(sent)
 
             # The actual request happens here:
             def save():
@@ -874,8 +873,8 @@ L
 
             fname, fp = await ctx.bot.loop.run_in_executor(None, save)
 
-        sent = (await ctx.send(":white_check_mark:", file=fp))
-        await ctx.bot.register_response(sent, ctx.message)
+        sent = await ctx.send(":white_check_mark:", file=fp)
+        await ctx.register_response(sent)
 
         os.remove(fname)
 
@@ -885,11 +884,11 @@ L
         """Create a star out of a string 1-25 characters long."""
 
         if len(msg) > 25:
-            sent = (await ctx.send("Your message must be shorter than 25 characters."))
-            return await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send("Your message must be shorter than 25 characters.")
+            return await ctx.register_response(sent)
         elif len(msg) == 0:
-            sent = (await ctx.send("Your message must have at least 1 character."))
-            return await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send("Your message must have at least 1 character.")
+            return await ctx.register_response(sent)
 
         ret = "```\n"
 
@@ -909,8 +908,8 @@ L
                 ret += "\n"
 
         ret += "```"
-        sent = (await ctx.send(ret))
-        await ctx.bot.register_response(sent, ctx.message)
+        sent = await ctx.send(ret)
+        await ctx.register_response(sent)
 
 
 def setup(bot):

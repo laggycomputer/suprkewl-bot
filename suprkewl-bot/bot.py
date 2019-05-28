@@ -25,7 +25,7 @@ import traceback
 import aiohttp
 import discord
 from discord.ext import commands
-from ext.utils import permissions_converter, linecount, plural
+from ext.utils import permissions_converter, linecount, plural, Context
 
 import redis
 
@@ -142,6 +142,10 @@ class suprkewl_bot(commands.Bot):
                         await message.author.send(":x: I can't send messages there! Perhaps try again elsewhere?")
             else:
                 await self.process_commands(message)
+
+    async def process_commands(self, message):
+        ctx = await self.get_context(message, cls=Context)
+        await self.invoke(ctx)
 
     async def on_raw_message_edit(self, payload):
         if not self.is_ready():

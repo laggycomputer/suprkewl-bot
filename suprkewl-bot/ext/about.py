@@ -131,8 +131,8 @@ class About(commands.Cog):
             icon_url=ctx.author.avatar_url
         )
 
-        sent = (await ctx.send(embed=emb))
-        await ctx.bot.register_response(sent, ctx.message)
+        sent = await ctx.send(embed=emb)
+        await ctx.register_response(sent)
 
     @commands.command()
     async def stats(self, ctx):
@@ -157,15 +157,15 @@ class About(commands.Cog):
             icon_url=ctx.author.avatar_url
         )
 
-        sent = (await ctx.send(embed=emb))
-        await ctx.bot.register_response(sent, ctx.message)
+        sent = await ctx.send(embed=emb)
+        await ctx.register_response(sent)
 
     @commands.command(aliases=["info"])
     async def about(self, ctx):
         """Give some general bot info."""
 
-        sent = (await ctx.send(":thinking:"))
-        await ctx.bot.register_response(sent, ctx.message)
+        sent = await ctx.send(":thinking:")
+        await ctx.register_response(sent)
         async with ctx.typing():
             emb = discord.Embed(name="Bot info", color=ctx.bot.embed_color)
 
@@ -229,8 +229,8 @@ class About(commands.Cog):
             url="attachment://image.gif"
         )
 
-        sent = (await ctx.send(embed=emb, file=fp))
-        await ctx.bot.register_response(sent, ctx.message)
+        sent = await ctx.send(embed=emb, file=fp)
+        await ctx.register_response(sent)
 
     # From R. Danny
     @commands.command(
@@ -241,8 +241,8 @@ class About(commands.Cog):
 
         source_url = "https://github.com/laggycomputer/suprkewl-bot/blob/untested"
         if command is None:
-            sent = (await ctx.send(source_url))
-            return await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(source_url)
+            return await ctx.register_response(sent)
 
         if command == "help":
             src = type(ctx.bot.help_command)
@@ -251,8 +251,8 @@ class About(commands.Cog):
         else:
             obj = ctx.bot.get_command(command.replace(".", " "))
             if obj is None:
-                sent = (await ctx.send("Could not find command."))
-                return await ctx.bot.register_response(sent, ctx.message)
+                sent = await ctx.send("Could not find command.")
+                return await ctx.register_response(sent)
 
             # since we found the command we're looking for, presumably anyway, let's
             # try to access the code itself
@@ -265,12 +265,13 @@ class About(commands.Cog):
             # not a built-in command
             location = os.path.relpath(filename).replace("\\", "/")
         else:
-            location = module.replace('.', '/') + '.py'
+            location = module.replace(".", "/") + ".py"
             source_url = 'https://github.com/Rapptz/discord.py/blob/master'
 
         final_url = f"<{source_url}/{location}#L{firstlineno}-L{firstlineno + len(lines) - 1}>"
+
         sent = await ctx.send(final_url)
-        await ctx.bot.register_response(sent, ctx.message)
+        await ctx.register_response(sent)
 
 
 def setup(bot):

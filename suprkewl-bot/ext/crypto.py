@@ -165,8 +165,8 @@ class Cryptography(commands.Cog):
         """Perform operations with the Caesar cipher."""
 
         if ctx.invoked_subcommand is None:
-            sent = (await ctx.send(":x: Please provide a valid subcommand!"))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(":x: Please provide a valid subcommand!")
+            await ctx.register_response(sent)
 
     @caesar.command(name="encode", aliases=["e", "encipher", "encrypt"])
     async def caesar_encode(self, ctx, shift: int, *, message):
@@ -175,8 +175,8 @@ class Cryptography(commands.Cog):
         encoded = caesar_translate(message, shift)
         encoded = f"```\n{encoded}```"
 
-        sent = (await ctx.send(encoded))
-        await ctx.bot.register_response(sent, ctx.message)
+        sent = await ctx.send(encoded)
+        await ctx.register_response(sent)
 
     @caesar.command(name="decode", aliases=["d", "decrypt", "decipher"])
     async def caesar_decode(self, ctx, shift: int, *, message):
@@ -185,8 +185,8 @@ class Cryptography(commands.Cog):
         decoded = caesar_translate(message, -shift)
         decoded = f"```\n{decoded}```"
 
-        sent = (await ctx.send(decoded))
-        await ctx.bot.register_response(sent, ctx.message)
+        sent = await ctx.send(decoded)
+        await ctx.register_response(sent)
 
     @caesar.command(name="crack", aliases=["c"])
     async def caesar_crack(self, ctx, *, message):
@@ -200,15 +200,15 @@ class Cryptography(commands.Cog):
         if len(msg) > 2000:
             fp = io.BytesIO(decoded.encode("utf-8"))
 
-            sent = (await ctx.send(
+            sent = await ctx.send(
                 content=f":white_check_mark: I think the shift is {shift}. Attached is a decryption of your message"
                 f" using that shift.",
                 file=discord.File(fp, "cracked.txt")
-            ))
-            await ctx.bot.register_response(sent, ctx.message)
+            )
+            await ctx.register_response(sent)
         else:
-            sent = (await ctx.send(msg))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(msg)
+            await ctx.register_response(sent)
 
     @commands.command(
         aliases=["r13"],
@@ -224,14 +224,14 @@ class Cryptography(commands.Cog):
         if len(msg) > 2000:
             fp = io.BytesIO(output.encode("utf-8"))
 
-            sent = (await ctx.send(
+            sent = await ctx.send(
                 content=f":white_check_mark: Attached is your output.",
                 file=discord.File(fp, "rot13.txt")
-            ))
-            await ctx.bot.register_response(sent, ctx.message)
+            )
+            await ctx.register_response(sent)
         else:
-            sent = (await ctx.send(msg))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(msg)
+            await ctx.register_response(sent)
 
     @commands.group(
         aliases=["sub"],
@@ -243,8 +243,8 @@ class Cryptography(commands.Cog):
         """Perform operations with a substitution cipher."""
 
         if ctx.invoked_subcommand is None:
-            sent = (await ctx.send(":x: Please provide a valid subcommand!"))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(":x: Please provide a valid subcommand!")
+            await ctx.register_response(sent)
 
     @substitution.command(name="keyword", aliases=["k", "key", "keywords", "kw"])
     async def substitution_keyword(self, ctx, *, kw):
@@ -252,8 +252,8 @@ class Cryptography(commands.Cog):
 
         full_key = keyword_expand(kw)
 
-        sent = (await ctx.send(f":white_check_mark: Your keyword was expanded to `{full_key}`."))
-        await ctx.bot.register_response(sent, ctx.message)
+        sent = await ctx.send(f":white_check_mark: Your keyword was expanded to `{full_key}`.")
+        await ctx.register_response(sent)
 
     @substitution.command(name="decode", aliases=["d", "decrypt", "decipher"])
     async def substitution_decode(self, ctx, key, *, message):
@@ -265,15 +265,15 @@ class Cryptography(commands.Cog):
         if len(msg) > 2000:
             fp = io.BytesIO(decoded.encode("utf-8"))
 
-            sent = (await ctx.send(
+            sent = await ctx.send(
                 "Your message was decoded. Because the resulting message is longer than 2000 characters, your output"
                 " has been placed in the attached file.",
                 file=discord.File(fp, "decoded.txt")
-            ))
-            await ctx.bot.register_response(sent, ctx.message)
+            )
+            await ctx.register_response(sent)
         else:
-            sent = (await ctx.send(msg))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(msg)
+            await ctx.register_response(sent)
 
     @substitution.command(name="encode", aliases=["e", "encipher", "encrypt"])
     async def substitution_encode(self, ctx, key, *, message):
@@ -290,10 +290,10 @@ class Cryptography(commands.Cog):
                 " has been placed in the attached file.",
                 file=discord.File(fp, "encoded.txt")
             ))
-            await ctx.bot.register_response(sent, ctx.message)
+            await ctx.register_response(sent)
         else:
-            sent = (await ctx.send(msg))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(msg)
+            await ctx.register_response(sent)
 
     @commands.group(
         aliases=["@bash", "@b"],
@@ -303,8 +303,8 @@ class Cryptography(commands.Cog):
         """Operates with the Atbash cipher."""
 
         if ctx.invoked_subcommand is None:
-            sent = (await ctx.send(":x: Please provide a valid subcommand!"))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(":x: Please provide a valid subcommand!")
+            await ctx.register_response(sent)
 
     @atbash.command(name="encode", aliases=["e", "encipher", "encrypt"])
     async def atbash_encode(self, ctx, *, message):
@@ -316,15 +316,15 @@ class Cryptography(commands.Cog):
         if len(msg) > 2000:
             fp = io.BytesIO(encoded.encode("utf-8"))
 
-            sent = (await ctx.send(
+            sent = await ctx.send(
                 "Your message was encoded. Because the resulting message is longer than 2000 characters, your output"
                 " has been placed in the attached file.",
                 file=discord.File(fp, "encoded.txt")
-            ))
-            await ctx.bot.register_response(sent, ctx.message)
+            )
+            await ctx.register_response(sent)
         else:
-            sent = (await ctx.send(msg))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(msg)
+            await ctx.register_response(sent)
 
     @atbash.command(name="decode", aliases=["d", "decrypt", "decipher"])
     async def atbash_decode(self, ctx, *, message):
@@ -336,15 +336,15 @@ class Cryptography(commands.Cog):
         if len(msg) > 2000:
             fp = io.BytesIO(decoded.encode("utf-8"))
 
-            sent = (await ctx.send(
+            sent = await ctx.send(
                 "Your message was decoded. Because the resulting message is longer than 2000 characters, your output"
                 " has been placed in the attached file.",
                 file=discord.File(fp, "decoded.txt")
-            ))
-            await ctx.bot.register_response(sent, ctx.message)
+            )
+            await ctx.register_response(sent)
         else:
-            sent = (await ctx.send(msg))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(msg)
+            await ctx.register_response(sent)
 
     @commands.command(
         aliases=["cs"],
@@ -359,7 +359,7 @@ class Cryptography(commands.Cog):
         if algorithm == "list" and message is None:
             algorithms = ", ".join(f"`{alg}`" for alg in allowed_alg)
             sent = (await ctx.send(":white_check_mark: The allowed algorithms are as follows: \n" + algorithms))
-            return await ctx.bot.register_response(sent, ctx.message)
+            return await ctx.register_response(sent)
 
         if algorithm in allowed_alg:
             message = message.encode("utf-8")
@@ -368,13 +368,13 @@ class Cryptography(commands.Cog):
             hash = m.hexdigest()
 
             sent = (await ctx.send(f":white_check_mark: The hash of your message is `{hash}`."))
-            await ctx.bot.register_response(sent, ctx.message)
+            await ctx.register_response(sent)
         else:
-            sent = (await ctx.send(
+            sent = await ctx.send(
                 f":x: Invalid algorithm. Remember that algorithm names are case-sensitive. See"
                 f" `{ctx.prefix}{ctx.invoked_with} list` for the list of available algorithms."
-            ))
-            await ctx.bot.register_response(sent, ctx.message)
+            )
+            await ctx.register_response(sent)
 
 
 def setup(bot):

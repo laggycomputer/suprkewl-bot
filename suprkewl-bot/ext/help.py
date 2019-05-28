@@ -92,8 +92,8 @@ class HelpCommand(commands.HelpCommand):
         embed.set_footer(text=f"Category: {command.cog_name}")
 
         destination = self.get_destination()
-        sent = (await destination.send(embed=embed))
-        await self.context.bot.register_response(sent, self.context.message)
+        sent = await destination.send(embed=embed)
+        await self.context.register_response(sent)
 
     async def send_group_help(self, group):
         embedinator = self.create_embedinator(
@@ -108,8 +108,8 @@ class HelpCommand(commands.HelpCommand):
             for command in filtered:
                 self.add_command_field(embedinator, command)
 
-        sent = (await embedinator.send())
-        await self.context.bot.register_response(sent, self.context.message)
+        sent = await embedinator.send()
+        await self.context.register_response(sent)
 
         await embedinator.handle()
 
@@ -126,8 +126,8 @@ class HelpCommand(commands.HelpCommand):
             for command in filtered:
                 self.add_command_field(embedinator, command)
 
-        sent = (await embedinator.send())
-        await self.context.bot.register_response(sent, self.context.message)
+        sent = await embedinator.send()
+        await self.context.register_response(sent)
 
         await embedinator.handle()
 
@@ -145,8 +145,8 @@ class HelpCommand(commands.HelpCommand):
                 for command in filtered:
                     self.add_command_field(embedinator, command)
 
-        sent = (await embedinator.send())
-        await self.context.bot.register_response(sent, self.context.message)
+        sent = await embedinator.send()
+        await self.context.register_response(sent)
 
         await embedinator.handle()
 

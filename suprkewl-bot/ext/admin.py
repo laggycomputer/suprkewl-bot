@@ -43,24 +43,24 @@ class Admin(commands.Cog):
             m = await ctx.fetch_message(message)
             sent = None
         except discord.NotFound:
-            sent = (await ctx.send(":x: Message not found. It must be in the current channel."))
+            sent = await ctx.send(":x: Message not found. It must be in the current channel.")
             m = None
         except discord.Forbidden:
-            sent = (await ctx.send(
+            sent = await ctx.send(
                 ":x: I do not have permission to `Read Message History` here. I cannot fetch the message."
-            ))
+            )
             m = None
         finally:
             if sent is not None:
-                await ctx.bot.register_response(sent, ctx.message)
+                await ctx.register_response(sent)
 
         try:
             await m.delete()
-            sent = (await ctx.send(":white_check_mark:"))
+            sent = await ctx.send(":white_check_mark:")
         except discord.Forbidden:
-            sent = (await ctx.send(":x: I do not have permission to delete that message."))
+            sent = await ctx.send(":x: I do not have permission to delete that message.")
         finally:
-            await ctx.bot.register_response(sent, ctx.message)
+            await ctx.register_response(sent)
 
     @commands.command(hidden=True)
     async def statustoggle(self, ctx):
@@ -70,14 +70,14 @@ class Admin(commands.Cog):
             resp = "Enabling status change."
         ctx.bot.change_status = not ctx.bot.change_status
 
-        sent = (await ctx.send(resp))
-        await ctx.bot.register_response(sent, ctx.message)
+        sent = await ctx.send(resp)
+        await ctx.register_response(sent)
 
     @commands.command(hidden=True)
     async def statuschange(self, ctx, *, status):
         await ctx.bot.change_presence(activity=discord.Game(name=status), status=discord.Status.idle)
-        sent = (await ctx.send(f":white_check_mark: Changed to `{status}`"))
-        await ctx.bot.register_response(sent, ctx.message)
+        sent = await ctx.send(f":white_check_mark: Changed to `{status}`")
+        await ctx.register_response(sent)
 
 
 def setup(bot):

@@ -34,8 +34,8 @@ class Text(commands.Cog):
 
         files = ["bee.txt", "lettuce.txt", "uwu.txt"]
         with open(os.getcwd() + f"/../assets/{random.choice(files)}", "rb") as fp:
-            sent = (await ctx.send(file=discord.File(fp, filename="love_letter.txt")))
-        await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send(file=discord.File(fp, filename="love_letter.txt"))
+        await ctx.register_response(sent)
 
     @commands.command()
     @commands.cooldown(1, 2, commands.BucketType.channel)
@@ -47,14 +47,14 @@ class Text(commands.Cog):
         if len(ret) > 2000:
             fp = io.BytesIO(ret.encode("utf-8"))
 
-            sent = (await ctx.send(
+            sent = await ctx.send(
                 content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in"
                         " this file:",
                 file=discord.File(fp, "stretch.txt")
-            ))
+            )
         else:
-            sent = (await ctx.send("```\n%s\n```" % ret))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send("```\n%s\n```" % ret)
+        await ctx.bot.register_response(sent, ctx.message)
 
     @commands.command()
     @commands.cooldown(1, 2, commands.BucketType.channel)
@@ -68,15 +68,14 @@ class Text(commands.Cog):
         if len(ret) > 2000:
             fp = io.BytesIO(ret.encode("utf-8"))
 
-            sent = (await ctx.send(
+            sent = await ctx.send(
                 content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in"
                         " this file:",
                 file=discord.File(fp, "square.txt")
-            ))
-            await ctx.bot.register_response(sent, ctx.message)
+            )
         else:
-            sent = (await ctx.send("```\n%s\n```" % ret))
-            await ctx.bot.register_response(sent, ctx.message)
+            sent = await ctx.send("```\n%s\n```" % ret)
+        await ctx.register_response(sent)
 
 
 def setup(bot):
