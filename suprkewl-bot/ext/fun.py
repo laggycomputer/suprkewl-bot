@@ -244,8 +244,6 @@ L
             content += winmsg
         elif winner == "comp":
             content += losemsg
-
-        async with ctx.channel.typing():
             await asyncio.sleep(2)
             msg = await ctx.send(f"{ctx.author.mention} :fist: Rock...")
             await ctx.register_response(msg)
@@ -276,8 +274,8 @@ L
 
         async with ctx.channel.typing():
             await asyncio.sleep(1)
-            msg = await ctx.send("thinking... :thinking:")
-            await asyncio.sleep(1)
+        msg = await ctx.send("thinking... :thinking:")
+        await asyncio.sleep(1)
         try:
             count, limit = map(int, dice.split("d"))
         except ValueError:
@@ -346,18 +344,11 @@ L
     async def choose(self, ctx, *choices: str):
         """Choose between given choices"""
 
-        async with ctx.channel.typing():
-            await asyncio.sleep(1)
-            msg = await ctx.send("Choosing...")
-            await ctx.register_response(msg)
-            await asyncio.sleep(1.5)
-            await msg.edit(content="Eeeny, Meeny, Miney, Mo. Catch a tiger by the toe...")
+        message = f"{ctx.author.mention}, I choose '"
+        message += random.choice(choices) + "'."
 
-        async with ctx.channel.typing():
-            await asyncio.sleep(1)
-            message = f"{ctx.author.mention}, I choose '"
-            message += random.choice(choices) + "'."
-            await msg.edit(content=message)
+        sent = await ctx.send(message)
+        await ctx.register_response(sent)
 
     @commands.command(
         description="Starts a fight between the command invoker and the specified <target>."
@@ -649,11 +640,14 @@ L
 
         win_mention = findwin().user.mention
         lose_mention = findloser().user.mention
-        await ctx.send(
+        await sent.delete()
+
+        sent = await ctx.send(
             f"Looks like {win_mention} defeated {lose_mention} with {findwin().health} health left!"
         )
 
         await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
+        await ctx.register_response(sent)
 
     @commands.group(description="Gets an xkcd comic.", invoke_without_command=True)
     @commands.cooldown(1, 3, commands.BucketType.channel)

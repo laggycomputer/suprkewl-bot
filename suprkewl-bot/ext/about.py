@@ -164,8 +164,6 @@ class About(commands.Cog):
     async def about(self, ctx):
         """Give some general bot info."""
 
-        sent = await ctx.send(":thinking:")
-        await ctx.register_response(sent)
         async with ctx.typing():
             emb = discord.Embed(name="Bot info", color=ctx.bot.embed_color)
 
@@ -214,7 +212,8 @@ class About(commands.Cog):
                 icon_url=ctx.author.avatar_url
             )
 
-        await sent.edit(content="", embed=emb)
+        sent = await ctx.send(":thinking:")
+        await ctx.register_response(sent)
 
     @commands.command()
     async def ping(self, ctx):
