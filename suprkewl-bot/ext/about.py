@@ -212,7 +212,7 @@ class About(commands.Cog):
                 icon_url=ctx.author.avatar_url
             )
 
-        sent = await ctx.send(":thinking:")
+        sent = await ctx.send(embed=emb)
         await ctx.register_response(sent)
 
     @commands.command()
