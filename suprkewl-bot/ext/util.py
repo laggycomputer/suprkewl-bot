@@ -42,7 +42,8 @@ class Utilities(commands.Cog):
         if ret["status"] == "error":
             data = {
                 "api_dev_key": config.pastebin_token, "api_option": "paste",
-                "api_paste_code": log, "api_paste_expire_date": "1W"
+                "api_paste_code": log, "api_paste_expire_date": "1W",
+                "api_paste_name": f"Rendering Log (ID: {ctx.message.id})"
             }
             async with ctx.bot.http2.post("https://pastebin.com/api/api_post.php", data=data) as resp:
                 if (await resp.text()).startswith("Bad API request, "):
