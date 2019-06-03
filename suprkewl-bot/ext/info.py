@@ -308,6 +308,51 @@ class Info(commands.Cog):
         sent = await ctx.send(embed=embed, file=fp)
         await ctx.register_response(sent)
 
+    @commands.command(
+        description="Checks the number of people in the server that are listening to a certain song on Spotify."
+                    " Defaults to the one you are listening to. The song name is case-insensitive."
+    )
+    @commands.guild_only()  # Member.activities seems to have no counterpart on User
+    async def songcount(self, ctx, *, song=None):
+        """Count members listening to a certain song on Spotify."""
+
+        await ctx.bot.request_offline_members(ctx.guild)
+
+        def is_listening(member):
+            if not len(member.activities):  # Member has no active activities
+                return False
+
+            return any(isinstance(a, discord.Spotify) for a in member.activities)
+
+        def song_name_from(member):
+            for activity in member.activities:
+                if isinstance(activity, discord.Spotify):
+                    return activity.title
+
+        if song is None:
+            if is_listening(ctx.author):
+                song = song_name_from(ctx.author)
+            else:
+                sent = await ctx.send(
+                    "You did not specify a song to count, and you are not listening to a song yourself. Please provide"
+                    " a song name, or start listening to a song and try again."
+                )
+                return await ctx.register_response(sent)
+
+        # The case insensitivity is for Spotify songs that have identical names but different cases
+        count = sum(is_listening(m) and song_name_from(m).lower() == song.lower() for m in ctx.guild.members)
+
+        if not count:
+            msg = "Nobody is"
+        elif count == 1:
+            msg = "One member is"
+        else:
+            msg = str(count) + "members are"
+
+        msg += f" listening to the song `{song}`."
+
+        await ctx.register_response(await ctx.send(msg))
+
 
 def setup(bot):
     bot.add_cog(Info())
