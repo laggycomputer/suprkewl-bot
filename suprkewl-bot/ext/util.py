@@ -37,12 +37,12 @@ class Utilities(commands.Cog):
                 code = code.replace(key, value)
 
             ret = await download_file(ctx, template.replace("#CONTENT", code))
-            ret.pop("log")
+            log = ret.pop("log")
 
         if ret["status"] == "error":
             data = {
                 "api_dev_key": config.pastebin_token, "api-option": "paste",
-                "api_paste_code": ret["log"], "api_paste_expire_date": "1W"
+                "api_paste_code": log, "api_paste_expire_date": "1W"
             }
             async with ctx.bot.http2.post("https://pastebin.com/api/api_post.php", data=data) as resp:
                 if (await resp.text()).startswith("Bad API request, "):
