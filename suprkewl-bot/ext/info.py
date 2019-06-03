@@ -17,8 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import base64
+import binascii
+from datetime import datetime
 import io
 import os
+import re
 import typing
 from urllib.parse import quote as urlquote
 
@@ -27,6 +31,9 @@ from discord.ext import commands
 import matplotlib.pyplot as plt
 
 from .utils import permissions_converter, escape_codeblocks, format_json
+
+
+token_re = re.compile(r"[a-zA-Z0-9]{24}\.[a-zA-Z0-9]{6}\.[a-zA-Z0-9_\-]{27}|mfa\.[a-zA-Z0-9_\-]{84}")
 
 
 class Info(commands.Cog):
@@ -352,6 +359,50 @@ class Info(commands.Cog):
         msg += f" listening to the song `{song}`."
 
         await ctx.register_response(await ctx.send(msg))
+
+    @commands.command(aliases=["tokenparse", "ptoken"])
+    @commands.cooldown(1, 2.5, commands.BucketType.member)
+    async def parsetoken(self, ctx, *, token):
+        """Parse a Discord auth token."""
+
+        sent = None
+
+        if not token_re.match(token):
+            sent = await ctx.send("Not a valid token.")
+
+        t = token.split(".")
+        if len(t) != 3:
+            sent = await ctx.send("Not a valid token.")
+
+        if sent is not None:
+            return await ctx.register_response(sent)
+
+        try:
+            id_ = base64.standard_b64decode(t[0]).decode("utf-8")
+            try:
+                user = await ctx.bot.fetch_user(int(id_))
+            except discord.HTTPException:
+                user = None
+        except binascii.Error:
+            return await ctx.send("Failed to decode user ID.")
+
+        try:
+            token_epoch = 1293840000
+            decoded = int.from_bytes(base64.standard_b64decode(t[1] + "=="), "big")
+            timestamp = datetime.utcfromtimestamp(decoded)
+            if timestamp.year < 2015:
+                timestamp = datetime.utcfromtimestamp(decoded + token_epoch)
+            date = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        except binascii.Error:
+            return await ctx.send("Failed to decode timestamp.")
+
+        invite = f"https://discordapp.com/oauth2/authorize?client_id={id_}&scope=bot"
+
+        fmt = f"**Valid token: **\n\n**User ID is**: {id_} ({user or '*Not fetchable*.'}).\n" \
+              f"**Created at**: {date}\n**Cryptographic component**: {t[2]}\n**Invite**: {invite}"
+
+        sent = await ctx.send(fmt)
+        await ctx.register_response(sent)
 
 
 def setup(bot):
