@@ -1,4 +1,6 @@
+aiodns
 aioredis
+cchardet
 python-dateutil
 discord.py
 gtts
