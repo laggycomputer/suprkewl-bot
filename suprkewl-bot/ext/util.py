@@ -7,6 +7,7 @@ from discord.ext import commands
 
 import config
 
+
 async def download_file(ctx, data):
     cs = ctx.bot.http2
     async with cs.post("http://rtex.probablyaweb.site/api/v2", data={
@@ -49,7 +50,8 @@ class Utilities(commands.Cog):
                     return await ctx.register_response(sent)
                 else:
                     pasted_url = await resp.text()
-            sent = await ctx.send(f"Something wrong happened while rendering. The render log is available at {pasted_url}.")
+            sent = await ctx.send(
+                f"Something wrong happened while rendering. The render log is available at {pasted_url}.")
             return await ctx.register_response(sent)
 
         async with ctx.typing():
