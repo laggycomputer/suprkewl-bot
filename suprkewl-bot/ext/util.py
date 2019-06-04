@@ -62,7 +62,10 @@ class Utilities(commands.Cog):
             async with ctx.bot.http2.get("http://rtex.probablyaweb.site/api/v2/" + fname) as resp:
                 fp = io.BytesIO(await resp.content.read())
 
-        await ctx.send(":white_check_mark:", file=discord.File(fp, "latex.png"))
+        await ctx.send(
+            ":white_check_mark: Like it or not, this image is better viewed on light theme.",
+            file=discord.File(fp, "latex.png")
+        )
 
 
 def setup(bot):
