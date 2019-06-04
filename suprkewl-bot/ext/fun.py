@@ -905,6 +905,24 @@ L
         sent = await ctx.send(ret)
         await ctx.register_response(sent)
 
+    @commands.command(aliases=["mcxp"])
+    async def minecraftxp(self, ctx, *, percent: int):  # I don't do Minecraft. Thanks for reading.
+        """Draw a Minecraft XP bar."""
+
+        if 0 >= percent >= 100:
+            sent = await ctx.send(":x: Your argument must be an integer between 0 and 100.")
+            return await ctx.register_response(sent)
+
+        data = {"percent": percent}
+
+        async with ctx.bot.http2.get("https://cdn.welcomer.fun/minecraftxp", data=data) as resp:
+            raw = await resp.content.read()
+
+        fp = discord.File(io.BytesIO(raw), "xp.png")
+
+        sent = await ctx.send(file=fp)
+        await ctx.register_response(sent)
+
 
 def setup(bot):
     bot.add_cog(Fun())
