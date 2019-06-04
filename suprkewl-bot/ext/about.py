@@ -82,7 +82,7 @@ async def get_build_status(cs):
     headers = {"Travis-API-Version": "3", "Authorization": f"token {token}"}
     async with cs.get(f"https://api.travis-ci.com/repo/{repo_id}/branches", headers=headers) as resp:
         text = await resp.json()
-    branches = text["branches"]
+        branches = text["branches"]
     ret = {}
 
     for branch in branches:
@@ -90,6 +90,9 @@ async def get_build_status(cs):
         ret[key] = {}
 
         duration = branch["last_build"]["duration"]
+
+        started_at, finished_at = branch["last_build"]["started_at"], branch["last_build"]["finished_at"]
+
         if duration is not None:
             if duration >= 60:
                 minutes, seconds = divmod(duration, 60)
@@ -102,9 +105,40 @@ async def get_build_status(cs):
 
             build_status = branch["last_build"]["state"].title()
             val = f"{build_status} after {duration}"
+
+            finished_at = finished_at.rstrip("Z")
+            date, time_ = finished_at.split("T")
+            date = date.split("-")
+            time_ = time_.split(":")
+
+            date = tuple(int(v) for v in date)
+            time_ = tuple(int(v) for v in time_)
+
+            year, month, dayofmonth = date
+            hour, minute, second = time_
+
+            dt = datetime.datetime(year, month, dayofmonth, hour, minute, second)
+            offset = t_utils.human_timedelta(dt, accuracy=1)
+
+            val += ", " + offset
+
             ret[key]["status"] = val
         else:
-            ret[key]["status"] = "Build in progress"
+            started_at = started_at.rstrip("Z")
+            date, time_ = started_at.split("T")
+            date = date.split("-")
+            time_ = time_.split(":")
+
+            date = tuple(int(v) for v in date)
+            time_ = tuple(int(v) for v in time_)
+
+            year, month, dayofmonth = date
+            hour, minute, second = time_
+
+            dt = datetime.datetime(year, month, dayofmonth, hour, minute, second)
+            offset = t_utils.human_timedelta(dt, accuracy=1)
+
+            ret[key]["status"] = "Build in progress from " + offset
 
         ret[key]["id"] = branch["last_build"]["id"]
     return ret
