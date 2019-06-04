@@ -889,7 +889,7 @@ L
         mid = len(msg) - 1
 
         for i in range(len(msg) * 2 - 1):
-            if (mid == i):
+            if mid == i:
                 ret += msg[::-1] + msg[1:] + "\n"
             else:
                 let = abs(mid - i)
