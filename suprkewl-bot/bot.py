@@ -82,7 +82,7 @@ class suprkewl_bot(commands.Bot):
             f"Current discord.py version: {discord.__version__} | Current Python version: {platform.python_version()}"
         )
         print("-" * 8)
-        print(f"Use this link to invite this bot:")
+        print("Use this link to invite this bot:")
         invite = discord.utils.oauth_url(self.user.id, discord.Permissions(permissions=8))
         print(invite)
         print("-" * 8)
