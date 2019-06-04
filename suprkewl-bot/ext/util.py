@@ -10,7 +10,7 @@ import config
 
 async def download_file(ctx, data):
     cs = ctx.bot.http2
-    async with cs.post("http://rtex.probablyaweb.site/api/v2", data={
+    async with cs.post(f"http://{config.rtex_server}/api/v2", data={
         "code": data,
         "format": "png"
     }) as resp:
@@ -59,7 +59,7 @@ class Utilities(commands.Cog):
 
             fname = ret["filename"]
 
-            async with ctx.bot.http2.get("http://rtex.probablyaweb.site/api/v2/" + fname) as resp:
+            async with ctx.bot.http2.get(f"http://{config.rtex_server}/api/v2/" + fname) as resp:
                 fp = io.BytesIO(await resp.content.read())
 
         await ctx.send(

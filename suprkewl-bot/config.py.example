@@ -26,3 +26,6 @@ travis_token = ""
 
 # pastebin API token
 pastebin_token = ""
+
+# rTeX config: use http://rtex.probablyaweb.site, or set up your own instance, see DXSmiley/rtex
+rtex_server = "rtex.probablyaweb.site"
