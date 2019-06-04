@@ -365,16 +365,13 @@ class Info(commands.Cog):
     async def parsetoken(self, ctx, *, token):
         """Parse a Discord auth token."""
 
-        sent = None
-
         if not token_re.match(token):
             sent = await ctx.send("Not a valid token.")
+            return await ctx.register_response(sent)
 
         t = token.split(".")
         if len(t) != 3:
             sent = await ctx.send("Not a valid token.")
-
-        if sent is not None:
             return await ctx.register_response(sent)
 
         try:
@@ -384,7 +381,8 @@ class Info(commands.Cog):
             except discord.HTTPException:
                 user = None
         except binascii.Error:
-            return await ctx.send("Failed to decode user ID.")
+            sent = await ctx.send("Failed to decode user ID.")
+            return await ctx.register_response(sent)
 
         try:
             token_epoch = 1293840000
@@ -394,7 +392,8 @@ class Info(commands.Cog):
                 timestamp = datetime.utcfromtimestamp(decoded + token_epoch)
             date = timestamp.strftime("%Y-%m-%d %H:%M:%S")
         except binascii.Error:
-            return await ctx.send("Failed to decode timestamp.")
+            sent = await ctx.send("Failed to decode timestamp.")
+            return await ctx.register_response(sent)
 
         invite = f"https://discordapp.com/oauth2/authorize?client_id={id_}&scope=bot"
 
