@@ -83,7 +83,8 @@ class suprkewl_bot(commands.Bot):
         )
         print("-" * 8)
         print(f"Use this link to invite this bot:")
-        print(f"https://discordapp.com/oauth2/authorize?client_id={self.user.id}&scope=bot&permissions=8")
+        invite = discord.utils.oauth_url(self.user.id, discord.Permissions(permissions=8))
+        print(invite)
         print("-" * 8)
 
     async def on_message(self, message):

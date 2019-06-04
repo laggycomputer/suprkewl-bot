@@ -396,7 +396,7 @@ class Info(commands.Cog):
             sent = await ctx.send("Failed to decode timestamp.")
             return await ctx.register_response(sent)
 
-        invite = f"https://discordapp.com/oauth2/authorize?client_id={id_}&scope=bot"
+        invite = discord.utils.oauth_url(ctx.bot.user.id, discord.Permissions.none())
 
         fmt = f"**Valid token: **\n\n**User ID is**: {id_} ({user or '*Not fetchable*.'}).\n" \
               f"**Created at**: {date}\n**Cryptographic component**: {t[2]}\n**Invite**: {invite}"
