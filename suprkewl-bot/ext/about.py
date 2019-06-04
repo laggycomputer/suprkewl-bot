@@ -93,7 +93,7 @@ async def get_build_status(cs):
 
         started_at, finished_at = branch["last_build"]["started_at"], branch["last_build"]["finished_at"]
 
-        if duration is not None:
+        if finished_at is not None:
             if duration >= 60:
                 minutes, seconds = divmod(duration, 60)
                 duration = f"{minutes} minutes"
