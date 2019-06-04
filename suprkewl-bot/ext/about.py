@@ -130,16 +130,16 @@ async def get_build_status(cs):
                 date, time_ = started_at.split("T")
                 date = date.split("-")
                 time_ = time_.split(":")
-    
+
                 date = tuple(int(v) for v in date)
                 time_ = tuple(int(v) for v in time_)
-    
+
                 year, month, dayofmonth = date
                 hour, minute, second = time_
-    
+
                 dt = datetime.datetime(year, month, dayofmonth, hour, minute, second)
                 offset = t_utils.human_timedelta(dt, accuracy=1)
-                
+
                 val += " from " + offset
 
             ret[key]["status"] = val
