@@ -124,21 +124,25 @@ async def get_build_status(cs):
 
             ret[key]["status"] = val
         else:
-            started_at = started_at.rstrip("Z")
-            date, time_ = started_at.split("T")
-            date = date.split("-")
-            time_ = time_.split(":")
+            val = "Build in progress"
+            if started_at is not None:
+                started_at = started_at.rstrip("Z")
+                date, time_ = started_at.split("T")
+                date = date.split("-")
+                time_ = time_.split(":")
+    
+                date = tuple(int(v) for v in date)
+                time_ = tuple(int(v) for v in time_)
+    
+                year, month, dayofmonth = date
+                hour, minute, second = time_
+    
+                dt = datetime.datetime(year, month, dayofmonth, hour, minute, second)
+                offset = t_utils.human_timedelta(dt, accuracy=1)
+                
+                val += " from " + offset
 
-            date = tuple(int(v) for v in date)
-            time_ = tuple(int(v) for v in time_)
-
-            year, month, dayofmonth = date
-            hour, minute, second = time_
-
-            dt = datetime.datetime(year, month, dayofmonth, hour, minute, second)
-            offset = t_utils.human_timedelta(dt, accuracy=1)
-
-            ret[key]["status"] = "Build in progress from " + offset
+            ret[key]["status"] = val
 
         ret[key]["id"] = branch["last_build"]["id"]
     return ret
