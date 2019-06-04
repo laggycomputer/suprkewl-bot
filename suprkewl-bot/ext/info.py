@@ -323,7 +323,8 @@ class Info(commands.Cog):
     async def songcount(self, ctx, *, song=None):
         """Count members listening to a certain song on Spotify."""
 
-        await ctx.bot.request_offline_members(ctx.guild)
+        if ctx.guild.large:
+            await ctx.bot.request_offline_members(ctx.guild)
 
         def is_listening(member):
             if not len(member.activities):  # Member has no active activities
