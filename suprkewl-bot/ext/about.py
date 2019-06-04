@@ -84,23 +84,28 @@ async def get_build_status(cs):
         text = await resp.json()
     branches = text["branches"]
     ret = {}
+
     for branch in branches:
         key = branch["name"]
         ret[key] = {}
+
         duration = branch["last_build"]["duration"]
         if duration is not None:
             if duration >= 60:
                 minutes, seconds = divmod(duration, 60)
                 duration = f"{minutes} minutes"
+
                 if seconds:
                     duration += f" and {seconds} seconds"
             else:
                 duration = str(duration) + " seconds"
+
             build_status = branch["last_build"]["state"].title()
             val = f"{build_status} after {duration}"
             ret[key]["status"] = val
         else:
             ret[key]["status"] = "Build in progress"
+
         ret[key]["id"] = branch["last_build"]["id"]
     return ret
 
