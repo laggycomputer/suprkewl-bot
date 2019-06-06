@@ -1,9 +1,9 @@
 aiodns
 aioredis
 cchardet
-python-dateutil
 discord.py
 gtts
-matplotlib
 jishaku
+matplotlib
 pygit2
+python-dateutil
