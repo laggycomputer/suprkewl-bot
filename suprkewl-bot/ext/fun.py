@@ -287,7 +287,6 @@ L
             return
 
         if 1000 >= count > 0 and 1000 >= limit > 0:
-
             rolls = []
             total = 0
 
