@@ -374,10 +374,10 @@ L
             emb.set_image(
                 url="attachment://image.gif"
             )
-            emb.set_thumbnail(url=ctx.guild.me.avatar_url)
+            emb.set_thumbnail(url=ctx.bot.user.avatar_url)
             emb.set_author(
-                name=ctx.guild.me.name,
-                icon_url=ctx.guild.me.avatar_url
+                name=ctx.bot.user.name,
+                icon_url=ctx.bot.user.avatar_url
             )
             emb.set_footer(
                 text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
@@ -396,10 +396,10 @@ L
             emb.set_image(
                 url="attachment://image.gif"
             )
-            emb.set_thumbnail(url=ctx.guild.me.avatar_url)
+            emb.set_thumbnail(url=ctx.bot.user.avatar_url)
             emb.set_author(
-                name=ctx.guild.me.name,
-                icon_url=ctx.guild.me.avatar_url
+                name=ctx.bot.user.name,
+                icon_url=ctx.bot.user.avatar_url
             )
             emb.set_footer(
                 text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
