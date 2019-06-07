@@ -198,6 +198,52 @@ class Stats(commands.Cog):
 
         await ctx.register_response(await ctx.send(msg))
 
+    @commands.command(
+        description="Checks the number of people in the server that are playing a certain game."
+                    " Defaults to the game you are playing, if any. The game name is case-insensitive."
+    )
+    @commands.guild_only()  # Member.activities seems to have no counterpart on User
+    async def gamecount(self, ctx, *, game=None):
+        """Count members playing a certain game."""
+
+        if ctx.guild.large:
+            await ctx.bot.request_offline_members(ctx.guild)
+
+        def has_game(member):
+            if not len(member.activities):  # Member has no active activities
+                return False
+
+            return any(isinstance(a, discord.Game) for a in member.activities)
+
+        def game_name_from(member):
+            for activity in member.activities:
+                if isinstance(activity, discord.Game):
+                    return activity.name
+
+        if game is None:
+            if has_game(ctx.author):
+                game = game_name_from(ctx.author)
+            else:
+                sent = await ctx.send(
+                    "You did not specify a game, and you are not playing one yourself. Please provide"
+                    " a game name, or start playing a game and try again."
+                )
+                return await ctx.register_response(sent)
+
+        # Case insensitivity just in case
+        count = sum(has_game(m) and game_name_from(m).lower() == game.lower() for m in ctx.guild.members)
+
+        if not count:
+            msg = "Nobody is"
+        elif count == 1:
+            msg = "One member is"
+        else:
+            msg = str(count) + "members are"
+
+        msg += f" playing the game `{game}`."
+
+        await ctx.register_response(await ctx.send(msg))
+
 
 def setup(bot):
     bot.add_cog(Stats())
