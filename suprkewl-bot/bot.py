@@ -49,6 +49,7 @@ class suprkewl_bot(commands.Bot):
             "ext.crypto",
             "ext.fun",
             "ext.help",
+            "ext.img",
             "ext.info",
             "ext.mod",
             "ext.text",
