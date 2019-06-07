@@ -27,17 +27,26 @@ import matplotlib.pyplot as plt
 
 class Stats(commands.Cog):
 
-    @commands.command(
+    @commands.group(aliases=["chart", "stat"], description="Generate a pie chart for guild attributes.")
+    @commands.guild_only()
+    @commands.cooldown(1, 2, commands.BucketType.channel)
+    async def pie(self, ctx):
+        """Generate pie charts."""
+
+        if ctx.invoked_subcommand is None:
+            sent = await ctx.send(":x: You must specify a subcommand.")
+            await ctx.register_response(sent)
+        else:
+            if ctx.guild.large:
+                await ctx.bot.request_offline_members(ctx.guild)
+
+    @pie.command(
+        name="role",
         description="Generates a pie chart of those with a role and those without. If no role is specified, a pie-chart"
                     " is generated of members by their top role."
     )
-    @commands.cooldown(1, 3, commands.BucketType.guild)
-    @commands.guild_only()
-    async def rolepie(self, ctx, *, role: discord.Role = None):
+    async def pie_role(self, ctx, *, role: discord.Role = None):
         """Generate a piechart of those who have <role>."""
-
-        if ctx.guild.large:
-            await ctx.bot.request_offline_members(ctx.guild)
 
         def pie_gen(ctx, role=None):
             m = ctx.guild.members
@@ -117,17 +126,14 @@ class Stats(commands.Cog):
             sent = await ctx.send(fmt, file=fp)
 
         await ctx.register_response(sent)
-
         os.remove(fname)
 
-    @commands.command(description="Sends a pie chart of users that are bots and those that are otherwise.")
-    @commands.cooldown(1, 3, commands.BucketType.guild)
-    @commands.guild_only()
-    async def botpie(self, ctx):
+    @pie.command(
+        name="bot",
+        aliases=["bots"], description="Sends a pie chart of users that are bots and those that are otherwise."
+    )
+    async def pie_bot(self, ctx):
         """Make a pie chart of server bots."""
-
-        if ctx.guild.large:
-            await ctx.bot.request_offline_members(ctx.guild)
 
         def pie_gen():
             prc = sum(m.bot for m in ctx.guild.members) / len(ctx.guild.members) * 100
@@ -152,15 +158,10 @@ class Stats(commands.Cog):
         os.remove(fname)
         await ctx.register_response(sent)
 
-    @commands.command(aliases=["statuspie"],
-                      description="Sends a pie chart of users by status (online, idle, do-not-disturb, etc).")
-    @commands.cooldown(1, 3, commands.BucketType.guild)
-    @commands.guild_only()
-    async def statuschart(self, ctx):
+    @pie.command(
+        name="status", description="Sends a pie chart of users by status (online, idle, do-not-disturb, etc).")
+    async def pie_status(self, ctx):
         """Generate a pie chart for the status of server members."""
-
-        if ctx.guild.large:
-            await ctx.bot.request_offline_members(ctx.guild)
 
         members = ctx.guild.members
         offline_count = sum(m.status == discord.Status.offline for m in members) / len(members) * 100
