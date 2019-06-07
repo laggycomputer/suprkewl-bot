@@ -134,7 +134,7 @@ class Embedinator:
     def set_footer(self, text, icon_url):
         i = 1
         for embed in self.embed_list:
-            embed.set_footer(text=f'{i}/{len(self.embed_list)} {text}', icon_url=icon_url)
+            embed.set_footer(text=f"{i}/{len(self.embed_list)} {text}", icon_url=icon_url)
             i += 1
 
     def set_author(self, **kwargs):
