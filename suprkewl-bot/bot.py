@@ -52,6 +52,7 @@ class suprkewl_bot(commands.Bot):
             "ext.img",
             "ext.info",
             "ext.mod",
+            "ext.stats",
             "ext.text",
             "ext.util",
             "jishaku"
