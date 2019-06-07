@@ -152,6 +152,54 @@ class Stats(commands.Cog):
         os.remove(fname)
         await ctx.register_response(sent)
 
+    @commands.command(aliases=["statuspie"],
+                      description="Sends a pie chart of users by status (online, idle, do-not-disturb, etc).")
+    @commands.cooldown(1, 3, commands.BucketType.guild)
+    @commands.guild_only()
+    async def statuschart(self, ctx):
+        """Generate a pie chart for the status of server members."""
+
+        if ctx.guild.large:
+            await ctx.bot.request_offline_members(ctx.guild)
+
+        members = ctx.guild.members
+        offline_count = sum(m.status == discord.Status.offline for m in members) / len(members) * 100
+        idle_count = sum(m.status == discord.Status.idle for m in members) / len(members) * 100
+        dnd_count = sum(m.status == discord.Status.dnd for m in members) / len(members) * 100
+        online_count = sum(m.status == discord.Status.online for m in members) / len(members) * 100
+        other_count = sum(isinstance(m.status, str) for m in members) / len(members) * 100
+
+        def pie_gen():
+            labels = ["Offline", "Idle", "Do Not Disturb", "Online"]
+            sizes = [offline_count, idle_count, dnd_count, online_count]
+            colors = ["gray", "#f1c40f", "#e74c3c", "#2ecc71"]
+            if other_count:
+                labels.append("Other/Unknown")
+                sizes.append(other_count)
+                colors.append("blue")
+            patches, _ = plt.pie(sizes, colors=colors, startangle=90)
+            plt.legend(patches, labels, loc="best")
+            plt.axis("equal")
+            plt.tight_layout()
+            fname = str(ctx.message.id) + ".png"
+            plt.savefig(fname)
+
+            return fname
+
+        fname = await ctx.bot.loop.run_in_executor(None, pie_gen)
+
+        fp = discord.File(fname, filename="piechart.png")
+
+        ret = f":white_check_mark:\n {offline_count}% of the server's members are offline.\n{idle_count}% of the" \
+              f" server is idle.\n{dnd_count}% of the server is on do not disturb.\n{online_count}% of the server is" \
+              f" online."
+        if other_count:
+            ret += f"\n{other_count}% of the server has an unknown status."
+
+        sent = await ctx.send(ret, file=fp)
+        os.remove(fname)
+        await ctx.register_response(sent)
+
     @commands.command(
         description="Checks the number of people in the server that are listening to a certain song on Spotify."
                     " Defaults to the one you are listening to. The song name is case-insensitive."
