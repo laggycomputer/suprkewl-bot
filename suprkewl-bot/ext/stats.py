@@ -191,7 +191,7 @@ class Stats(commands.Cog):
 
         fp = discord.File(fname, filename="piechart.png")
 
-        ret = f":white_check_mark:\n {offline_count}% of the server's members are offline.\n{idle_count}% of the" \
+        ret = f":white_check_mark:\n{offline_count}% of the server's members are offline.\n{idle_count}% of the" \
               f" server is idle.\n{dnd_count}% of the server is on do not disturb.\n{online_count}% of the server is" \
               f" online."
         if other_count:
