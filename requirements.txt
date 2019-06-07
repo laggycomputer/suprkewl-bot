@@ -8,4 +8,5 @@ matplotlib
 opencv-python
 Pillow
 pygit2
+PyLyrics
 python-dateutil
