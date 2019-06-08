@@ -99,7 +99,7 @@ class HelpCommand(commands.HelpCommand):
         embedinator = self.create_embedinator(
             title=self.get_command_name(group),
             description=group.short_doc or "No description",
-            max_fields=4
+            max_fields=8
         )
 
         filtered = await self.filter_commands(group.commands)
@@ -117,7 +117,7 @@ class HelpCommand(commands.HelpCommand):
         embedinator = self.create_embedinator(
             title=cog.qualified_name,
             description=cog.description or "No description",
-            max_fields=4
+            max_fields=8
         )
 
         filtered = await self.filter_commands(cog.get_commands())
@@ -135,7 +135,7 @@ class HelpCommand(commands.HelpCommand):
         embedinator = self.create_embedinator(
             title="General help",
             description=self.get_opening_note(),
-            max_fields=4
+            max_fields=8
         )
 
         for cog, cog_commands in mapping.items():
@@ -167,7 +167,7 @@ class Help(commands.Cog):
         self.original_help_command = bot.help_command
         bot.help_command = HelpCommand()
         bot.help_command.cog = self
-        self.bot.get_command('help').hidden = True
+        self.bot.get_command("help").hidden = True
 
     def cog_unload(self):
         self.bot.help_command = self.original_help_command
