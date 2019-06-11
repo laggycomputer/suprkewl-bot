@@ -173,6 +173,19 @@ class Utilities(commands.Cog):
             sent = await ctx.send(ctx.guild.banner_url_as(format="png"))
         await ctx.register_response(sent)
 
+    @commands.command()
+    @commands.guild_only()
+    async def servericon(self, ctx):
+        """Gets the server icon."""
+
+        asset = ctx.guild.icon_url_as(format="png")
+
+        if asset is None:
+            sent = await ctx.send("This guild has no banner!")
+        else:
+            sent = await ctx.send(asset)
+        await ctx.register_response(sent)
+
 
 def setup(bot):
     bot.add_cog(Utilities())
