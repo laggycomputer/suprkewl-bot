@@ -152,7 +152,8 @@ class HelpCommand(commands.HelpCommand):
 
     def add_command_field(self, embedinator, command):
         name = self.get_command_name(command)
-        embedinator.add_field(name=name, value=command.short_doc or "\u200b", inline=False)
+        embedinator.add_field(
+            name=name, value=command.short_doc or "No short help provided, see main dialog", inline=False)
 
     def get_opening_note(self):
         command_name = self.context.invoked_with
