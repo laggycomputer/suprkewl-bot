@@ -142,7 +142,10 @@ class suprkewl_bot(commands.Bot):
 
                 else:
                     if message.content.startswith("s!"):
-                        await message.author.send(":x: I can't send messages there! Perhaps try again elsewhere?")
+                        try:
+                            await message.author.send(":x: I can't send messages there! Perhaps try again elsewhere?")
+                        except discord.Forbidden:
+                            pass
             else:
                 await self.process_commands(message)
 
