@@ -164,7 +164,7 @@ class Utilities(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def banner(self, ctx):
+    async def serverbanner(self, ctx):
         """Gets the guild banner."""
 
         if ctx.guild.banner is None:
