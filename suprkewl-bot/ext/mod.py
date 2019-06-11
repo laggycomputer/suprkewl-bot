@@ -284,7 +284,7 @@ class Moderation(commands.Cog):
             sent = await ctx.send(":white_check_mark: The server has no bans!")
             await ctx.register_response(sent)
         for ban in banlist:
-            bans.append(ban[0].name + "#" + ban[0].discriminator)
+            bans.append(str(ban.user))
 
         msg = ", ".join(bans)
         emb.add_field(name=f"Banned users for {ctx.guild}", value=msg)
