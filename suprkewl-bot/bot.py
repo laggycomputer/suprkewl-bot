@@ -119,11 +119,10 @@ class suprkewl_bot(commands.Bot):
                             "../assets/angery,gif",
                             "../assets/eyes.png",
                         ]
-                        desc = plural(await get_pre(self, message))
                         emb = discord.Embed(
                             color=self.embed_color,
-                            description=f":eyes: Who pinged? My prefix(es) is/are `{desc}`. If you are in a DM with"
-                                        f" me, I do not require a prefix."
+                            description=f":eyes: Who pinged? My prefix(es) is `s!`. If you are in a DM with"
+                                        f" me, or you are my owner, I do not require a prefix."
                         )
                         fname = random.choice(ping_images)
                         ext = fname.split(".")[-1]
