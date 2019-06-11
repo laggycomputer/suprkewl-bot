@@ -27,6 +27,11 @@ import matplotlib.pyplot as plt
 
 class Stats(commands.Cog):
 
+    async def cog_before_invoke(self, ctx):
+        if ctx.guild is not None:
+            if ctx.guild.large:
+                await ctx.bot.request_offline_members(ctx.guild)
+
     @commands.group(aliases=["chart", "stat"], description="Generate a pie chart for guild attributes.")
     @commands.guild_only()
     @commands.cooldown(1, 2, commands.BucketType.channel)
@@ -36,9 +41,6 @@ class Stats(commands.Cog):
         if ctx.invoked_subcommand is None:
             sent = await ctx.send(":x: You must specify a subcommand.")
             await ctx.register_response(sent)
-        else:
-            if ctx.guild.large:
-                await ctx.bot.request_offline_members(ctx.guild)
 
     @pie.command(
         name="role",
@@ -208,9 +210,6 @@ class Stats(commands.Cog):
     @commands.guild_only()  # Member.activities seems to have no counterpart on User
     async def songcount(self, ctx, *, song=None):
         """Count members listening to a certain song on Spotify."""
-
-        if ctx.guild.large:
-            await ctx.bot.request_offline_members(ctx.guild)
 
         def is_listening(member):
             if not len(member.activities):  # Member has no active activities
