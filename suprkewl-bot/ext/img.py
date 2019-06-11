@@ -269,7 +269,7 @@ class Image_(commands.Cog, name="Image"):  # To avoid confusion with PIL.Image
                 )
                 return await ctx.register_response(sent)
 
-            img = await fry(ctx, await fry(ctx, img))  # One fry is very weak
+            img = await fry(ctx, img)
             fname = str(ctx.message.id) + ".png"
             try:
                 img.save(fname, format="png")
