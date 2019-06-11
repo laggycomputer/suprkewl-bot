@@ -234,25 +234,39 @@ def normalise(v):
 
 class Image_(commands.Cog, name="Image"):  # To avoid confusion with PIL.Image
 
-    @commands.command()
-    @commands.guild_only()
+    @commands.command(
+        description="Specify a member to use their avatar, or no URL to use yours. If you attach an image, that will"
+                    " be used as the image, ignoring any other arguments."
+    )
     async def deepfry(self, ctx, *, url=None):
-        """Deepfry an image. Specify a member to use their avatar, or no URL to use yours."""
+        """Deepfry an image."""
 
         if url is None:
-            url = str(ctx.author.avatar_url_as(format="png", size=1024))
+            is_found = False
+            for att in ctx.message.attachments:
+                if att.height is not None and not is_found:
+                    url = att.proxy_url
+                    is_found = True
+            if not is_found:
+                url = str(ctx.author.avatar_url_as(format="png", size=1024))
         else:
             try:
                 member = await commands.MemberConverter().convert(ctx, url)
                 url = str(member.avatar_url_as(format="png", size=1024))
             except commands.BadArgument:
-                pass
+                try:
+                    member = await commands.UserConverter().convert(ctx, url)
+                    url = str(member.avatar_url_as(format="png", size=1024))
+                except commands.BadArgument:
+                    pass
 
         async with ctx.typing():
             img = await download_image(ctx, url)
             if img is None:
                 sent = await ctx.send(
-                    "That argument does not seem to be an image, and does not seem to be a member of this server.")
+                    "That argument does not seem to be an image, and does not seem to be a member of this server or"
+                    " other user, and you did not attach an image. Please try again."
+                )
                 return await ctx.register_response(sent)
 
             img = await fry(ctx, await fry(ctx, img))  # One fry is very weak
