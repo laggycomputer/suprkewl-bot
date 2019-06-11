@@ -25,7 +25,7 @@ import traceback
 import aiohttp
 import discord
 from discord.ext import commands
-from ext.utils import permissions_converter, linecount, plural, Context
+from ext.utils import permissions_converter, linecount, Context
 
 import redis
 
