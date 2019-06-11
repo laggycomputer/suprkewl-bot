@@ -61,36 +61,37 @@ class Embedinator:
         )
 
     async def handle(self):
-        for button in self.buttons:
-            await self.message.add_reaction(button)
+        if len(self.embed_list) > 1:
+            for button in self.buttons:
+                await self.message.add_reaction(button)
 
-        while self.active:
-            done, pending = await asyncio.wait(
-                [
-                    self.bot.wait_for(
-                        "reaction_add",
-                        check=self.check_reaction
-                    ),
-                    self.bot.wait_for(
-                        "reaction_remove",
-                        check=self.check_reaction
-                    )
-                ],
-                timeout=60.0,
-                return_when=asyncio.FIRST_COMPLETED
-            )
+            while self.active:
+                done, pending = await asyncio.wait(
+                    [
+                        self.bot.wait_for(
+                            "reaction_add",
+                            check=self.check_reaction
+                        ),
+                        self.bot.wait_for(
+                            "reaction_remove",
+                            check=self.check_reaction
+                        )
+                    ],
+                    timeout=60.0,
+                    return_when=asyncio.FIRST_COMPLETED
+                )
 
-            try:
-                if any(done):
-                    reaction, user = done.pop().result()
-                    for future in pending:
-                        future.cancel()
-                    await self.handle_reaction(reaction, user)
-                else:
-                    await self.cleanup()
-            except discord.NotFound:
-                traceback.print_exc()
-                return
+                try:
+                    if any(done):
+                        reaction, user = done.pop().result()
+                        for future in pending:
+                            future.cancel()
+                        await self.handle_reaction(reaction, user)
+                    else:
+                        await self.cleanup()
+                except discord.NotFound:
+                    traceback.print_exc()
+                    return
 
     def check_reaction(self, reaction, user):
         return (
