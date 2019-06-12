@@ -149,6 +149,9 @@ class suprkewl_bot(commands.Bot):
             else:
                 await self.process_commands(message)
 
+    async def on_command_completion(self, ctx):
+        await self.redis.incr("commands_used")
+
     async def process_commands(self, message):
         ctx = await self.get_context(message, cls=Context)
         await self.invoke(ctx)
@@ -332,7 +335,6 @@ class suprkewl_bot(commands.Bot):
                 f"tracked_message {request.id}",
                 f"{response.channel.id}:{response.id}"
             )
-            await self.redis.incr("commands_used")
 
     async def playingstatus(self):
 
