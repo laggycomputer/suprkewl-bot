@@ -24,12 +24,17 @@ from discord.ext import commands
 
 class Moderation(commands.Cog):
 
+    async def cog_check(self, ctx):
+        if ctx.guild is None:
+            raise commands.NoPrivateMessage
+        else:
+            return True
+
     @commands.group(
         aliases=["purge"], invoke_without_command=True,
         description="Clear <count> messages from the bottom of the current channel, excluding the message used to run"
                     " the command."
     )
-    @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, count: int):
@@ -132,7 +137,6 @@ class Moderation(commands.Cog):
     @commands.command(
         description="Kicks the given <target>. Also notifies <target> of kick."
     )
-    @commands.guild_only()
     @commands.bot_has_permissions(kick_members=True)
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, *, target: discord.Member):
@@ -173,7 +177,6 @@ class Moderation(commands.Cog):
         description="Bans the given <target> with reason <reason>, deleteing all messages sent from that user over the"
                     " last <deletedays> days."
     )
-    @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, target: discord.Member, deletedays: int, *, reason: str):
@@ -224,7 +227,6 @@ class Moderation(commands.Cog):
         description="Unbans the given <target>. The target must be banned from the current server. <target> will be"
                     " DM'd once they are unbanned."
     )
-    @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, *, target: discord.User):
@@ -254,7 +256,6 @@ class Moderation(commands.Cog):
     @commands.command(
         description="Gives the list of banned users for this server."
     )
-    @commands.guild_only()
     @commands.bot_has_permissions(ban_members=True)
     @commands.has_permissions(ban_members=True)
     async def banlist(self, ctx):
