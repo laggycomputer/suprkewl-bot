@@ -295,6 +295,27 @@ class Stats(commands.Cog):
 
         await ctx.register_response(await ctx.send(msg))
 
+    @commands.command(
+        description="Count the number of users in the guild with nicknames that start with common characters used to"
+                    " name-hoist."
+    )
+    async def hoistcount(self, ctx):
+        """Get potential name hoisters on the server."""
+
+        cnt = 0
+        hoist_chars = ["(", "/", "%", "-", "#", "$", "'", "*", "+", ".", "!"]
+        for member in ctx.guild.members:
+            if member.nick is not None:
+                if member.nick[0] in hoist_chars:
+                    cnt += 1
+
+        chars = ", ".join(f"`{c}`" for c in hoist_chars)
+
+        msg = f"{cnt} members have nicknames that start with one of the following characters: {chars}"
+
+        sent = await ctx.send(msg)
+        await ctx.register_response(sent)
+
 
 def setup(bot):
     bot.add_cog(Stats())
