@@ -66,16 +66,13 @@ class Utilities(commands.Cog):
             log = ret.pop("log")
 
         if ret["status"] == "error":
-            data = {
-                "api_dev_key": config.pastebin_token, "api_option": "paste",
-                "api_paste_code": log, "api_paste_expire_date": "1W",
-                "api_paste_name": f"Rendering Log (ID: {ctx.message.id})"
-            }
-            async with ctx.bot.http2.post("https://pastebin.com/api/api_post.php", data=data) as resp:
-                if (await resp.text()).startswith("Bad API request, "):
+            data = log.encode("utf-8")
+            async with ctx.bot.http2.post("https://hastebin.com/documents", data=data) as resp:
+                out = await resp.json()
+                if "key" not in out:
                     return await ctx.send("Something wrong happened while rendering. Perhaps your input was invalid?")
                 else:
-                    pasted_url = await resp.text()
+                    pasted_url = "https://hastebin.com/" + out["key"]
             return await ctx.send(
                 f"Something wrong happened while rendering. The render log is available at {pasted_url}.")
 
