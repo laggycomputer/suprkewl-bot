@@ -35,6 +35,8 @@ class Stats(commands.Cog):
     async def cog_check(self, ctx):
         if ctx.guild is None:
             raise commands.NoPrivateMessage
+        else:
+            return True
 
     @commands.group(aliases=["chart", "stat"], description="Generate a pie chart for guild attributes.")
     @commands.cooldown(1, 2, commands.BucketType.channel)
