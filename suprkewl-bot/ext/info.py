@@ -38,8 +38,7 @@ class Info(commands.Cog):
         """Returns a dict version of some objects."""
 
         if ctx.invoked_subcommand is None:
-            sent = await ctx.send(":x: Please provide a valid subcommand!")
-            await ctx.register_response(sent)
+            await ctx.send(":x: Please provide a valid subcommand!")
 
     @raw.command(name="message", aliases=["msg"])
     async def raw_message(self, ctx, *, message: discord.Message):
@@ -48,14 +47,12 @@ class Info(commands.Cog):
         raw = await ctx.bot.http.get_message(message.channel.id, message.id)
 
         try:
-            sent = await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```")
-            await ctx.register_response(sent)
+            await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```")
         except discord.HTTPException:
             fp = io.BytesIO(format_json(raw))
             fp = discord.File(fp, "raw.txt")
 
-            sent = await ctx.send("Your output was placed in the attached file:", file=fp)
-            await ctx.register_response(sent)
+            await ctx.send("Your output was placed in the attached file:", file=fp)
 
     @raw.command(name="member", aliases=["user"])
     async def raw_member(self, ctx, *, user: discord.User = None):
@@ -66,8 +63,7 @@ class Info(commands.Cog):
         route = discord.http.Route("GET", f"/users/{user.id}")
         raw = await ctx.bot.http.request(route)
 
-        sent = await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```")
-        await ctx.register_response(sent)
+        await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```")
 
     @raw.command(name="channel")
     async def raw_channel(
@@ -84,13 +80,9 @@ class Info(commands.Cog):
         try:
             raw = await ctx.bot.http.request(route)
         except discord.Forbidden:
-            sent = await ctx.send(":x: I can't see info on that channel!")
-            await ctx.register_response(sent)
+            return await ctx.send(":x: I can't see info on that channel!")
 
-            return
-
-        sent = await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```")
-        await ctx.register_response(sent)
+        await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```")
 
     @commands.command(description="Gives info on role <permsRole> in server (ping the role).")
     @commands.guild_only()
@@ -113,8 +105,7 @@ class Info(commands.Cog):
             disp_hoist = "Yes"
         emb.add_field(name="'Display role member seperately from online members'", value=disp_hoist)
 
-        sent = await ctx.send(embed=emb)
-        await ctx.register_response(sent)
+        await ctx.send(embed=emb)
 
     @commands.command(
         description="Gives perms on the given role. The bot must have the 'Manage Roles' permission, and the user must "
@@ -151,8 +142,7 @@ class Info(commands.Cog):
                 fieldval = "No"
             emb.add_field(name=fieldname, value=fieldval)
 
-        sent = await ctx.send(embed=emb)
-        await ctx.register_response(sent)
+        await ctx.send(embed=emb)
 
     # Thanks to Takaru, PendragonLore/TakaruBot
     @commands.command()
@@ -178,8 +168,7 @@ class Info(commands.Cog):
             url="attachment://image.png"
         )
 
-        sent = await ctx.send(embed=embed, file=fp)
-        await ctx.register_response(sent)
+        await ctx.send(embed=embed, file=fp)
 
 
 def setup(bot):

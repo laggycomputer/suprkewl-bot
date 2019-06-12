@@ -44,8 +44,7 @@ class Stats(commands.Cog):
         """Generate pie charts."""
 
         if ctx.invoked_subcommand is None:
-            sent = await ctx.send(":x: You must specify a subcommand.")
-            await ctx.register_response(sent)
+            await ctx.send(":x: You must specify a valid subcommand.")
 
     @pie.command(
         name="role",
@@ -128,11 +127,10 @@ class Stats(commands.Cog):
             fmt = io.BytesIO(fmt.encode("utf-8"))
             fp2 = discord.File(fmt, "key.txt")
 
-            sent = await ctx.send(":white_check_mark: Attached is your output and pie-chart.", files=[fp, fp2])
+            await ctx.send(":white_check_mark: Attached is your output and pie-chart.", files=[fp, fp2])
         else:
-            sent = await ctx.send(fmt, file=fp)
+            await ctx.send(fmt, file=fp)
 
-        await ctx.register_response(sent)
         os.remove(fname)
 
     @pie.command(
@@ -161,9 +159,8 @@ class Stats(commands.Cog):
 
         fp = discord.File(fname, filename="piechart.png")
 
-        sent = await ctx.send(f":white_check_mark: {prc}% of the server's members are bots.", file=fp)
+        await ctx.send(f":white_check_mark: {prc}% of the server's members are bots.", file=fp)
         os.remove(fname)
-        await ctx.register_response(sent)
 
     @pie.command(
         name="status", description="Sends a pie chart of users by status (online, idle, do-not-disturb, etc).")
@@ -204,9 +201,8 @@ class Stats(commands.Cog):
         if other_count:
             ret += f"\n{other_count}% of the server has an unknown status."
 
-        sent = await ctx.send(ret, file=fp)
+        await ctx.send(ret, file=fp)
         os.remove(fname)
-        await ctx.register_response(sent)
 
     @commands.command(
         description="Checks the number of people in the server that are listening to a certain song on Spotify."
@@ -230,11 +226,10 @@ class Stats(commands.Cog):
             if is_listening(ctx.author):
                 song = song_name_from(ctx.author)
             else:
-                sent = await ctx.send(
+                return await ctx.send(
                     "You did not specify a song to count, and you are not listening to a song yourself. Please provide"
                     " a song name, or start listening to a song and try again."
                 )
-                return await ctx.register_response(sent)
 
         # The case insensitivity is for Spotify songs that have identical names but different cases
         count = sum(is_listening(m) and song_name_from(m).lower() == song.lower() for m in ctx.guild.members)
@@ -248,7 +243,7 @@ class Stats(commands.Cog):
 
         msg += f" listening to the song `{song}`."
 
-        await ctx.register_response(await ctx.send(msg))
+        await ctx.send(msg)
 
     @commands.command(
         description="Checks the number of people in the server that are playing a certain game."
@@ -275,11 +270,10 @@ class Stats(commands.Cog):
             if has_game(ctx.author):
                 game = game_name_from(ctx.author)
             else:
-                sent = await ctx.send(
+                return await ctx.send(
                     "You did not specify a game, and you are not playing one yourself. Please provide"
                     " a game name, or start playing a game and try again."
                 )
-                return await ctx.register_response(sent)
 
         # Case insensitivity just in case
         count = sum(has_game(m) and game_name_from(m).lower() == game.lower() for m in ctx.guild.members)
@@ -293,7 +287,7 @@ class Stats(commands.Cog):
 
         msg += f" playing the game `{game}`."
 
-        await ctx.register_response(await ctx.send(msg))
+        await ctx.send(msg)
 
     @commands.command(
         description="Count the number of users in the guild with nicknames that start with common characters used to"
@@ -313,8 +307,7 @@ class Stats(commands.Cog):
 
         msg = f"{cnt} members have nicknames that start with one of the following characters: {chars}"
 
-        sent = await ctx.send(msg)
-        await ctx.register_response(sent)
+        await ctx.send(msg)
 
 
 def setup(bot):

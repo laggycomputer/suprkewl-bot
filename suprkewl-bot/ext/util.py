@@ -73,13 +73,11 @@ class Utilities(commands.Cog):
             }
             async with ctx.bot.http2.post("https://pastebin.com/api/api_post.php", data=data) as resp:
                 if (await resp.text()).startswith("Bad API request, "):
-                    sent = await ctx.send("Something wrong happened while rendering. Perhaps your input was invalid?")
-                    return await ctx.register_response(sent)
+                    return await ctx.send("Something wrong happened while rendering. Perhaps your input was invalid?")
                 else:
                     pasted_url = await resp.text()
-            sent = await ctx.send(
+            return await ctx.send(
                 f"Something wrong happened while rendering. The render log is available at {pasted_url}.")
-            return await ctx.register_response(sent)
 
         async with ctx.typing():
 
@@ -99,13 +97,11 @@ class Utilities(commands.Cog):
         """Parse a Discord auth token."""
 
         if not token_re.match(token):
-            sent = await ctx.send("Not a valid token.")
-            return await ctx.register_response(sent)
+            await ctx.send("Not a valid token.")
 
         t = token.split(".")
         if len(t) != 3:
-            sent = await ctx.send("Not a valid token.")
-            return await ctx.register_response(sent)
+            return await ctx.send("Not a valid token.")
 
         try:
             id_ = base64.standard_b64decode(t[0]).decode("utf-8")
@@ -114,8 +110,7 @@ class Utilities(commands.Cog):
             except discord.HTTPException:
                 user = None
         except binascii.Error:
-            sent = await ctx.send("Failed to decode user ID.")
-            return await ctx.register_response(sent)
+            return await ctx.send("Failed to decode user ID.")
 
         try:
             token_epoch = 1293840000
@@ -125,16 +120,14 @@ class Utilities(commands.Cog):
                 timestamp = datetime.utcfromtimestamp(decoded + token_epoch)
             date = timestamp.strftime("%Y-%m-%d %H:%M:%S")
         except binascii.Error:
-            sent = await ctx.send("Failed to decode timestamp.")
-            return await ctx.register_response(sent)
+            return await ctx.send("Failed to decode timestamp.")
 
         invite = discord.utils.oauth_url(ctx.bot.user.id, discord.Permissions.none())
 
         fmt = f"**Valid token: **\n\n**User ID is**: {id_} ({user or '*Not fetchable*.'}).\n" \
               f"**Created at**: {date}\n**Cryptographic component**: {t[2]}\n**Invite**: {invite}"
 
-        sent = await ctx.send(fmt)
-        await ctx.register_response(sent)
+        await ctx.send(fmt)
 
     @commands.command()
     @commands.cooldown(1, 3, commands.BucketType.member)
@@ -145,8 +138,7 @@ class Utilities(commands.Cog):
             try:
                 tts = gtts.gTTS(text=message)
             except AssertionError:
-                sent = await ctx.send(":x: There was nothing speakable in that message.")
-                return await ctx.register_response(sent)
+                return await ctx.send(":x: There was nothing speakable in that message.")
 
             # The actual request happens here:
             def save():
@@ -157,9 +149,7 @@ class Utilities(commands.Cog):
 
             fname, fp = await ctx.bot.loop.run_in_executor(None, save)
 
-        sent = await ctx.send(":white_check_mark:", file=fp)
-        await ctx.register_response(sent)
-
+        await ctx.send(":white_check_mark:", file=fp)
         os.remove(fname)
 
     @commands.command()
@@ -168,10 +158,9 @@ class Utilities(commands.Cog):
         """Gets the guild banner."""
 
         if ctx.guild.banner is None:
-            sent = await ctx.send("This guild has no banner!")
+            await ctx.send("This guild has no banner!")
         else:
-            sent = await ctx.send(ctx.guild.banner_url_as(format="png"))
-        await ctx.register_response(sent)
+            await ctx.send(ctx.guild.banner_url_as(format="png"))
 
     @commands.command()
     @commands.guild_only()
@@ -181,10 +170,9 @@ class Utilities(commands.Cog):
         asset = ctx.guild.icon_url_as(format="png")
 
         if asset is None:
-            sent = await ctx.send("This guild has no banner!")
+            await ctx.send("This guild has no banner!")
         else:
-            sent = await ctx.send(asset)
-        await ctx.register_response(sent)
+            await ctx.send(asset)
 
 
 def setup(bot):

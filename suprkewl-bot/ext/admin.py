@@ -41,26 +41,18 @@ class Admin(commands.Cog):
     async def deletemsg(self, ctx, message: int):
         try:
             m = await ctx.fetch_message(message)
-            sent = None
         except discord.NotFound:
-            sent = await ctx.send(":x: Message not found. It must be in the current channel.")
-            m = None
+            return await ctx.send(":x: Message not found. It must be in the current channel.")
         except discord.Forbidden:
-            sent = await ctx.send(
+            return await ctx.send(
                 ":x: I do not have permission to `Read Message History` here. I cannot fetch the message."
             )
-            m = None
-        finally:
-            if sent is not None:
-                await ctx.register_response(sent)
 
         try:
             await m.delete()
-            sent = await ctx.send(":white_check_mark:")
+            await ctx.send(":white_check_mark:")
         except discord.Forbidden:
-            sent = await ctx.send(":x: I do not have permission to delete that message.")
-        finally:
-            await ctx.register_response(sent)
+            await ctx.send(":x: I do not have permission to delete that message.")
 
     @commands.command(hidden=True)
     async def statustoggle(self, ctx):
@@ -70,14 +62,12 @@ class Admin(commands.Cog):
             resp = "Enabling status change."
         ctx.bot.change_status = not ctx.bot.change_status
 
-        sent = await ctx.send(resp)
-        await ctx.register_response(sent)
+        await ctx.send(resp)
 
     @commands.command(hidden=True)
     async def statuschange(self, ctx, *, status):
         await ctx.bot.change_presence(activity=discord.Game(name=status), status=discord.Status.idle)
-        sent = await ctx.send(f":white_check_mark: Changed to `{status}`")
-        await ctx.register_response(sent)
+        await ctx.send(f":white_check_mark: Changed to `{status}`")
 
 
 def setup(bot):

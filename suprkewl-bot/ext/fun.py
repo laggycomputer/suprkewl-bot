@@ -100,13 +100,13 @@ Manly Lenny: ᕦ( ͡͡~͜ʖ ͡° )ᕤ
 Put ur dongers up or I'll shoot:(ง ͡° ͜ʖ ͡°)=/̵͇̿/'̿'̿̿̿ ̿ ̿̿
 Badass Lenny: ̿ ̿'̿'̵͇̿з=(⌐■ʖ■)=ε/̵͇̿/'̿̿ ̿
 """
-        sent = await ctx.send(msg)
-        await ctx.register_response(sent)
+        await ctx.send(msg)
 
     @commands.command(description="LMAO! Has a 5-second channel cooldown to keep things calm.")
     @commands.cooldown(1, 5, commands.BucketType.channel)
     async def lmao(self, ctx):
         """A nice and long lmao"""
+
         msg = """
 L
     M
@@ -119,8 +119,7 @@ L
         。
        ."""
 
-        sent = await ctx.send(msg)
-        await ctx.register_response(sent)
+        await ctx.send(msg)
 
     @commands.command(
         description="Make the bot say something. Watch what you say. Has a 5 second user cooldown."
@@ -129,8 +128,7 @@ L
     async def say(self, ctx, *, message: str):
         """Make the bot say something."""
 
-        sent = await ctx.send(f"{ctx.author.mention} wants me to say '{message}'")
-        await ctx.register_response(sent)
+        await ctx.send(f"{ctx.author.mention} wants me to say '{message}'")
 
     @commands.command(aliases=["burn"])
     async def roast(self, ctx, *, target: discord.Member):
@@ -159,8 +157,7 @@ L
             f"I don't forget a single face, but in your case, {target.mention}, I'll make an exception."
         ]
 
-        sent = await ctx.send(random.choice(roasts))
-        await ctx.register_response(sent)
+        await ctx.send(random.choice(roasts))
 
     @commands.command(aliases=["card"], description="Draw from a standard, 52-card deck, no jokers.")
     async def draw(self, ctx):
@@ -173,8 +170,7 @@ L
             ":eight:", ":nine:", ":keycap_ten:", "Jack", "Queen", "King"
         ]
 
-        sent = await ctx.send(f"I drew the {random.choice(ranks)} of {random.choice(suits)}")
-        await ctx.register_response(sent)
+        await ctx.send(f"I drew the {random.choice(ranks)} of {random.choice(suits)}")
 
     @commands.command(aliases=["flip", "quarter", "dime", "penny", "nickel"])
     async def coin(self, ctx):
@@ -190,8 +186,6 @@ L
             await msg.edit(content="It's heads!")
         else:
             await msg.edit(content="It's tails.")
-
-        await ctx.register_response(msg)
 
     @commands.command(
         aliases=["rockpaperscissors"],
@@ -244,7 +238,6 @@ L
             content += losemsg
             await asyncio.sleep(2)
             msg = await ctx.send(f"{ctx.author.mention} :fist: Rock...")
-            await ctx.register_response(msg)
             await asyncio.sleep(1)
 
             await msg.edit(content=f"{ctx.author.mention} :newspaper: Paper...")
@@ -277,12 +270,10 @@ L
         try:
             count, limit = map(int, dice.split("d"))
         except ValueError:
-            await msg.edit(
+            return await msg.edit(
                 content=f":x: Your input must be of the form `AdB`! Please check `{ctx.prefix}{ctx.invoked_with}"
                 f" info` for more info."
             )
-            await ctx.register_response(msg)
-            return
 
         if 1000 >= count > 0 and 1000 >= limit > 0:
             rolls = []
@@ -308,30 +299,26 @@ L
                 file_content = "Rolls: {0}Total: {2}{1}Average:{3}".format(
                     "\n".join(rolls), "\n", total, avg)
                 fp = io.BytesIO(file_content.encode("utf-8"))
-                sent = (await ctx.send(
-                    content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed"
-                            " in this file:",
+                await ctx.send(
+                    ":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this"
+                    " file:",
                     file=discord.File(fp, "rolls.txt")
-                ))
-                await ctx.register_response(sent)
+                )
 
             else:
                 await msg.edit(content=content)
-                await ctx.register_response(msg)
         else:
             await msg.edit(
                 content=f"Your syntax was correct, however one of your arguments were invalid. See"
                 f" `{ctx.prefix}{ctx.invoked_with} info.`"
             )
-            await ctx.register_response(msg)
 
     @dice.command(description="Show info for dice command.", name="info")
     async def dice_info(self, ctx):
-        sent = (await ctx.send(
+        await ctx.send(
             "Your argument must be of the form AdB, where A is the number of dice to roll and B is the number of sides"
             " on each die. A and B must be positive integers between 1 and 1000."
-        ))
-        await ctx.register_response(sent)
+        )
 
     @commands.command(
         aliases=["pick", "rand"],
@@ -344,8 +331,7 @@ L
         message = f"{ctx.author.mention}, I choose '"
         message += random.choice(choices) + "'."
 
-        sent = await ctx.send(message)
-        await ctx.register_response(sent)
+        await ctx.send(message)
 
     @commands.command(
         description="Starts a fight between the command invoker and the specified <target>."
@@ -356,15 +342,12 @@ L
 
         # Yes, this entire command is an eyesore. I'll get to it. Soon.
         if target.bot:
-            sent = await ctx.send(
+            return await ctx.send(
                 ":x: Oops! You can't fight a robot; it's robot arms will annihilate you! Perhaps you meant a human?"
             )
-            await ctx.register_response(sent)
-            return
         if target == ctx.author:
-            sent = await ctx.send(":x: You can't fight yourself!")
-            await ctx.register_response(sent)
-            return
+            return await ctx.send(":x: You can't fight yourself!")
+
         if (await ctx.bot.redis.exists(f"{ctx.author.id}:fighting")):
             emb = discord.Embed(
                 color=ctx.bot.embed_color,
@@ -382,8 +365,7 @@ L
             emb.set_footer(
                 text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
-            sent = await ctx.send(embed=emb, file=fp)
-            await ctx.register_response(sent)
+            await ctx.send(embed=emb, file=fp)
 
             return
         if (await ctx.bot.redis.exists(f"{target.id}:fighting")):
@@ -404,10 +386,8 @@ L
             emb.set_footer(
                 text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
-            sent = await ctx.send(embed=emb, file=fp)
-            await ctx.register_response(sent)
+            return await ctx.send(embed=emb, file=fp)
 
-            return
         await ctx.bot.redis.execute("SET", f"{ctx.author.id}:fighting", "fighting")
         await ctx.bot.redis.execute("SET", f"{target.id}:fighting", "fighting")
 
@@ -615,8 +595,7 @@ L
                 )
 
                 if sent is None:
-                    sent = await ctx.send(embed=emb)
-                    await ctx.register_response(sent)
+                    await ctx.send(embed=emb)
                 else:
                     await sent.edit(embed=emb)
 
@@ -639,12 +618,11 @@ L
         lose_mention = findloser().user.mention
         await sent.delete()
 
-        sent = await ctx.send(
+        await ctx.send(
             f"Looks like {win_mention} defeated {lose_mention} with {findwin().health} health left!"
         )
 
         await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
-        await ctx.register_response(sent)
 
     @commands.group(description="Gets an xkcd comic.", invoke_without_command=True)
     @commands.cooldown(1, 3, commands.BucketType.channel)
@@ -653,18 +631,14 @@ L
             await self.xkcd_latest(ctx)
         else:
             if arg <= 0:
-                sent = await ctx.send(":x: Invalid comic number.")
-                await ctx.register_response(sent)
-                return
+                return await ctx.send(":x: Invalid comic number.")
 
             await self.xkcd_get(ctx, arg)
 
     async def xkcd_get(self, ctx, number):
         async with ctx.bot.http2.get(f"https://xkcd.com/{number}/info.0.json") as resp:
             if resp.status == 404:
-                sent = await ctx.send(":x: Comic not found!")
-                await ctx.register_response(sent)
-                return
+                return await ctx.send(":x: Comic not found!")
             text = await resp.json()
 
         emb = discord.Embed(
@@ -680,8 +654,7 @@ L
             icon_url=ctx.author.avatar_url
         )
 
-        sent = await ctx.send(embed=emb)
-        await ctx.register_response(sent)
+        await ctx.send(embed=emb)
 
     @xkcd.command(name="random", aliases=["rand"], description="Get a random xkcd comic.")
     async def xkcd_random(self, ctx):
@@ -712,8 +685,7 @@ L
             icon_url=ctx.author.avatar_url
         )
 
-        sent = await ctx.send(embed=emb)
-        await ctx.register_response(sent)
+        await ctx.send(embed=emb)
 
     async def xkcd_latest(self, ctx):
         async with ctx.bot.http2.get("https://xkcd.com/info.0.json") as resp:
@@ -736,8 +708,7 @@ L
             icon_url=ctx.author.avatar_url
         )
 
-        sent = await ctx.send(embed=emb)
-        await ctx.register_response(sent)
+        await ctx.send(embed=emb)
 
     @commands.command(
         description="Reacts with a sheep emoji to sheep-related messages. Send 's!stop' to end the sheepiness."
@@ -764,13 +735,9 @@ L
 
             await ctx.bot.redis.delete(f"{ctx.channel.id}:sheep")
 
-            sent = await ctx.send(":white_check_mark: Done.")
-            await ctx.register_response(sent)
+            await ctx.send(":white_check_mark: Done.")
         else:
-            sent = await ctx.send(
-                ":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command."
-            )
-            await ctx.register_response(sent)
+            await ctx.send(":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command.")
 
     @commands.command(
         description="Reacts with a duck emoji to duck-related messages. Send 's!stop' to end the quackery."
@@ -798,13 +765,9 @@ L
 
             await ctx.bot.redis.delete(f"{ctx.channel.id}:duck")
 
-            sent = await ctx.send(":white_check_mark: Done.")
-            await ctx.register_response(sent)
+            await ctx.send(":white_check_mark: Done.")
         else:
-            sent = await ctx.send(
-                ":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command."
-            )
-            await ctx.register_response(sent)
+            await ctx.send(":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command.")
 
     @commands.command(
         description="Reacts with a dog emoji to dog-related messages. Send 's!stop' to end the borkiness."
@@ -835,13 +798,9 @@ L
 
             await ctx.bot.redis.delete(f"{ctx.channel.id}:dog")
 
-            sent = await ctx.send(":white_check_mark: Done.")
-            await ctx.register_response(sent)
+            await ctx.send(":white_check_mark: Done.")
         else:
-            sent = await ctx.send(
-                ":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command."
-            )
-            await ctx.register_response(sent)
+            await ctx.send(":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command.")
 
     # From spoo.py
     @commands.command()
@@ -849,11 +808,9 @@ L
         """Create a star out of a string 1-25 characters long."""
 
         if len(msg) > 25:
-            sent = await ctx.send("Your message must be shorter than 25 characters.")
-            return await ctx.register_response(sent)
+            return await ctx.send("Your message must be shorter than 25 characters.")
         elif len(msg) == 0:
-            sent = await ctx.send("Your message must have at least 1 character.")
-            return await ctx.register_response(sent)
+            return await ctx.send("Your message must have at least 1 character.")
 
         ret = "```\n"
 
@@ -873,16 +830,14 @@ L
                 ret += "\n"
 
         ret += "```"
-        sent = await ctx.send(ret)
-        await ctx.register_response(sent)
+        await ctx.send(ret)
 
     @commands.command(aliases=["mcxp"])
     async def minecraftxp(self, ctx, *, percent: int):  # I don't do Minecraft. Thanks for reading.
         """Draw a Minecraft XP bar."""
 
         if 0 >= percent >= 100:
-            sent = await ctx.send(":x: Your argument must be an integer between 0 and 100.")
-            return await ctx.register_response(sent)
+            return await ctx.send(":x: Your argument must be an integer between 0 and 100.")
 
         data = {"percent": percent}
 
@@ -891,8 +846,7 @@ L
 
         fp = discord.File(io.BytesIO(raw), "xp.png")
 
-        sent = await ctx.send(file=fp)
-        await ctx.register_response(sent)
+        await ctx.send(file=fp)
 
 
 def setup(bot):

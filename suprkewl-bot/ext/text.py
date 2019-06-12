@@ -35,8 +35,7 @@ class Text(commands.Cog):
 
         files = ["bee.txt", "lettuce.txt", "rickroll.txt", "uwu.txt"]
         with open(os.getcwd() + f"/../assets/{random.choice(files)}", "rb") as fp:
-            sent = await ctx.send(file=discord.File(fp, filename="love_letter.txt"))
-        await ctx.register_response(sent)
+            await ctx.send(file=discord.File(fp, filename="love_letter.txt"))
 
     @commands.command()
     @commands.cooldown(1, 2, commands.BucketType.channel)
@@ -48,14 +47,13 @@ class Text(commands.Cog):
         if len(ret) > 2000:
             fp = io.BytesIO(ret.encode("utf-8"))
 
-            sent = await ctx.send(
-                content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in"
-                        " this file:",
+            await ctx.send(
+                ":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this"
+                " file:",
                 file=discord.File(fp, "stretch.txt")
             )
         else:
-            sent = await ctx.send("```\n%s\n```" % ret)
-        await ctx.bot.register_response(sent, ctx.message)
+            await ctx.send("```\n%s\n```" % ret)
 
     @commands.command()
     @commands.cooldown(1, 2, commands.BucketType.channel)
@@ -69,14 +67,13 @@ class Text(commands.Cog):
         if len(ret) > 2000:
             fp = io.BytesIO(ret.encode("utf-8"))
 
-            sent = await ctx.send(
-                content=":white_check_mark: Your output was longer than 2000 characters and was therefore placed in"
-                        " this file:",
+            await ctx.send(
+                ":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this"
+                " file:",
                 file=discord.File(fp, "square.txt")
             )
         else:
-            sent = await ctx.send("```\n%s\n```" % ret)
-        await ctx.register_response(sent)
+            await ctx.send("```\n%s\n```" % ret)
 
     @commands.command(description="Format your arguments like author/song.")
     @commands.cooldown(1, 1.5, commands.BucketType.channel)
@@ -90,14 +87,13 @@ class Text(commands.Cog):
         try:
             lyrics = await ctx.bot.loop.run_in_executor(None, PyLyrics.getLyrics, author, song)
         except ValueError:
-            sent = await ctx.send("Your song is either invalid or missing from the database. Try again.")
-            return await ctx.register_response(sent)
+            return await ctx.send("Your song is either invalid or missing from the database. Try again.")
 
         if isinstance(lyrics, bytes):  # This library can be dum-dum
             lyrics = lyrics.decode("utf-8")
 
         if len(lyrics) > 2048:
-            sent = await ctx.send(file=discord.File(io.BytesIO(lyrics.encode("utf-8")), "lyrics.txt"))
+            await ctx.send(file=discord.File(io.BytesIO(lyrics.encode("utf-8")), "lyrics.txt"))
         else:
             emb = discord.Embed(description=lyrics, color=ctx.bot.embed_color)
 
@@ -105,9 +101,7 @@ class Text(commands.Cog):
             emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
             emb.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
-            sent = await ctx.send(embed=emb)
-
-        await ctx.register_response(sent)
+            await ctx.send(embed=emb)
 
 
 def setup(bot):

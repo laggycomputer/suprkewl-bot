@@ -174,8 +174,7 @@ class About(commands.Cog):
             icon_url=ctx.author.avatar_url
         )
 
-        sent = await ctx.send(embed=emb)
-        await ctx.register_response(sent)
+        await ctx.send(embed=emb)
 
     @commands.command()
     async def stats(self, ctx):
@@ -200,8 +199,7 @@ class About(commands.Cog):
             icon_url=ctx.author.avatar_url
         )
 
-        sent = await ctx.send(embed=emb)
-        await ctx.register_response(sent)
+        await ctx.send(embed=emb)
 
     @commands.command(aliases=["info"])
     async def about(self, ctx):
@@ -255,8 +253,7 @@ class About(commands.Cog):
                 icon_url=ctx.author.avatar_url
             )
 
-        sent = await ctx.send(embed=emb)
-        await ctx.register_response(sent)
+        await ctx.send(embed=emb)
 
     @commands.command()
     async def ping(self, ctx):
@@ -271,8 +268,7 @@ class About(commands.Cog):
             url="attachment://image.gif"
         )
 
-        sent = await ctx.send(embed=emb, file=fp)
-        await ctx.register_response(sent)
+        await ctx.send(embed=emb, file=fp)
 
     # From R. Danny
     @commands.command(
@@ -283,8 +279,7 @@ class About(commands.Cog):
 
         source_url = "https://github.com/laggycomputer/suprkewl-bot/blob/untested"
         if command is None:
-            sent = await ctx.send(source_url)
-            return await ctx.register_response(sent)
+            return await ctx.send(source_url)
 
         if command == "help":
             src = type(ctx.bot.help_command)
@@ -293,8 +288,7 @@ class About(commands.Cog):
         else:
             obj = ctx.bot.get_command(command.replace(".", " "))
             if obj is None:
-                sent = await ctx.send("Could not find command.")
-                return await ctx.register_response(sent)
+                return await ctx.send("Could not find command.")
 
             # since we found the command we're looking for, presumably anyway, let's
             # try to access the code itself
@@ -312,8 +306,7 @@ class About(commands.Cog):
 
         final_url = f"<{source_url}/{location}#L{firstlineno}-L{firstlineno + len(lines) - 1}>"
 
-        sent = await ctx.send(final_url)
-        await ctx.register_response(sent)
+        await ctx.send(final_url)
 
 
 def setup(bot):

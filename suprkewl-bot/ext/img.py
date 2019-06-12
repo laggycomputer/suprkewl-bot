@@ -263,26 +263,23 @@ class Image_(commands.Cog, name="Image"):  # To avoid confusion with PIL.Image
         async with ctx.typing():
             img = await download_image(ctx, url)
             if img is None:
-                sent = await ctx.send(
+                return await ctx.send(
                     "That argument does not seem to be an image, and does not seem to be a member of this server or"
                     " other user, and you did not attach an image. Please try again."
                 )
-                return await ctx.register_response(sent)
 
             img = await fry(ctx, img)
             fname = str(ctx.message.id) + ".png"
             try:
                 img.save(fname, format="png")
             except IOError:
-                sent = await ctx.send(
+                return await ctx.send(
                     "Your image was rendered but could not be saved, please try again later. :slight_frown:")
-                return await ctx.register_response(sent)
 
             fp = discord.File(fname, "deepfried.png")
 
-        sent = await ctx.send(file=fp)
+        await ctx.send(file=fp)
         os.remove(fname)
-        await ctx.register_response(sent)
 
 
 def setup(bot):
