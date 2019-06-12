@@ -32,8 +32,11 @@ class Stats(commands.Cog):
             if ctx.guild.large:
                 await ctx.bot.request_offline_members(ctx.guild)
 
+    async def cog_check(self, ctx):
+        if ctx.guild is None:
+            raise commands.NoPrivateMessage
+
     @commands.group(aliases=["chart", "stat"], description="Generate a pie chart for guild attributes.")
-    @commands.guild_only()
     @commands.cooldown(1, 2, commands.BucketType.channel)
     async def pie(self, ctx):
         """Generate pie charts."""
@@ -207,7 +210,6 @@ class Stats(commands.Cog):
         description="Checks the number of people in the server that are listening to a certain song on Spotify."
                     " Defaults to the one you are listening to. The song name is case-insensitive."
     )
-    @commands.guild_only()  # Member.activities seems to have no counterpart on User
     async def songcount(self, ctx, *, song=None):
         """Count members listening to a certain song on Spotify."""
 
@@ -250,7 +252,6 @@ class Stats(commands.Cog):
         description="Checks the number of people in the server that are playing a certain game."
                     " Defaults to the game you are playing, if any. The game name is case-insensitive."
     )
-    @commands.guild_only()  # Member.activities seems to have no counterpart on User
     async def gamecount(self, ctx, *, game=None):
         """Count members playing a certain game."""
 
