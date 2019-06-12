@@ -93,7 +93,23 @@ class Text(commands.Cog):
             lyrics = lyrics.decode("utf-8")
 
         if len(lyrics) > 2048:
-            await ctx.send(file=discord.File(io.BytesIO(lyrics.encode("utf-8")), "lyrics.txt"))
+            by_line = lyrics.split("\n")
+            current_length = 0
+            current_index = 0
+            while current_length <= 2048:
+                current_length += len(by_line[current_index]) + len("\n")
+                current_index += 1
+
+            part1 = "\n".join(by_line[:current_index - 1])
+            part2 = "\n".join(by_line[current_index:])
+
+            emb1 = discord.Embed(description=part1, color=ctx.bot.embed_color)
+            emb1.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+            emb2 = discord.Embed(description=part2, color=ctx.bot.embed_color)
+            emb2.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+
+            await ctx.send(embed=emb1)
+            await ctx.send(embed=emb2)
         else:
             emb = discord.Embed(description=lyrics, color=ctx.bot.embed_color)
 
