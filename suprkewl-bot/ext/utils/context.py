@@ -17,3 +17,5 @@ class Context(commands.Context):
 
         if register:
             await self.register_response(sent)
+
+        return sent
