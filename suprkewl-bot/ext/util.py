@@ -167,7 +167,7 @@ class Utilities(commands.Cog):
         asset = ctx.guild.icon_url_as(format="png")
 
         if asset is None:
-            await ctx.send("This guild has no banner!")
+            await ctx.send("This guild has no icon!")
         else:
             await ctx.send(asset)
 
