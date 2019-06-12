@@ -232,6 +232,25 @@ def normalise(v):
     return v / length(v)
 
 
+def combine(one, two):
+    a = Image.open(one).resize((256, 256)).convert("RGBA")
+    b = Image.open(two).resize((256, 256)).convert("RGBA")
+    lx, ly = a.size
+    fin = Image.new("RGBA", a.size)
+    for x in range(lx):
+        for y in range(ly):
+            if (x + y) % 2 == 0:
+                px = a.getpixel((x, y))
+            else:
+                px = b.getpixel((x, y))
+            fin.putpixel((x, y), px)
+    n = io.BytesIO()
+    fin.save(n, "png")
+    n.seek(0)
+
+    return n
+
+
 class Image_(commands.Cog, name="Image"):  # To avoid confusion with PIL.Image
 
     @commands.command(
@@ -280,6 +299,26 @@ class Image_(commands.Cog, name="Image"):  # To avoid confusion with PIL.Image
 
         await ctx.send(file=fp)
         os.remove(fname)
+
+    @commands.command(aliases=["cmb"], description="Combine your avatar and that of another user.")
+    async def combine(self, ctx, user1: discord.Member, *, user2: discord.Member = None):
+        """Combine two avatars."""
+
+        async with ctx.typing():
+            if not user2:
+                user2 = user1
+                user1 = ctx.author
+
+            if user1 == user2:
+                return await ctx.send(":question: You can't combine with yourself!")
+
+            a1 = io.BytesIO(await user1.avatar_url_as(format="png").read())
+            a2 = io.BytesIO(await user2.avatar_url_as(format="png").read())
+
+            f = await ctx.bot.loop.run_in_executor(None, combine, a1, a2)
+            f = discord.File(f, "combined.png")
+
+        await ctx.send(":white_check_mark:", file=f)
 
 
 def setup(bot):
