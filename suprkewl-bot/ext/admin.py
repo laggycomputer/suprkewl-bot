@@ -38,18 +38,11 @@ class Admin(commands.Cog):
         await ctx.invoke(ctx.bot.get_command("jsk sh"), argument=conv)
 
     @commands.command(hidden=True, name="del")
-    async def deletemsg(self, ctx, message: int):
-        try:
-            m = await ctx.fetch_message(message)
-        except discord.NotFound:
-            return await ctx.send(":x: Message not found. It must be in the current channel.")
-        except discord.Forbidden:
-            return await ctx.send(
-                ":x: I do not have permission to `Read Message History` here. I cannot fetch the message."
-            )
+    async def deletemsg(self, ctx, message: discord.Message):
+        """Delete a specific message."""
 
         try:
-            await m.delete()
+            await message.delete()
             await ctx.send(":white_check_mark:")
         except discord.Forbidden:
             await ctx.send(":x: I do not have permission to delete that message.")
