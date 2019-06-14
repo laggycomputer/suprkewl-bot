@@ -267,13 +267,14 @@ def invert(img):
     return fp
 
 
-class Image_(commands.Cog, name="Image"):  # To avoid confusion with PIL.Image
+# To avoid confusion with PIL.Image
+class Image_(commands.Cog, name="Image",
+             command_attrs=dict(cooldown=commands.Cooldown(1, 2, commands.BucketType.member))):
 
     @commands.command(
         description="Specify a member to use their avatar, or no URL to use yours. If you attach an image, that will"
                     " be used as the image, ignoring any other arguments."
     )
-    @commands.cooldown(1, 2, commands.BucketType.member)
     async def deepfry(self, ctx, *, url=None):
         """Deepfry an image."""
 
@@ -310,7 +311,6 @@ class Image_(commands.Cog, name="Image"):  # To avoid confusion with PIL.Image
         await ctx.send(file=fp)
 
     @commands.command(name="combine", aliases=["cmb"], description="Combine your avatar and that of another user.")
-    @commands.cooldown(1, 2, commands.BucketType.member)
     async def combine_(self, ctx, user1: discord.Member, *, user2: discord.Member = None):
         """Combine two avatars."""
 
@@ -335,7 +335,6 @@ class Image_(commands.Cog, name="Image"):  # To avoid confusion with PIL.Image
         aliases=["inv"],
         description="Invert an image. Specify a member, image URL, or attach an image. Defaults to your avatar."
     )
-    @commands.cooldown(1, 2, commands.BucketType.member)
     async def invert_(self, ctx, *, url=None):
         """Invert the colors of an image."""
 
