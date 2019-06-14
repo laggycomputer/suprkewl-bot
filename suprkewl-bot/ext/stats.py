@@ -23,6 +23,8 @@ import discord
 from discord.ext import commands
 import matplotlib.pyplot as plt
 
+from .utils import async_executor
+
 
 class Stats(commands.Cog):
 
@@ -53,7 +55,8 @@ class Stats(commands.Cog):
     async def pie_role(self, ctx, *, role: discord.Role = None):
         """Generate a piechart of those who have <role>."""
 
-        def pie_gen(ctx, role=None):
+        @async_executor()
+        def pie_gen(role=None):
             m = ctx.guild.members
             guild_size = len(m)
 
@@ -119,7 +122,7 @@ class Stats(commands.Cog):
 
                 return [fmt, img_out]
 
-        fmt, fp = await ctx.bot.loop.run_in_executor(None, pie_gen, ctx, role)
+        fmt, fp = await pie_gen(role)
 
         fp = discord.File(fp, filename="chart.png")
 
@@ -138,6 +141,7 @@ class Stats(commands.Cog):
     async def pie_bot(self, ctx):
         """Make a pie chart of server bots."""
 
+        @async_executor()
         def pie_gen():
             prc = sum(m.bot for m in ctx.guild.members) / len(ctx.guild.members) * 100
 
@@ -155,7 +159,7 @@ class Stats(commands.Cog):
 
             return [fp, prc]
 
-        fp, prc = await ctx.bot.loop.run_in_executor(None, pie_gen)
+        fp, prc = await pie_gen()
 
         fp = discord.File(fp, filename="piechart.png")
 
@@ -173,6 +177,7 @@ class Stats(commands.Cog):
         online_count = sum(m.status == discord.Status.online for m in members) / len(members) * 100
         other_count = sum(isinstance(m.status, str) for m in members) / len(members) * 100
 
+        @async_executor()
         def pie_gen():
             labels = ["Offline", "Idle", "Do Not Disturb", "Online"]
             sizes = [offline_count, idle_count, dnd_count, online_count]
@@ -192,7 +197,7 @@ class Stats(commands.Cog):
 
             return fp
 
-        fp = await ctx.bot.loop.run_in_executor(None, pie_gen)
+        fp = await pie_gen()
 
         fp = discord.File(fp, filename="piechart.png")
 

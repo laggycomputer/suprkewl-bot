@@ -29,6 +29,7 @@ import discord
 from discord.ext import commands
 import gtts
 
+from .utils import async_executor
 import config
 
 
@@ -137,14 +138,14 @@ class Utilities(commands.Cog):
             except AssertionError:
                 return await ctx.send(":x: There was nothing speakable in that message.")
 
-            # The actual request happens here:
+            @async_executor()
             def save():
                 fname = f"{ctx.message.id}.mp3"
-                tts.save(fname)  # This uses requests, and has to wait for all of the sound output to be streamed.
+                tts.save(fname)
                 fp = discord.File(fname, "out.mp3")
                 return [fname, fp]
 
-            fname, fp = await ctx.bot.loop.run_in_executor(None, save)
+            fname, fp = await save()
 
         await ctx.send(":white_check_mark:", file=fp)
         os.remove(fname)

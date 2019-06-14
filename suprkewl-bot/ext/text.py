@@ -25,6 +25,8 @@ import discord
 from discord.ext import commands
 from PyLyrics import PyLyrics
 
+from .utils import async_executor
+
 
 class Text(commands.Cog):
 
@@ -84,8 +86,12 @@ class Text(commands.Cog):
 
         author, song = author.strip().title(), song.strip().title()
 
+        @async_executor()
+        def get_lyrics(a, s):
+            PyLyrics.getLyrics(a, s)
+
         try:
-            lyrics = await ctx.bot.loop.run_in_executor(None, PyLyrics.getLyrics, author, song)
+            lyrics = await get_lyrics(author, song)
         except ValueError:
             return await ctx.send("Your song is either invalid or missing from the database. Try again.")
 

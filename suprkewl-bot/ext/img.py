@@ -28,11 +28,14 @@ from discord.ext import commands
 import numpy as np
 from PIL import Image
 
+from .utils import async_executor
+
 
 PWD = os.getcwd()
 
 
-def _fry(img):
+@async_executor()
+def fry(img):
     coords = find_chars(img)
     img = add_b_emojis(img, coords)
     img = add_laughing_emojis(img, 5)
@@ -52,10 +55,6 @@ def _fry(img):
     fp.seek(0)
 
     return fp
-
-
-async def fry(ctx, img):
-    return await ctx.bot.loop.run_in_executor(None, _fry, img)
 
 
 def find_chars(img):
@@ -236,6 +235,7 @@ def normalise(v):
     return v / length(v)
 
 
+@async_executor()
 def combine(one, two):
     a = Image.open(one).resize((256, 256)).convert("RGBA")
     b = Image.open(two).resize((256, 256)).convert("RGBA")
@@ -291,13 +291,13 @@ class Image_(commands.Cog, name="Image"):  # To avoid confusion with PIL.Image
                     " other user, and you did not attach an image. Please try again."
                 )
 
-            img = await fry(ctx, img)
+            img = await fry(img)
             fp = discord.File(img, "deepfried.png")
 
         await ctx.send(file=fp)
 
-    @commands.command(aliases=["cmb"], description="Combine your avatar and that of another user.")
-    async def combine(self, ctx, user1: discord.Member, *, user2: discord.Member = None):
+    @commands.command(name="combine", aliases=["cmb"], description="Combine your avatar and that of another user.")
+    async def combine_(self, ctx, user1: discord.Member, *, user2: discord.Member = None):
         """Combine two avatars."""
 
         async with ctx.typing():
@@ -311,7 +311,7 @@ class Image_(commands.Cog, name="Image"):  # To avoid confusion with PIL.Image
             a1 = io.BytesIO(await user1.avatar_url_as(format="png").read())
             a2 = io.BytesIO(await user2.avatar_url_as(format="png").read())
 
-            f = await ctx.bot.loop.run_in_executor(None, combine, a1, a2)
+            f = await combine(a1, a2)
             f = discord.File(f, "combined.png")
 
         await ctx.send(":white_check_mark:", file=f)
