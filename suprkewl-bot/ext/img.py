@@ -47,7 +47,11 @@ def _fry(img):
     img = add_noise(img, 0.2)
     img = change_contrast(img, 200)
 
-    return img
+    fp = io.BytesIO()
+    img.save(fp, format="png")
+    fp.seek(0)
+
+    return fp
 
 
 async def fry(ctx, img):
@@ -288,17 +292,9 @@ class Image_(commands.Cog, name="Image"):  # To avoid confusion with PIL.Image
                 )
 
             img = await fry(ctx, img)
-            fname = str(ctx.message.id) + ".png"
-            try:
-                img.save(fname, format="png")
-            except IOError:
-                return await ctx.send(
-                    "Your image was rendered but could not be saved, please try again later. :slight_frown:")
-
-            fp = discord.File(fname, "deepfried.png")
+            fp = discord.File(img, "deepfried.png")
 
         await ctx.send(file=fp)
-        os.remove(fname)
 
     @commands.command(aliases=["cmb"], description="Combine your avatar and that of another user.")
     async def combine(self, ctx, user1: discord.Member, *, user2: discord.Member = None):

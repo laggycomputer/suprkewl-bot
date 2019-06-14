@@ -18,7 +18,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import io
-import os
 
 import discord
 from discord.ext import commands
@@ -87,16 +86,16 @@ class Stats(commands.Cog):
                 plt.axis("equal")
                 plt.tight_layout()
 
-                fname = str(ctx.message.id) + ".png"
-
-                plt.savefig(fname)
+                fp = io.BytesIO()
+                plt.savefig(fp)
+                fp.seek(0)
 
                 fmt = "\n" + "\n".join(user_friendly_prc)
                 fmt = fmt.replace("@everyone", "\\@everyone")
 
-                return [fmt, fname]
+                return [fmt, fp]
             else:
-                def _piegenerate(name1, name2, prc, fname):
+                def _piegenerate(name1, name2, prc):
                     labels = [name1, name2]
                     sizes = [prc, 100 - prc]
                     colors = ["lightcoral", "lightskyblue"]
@@ -104,24 +103,25 @@ class Stats(commands.Cog):
                     plt.legend(patches, labels, loc="best")
                     plt.axis("equal")
                     plt.tight_layout()
-                    fname += ".png"
-                    plt.savefig(fname)
 
-                    return fname
+                    fp = io.BytesIO()
+                    plt.savefig(fp)
+                    fp.seek(0)
+
+                    return fp
 
                 prc = (sum(member._roles.has(role.id) for member in m) / guild_size) * 100
 
                 names = [f"Members with '{role.name}' role",
                          f"Members without '{role.name}' role"]
-                fname = str(ctx.message.id)
-                img_out = _piegenerate(names[0], names[1], prc, fname)
+                img_out = _piegenerate(names[0], names[1], prc)
                 fmt = f":white_check_mark: {prc}% of the server has the chosen role."
 
                 return [fmt, img_out]
 
-        fmt, fname = await ctx.bot.loop.run_in_executor(None, pie_gen, ctx, role)
+        fmt, fp = await ctx.bot.loop.run_in_executor(None, pie_gen, ctx, role)
 
-        fp = discord.File(fname, filename="chart.png")
+        fp = discord.File(fp, filename="chart.png")
 
         if len(fmt) > 2000:
             fmt = io.BytesIO(fmt.encode("utf-8"))
@@ -130,8 +130,6 @@ class Stats(commands.Cog):
             await ctx.send(":white_check_mark: Attached is your output and pie-chart.", files=[fp, fp2])
         else:
             await ctx.send(fmt, file=fp)
-
-        os.remove(fname)
 
     @pie.command(
         name="bot",
@@ -150,17 +148,18 @@ class Stats(commands.Cog):
             plt.legend(patches, labels, loc="best")
             plt.axis("equal")
             plt.tight_layout()
-            fname = str(ctx.message.id) + ".png"
-            plt.savefig(fname)
 
-            return [fname, prc]
+            fp = io.BytesIO()
+            plt.savefig(fp)
+            fp.seek(0)
 
-        fname, prc = await ctx.bot.loop.run_in_executor(None, pie_gen)
+            return [fp, prc]
 
-        fp = discord.File(fname, filename="piechart.png")
+        fp, prc = await ctx.bot.loop.run_in_executor(None, pie_gen)
+
+        fp = discord.File(fp, filename="piechart.png")
 
         await ctx.send(f":white_check_mark: {prc}% of the server's members are bots.", file=fp)
-        os.remove(fname)
 
     @pie.command(
         name="status", description="Sends a pie chart of users by status (online, idle, do-not-disturb, etc).")
@@ -186,14 +185,16 @@ class Stats(commands.Cog):
             plt.legend(patches, labels, loc="best")
             plt.axis("equal")
             plt.tight_layout()
-            fname = str(ctx.message.id) + ".png"
-            plt.savefig(fname)
 
-            return fname
+            fp = io.BytesIO()
+            plt.savefig(fp)
+            fp.seek(0)
 
-        fname = await ctx.bot.loop.run_in_executor(None, pie_gen)
+            return fp
 
-        fp = discord.File(fname, filename="piechart.png")
+        fp = await ctx.bot.loop.run_in_executor(None, pie_gen)
+
+        fp = discord.File(fp, filename="piechart.png")
 
         ret = f":white_check_mark:\n{offline_count}% of the server's members are offline.\n{idle_count}% of the" \
               f" server is idle.\n{dnd_count}% of the server is on do not disturb.\n{online_count}% of the server is" \
@@ -202,7 +203,6 @@ class Stats(commands.Cog):
             ret += f"\n{other_count}% of the server has an unknown status."
 
         await ctx.send(ret, file=fp)
-        os.remove(fname)
 
     @commands.command(
         description="Checks the number of people in the server that are listening to a certain song on Spotify."
