@@ -27,6 +27,7 @@ import discord
 from discord.ext import commands
 import numpy as np
 from PIL import Image
+import PIL.ImageOps
 
 from .utils import async_executor
 
@@ -255,6 +256,17 @@ def combine(one, two):
     return n
 
 
+@async_executor()
+def invert(img):
+    inverted = PIL.ImageOps.invert(img)
+
+    fp = io.BytesIO()
+    inverted.save(fp, "png")
+    fp.seek(0)
+
+    return fp
+
+
 class Image_(commands.Cog, name="Image"):  # To avoid confusion with PIL.Image
 
     @commands.command(
@@ -315,6 +327,49 @@ class Image_(commands.Cog, name="Image"):  # To avoid confusion with PIL.Image
             f = discord.File(f, "combined.png")
 
         await ctx.send(":white_check_mark:", file=f)
+
+    @commands.command(
+        name="invert",
+        aliases=["inv"],
+        description="Invert an image. Specify a member, image URL, or attach an image. Defaults to your avatar."
+    )
+    async def invert_(self, ctx, *, url=None):
+        """Invert the colors of an image."""
+
+        async with ctx.typing():
+            if url is None:
+                is_found = False
+                for att in ctx.message.attachments:
+                    if att.height is not None and not is_found:
+                        url = att
+                        is_found = True
+                if not is_found:
+                    url = ctx.author.avatar_url_as(format="png", size=1024)
+            else:
+                try:
+                    member = await commands.MemberConverter().convert(ctx, url)
+                    url = member.avatar_url_as(format="png", size=1024)
+                except commands.BadArgument:
+                    try:
+                        member = await commands.UserConverter().convert(ctx, url)
+                        url = member.avatar_url_as(format="png", size=1024)
+                    except commands.BadArgument:
+                        pass
+
+            if isinstance(url, (discord.Attachment, discord.Asset)):
+                fp = io.BytesIO(await url.read())
+                img = Image.open(fp).convert("RGB")
+            else:
+                img = await download_image(ctx, url)
+                if img is None:
+                    return await ctx.send(
+                        "That argument does not seem to be an image, and does not seem to be a member of this server or"
+                        " other user, and you did not attach an image. Please try again."
+                    )
+
+            inverted = await invert(img)
+            fp = discord.File(inverted, "image.png")
+            await ctx.send(":white_check_mark:", file=fp)
 
 
 def setup(bot):
