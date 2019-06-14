@@ -208,11 +208,11 @@ def bulge(img, f, r, a, h, ior):
     return img
 
 
-async def download_image(ctx, url):
+async def download_image(cs, url, fmt="RGB"):
     try:
-        async with ctx.bot.http2.get(url) as resp:
+        async with cs.get(url) as resp:
             try:
-                img = Image.open(io.BytesIO(await resp.content.read())).convert("RGB")
+                img = Image.open(io.BytesIO(await resp.content.read())).convert(fmt)
             except OSError:
                 img = None
     except aiohttp.InvalidURL:
@@ -297,7 +297,7 @@ class Image_(commands.Cog, name="Image"):  # To avoid confusion with PIL.Image
                     pass
 
         async with ctx.typing():
-            img = await download_image(ctx, url)
+            img = await download_image(ctx.bot.http2, url)
             if img is None:
                 return await ctx.send(
                     "That argument does not seem to be an image, and does not seem to be a member of this server or"
@@ -363,7 +363,7 @@ class Image_(commands.Cog, name="Image"):  # To avoid confusion with PIL.Image
                 fp = io.BytesIO(await url.read())
                 img = Image.open(fp).convert("RGB")
             else:
-                img = await download_image(ctx, url)
+                img = await download_image(ctx.bot.http2, url)
                 if img is None:
                     return await ctx.send(
                         "That argument does not seem to be an image, and does not seem to be a member of this server or"
