@@ -21,7 +21,7 @@ import datetime
 
 from dateutil.relativedelta import relativedelta
 
-from .plural import Plural
+from .format_and_convert import Plural
 
 
 def human_timedelta(dt, *, source=None, accuracy=None):  # From R. Danny.

@@ -17,6 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+
+import json
+
+
 permissions_converter = {
     "add_reactions": "Add Reactions", "administrator": "Administrator", "attach_files": "Attach Files",
     "ban_members": "Ban Members", "change_nickname": "Can Change Own Nickname", "connect": "Connect to Voice Channels",
@@ -32,3 +36,55 @@ permissions_converter = {
     "send_tts_messages": "Send TTS Messages", "speak": "Speak", "use_voice_activation": "No Voice Activity",
     "view_audit_log": "View the Server Audit Log"
 }
+
+
+def escape_codeblocks(line):
+    if not line:
+        return line
+
+    i = 0
+    n = 0
+    while i < len(line):
+        if (line[i]) == "`":
+            n += 1
+        if n == 3:
+            line = line[:i] + '\u200b' + line[i:]
+            n = 1
+            i += 1
+        i += 1
+
+    if line[-1] == "`":
+        line += '\u200b'
+
+    return line
+
+
+def format_json(string):
+    return json.dumps(string, indent=2, ensure_ascii=False, sort_keys=True)
+
+
+def plural(values):
+    if len(values) == 0:
+        return ""
+    elif len(values) == 1:
+        return values[0]
+    elif len(values) == 2:
+        return f"{values[0] and values[1]}"
+    else:
+        ret = ", ".join(values[:-3])
+        ret += f", {values[-2]}, and {values[-1]}"
+        return ret
+
+
+class Plural:  # From R. Danny.
+
+    def __init__(self, value):
+        self.value = value
+
+    def __format__(self, format_spec):
+        v = self.value
+        singular, sep, plural = format_spec.partition("|")
+        plural = plural or f"{singular}s"
+        if abs(v) != 1:
+            return f"{v} {plural}"
+        return f"{v} {singular}"
