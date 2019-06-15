@@ -298,8 +298,11 @@ class About(commands.Cog):
 
         lines, firstlineno = inspect.getsourcelines(src)
         if not module.startswith("discord"):
-            # not a built-in command
-            location = os.path.relpath(filename).replace("\\", "/")
+            if module.startswith("jishaku"):
+                source_url = "https://github.com/Gorialis/jishaku"
+                location = module.replace(".", "/") + ".py"
+            else:
+                location = os.path.relpath(filename).replace("\\", "/")
         else:
             location = module.replace(".", "/") + ".py"
             source_url = 'https://github.com/Rapptz/discord.py/blob/master'
