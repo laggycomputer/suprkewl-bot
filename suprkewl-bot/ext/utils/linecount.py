@@ -18,4 +18,7 @@ def linecount():
                         else:
                             total += 1
 
-    return f"I am made of {total:,} lines of Python, spread across {file_amount:,} files!"
+    avg = round(total / file_amount, 2)
+
+    return f"I am made of {total:,} lines of Python, spread across {file_amount:,} files! That's an average of about" \
+        f" {avg:,} lines per file."
