@@ -278,6 +278,7 @@ class Image_(commands.Cog, name="Image",
     async def deepfry(self, ctx, *, url=None):
         """Deepfry an image."""
 
+        async with ctx.typing():
         if url is None:
             is_found = False
             for att in ctx.message.attachments:
@@ -297,7 +298,6 @@ class Image_(commands.Cog, name="Image",
                 except commands.BadArgument:
                     pass
 
-        async with ctx.typing():
             img = await download_image(ctx.bot.http2, url)
             if img is None:
                 return await ctx.send(
