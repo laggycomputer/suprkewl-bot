@@ -371,7 +371,52 @@ class Image_(commands.Cog, name="Image",
 
             inverted = await invert(img)
             fp = discord.File(inverted, "image.png")
-            await ctx.send(":white_check_mark:", file=fp)
+        await ctx.send(":white_check_mark:", file=fp)
+
+    @commands.command(
+        aliases=["gs"],
+        description="Grayscale an image. Specify a member, image URL, or attach an image. Defaults to your avatar."
+    )
+    async def grayscale(self, ctx, *, url=None):
+        """Convert an image to grayscale."""
+
+        async with ctx.typing():
+            if url is None:
+                is_found = False
+                for att in ctx.message.attachments:
+                    if att.height is not None and not is_found:
+                        url = att
+                        is_found = True
+                if not is_found:
+                    url = ctx.author.avatar_url_as(format="png", size=1024)
+            else:
+                try:
+                    member = await commands.MemberConverter().convert(ctx, url)
+                    url = member.avatar_url_as(format="png", size=1024)
+                except commands.BadArgument:
+                    try:
+                        member = await commands.UserConverter().convert(ctx, url)
+                        url = member.avatar_url_as(format="png", size=1024)
+                    except commands.BadArgument:
+                        pass
+
+            if isinstance(url, (discord.Attachment, discord.Asset)):
+                fp = io.BytesIO(await url.read())
+                img = Image.open(fp).convert("L")
+            else:
+                img = await download_image(ctx.bot.http2, url, "L")
+                if img is None:
+                    return await ctx.send(
+                        "That argument does not seem to be an image, and does not seem to be a member of this server or"
+                        " other user, and you did not attach an image. Please try again."
+                    )
+
+            fp = io.BytesIO()
+            img.save(fp, "png")
+            fp.seek(0)
+
+            fp = discord.File(fp, "gray.png")
+        await ctx.send(":white_check_mark:", file=fp)
 
 
 def setup(bot):
