@@ -182,11 +182,12 @@ class About(commands.Cog):
 
         emb = discord.Embed(name="Bot status", color=ctx.bot.embed_color)
         emb.add_field(name="Line count", value=linecount())
-        cmds_used = (await ctx.bot.redis.get("commands_used"))
+        cmds_used = ctx.bot.commands_used
+        msgs_seen = ctx.bot.messages_seen
         emb.add_field(
             name="Stats",
-            value=f"{cmds_used} commands used since start, {len(ctx.bot.users)} users, {len(ctx.bot.guilds)} guilds,"
-            f" {len(ctx.bot.commands)} commands"
+            value=f"{cmds_used} commands used since start, {msgs_seen} messages seen since start, {len(ctx.bot.users)}"
+            f" users, {len(ctx.bot.guilds)} guilds, {len(ctx.bot.commands)} commands"
         )
 
         emb.set_thumbnail(url=ctx.bot.user.avatar_url)

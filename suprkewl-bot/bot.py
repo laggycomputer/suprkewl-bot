@@ -37,6 +37,9 @@ class suprkewl_bot(commands.Bot):
 
         self.embed_color = 0xf92f2f
 
+        self.commands_used = 0
+        self.messages_seen = 0
+
         self.redis = None
         self.http2 = None
 
@@ -73,8 +76,6 @@ class suprkewl_bot(commands.Bot):
         if not self.http2:
             self.http2 = aiohttp.ClientSession()
 
-        await self.redis.execute("SET", "commands_used", 0)
-
         print(
             f"Logged in as {self.user.name} (UID {self.user.id}) | Connected to {len(self.guilds)} servers and their "
             f"combined {len(set(self.get_all_members()))} members"
@@ -106,6 +107,8 @@ class suprkewl_bot(commands.Bot):
             for emb in message.embeds:
                 embeds += str(emb.to_dict())
             print(f"With embed(s):\n{embeds}")
+
+        self.messages_seen += 1
 
         if message.author.bot:
             return
@@ -150,7 +153,7 @@ class suprkewl_bot(commands.Bot):
                 await self.process_commands(message)
 
     async def on_command_completion(self, ctx):
-        await self.redis.incr("commands_used")
+        self.commands_used += 1
 
     async def process_commands(self, message):
         ctx = await self.get_context(message, cls=Context)
