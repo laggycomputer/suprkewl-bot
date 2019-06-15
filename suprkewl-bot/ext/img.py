@@ -267,6 +267,28 @@ def invert(img):
     return fp
 
 
+@async_executor()
+def posterize(img):
+    postered = PIL.ImageOps.posterize(img, 1)
+
+    fp = io.BytesIO()
+    postered.save(fp, "png")
+    fp.seek(0)
+
+    return fp
+
+
+@async_executor()
+def solarize(img):
+    solarized = PIL.ImageOps.solarize(img)
+
+    fp = io.BytesIO()
+    solarized.save(fp, "png")
+    fp.seek(0)
+
+    return fp
+
+
 # To avoid confusion with PIL.Image
 class Image_(commands.Cog, name="Image",
              command_attrs=dict(cooldown=commands.Cooldown(1, 2, commands.BucketType.member))):
@@ -279,34 +301,34 @@ class Image_(commands.Cog, name="Image",
         """Deepfry an image."""
 
         async with ctx.typing():
-        if url is None:
-            is_found = False
-            for att in ctx.message.attachments:
-                if att.height is not None and not is_found:
-                    url = att.proxy_url
-                    is_found = True
-            if not is_found:
-                url = str(ctx.author.avatar_url_as(format="png", size=1024))
-        else:
-            try:
-                member = await commands.MemberConverter().convert(ctx, url)
-                url = str(member.avatar_url_as(format="png", size=1024))
-            except commands.BadArgument:
+            if url is None:
+                is_found = False
+                for att in ctx.message.attachments:
+                    if att.height is not None and not is_found:
+                        url = att.proxy_url
+                        is_found = True
+                if not is_found:
+                    url = str(ctx.author.avatar_url_as(format="png", size=1024))
+            else:
                 try:
-                    member = await commands.UserConverter().convert(ctx, url)
+                    member = await commands.MemberConverter().convert(ctx, url)
                     url = str(member.avatar_url_as(format="png", size=1024))
                 except commands.BadArgument:
-                    pass
+                    try:
+                        member = await commands.UserConverter().convert(ctx, url)
+                        url = str(member.avatar_url_as(format="png", size=1024))
+                    except commands.BadArgument:
+                        pass
 
-            img = await download_image(ctx.bot.http2, url)
-            if img is None:
-                return await ctx.send(
-                    "That argument does not seem to be an image, and does not seem to be a member of this server or"
-                    " other user, and you did not attach an image. Please try again."
-                )
+                img = await download_image(ctx.bot.http2, url)
+                if img is None:
+                    return await ctx.send(
+                        "That argument does not seem to be an image, and does not seem to be a member of this server or"
+                        " other user, and you did not attach an image. Please try again."
+                    )
 
-            img = await fry(img)
-            fp = discord.File(img, "deepfried.png")
+                img = await fry(img)
+                fp = discord.File(img, "deepfried.png")
 
         await ctx.send(file=fp)
 
@@ -416,6 +438,92 @@ class Image_(commands.Cog, name="Image",
             fp.seek(0)
 
             fp = discord.File(fp, "gray.png")
+        await ctx.send(":white_check_mark:", file=fp)
+
+    @commands.command(
+        aliases=["dk"],
+        description="Darken all pixels of an image. Specify a member, image URL, or attach an image. Defaults to your"
+                    " avatar."
+    )
+    async def darken(self, ctx, *, url=None):
+        """Darken an image."""
+
+        async with ctx.typing():
+            if url is None:
+                is_found = False
+                for att in ctx.message.attachments:
+                    if att.height is not None and not is_found:
+                        url = att
+                        is_found = True
+                if not is_found:
+                    url = ctx.author.avatar_url_as(format="png", size=1024)
+            else:
+                try:
+                    member = await commands.MemberConverter().convert(ctx, url)
+                    url = member.avatar_url_as(format="png", size=1024)
+                except commands.BadArgument:
+                    try:
+                        member = await commands.UserConverter().convert(ctx, url)
+                        url = member.avatar_url_as(format="png", size=1024)
+                    except commands.BadArgument:
+                        pass
+
+            if isinstance(url, (discord.Attachment, discord.Asset)):
+                fp = io.BytesIO(await url.read())
+                img = Image.open(fp).convert("RGB")
+            else:
+                img = await download_image(ctx.bot.http2, url)
+                if img is None:
+                    return await ctx.send(
+                        "That argument does not seem to be an image, and does not seem to be a member of this server or"
+                        " other user, and you did not attach an image. Please try again."
+                    )
+
+            postered = await posterize(img)
+            fp = discord.File(postered, "image.png")
+        await ctx.send(":white_check_mark:", file=fp)
+
+    @commands.command(
+        name="solarize",
+        aliases=["sz"],
+        description="Solarize an image. Specify a member, image URL, or attach an image. Defaults to your avatar."
+    )
+    async def solarize_(self, ctx, *, url=None):
+        """Invert all pixels of an aimge above a certain brightness."""
+
+        async with ctx.typing():
+            if url is None:
+                is_found = False
+                for att in ctx.message.attachments:
+                    if att.height is not None and not is_found:
+                        url = att
+                        is_found = True
+                if not is_found:
+                    url = ctx.author.avatar_url_as(format="png", size=1024)
+            else:
+                try:
+                    member = await commands.MemberConverter().convert(ctx, url)
+                    url = member.avatar_url_as(format="png", size=1024)
+                except commands.BadArgument:
+                    try:
+                        member = await commands.UserConverter().convert(ctx, url)
+                        url = member.avatar_url_as(format="png", size=1024)
+                    except commands.BadArgument:
+                        pass
+
+            if isinstance(url, (discord.Attachment, discord.Asset)):
+                fp = io.BytesIO(await url.read())
+                img = Image.open(fp).convert("RGB")
+            else:
+                img = await download_image(ctx.bot.http2, url)
+                if img is None:
+                    return await ctx.send(
+                        "That argument does not seem to be an image, and does not seem to be a member of this server or"
+                        " other user, and you did not attach an image. Please try again."
+                    )
+
+            solarized = await solarize(img)
+            fp = discord.File(solarized, "image.png")
         await ctx.send(":white_check_mark:", file=fp)
 
 
