@@ -227,10 +227,14 @@ class About(commands.Cog):
         emb.add_field(name="Line count", value=linecount())
         cmds_used = ctx.bot.commands_used
         msgs_seen = ctx.bot.messages_seen
+        guilds = len(ctx.bot.guilds)
+        users = len(ctx.bot.users)
+        all_members = len(set(ctx.bot.get_all_members()))
         emb.add_field(
             name="Stats",
-            value=f"{cmds_used} commands used since start, {msgs_seen} messages seen since start, {len(ctx.bot.users)}"
-            f" users, {len(ctx.bot.guilds)} guilds, {len(ctx.bot.commands)} commands"
+            value=f"{cmds_used} commands used since start, {msgs_seen} messages seen since start, {users} users,"
+            f" {guilds} guilds, {all_members} members (average of about {round(all_members / guilds, 2)} per guild),"
+            f" {len(ctx.bot.commands)} commands"
         )
 
         emb.set_thumbnail(url=ctx.bot.user.avatar_url)
