@@ -76,7 +76,7 @@ def current_time():
     return disptime
 
 
-async def get_build_status(cs):
+async def get_latest_build_status(cs):
     repo_id = 9109252
     token = config.travis_token
     headers = {"Travis-API-Version": "3", "Authorization": f"token {token}"}
@@ -144,7 +144,28 @@ async def get_build_status(cs):
 
             ret[key]["status"] = val
 
-        ret[key]["id"] = branch["last_build"]["id"]
+    return ret
+
+
+async def get_recent_builds_on(cs, branch):
+    repo_id = 9109252
+    token = config.travis_token
+    headers = {"Travis-API-Version": "3", "Authorization": f"token {token}"}
+    async with cs.get(
+            f"https://api.travis-ci.com/repo/{repo_id}/branch/{branch}?include=branch.recent_builds", headers=headers
+    ) as resp:
+        branch_info = await resp.json()
+
+    ret = []
+
+    for build in branch_info["recent_builds"]:
+        if build["finished_at"] is None:
+            ret.append(":clock:")
+        elif build["state"] == "passed":
+            ret.append(":white_check_mark:")
+        else:
+            ret.append(":x:")
+
     return ret
 
 
@@ -155,15 +176,37 @@ class About(commands.Cog):
         """Get info about the Git repository for this bot."""
 
         emb = discord.Embed(name="GitHub info", color=ctx.bot.embed_color, description=get_last_commits())
-        fieldval = []
-        build_status = await get_build_status(ctx.bot.http2)
-        for branch_name in build_status:
-            fieldval.append(
-                f"`{branch_name}`: [{build_status[branch_name]['status']}]"
-                f"(https://travis-ci.com/laggycomputer/suprkewl-bot/builds/{build_status[branch_name]['id']}"
-                f" \"Boo!\")"
-            )
-        emb.add_field(name="Build status", value="\n".join(fieldval))
+        emb.add_field(name="Build status", value=f"See {ctx.prefix}buildinfo command for build status.")
+        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+        emb.set_author(
+            name=ctx.bot.user.name,
+            icon_url=ctx.bot.user.avatar_url
+        )
+        emb.set_footer(
+            text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
+            icon_url=ctx.author.avatar_url
+        )
+
+        await ctx.send(embed=emb)
+
+    @commands.command(aliases=["bi"])
+    async def buildinfo(self, ctx):
+        """Gets Travis CI info for the bot."""
+
+        status = await get_latest_build_status(ctx.bot.http2)
+        emb = discord.Embed(color=ctx.bot.embed_color)
+
+        desc = ""
+
+        for k, v in status.items():
+            desc += f"`{k}`:\n"
+            desc += f"**Latest build:** {v['status']}\n"
+
+            past_status = await get_recent_builds_on(ctx.bot.http2, k)
+            desc += f"**10 most recent builds:** {''.join(past_status)}\n\n"
+
+        emb.description = desc
+
         emb.set_thumbnail(url=ctx.bot.user.avatar_url)
         emb.set_author(
             name=ctx.bot.user.name,
