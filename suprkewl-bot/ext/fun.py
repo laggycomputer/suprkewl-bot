@@ -172,7 +172,7 @@ L
 
         await ctx.send(f"I drew the {random.choice(ranks)} of {random.choice(suits)}")
 
-    @commands.command(aliases=["flip", "quarter", "dime", "penny", "nickel"])
+    @commands.command(aliases=["quarter", "dime", "penny", "nickel"])
     async def coin(self, ctx):
         """Flip a coin"""
 

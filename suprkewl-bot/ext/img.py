@@ -289,6 +289,20 @@ def solarize(img):
     return fp
 
 
+@async_executor()
+def invert_along(img, axis):
+    if axis == "x":
+        ret = PIL.ImageOps.flip(img)
+    elif axis == "y":
+        ret = PIL.ImageOps.mirror(img)
+
+    fp = io.BytesIO()
+    ret.save(fp, "png")
+    fp.seek(0)
+
+    return fp
+
+
 # To avoid confusion with PIL.Image
 class Image_(commands.Cog, name="Image",
              command_attrs=dict(cooldown=commands.Cooldown(1, 2, commands.BucketType.member))):
@@ -524,6 +538,91 @@ class Image_(commands.Cog, name="Image",
 
             solarized = await solarize(img)
             fp = discord.File(solarized, "image.png")
+        await ctx.send(":white_check_mark:", file=fp)
+
+    @commands.group(description="Invert an image along an axis. Specify `x` or `y`.")
+    async def flip(self, ctx):
+        """Invert an image along a given axis."""
+
+        if ctx.invoked_subcommand is None:
+            await ctx.send(":x: Please specify an axis to invert along. Only `x` and `y` are valid.")
+
+    @flip.command(name="x")
+    async def flip_x(self, ctx, *, url=None):
+        """Invert along the x axis, a.k.a. flip."""
+
+        async with ctx.typing():
+            if url is None:
+                is_found = False
+                for att in ctx.message.attachments:
+                    if att.height is not None and not is_found:
+                        url = att
+                        is_found = True
+                if not is_found:
+                    url = ctx.author.avatar_url_as(format="png", size=1024)
+            else:
+                try:
+                    member = await commands.MemberConverter().convert(ctx, url)
+                    url = member.avatar_url_as(format="png", size=1024)
+                except commands.BadArgument:
+                    try:
+                        member = await commands.UserConverter().convert(ctx, url)
+                        url = member.avatar_url_as(format="png", size=1024)
+                    except commands.BadArgument:
+                        pass
+
+            if isinstance(url, (discord.Attachment, discord.Asset)):
+                fp = io.BytesIO(await url.read())
+                img = Image.open(fp).convert("RGB")
+            else:
+                img = await download_image(ctx.bot.http2, url)
+                if img is None:
+                    return await ctx.send(
+                        "That argument does not seem to be an image, and does not seem to be a member of this server or"
+                        " other user, and you did not attach an image. Please try again."
+                    )
+
+            flipped = await invert_along(img, "x")
+            fp = discord.File(flipped, "image.png")
+        await ctx.send(":white_check_mark:", file=fp)
+
+    @flip.command(name="y")
+    async def flip_y(self, ctx, *, url=None):
+        """Invert along the y axis, a.k.a. mirror."""
+
+        async with ctx.typing():
+            if url is None:
+                is_found = False
+                for att in ctx.message.attachments:
+                    if att.height is not None and not is_found:
+                        url = att
+                        is_found = True
+                if not is_found:
+                    url = ctx.author.avatar_url_as(format="png", size=1024)
+            else:
+                try:
+                    member = await commands.MemberConverter().convert(ctx, url)
+                    url = member.avatar_url_as(format="png", size=1024)
+                except commands.BadArgument:
+                    try:
+                        member = await commands.UserConverter().convert(ctx, url)
+                        url = member.avatar_url_as(format="png", size=1024)
+                    except commands.BadArgument:
+                        pass
+
+            if isinstance(url, (discord.Attachment, discord.Asset)):
+                fp = io.BytesIO(await url.read())
+                img = Image.open(fp).convert("RGB")
+            else:
+                img = await download_image(ctx.bot.http2, url)
+                if img is None:
+                    return await ctx.send(
+                        "That argument does not seem to be an image, and does not seem to be a member of this server or"
+                        " other user, and you did not attach an image. Please try again."
+                    )
+
+            flipped = await invert_along(img, "y")
+            fp = discord.File(flipped, "image.png")
         await ctx.send(":white_check_mark:", file=fp)
 
 
