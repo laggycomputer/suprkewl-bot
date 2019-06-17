@@ -392,6 +392,7 @@ class suprkewl_bot(commands.Bot):
             "Don't run the code and no errors will appear.",
             "I am Nobody, nobody is perfect, therefore I am perfect. - Dandi Daley Mackall",
             "If plan A fails, don't worry; there are still 25 more letters in the alphabet.",
+            "If two wrongs don't make a right, try three.",
             "If you work 8 hours a day as a regular worker, you may one day be promoted to boss and work 12 hours a"
             " day.",
             "Instant gratification takes too long - Carrie Fisher",
