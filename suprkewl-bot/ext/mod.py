@@ -42,22 +42,16 @@ class Moderation(commands.Cog):
 
         await ctx.message.delete()
 
-        messages = await ctx.history(limit=count).flatten()
+        messages_deleted = await ctx.channel.purge(limit=count)
 
-        await ctx.send(delete_after=5, content="Clearing...")
-        deleted = 0
-        errorcnt = 0
+        await ctx.send(delete_after=5, content="Clearing...", register_response=False)
 
-        for message in messages:
-            try:
-                await message.delete()
-                deleted += 1
-            except discord.HTTPException:
-                errorcnt += 1
+        deleted = len(messages_deleted)
+        errorcnt = count - deleted
 
         await ctx.send(
             f"<:suprKewl:508479728613851136> Done! Deleted {deleted} messages, failed to delete {errorcnt} messages."
-            f" See `{ctx.prefix}{ctx.invoked_with} info for more.`"
+            f" See `{ctx.prefix}{ctx.invoked_with}` info for more."
         )
 
     @clear.command(name="info")
