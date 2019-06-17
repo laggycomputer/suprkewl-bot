@@ -189,7 +189,7 @@ class About(commands.Cog):
 
         await ctx.send(embed=emb)
 
-    @commands.command(aliases=["bi"])
+    @commands.command(aliases=["bi", "buildhistory", "bh", "builds"])
     async def buildinfo(self, ctx):
         """Gets Travis CI info for the bot."""
 
