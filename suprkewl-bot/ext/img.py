@@ -308,6 +308,7 @@ class Image_(commands.Cog, name="Image",
              command_attrs=dict(cooldown=commands.Cooldown(1, 2, commands.BucketType.member))):
 
     @commands.command(
+        alises=["df"],
         description="Specify a member to use their avatar, or no URL to use yours. If you attach an image, that will"
                     " be used as the image, ignoring any other arguments."
     )
