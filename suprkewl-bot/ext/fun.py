@@ -836,7 +836,7 @@ L
     async def minecraftxp(self, ctx, *, percent: int):  # I don't do Minecraft. Thanks for reading.
         """Draw a Minecraft XP bar."""
 
-        if 0 >= percent >= 100:
+        if percent < 0 or percent > 100:
             return await ctx.send(":x: Your argument must be an integer between 0 and 100.")
 
         data = {"percent": percent}
