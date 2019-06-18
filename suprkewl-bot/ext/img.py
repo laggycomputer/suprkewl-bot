@@ -335,15 +335,15 @@ class Image_(commands.Cog, name="Image",
                     except commands.BadArgument:
                         pass
 
-                img = await download_image(ctx.bot.http2, url)
-                if img is None:
-                    return await ctx.send(
-                        "That argument does not seem to be an image, and does not seem to be a member of this server or"
-                        " other user, and you did not attach an image. Please try again."
-                    )
+            img = await download_image(ctx.bot.http2, url)
+            if img is None:
+                return await ctx.send(
+                    "That argument does not seem to be an image, and does not seem to be a member of this server or"
+                    " other user, and you did not attach an image. Please try again."
+                )
 
-                img = await fry(img)
-                fp = discord.File(img, "deepfried.png")
+            img = await fry(img)
+            fp = discord.File(img, "deepfried.png")
 
         await ctx.send(file=fp)
 
