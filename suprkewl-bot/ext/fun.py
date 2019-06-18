@@ -852,8 +852,9 @@ L
     async def supreme(self, ctx, *, text):
         """Draw a Supreme sticker with your text."""
 
-        async with ctx.bot.http2.get(f"https://api.alexflipnote.dev/supreme?text={text}") as resp:
-            raw = await resp.content.read()
+        async with ctx.typing():
+            async with ctx.bot.http2.get(f"https://api.alexflipnote.dev/supreme?text={text}") as resp:
+                raw = await resp.content.read()
 
         await ctx.send(file=discord.File(io.BytesIO(raw), "supreme.png"))
 
