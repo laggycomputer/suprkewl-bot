@@ -296,7 +296,7 @@ L
 
             if len(content) > 2000:
                 # Yes, this is blocking, but given current limits responses are almost always ~4000 characters max.
-                file_content = "Rolls: {0}Total: {2}{1}Average:{3}".format(
+                file_content = "Rolls: {1}{0}{1}Total: {2}{1}Average: {3}{1}".format(
                     "\n".join(rolls), "\n", total, avg)
                 fp = io.BytesIO(file_content.encode("utf-8"))
                 await ctx.send(
