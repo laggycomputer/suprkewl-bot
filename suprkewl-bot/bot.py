@@ -368,7 +368,8 @@ class suprkewl_bot(commands.Bot):
             "with my dad, Too Laggy",
             "with my Raspberry Pi",
             "with the community",
-            "with the Discord API"
+            "with the Discord API",
+            "with your emotions"
         ]
 
         while self.is_ready() and self.change_status:
