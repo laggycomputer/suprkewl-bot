@@ -141,6 +141,8 @@ async def get_latest_build_status(cs):
                 offset = t_utils.human_timedelta(dt, accuracy=1)
 
                 val += " from " + offset
+            else:
+                val += " (booting VM)"
 
             ret[key]["status"] = val
 
