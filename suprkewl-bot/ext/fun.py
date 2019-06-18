@@ -848,6 +848,16 @@ L
 
         await ctx.send(file=fp)
 
+    @commands.command(aliases=["mca"])
+    async def minecraftachievement(self, ctx, *, text):
+        """Generate a Minecraft achievement notification with your text."""
+
+        async with ctx.typing():
+            async with ctx.bot.http2.get(f"https://api.alexflipnote.dev/achievement?text={text}") as resp:
+                raw = await resp.content.read()
+
+        await ctx.send(file=discord.File(io.BytesIO(raw), "achieved.png"))
+
     @commands.command()
     async def supreme(self, ctx, *, text):
         """Draw a Supreme sticker with your text."""
