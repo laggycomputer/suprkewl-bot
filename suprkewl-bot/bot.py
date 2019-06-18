@@ -124,7 +124,7 @@ class suprkewl_bot(commands.Bot):
                         ]
                         emb = discord.Embed(
                             color=self.embed_color,
-                            description=f":eyes: Who pinged? My prefix(es) is `s!`. If you are in a DM with"
+                            description=f":eyes: Who pinged? My prefix is `s!`. If you are in a DM with"
                                         f" me, or you are my owner, I do not require a prefix."
                         )
                         fname = random.choice(ping_images)
