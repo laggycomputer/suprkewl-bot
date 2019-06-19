@@ -16,4 +16,6 @@ If you want to host this bot:
 * Fill in all the extra API values, and you're all set.
 * Finally, you can use `pip3 install -r requirements.txt` at the root of this repo to install the requirements.
 
+**Please ensure that you run the bot with the repo root as your current directory.**
+
 Oh and hey, if you wanna PR this bot, I'm not merging/rebasing until the build passes. Thanks anyway.

@@ -50,10 +50,7 @@ def format_commit(commit):
 
 
 def get_last_commits(count=5):
-    try:
-        repo = pygit2.Repository("../.git")
-    except pygit2.GitError:
-        repo = pygit2.Repository(".git")
+    repo = pygit2.Repository(".git")
     commits = list(itertools.islice(
         repo.walk(repo.head.target, pygit2.GIT_SORT_TOPOLOGICAL), count))
     return "\n".join(format_commit(c) for c in commits)
@@ -327,9 +324,9 @@ class About(commands.Cog):
     async def source(self, ctx, *, command=None):
         """Find my source code for a specific command."""
 
-        source_url = "https://github.com/laggycomputer/suprkewl-bot/tree/untested"
+        source_url = "https://github.com/laggycomputer/suprkewl-bot/blob/untested/"
         if command is None:
-            return await ctx.send(source_url)
+            return await ctx.send("https://github.com/laggycomputer/suprkewl-bot/tree/untested")
 
         if command == "help":
             src = type(ctx.bot.help_command)
