@@ -288,7 +288,7 @@ class Stats(commands.Cog):
         elif count == 1:
             msg = "One member is"
         else:
-            msg = str(count) + "members are"
+            msg = str(count) + " members are"
 
         msg += f" playing the game `{game}`."
 
@@ -310,7 +310,14 @@ class Stats(commands.Cog):
 
         chars = ", ".join(f"`{c}`" for c in hoist_chars)
 
-        msg = f"{cnt} members have nicknames that start with one of the following characters: {chars}"
+        if not cnt:
+            msg = "Nobody has a nickname"
+        elif cnt == 1:
+            msg = "One member has a nickname"
+        else:
+            msg = str(cnt) + " members have nicknames"
+
+        msg += f" starting with one of the following characters: {chars}"
 
         await ctx.send(msg)
 
