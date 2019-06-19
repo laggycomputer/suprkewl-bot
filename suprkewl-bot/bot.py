@@ -119,8 +119,8 @@ class suprkewl_bot(commands.Bot):
                 if message.channel.permissions_for(message.guild.me).send_messages:
                     if message.guild.me in message.mentions:
                         ping_images = [
-                            "../assets/angery,gif",
-                            "../assets/eyes.png",
+                            "assets/angery,gif",
+                            "assets/eyes.png",
                         ]
                         emb = discord.Embed(
                             color=self.embed_color,

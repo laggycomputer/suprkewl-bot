@@ -353,7 +353,7 @@ L
                 color=ctx.bot.embed_color,
                 description=f"{ctx.author.mention} :x: You can't fight multiple people at once! You're not Bruce Lee."
             )
-            fp = discord.File("../assets/brucelee.gif", "image.gif")
+            fp = discord.File("assets/brucelee.gif", "image.gif")
             emb.set_image(
                 url="attachment://image.gif"
             )
@@ -374,7 +374,7 @@ L
                 description=f"{ctx.author.mention} :x: Don't make {target.mention} fight multiple people at once!"
                 f" They're not Bruce Lee."
             )
-            fp = discord.File("../assets/brucelee.gif", "image.gif")
+            fp = discord.File("assets/brucelee.gif", "image.gif")
             emb.set_image(
                 url="attachment://image.gif"
             )

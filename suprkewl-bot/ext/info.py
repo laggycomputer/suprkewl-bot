@@ -163,7 +163,7 @@ class Info(commands.Cog):
             text=f"Latest: {data['info']['version']} |"
                  f" Keywords: {data['info']['keywords'] or 'No keywords.'}"
         )
-        fp = discord.File("../assets/pypi.png", "image.png")
+        fp = discord.File("assets/pypi.png", "image.png")
         embed.set_thumbnail(
             url="attachment://image.png"
         )

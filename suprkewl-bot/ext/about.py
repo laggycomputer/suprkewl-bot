@@ -310,7 +310,7 @@ class About(commands.Cog):
         latency = round(latency, 4)
         emb = discord.Embed(
             description=f":ping_pong: My current latency is {latency} milliseconds.", color=ctx.bot.embed_color)
-        fp = discord.File("../assets/catping.gif", "image.gif")
+        fp = discord.File("assets/catping.gif", "image.gif")
         emb.set_image(
             url="attachment://image.gif"
         )
