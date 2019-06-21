@@ -348,9 +348,9 @@ def process_sorting(img, img2):
     for way in reversed(way_back):
         for i, z in enumerate(way[:, :, ]):
             for x, rgb in enumerate(z):
-                l = template[tuple(rgb)]
-                way[:, :, ][i][x] = l[1][l[0]]
-                l[0] += 1
+                thing = template[tuple(rgb)]
+                way[:, :, ][i][x] = thing[1][thing[0]]
+                thing[0] += 1
         new = Image.fromarray(way.reshape(shape))
         frames.append(new)
         reset_template(template)
