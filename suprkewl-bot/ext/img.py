@@ -17,9 +17,11 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import copy
 import io
 import math
 import os
+import time
 
 import aiohttp
 import cv2
@@ -301,6 +303,86 @@ def invert_along(img, axis):
     fp.seek(0)
 
     return fp
+
+
+def link(arr, arr2):
+    rgb1 = arr.reshape((arr.shape[0] * arr.shape[1], 3))
+    rgb2 = list(map(tuple, arr2.reshape((arr2.shape[0] * arr2.shape[1], 3))))
+    template1 = {x: [0, []] for x in rgb2}
+    for x, y in zip(rgb2, rgb1):
+        template1[x][1].append(y)
+    return template1
+
+
+def reset_template(template):
+    for v in template.values():
+        v[0] = 0
+
+
+def process_sorting(img, img2):
+    arr = np.array(img)
+    arr2 = np.array(img2)
+
+    shape = arr.shape
+    npixs = shape[0] * shape[1]
+    valid = []
+    for i in range(1, npixs + 1):
+        num = npixs / i
+        if num.is_integer():
+            valid.append((int(num), i))
+
+    frames = []
+    way_back = []
+    for v in valid:
+        arr = arr.reshape((v[0], v[1], shape[2]))
+        arr.view("uint8,uint8,uint8").sort(order=["f2"], axis=1)
+        arr2 = arr2.reshape((v[0], v[1], shape[2]))
+        arr2.view("uint8,uint8,uint8").sort(order=["f2"], axis=1)
+        new = Image.fromarray(arr.reshape(shape))
+        frames.append(new)
+        ar2 = copy.copy(arr2)
+        way_back.append(ar2)
+
+    template = link(arr, arr2)
+
+    for way in reversed(way_back):
+        for i, z in enumerate(way[:, :, ]):
+            for x, rgb in enumerate(z):
+                l = template[tuple(rgb)]
+                way[:, :, ][i][x] = l[1][l[0]]
+                l[0] += 1
+        new = Image.fromarray(way.reshape(shape))
+        frames.append(new)
+        reset_template(template)
+
+    for i in range(5):
+        frames.insert(0, frames[0])
+        frames.append(frames[-1])
+    frames += list(reversed(frames))
+    return frames
+
+
+@async_executor()
+def process_transform(img1, img2):
+    img1 = img1.resize((256, 256), Image.NEAREST)
+    if img1.mode != "RGB":
+        img1 = img1.convert("RGB")
+    img2 = img2.resize((256, 256), Image.NEAREST)
+    if img2.mode != "RGB":
+        img2 = img2.convert("RGB")
+    frames = process_sorting(img1, img2)
+
+    buff = io.BytesIO()
+    frames[0].save(
+            buff,
+            "gif",
+            save_all=True,
+            append_images=frames[1:] + frames[-1:] * 5,
+            duration=125,
+            loop=0
+        )
+    buff.seek(0)
+    return buff
 
 
 # To avoid confusion with PIL.Image
@@ -625,6 +707,32 @@ class Image_(commands.Cog, name="Image",
             flipped = await invert_along(img, "y")
             fp = discord.File(flipped, "image.png")
         await ctx.send(":white_check_mark:", file=fp)
+
+    @commands.command(
+        aliases=["ts", "tf"],
+        description="If you only specify one member, I will transform their avatar to yours."
+    )
+    @commands.guild_only()
+    async def transform(self, ctx, user: discord.Member, other: discord.Member = None):
+        """Transform the avatar of one user to that of another and back."""
+
+        other = other or ctx.author
+
+        # Save bandwidth
+        im1 = Image.open(io.BytesIO(await user.avatar_url_as(format="png", size=256).read()))
+        im2 = Image.open(io.BytesIO(await other.avatar_url_as(format="png", size=256).read()))
+        async with ctx.typing():
+            t = time.time()
+
+            if other.id == ctx.author.id:
+                buff = await process_transform(im1, im2)
+            else:
+                buff = await process_transform(im2, im1)
+
+            t = round(time.time() - t, 3)
+
+            await ctx.send(
+                f":white_check_mark: That took about {t} seconds.", file=discord.File(buff, "transform.gif"))
 
 
 def setup(bot):
