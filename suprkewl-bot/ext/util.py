@@ -120,7 +120,7 @@ class Utilities(commands.Cog):
         except binascii.Error:
             return await ctx.send("Failed to decode timestamp.")
 
-        invite = discord.utils.oauth_url(ctx.bot.user.id, discord.Permissions.none())
+        invite = discord.utils.oauth_url(id_, discord.Permissions.none())
 
         fmt = f"**Valid token: **\n\n**User ID is**: {id_} ({user or '*Not fetchable*.'}).\n" \
               f"**Created at**: {date}\n**Cryptographic component**: {t[2]}\n**Invite**: {invite}"
