@@ -162,6 +162,8 @@ async def get_recent_builds_on(cs, branch):
             ret.append(":clock:")
         elif build["state"] == "passed":
             ret.append(":white_check_mark:")
+        elif build["state"] == "canceled":
+            ret.append(":grey_question:")
         else:
             ret.append(":x:")
 
