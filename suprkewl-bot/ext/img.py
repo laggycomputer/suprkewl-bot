@@ -22,6 +22,7 @@ import io
 import math
 import os
 import time
+import typing
 
 import aiohttp
 import cv2
@@ -429,8 +430,16 @@ class Image_(commands.Cog, name="Image",
 
         await ctx.send(file=fp)
 
-    @commands.command(name="combine", aliases=["cmb"], description="Combine your avatar and that of another user.")
-    async def combine_(self, ctx, user1: discord.Member, *, user2: discord.Member = None):
+    @commands.command(
+        name="combine", aliases=["cmb"],
+        description="Combine your avatar and that of another user. Example: `s!transform \"Too Laggy#3878\" @SuprKewl"
+                    " Bot`"
+    )
+    async def combine_(
+            self, ctx,
+            user1: typing.Union[discord.Member, discord.User],
+            *, user2: typing.Union[discord.Member, discord.User] = None
+    ):
         """Combine two avatars."""
 
         async with ctx.typing():
@@ -711,9 +720,13 @@ class Image_(commands.Cog, name="Image",
     @commands.command(
         aliases=["ts", "tf"],
         description="If you only specify one member, I will transform their avatar to yours."
+                    " Example: `s!transform \"Too Laggy#3878\" @SuprKewl Bot`"
     )
-    @commands.guild_only()
-    async def transform(self, ctx, user: discord.Member, other: discord.Member = None):
+    async def transform(
+            self, ctx,
+            user: typing.Union[discord.Member, discord.User],
+            *, other: typing.Union[discord.Member, discord.User] = None
+    ):
         """Transform the avatar of one user to that of another and back."""
 
         other = other or ctx.author
