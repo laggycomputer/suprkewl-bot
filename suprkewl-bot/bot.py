@@ -195,7 +195,11 @@ class suprkewl_bot(commands.Bot):
         if hasattr(ctx.command, "on_error"):
             return
 
-        ignored = (commands.CommandNotFound, commands.UserInputError)
+        ignored = (commands.CommandNotFound,)
+        quote_errors = (
+            commands.UnexpectedQuoteError, commands.InvalidEndOfQuotedStringError, commands.ExpectedClosingQuoteError
+        )
+        bad_arg_errors = (commands.BadArgument, commands.BadUnionArgument)
 
         error = getattr(error, "original", error)
 
@@ -217,6 +221,18 @@ class suprkewl_bot(commands.Bot):
 
         if isinstance(error, ignored):
             return
+
+        elif isinstance(error, quote_errors):
+            await ctx.send(
+                "Your argument(s) had too many or too few quotes. Remember to match all opening quotes with closing"
+                " quotes.")
+
+        elif isinstance(error, bad_arg_errors):
+            await ctx.send(":x: Your argument(s) could not be converted.")
+
+        elif isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"`{error.param.name}` is a missing required argument.")
+            await ctx.send_help(ctx.command)  # Hey shineydev
 
         elif isinstance(error, commands.DisabledCommand):
 
