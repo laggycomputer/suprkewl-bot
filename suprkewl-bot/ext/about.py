@@ -178,10 +178,10 @@ class About(commands.Cog):
 
         emb = discord.Embed(name="GitHub info", color=ctx.bot.embed_color, description=get_last_commits())
         emb.add_field(name="Build status", value=f"See {ctx.prefix}buildinfo command for build status.")
-        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+        emb.set_thumbnail(url=ctx.me.avatar_url)
         emb.set_author(
-            name=ctx.bot.user.name,
-            icon_url=ctx.bot.user.avatar_url
+            name=ctx.me.name,
+            icon_url=ctx.me.avatar_url
         )
         emb.set_footer(
             text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
@@ -208,10 +208,10 @@ class About(commands.Cog):
 
         emb.description = desc
 
-        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+        emb.set_thumbnail(url=ctx.me.avatar_url)
         emb.set_author(
-            name=ctx.bot.user.name,
-            icon_url=ctx.bot.user.avatar_url
+            name=ctx.me.name,
+            icon_url=ctx.me.avatar_url
         )
         emb.set_footer(
             text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
@@ -238,10 +238,10 @@ class About(commands.Cog):
             f" {len(ctx.bot.commands)} commands"
         )
 
-        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+        emb.set_thumbnail(url=ctx.me.avatar_url)
         emb.set_author(
-            name=ctx.bot.user.name,
-            icon_url=ctx.bot.user.avatar_url
+            name=ctx.me.name,
+            icon_url=ctx.me.avatar_url
         )
         emb.set_footer(
             text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
@@ -292,10 +292,10 @@ class About(commands.Cog):
                 owner = None
             if owner is not None:
                 emb.add_field(name="Bot owner", value=f"<@{owner_id}>")
-            emb.set_thumbnail(url=ctx.bot.user.avatar_url)
+            emb.set_thumbnail(url=ctx.me.avatar_url)
             emb.set_author(
-                name=ctx.bot.user.name,
-                icon_url=ctx.bot.user.avatar_url
+                name=ctx.me.name,
+                icon_url=ctx.me.avatar_url
             )
             emb.set_footer(
                 text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",

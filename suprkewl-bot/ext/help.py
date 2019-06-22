@@ -51,10 +51,10 @@ class HelpCommand(commands.HelpCommand):
     def create_embed(self):
         embed = discord.Embed(colour=self.context.bot.embed_color)
         embed.set_author(
-            name=self.context.bot.user.name,
-            icon_url=self.context.bot.user.avatar_url
+            name=self.context.me.name,
+            icon_url=self.context.me.avatar_url
         )
-        embed.set_thumbnail(url=self.context.bot.user.avatar_url)
+        embed.set_thumbnail(url=self.context.me.avatar_url)
         embed.set_footer(
             text=f"{self.context.bot.embed_footer} Requested by {self.context.author}",
             icon_url=self.context.author.avatar_url
@@ -73,10 +73,10 @@ class HelpCommand(commands.HelpCommand):
         )
 
         embedinator.set_author(
-            name=self.context.bot.user.name,
-            icon_url=self.context.bot.user.avatar_url
+            name=self.context.me.name,
+            icon_url=self.context.me.avatar_url
         )
-        embedinator.set_thumbnail(url=self.context.bot.user.avatar_url)
+        embedinator.set_thumbnail(url=self.context.me.avatar_url)
         embedinator.base_embed.set_footer(
             text=f"{self.context.bot.embed_footer} Requested by {self.context.author}",
             icon_url=self.context.author.avatar_url

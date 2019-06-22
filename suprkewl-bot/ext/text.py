@@ -109,7 +109,7 @@ class Text(commands.Cog):
             part2 = "\n".join(by_line[current_index:])
 
             emb1 = discord.Embed(description=part1, color=ctx.bot.embed_color)
-            emb1.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+            emb1.set_author(name=ctx.me.name, icon_url=ctx.me.avatar_url)
             emb2 = discord.Embed(description=part2, color=ctx.bot.embed_color)
             emb2.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
@@ -118,8 +118,8 @@ class Text(commands.Cog):
         else:
             emb = discord.Embed(description=lyrics, color=ctx.bot.embed_color)
 
-            emb.set_thumbnail(url=ctx.bot.user.avatar_url)
-            emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+            emb.set_thumbnail(url=ctx.me.avatar_url)
+            emb.set_author(name=ctx.me.name, icon_url=ctx.me.avatar_url)
             emb.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             await ctx.send(embed=emb)

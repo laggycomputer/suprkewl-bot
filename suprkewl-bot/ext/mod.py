@@ -139,13 +139,13 @@ class Moderation(commands.Cog):
         if target == ctx.guild.owner:
             await ctx.send(":x: I can't kick the server owner!")
         else:
-            if target == ctx.guild.me:
+            if target == ctx.me:
                 await ctx.send(":x: I can't kick myself!")
             else:
                 if ctx.author == target:
                     await ctx.send(":x: I'm not kicking you! If you hate this place that much, just leave!")
                 else:
-                    if ctx.guild.me.top_role < ctx.author.top_role:
+                    if ctx.me.top_role < ctx.author.top_role:
                         try:
                             await target.send(f"You've been kicked from `{ctx.guild}`. :slight_frown:")
                             sent = None
@@ -180,13 +180,13 @@ class Moderation(commands.Cog):
             if target == ctx.guild.owner:
                 await ctx.send(":x: The server owner can't be banned!")
             else:
-                if target == ctx.guild.me:
+                if target == ctx.me:
                     await ctx.send(":x: Oopsie! Can't ban myself...")
                 else:
                     if target == ctx.author:
                         await ctx.send(":x: I'm not banning you! Just leave if you hate this place so much!")
                     else:
-                        if ctx.guild.me.top_role > target.top_role:
+                        if ctx.me.top_role > target.top_role:
                             if 7 >= deletedays >= 0:
                                 try:
                                     await target.send(
@@ -265,8 +265,8 @@ class Moderation(commands.Cog):
         msg = ", ".join(bans)
         emb.add_field(name=f"Banned users for {ctx.guild}", value=msg)
 
-        emb.set_thumbnail(url=ctx.bot.user.avatar_url)
-        emb.set_author(name=ctx.bot.user.name, icon_url=ctx.bot.user.avatar_url)
+        emb.set_thumbnail(url=ctx.me.avatar_url)
+        emb.set_author(name=ctx.me.name, icon_url=ctx.me.avatar_url)
         emb.set_footer(
             text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
             icon_url=ctx.author.avatar_url
