@@ -103,18 +103,7 @@ async def get_latest_build_status(cs):
             build_status = branch["last_build"]["state"].title()
             val = f"{build_status} after {duration}"
 
-            finished_at = finished_at.rstrip("Z")
-            date, time_ = finished_at.split("T")
-            date = date.split("-")
-            time_ = time_.split(":")
-
-            date = tuple(int(v) for v in date)
-            time_ = tuple(int(v) for v in time_)
-
-            year, month, dayofmonth = date
-            hour, minute, second = time_
-
-            dt = datetime.datetime(year, month, dayofmonth, hour, minute, second)
+            dt = datetime.datetime.strptime(finished_at, "%Y-%m-%dT%H:%M:%SZ")
             offset = t_utils.human_timedelta(dt, accuracy=1)
 
             val += ", " + offset
@@ -123,18 +112,8 @@ async def get_latest_build_status(cs):
         else:
             val = "Build in progress"
             if started_at is not None:
-                started_at = started_at.rstrip("Z")
-                date, time_ = started_at.split("T")
-                date = date.split("-")
-                time_ = time_.split(":")
 
-                date = tuple(int(v) for v in date)
-                time_ = tuple(int(v) for v in time_)
-
-                year, month, dayofmonth = date
-                hour, minute, second = time_
-
-                dt = datetime.datetime(year, month, dayofmonth, hour, minute, second)
+                dt = datetime.datetime.strptime(started_at, "%Y-%m-%dT%H:%M:%SZ")
                 offset = t_utils.human_timedelta(dt, accuracy=1)
 
                 val += " from " + offset
