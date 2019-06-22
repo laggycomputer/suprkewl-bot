@@ -424,11 +424,15 @@ class Image_(commands.Cog, name="Image",
                     "That argument does not seem to be an image, and does not seem to be a member of this server or"
                     " other user, and you did not attach an image. Please try again."
                 )
+            t = time.time()
 
             img = await fry(img)
+
+            t = round(time.time() - t, 3)
+
             fp = discord.File(img, "deepfried.png")
 
-        await ctx.send(file=fp)
+        await ctx.send(f"That took about {t} seconds", file=fp)
 
     @commands.command(
         name="combine", aliases=["cmb"],
