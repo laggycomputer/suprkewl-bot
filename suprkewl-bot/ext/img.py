@@ -741,10 +741,10 @@ class Image_(commands.Cog, name="Image",
         async with ctx.typing():
             t = time.time()
 
-            if other.id == ctx.author.id:
-                buff = await process_transform(im1, im2)
-            else:
+            if other == ctx.author:
                 buff = await process_transform(im2, im1)
+            else:
+                buff = await process_transform(im1, im2)
 
             t = round(time.time() - t, 3)
 
