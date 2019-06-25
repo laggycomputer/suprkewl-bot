@@ -468,7 +468,7 @@ L
                 "Living Room": [
                     "{0.mention} hits {1.mention} with the TV remote",
                     "{0.mention} uses the Wii controller as a club on {1.mention} *wii sports plays*",
-                    "{1.mention} trips over the Skyrim CD sleeve, 00f"
+                    "{0.mention} body slams {1.mention}, who trips over the Skyrim CD sleeve, 00f"
                 ],
                 "Backyard": [
                     "{0.mention} hits {1.mention} with some tongs",
