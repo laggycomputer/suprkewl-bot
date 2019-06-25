@@ -21,7 +21,7 @@ import io
 
 import discord
 from discord.ext import commands
-import matplotlib.pyplot as plt
+import matplotlib.figure
 
 from .utils import async_executor
 
@@ -84,13 +84,14 @@ class Stats(commands.Cog):
 
                 labels = list(r.name for r in roles)
                 sizes = prc
-                patches, _ = plt.pie(sizes, startangle=90)
-                plt.legend(patches, labels, loc="best")
-                plt.axis("equal")
-                plt.tight_layout()
+
+                fig = matplotlib.figure.Figure(figsize=(5, 5))
+                ax = fig.add_subplot()
+                patches, _ = ax.pie(sizes, startangle=90)
+                ax.legend(patches, labels)
 
                 fp = io.BytesIO()
-                plt.savefig(fp)
+                fig.savefig(fp)
                 fp.seek(0)
 
                 fmt = "\n" + "\n".join(user_friendly_prc)
@@ -99,16 +100,18 @@ class Stats(commands.Cog):
                 return [fmt, fp]
             else:
                 def _piegenerate(name1, name2, prc):
+
                     labels = [name1, name2]
                     sizes = [prc, 100 - prc]
                     colors = ["lightcoral", "lightskyblue"]
-                    patches, _ = plt.pie(sizes, colors=colors, startangle=90)
-                    plt.legend(patches, labels, loc="best")
-                    plt.axis("equal")
-                    plt.tight_layout()
+
+                    fig = matplotlib.figure.Figure(figsize=(5, 5))
+                    ax = fig.add_subplot()
+                    patches, _ = ax.pie(sizes, colors=colors, startangle=90)
+                    ax.legend(patches, labels)
 
                     fp = io.BytesIO()
-                    plt.savefig(fp)
+                    fig.savefig(fp)
                     fp.seek(0)
 
                     return fp
@@ -148,13 +151,14 @@ class Stats(commands.Cog):
             labels = ["Bots", "Non-Bots"]
             sizes = [prc, 100 - prc]
             colors = ["lightcoral", "lightskyblue"]
-            patches, _ = plt.pie(sizes, colors=colors, startangle=90)
-            plt.legend(patches, labels, loc="best")
-            plt.axis("equal")
-            plt.tight_layout()
+
+            fig = matplotlib.figure.Figure(figsize=(5, 5))
+            ax = fig.add_subplot()
+            patches, _ = ax.pie(sizes, colors=colors, startangle=90)
+            ax.legend(patches, labels)
 
             fp = io.BytesIO()
-            plt.savefig(fp)
+            fig.savefig(fp)
             fp.seek(0)
 
             return [fp, prc]
@@ -186,13 +190,14 @@ class Stats(commands.Cog):
                 labels.append("Other/Unknown")
                 sizes.append(other_count)
                 colors.append("blue")
-            patches, _ = plt.pie(sizes, colors=colors, startangle=90)
-            plt.legend(patches, labels, loc="best")
-            plt.axis("equal")
-            plt.tight_layout()
+
+            fig = matplotlib.figure.Figure(figsize=(5, 5))
+            ax = fig.add_subplot()
+            patches, _ = ax.pie(sizes, colors=colors, startangle=90)
+            ax.legend(patches, labels)
 
             fp = io.BytesIO()
-            plt.savefig(fp)
+            fig.savefig(fp)
             fp.seek(0)
 
             return fp
