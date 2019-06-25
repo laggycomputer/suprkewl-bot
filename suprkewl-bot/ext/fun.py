@@ -625,6 +625,8 @@ L
     @commands.group(description="Gets an xkcd comic.", invoke_without_command=True)
     @commands.cooldown(1, 3, commands.BucketType.channel)
     async def xkcd(self, ctx, arg: int = None):
+        """Gets xkcd comics. Specify a number to get that comic, no number to get the latest comic."""
+
         if arg is None:
             await self.xkcd_latest(ctx)
         else:
@@ -656,8 +658,7 @@ L
 
     @xkcd.command(name="random", aliases=["rand"], description="Get a random xkcd comic.")
     async def xkcd_random(self, ctx):
-        if not ctx.command.parent.can_run(ctx):
-            return
+        """Gets a random comic."""
 
         async with ctx.bot.http2.get("https://xkcd.com/info.0.json") as resp:
             text = await resp.json()
