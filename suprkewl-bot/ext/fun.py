@@ -515,7 +515,8 @@ L
             try:
                 usrinput = await ctx.bot.wait_for("message", check=check, timeout=30.0)
             except asyncio.TimeoutError:
-                return await ctx.send("it timed out noobs")
+                await ctx.send("it timed out noobs")
+                return await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
 
             if usrinput.content.lower().startswith("block"):
                 currentaction = f"{find_turn().user.mention} is bloccing"
@@ -569,41 +570,40 @@ L
                     f"{find_turn().user.mention} and {find_not_turn().user.mention} get friendly and the fight's"
                     f" over."
                 )
-                await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
-                return
+                return await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
 
-                find_not_turn().health -= damage
-                if find_not_turn().health < 0:
-                    find_not_turn().health = 0
+            find_not_turn().health -= damage
+            if find_not_turn().health < 0:
+                find_not_turn().health = 0
 
-                emb = discord.Embed(
-                    name="FIGHT", color=find_turn().user.colour)
+            emb = discord.Embed(
+                name="FIGHT", color=find_turn().user.colour)
 
-                emb.add_field(name=f"Player 1 ({ctx.author}) health", value=f"**{p1.health}**")
-                emb.add_field(name=f"Player 2 ({target}) health", value=f"**{p2.health}**")
-                emb.add_field(name="Current Setting", value=f"`{setting}`")
-                emb.add_field(name="Current action", value=currentaction)
+            emb.add_field(name=f"Player 1 ({ctx.author}) health", value=f"**{p1.health}**")
+            emb.add_field(name=f"Player 2 ({target}) health", value=f"**{p2.health}**")
+            emb.add_field(name="Current Setting", value=f"`{setting}`")
+            emb.add_field(name="Current action", value=currentaction)
 
-                emb.set_thumbnail(url=ctx.me.avatar_url)
-                emb.set_author(name=ctx.me.name,
-                               icon_url=ctx.me.avatar_url)
-                emb.set_footer(
-                    text=f"{current_footer} Requested by {ctx.author}",
-                    icon_url=ctx.author.avatar_url
-                )
+            emb.set_thumbnail(url=ctx.me.avatar_url)
+            emb.set_author(name=ctx.me.name,
+                           icon_url=ctx.me.avatar_url)
+            emb.set_footer(
+                text=f"{current_footer} Requested by {ctx.author}",
+                icon_url=ctx.author.avatar_url
+            )
 
-                if sent is None:
-                    await ctx.send(embed=emb)
-                else:
-                    await sent.edit(embed=emb)
+            if sent is None:
+                await ctx.send(embed=emb)
+            else:
+                await sent.edit(embed=emb)
 
-                try:
-                    await askaction.delete()
-                    await usrinput.delete()
-                except discord.Forbidden or discord.NotFound:
-                    pass
+            try:
+                await askaction.delete()
+                await usrinput.delete()
+            except discord.Forbidden or discord.NotFound:
+                pass
 
-                switchturn()
+            switchturn()
 
         if p1.health == 0:
             p2.won = True
