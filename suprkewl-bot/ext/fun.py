@@ -512,67 +512,65 @@ L
                 else:
                     return False
 
-            usrinput = await ctx.bot.wait_for("message", check=check)
+            try:
+                usrinput = await ctx.bot.wait_for("message", check=check, timeout=30.0)
+            except asyncio.TimeoutError:
+                return await ctx.send("it timed out noobs")
 
-            if usrinput is None:
-                await ctx.send("it timed out noobs")
-                return
-            else:
+            if usrinput.content.lower().startswith("block"):
+                currentaction = f"{find_turn().user.mention} is bloccing"
+                find_turn().blocking = True
 
-                if usrinput.content.lower().startswith("block"):
-                    currentaction = f"{find_turn().user.mention} is bloccing"
-                    find_turn().blocking = True
+            elif usrinput.content.lower().startswith("hit"):
+                damage = 0
+                rand = random.randint(1, 15)
+                if rand == 1:
+                    blow = deathblows[setting].format(
+                        find_turn().user, find_not_turn().user)
+                    blow += " (DEATHBLOW)"
+                    damage = 100
 
-                elif usrinput.content.lower().startswith("hit"):
-                    damage = 0
-                    rand = random.randint(1, 15)
-                    if rand == 1:
-                        blow = deathblows[setting].format(
-                            find_turn().user, find_not_turn().user)
-                        blow += " (DEATHBLOW)"
-                        damage = 100
+                elif rand > 9:
+                    blow = random.choice(universalactions).format(
+                        find_turn().user, find_not_turn().user)
+                    damage = random.randint(1, 50)
 
-                    elif rand > 9:
-                        blow = random.choice(universalactions).format(
-                            find_turn().user, find_not_turn().user)
-                        damage = random.randint(1, 50)
+                else:
+                    blow = random.choice(fightactions[setting]).format(
+                        find_turn().user, find_not_turn().user)
+                    damage = random.randint(1, 50)
 
+                if find_not_turn().blocking:
+                    rand = random.randint(0, 5)
+                    if rand:
+                        damage = math.floor(damage / 2)
+
+                blow += f" ({damage} dmg)"
+
+                if find_not_turn().blocking:
+                    if rand:
+                        blow += f", and {find_not_turn().user.mention} blocked successfully! Half damage."
                     else:
-                        blow = random.choice(fightactions[setting]).format(
-                            find_turn().user, find_not_turn().user)
-                        damage = random.randint(1, 50)
+                        blow += f", and {find_not_turn().user.mention} failed to blocc!"
 
-                    if find_not_turn().blocking:
-                        rand = random.randint(0, 5)
-                        if rand:
-                            damage = math.floor(damage / 2)
+                currentaction = blow
 
-                    blow += f" ({damage} dmg)"
+            elif usrinput.content.lower().startswith("run"):
+                newsetting = random.choice(connectedrooms[setting])
 
-                    if find_not_turn().blocking:
-                        if rand:
-                            blow += f", and {find_not_turn().user.mention} blocked successfully! Half damage."
-                        else:
-                            blow += f", and {find_not_turn().user.mention} failed to blocc!"
+                currentaction = f"{find_turn().user.mention} kicks {find_not_turn().user.mention} in the" \
+                    f" shins and runs as fast as he/she can out of the {setting} and into the" \
+                    f" {newsetting}. {find_turn().user.mention} gives chase."
 
-                    currentaction = blow
+                setting = newsetting
 
-                elif usrinput.content.lower().startswith("run"):
-                    newsetting = random.choice(connectedrooms[setting])
-
-                    currentaction = f"{find_turn().user.mention} kicks {find_not_turn().user.mention} in the" \
-                        f" shins and runs as fast as he/she can out of the {setting} and into the" \
-                        f" {newsetting}. {find_turn().user.mention} gives chase."
-
-                    setting = newsetting
-
-                elif usrinput.content.lower().startswith("end"):
-                    await ctx.send(
-                        f"{find_turn().user.mention} and {find_not_turn().user.mention} get friendly and the fight's"
-                        f" over."
-                    )
-                    await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
-                    return
+            elif usrinput.content.lower().startswith("end"):
+                await ctx.send(
+                    f"{find_turn().user.mention} and {find_not_turn().user.mention} get friendly and the fight's"
+                    f" over."
+                )
+                await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
+                return
 
                 find_not_turn().health -= damage
                 if find_not_turn().health < 0:
