@@ -53,11 +53,11 @@ class Utilities(commands.Cog):
         """Render LaTeX code."""
 
         async with ctx.typing():
-            with open("suprkewl-bot/ext/template.tex", "r") as fp:
+            with open("assets/latex/template.tex", "r") as fp:
                 template = fp.read()
             template = re.sub(r"%.*\n", "", template)
 
-            with open("suprkewl-bot/ext/replacements.json", "r") as fp:
+            with open("assets/latex/replacements.json", "r") as fp:
                 replacements = json.loads(fp.read())
 
             for key, value in replacements.items():
