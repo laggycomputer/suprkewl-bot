@@ -216,7 +216,7 @@ class Utilities(commands.Cog):
         emb.set_author(name=ctx.me.name,
                        icon_url=ctx.me.avatar_url)
         emb.set_footer(
-            text=f"{text['alt']}; Requested by {ctx.author}",
+            text=f"{text['alt']} Requested by {ctx.author}",
             icon_url=ctx.author.avatar_url
         )
 
