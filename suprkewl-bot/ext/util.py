@@ -200,7 +200,7 @@ class Utilities(commands.Cog):
             "July", "August", "September", "October", "November", "December"
         ]
 
-        month = months[month - 1]
+        month = months[int(month) - 1]
 
         date = f"{month} {day}, {year}"
 
