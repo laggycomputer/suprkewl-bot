@@ -30,7 +30,7 @@ import discord
 from discord.ext import commands
 import gtts
 
-from .utils import async_executor
+from .utils import async_executor, human_timedelta
 import config
 
 
@@ -200,13 +200,14 @@ class Utilities(commands.Cog):
             "July", "August", "September", "October", "November", "December"
         ]
 
+        dt = datetime(int(year), int(month), int(day))
+        delta = human_timedelta(dt, accuracy=3)
         month = months[int(month) - 1]
-
         date = f"{month} {day}, {year}"
 
         emb = discord.Embed(
             color=ctx.bot.embed_color,
-            description=f"Here you are! xkcd comic #{number}, published {date}."
+            description=f"Here you are! xkcd comic #{number}, published {date} ({delta})."
             f" Credits to [xkcd](https://xkcd.com/{number})."
         )
 
