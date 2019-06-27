@@ -641,16 +641,29 @@ L
                 return await ctx.send(":x: Comic not found!")
             text = await resp.json()
 
+        month, day, year = text["month"], text["day"], text["year"]
+
+        months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ]
+
+        month = months[month - 1]
+
+        date = f"{month} {day}, {year}"
+
         emb = discord.Embed(
             color=ctx.bot.embed_color,
-            description=f"Here you are! xkcd comic #{number}. Credits to [xkcd](https://xkcd.com/{number})."
+            description=f"Here you are! xkcd comic #{number}, published {date}."
+            f" Credits to [xkcd](https://xkcd.com/{number})."
         )
+
         emb.set_image(url=text["img"])
 
         emb.set_author(name=ctx.me.name,
                        icon_url=ctx.me.avatar_url)
         emb.set_footer(
-            text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
+            text=f"{text['alt']}; Requested by {ctx.author}",
             icon_url=ctx.author.avatar_url
         )
 
@@ -690,24 +703,7 @@ L
         async with ctx.bot.http2.get("https://xkcd.com/info.0.json") as resp:
             text = await resp.json()
 
-        num = text["num"]
-
-        emb = discord.Embed(
-            color=ctx.bot.embed_color,
-            description=f"Here you are! xkcd comic #{num}. Credits to [xkcd](https://xkcd.com/{num})."
-        )
-        emb.set_image(url=text["img"])
-
-        emb.set_author(
-            name=ctx.me.name,
-            icon_url=ctx.me.avatar_url
-        )
-        emb.set_footer(
-            text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
-            icon_url=ctx.author.avatar_url
-        )
-
-        await ctx.send(embed=emb)
+        await self.xkcd_get(ctx, text["num"])
 
     @commands.command(
         description="Reacts with a sheep emoji to sheep-related messages. Send 's!stop' to end the sheepiness."
