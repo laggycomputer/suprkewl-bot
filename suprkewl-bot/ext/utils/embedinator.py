@@ -23,6 +23,7 @@ import traceback
 
 
 class Embedinator:
+
     def __init__(self, bot, destination, member=None, **kwargs):
         self.bot = bot
         self.destination = destination

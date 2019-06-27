@@ -24,6 +24,7 @@ from .utils import Embedinator
 
 
 class HelpCommand(commands.HelpCommand):
+
     def __init__(self):
         super().__init__()
 

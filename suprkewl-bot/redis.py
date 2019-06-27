@@ -22,6 +22,7 @@ import config
 
 
 class Redis:
+
     def __init__(self):
         self.connection = None
 
