@@ -201,7 +201,7 @@ class Utilities(commands.Cog):
         ]
 
         dt = datetime(int(year), int(month), int(day))
-        delta = human_timedelta(dt, accuracy=3)
+        delta = human_timedelta(dt, accuracy=4)
         month = months[int(month) - 1]
         date = f"{month} {day}, {year}"
 
