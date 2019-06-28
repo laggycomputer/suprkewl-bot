@@ -395,7 +395,7 @@ class Image_(commands.Cog, name="Image",
         description="Specify a member to use their avatar, or no URL to use yours. If you attach an image, that will"
                     " be used as the image, ignoring any other arguments."
     )
-    async def deepfry(self, ctx, *, url=None):
+    async def deepfry(self, ctx, *, url: typing.Union[discord.Member, discord.User, str] = None):
         """Deepfry an image."""
 
         async with ctx.typing():
@@ -403,27 +403,25 @@ class Image_(commands.Cog, name="Image",
                 is_found = False
                 for att in ctx.message.attachments:
                     if att.height is not None and not is_found:
-                        url = att.proxy_url
+                        url = att
                         is_found = True
                 if not is_found:
-                    url = str(ctx.author.avatar_url_as(format="png", size=1024))
+                    url = ctx.author.avatar_url_as(format="png", size=1024)
             else:
-                try:
-                    member = await commands.MemberConverter().convert(ctx, url)
-                    url = str(member.avatar_url_as(format="png", size=1024))
-                except commands.BadArgument:
-                    try:
-                        member = await commands.UserConverter().convert(ctx, url)
-                        url = str(member.avatar_url_as(format="png", size=1024))
-                    except commands.BadArgument:
-                        pass
+                if isinstance(url, (discord.Member, discord.User)):
+                    url = url.avatar_url_as(format="png", size=1024)
 
-            img = await download_image(ctx.bot.http2, url)
-            if img is None:
-                return await ctx.send(
-                    "That argument does not seem to be an image, and does not seem to be a member of this server or"
-                    " other user, and you did not attach an image. Please try again."
-                )
+            if isinstance(url, (discord.Attachment, discord.Asset)):
+                fp = io.BytesIO(await url.read())
+                img = Image.open(fp).convert("RGB")
+            else:
+                img = await download_image(ctx.bot.http2, url)
+                if img is None:
+                    return await ctx.send(
+                        "That argument does not seem to be an image, and does not seem to be a member of this server or"
+                        " other user, and you did not attach an image. Please try again."
+                    )
+
             t = time.time()
 
             img = await fry(img)
@@ -467,7 +465,7 @@ class Image_(commands.Cog, name="Image",
         aliases=["inv"],
         description="Invert an image. Specify a member, image URL, or attach an image. Defaults to your avatar."
     )
-    async def invert_(self, ctx, *, url=None):
+    async def invert_(self, ctx, *, url: typing.Union[discord.Member, discord.User, str] = None):
         """Invert the colors of an image."""
 
         async with ctx.typing():
@@ -480,15 +478,8 @@ class Image_(commands.Cog, name="Image",
                 if not is_found:
                     url = ctx.author.avatar_url_as(format="png", size=1024)
             else:
-                try:
-                    member = await commands.MemberConverter().convert(ctx, url)
-                    url = member.avatar_url_as(format="png", size=1024)
-                except commands.BadArgument:
-                    try:
-                        member = await commands.UserConverter().convert(ctx, url)
-                        url = member.avatar_url_as(format="png", size=1024)
-                    except commands.BadArgument:
-                        pass
+                if isinstance(url, (discord.Member, discord.User)):
+                    url = url.avatar_url_as(format="png", size=1024)
 
             if isinstance(url, (discord.Attachment, discord.Asset)):
                 fp = io.BytesIO(await url.read())
@@ -509,7 +500,7 @@ class Image_(commands.Cog, name="Image",
         aliases=["gs"],
         description="Grayscale an image. Specify a member, image URL, or attach an image. Defaults to your avatar."
     )
-    async def grayscale(self, ctx, *, url=None):
+    async def grayscale(self, ctx, *, url: typing.Union[discord.Member, discord.User, str] = None):
         """Convert an image to grayscale."""
 
         async with ctx.typing():
@@ -522,21 +513,14 @@ class Image_(commands.Cog, name="Image",
                 if not is_found:
                     url = ctx.author.avatar_url_as(format="png", size=1024)
             else:
-                try:
-                    member = await commands.MemberConverter().convert(ctx, url)
-                    url = member.avatar_url_as(format="png", size=1024)
-                except commands.BadArgument:
-                    try:
-                        member = await commands.UserConverter().convert(ctx, url)
-                        url = member.avatar_url_as(format="png", size=1024)
-                    except commands.BadArgument:
-                        pass
+                if isinstance(url, (discord.Member, discord.User)):
+                    url = url.avatar_url_as(format="png", size=1024)
 
             if isinstance(url, (discord.Attachment, discord.Asset)):
                 fp = io.BytesIO(await url.read())
-                img = Image.open(fp).convert("L")
+                img = Image.open(fp).convert("RGB")
             else:
-                img = await download_image(ctx.bot.http2, url, "L")
+                img = await download_image(ctx.bot.http2, url)
                 if img is None:
                     return await ctx.send(
                         "That argument does not seem to be an image, and does not seem to be a member of this server or"
@@ -555,7 +539,7 @@ class Image_(commands.Cog, name="Image",
         description="Darken all pixels of an image. Specify a member, image URL, or attach an image. Defaults to your"
                     " avatar."
     )
-    async def darken(self, ctx, *, url=None):
+    async def darken(self, ctx, *, url: typing.Union[discord.Member, discord.User, str] = None):
         """Darken an image."""
 
         async with ctx.typing():
@@ -568,15 +552,8 @@ class Image_(commands.Cog, name="Image",
                 if not is_found:
                     url = ctx.author.avatar_url_as(format="png", size=1024)
             else:
-                try:
-                    member = await commands.MemberConverter().convert(ctx, url)
-                    url = member.avatar_url_as(format="png", size=1024)
-                except commands.BadArgument:
-                    try:
-                        member = await commands.UserConverter().convert(ctx, url)
-                        url = member.avatar_url_as(format="png", size=1024)
-                    except commands.BadArgument:
-                        pass
+                if isinstance(url, (discord.Member, discord.User)):
+                    url = url.avatar_url_as(format="png", size=1024)
 
             if isinstance(url, (discord.Attachment, discord.Asset)):
                 fp = io.BytesIO(await url.read())
@@ -598,8 +575,8 @@ class Image_(commands.Cog, name="Image",
         aliases=["sz"],
         description="Solarize an image. Specify a member, image URL, or attach an image. Defaults to your avatar."
     )
-    async def solarize_(self, ctx, *, url=None):
-        """Invert all pixels of an aimge above a certain brightness."""
+    async def solarize_(self, ctx, *, url: typing.Union[discord.Member, discord.User, str] = None):
+        """Invert all pixels of an an image above a certain brightness."""
 
         async with ctx.typing():
             if url is None:
@@ -611,15 +588,8 @@ class Image_(commands.Cog, name="Image",
                 if not is_found:
                     url = ctx.author.avatar_url_as(format="png", size=1024)
             else:
-                try:
-                    member = await commands.MemberConverter().convert(ctx, url)
-                    url = member.avatar_url_as(format="png", size=1024)
-                except commands.BadArgument:
-                    try:
-                        member = await commands.UserConverter().convert(ctx, url)
-                        url = member.avatar_url_as(format="png", size=1024)
-                    except commands.BadArgument:
-                        pass
+                if isinstance(url, (discord.Member, discord.User)):
+                    url = url.avatar_url_as(format="png", size=1024)
 
             if isinstance(url, (discord.Attachment, discord.Asset)):
                 fp = io.BytesIO(await url.read())
@@ -644,7 +614,7 @@ class Image_(commands.Cog, name="Image",
             await ctx.send(":x: Please specify an axis to invert along. Only `x` and `y` are valid.")
 
     @flip.command(name="x")
-    async def flip_x(self, ctx, *, url=None):
+    async def flip_x(self, ctx, *, url: typing.Union[discord.Member, discord.User, str] = None):
         """Invert along the x axis, a.k.a. flip."""
 
         async with ctx.typing():
@@ -657,15 +627,8 @@ class Image_(commands.Cog, name="Image",
                 if not is_found:
                     url = ctx.author.avatar_url_as(format="png", size=1024)
             else:
-                try:
-                    member = await commands.MemberConverter().convert(ctx, url)
-                    url = member.avatar_url_as(format="png", size=1024)
-                except commands.BadArgument:
-                    try:
-                        member = await commands.UserConverter().convert(ctx, url)
-                        url = member.avatar_url_as(format="png", size=1024)
-                    except commands.BadArgument:
-                        pass
+                if isinstance(url, (discord.Member, discord.User)):
+                    url = url.avatar_url_as(format="png", size=1024)
 
             if isinstance(url, (discord.Attachment, discord.Asset)):
                 fp = io.BytesIO(await url.read())
@@ -683,7 +646,7 @@ class Image_(commands.Cog, name="Image",
         await ctx.send(":white_check_mark:", file=fp)
 
     @flip.command(name="y")
-    async def flip_y(self, ctx, *, url=None):
+    async def flip_y(self, ctx, *, url: typing.Union[discord.Member, discord.User, str] = None):
         """Invert along the y axis, a.k.a. mirror."""
 
         async with ctx.typing():
@@ -696,15 +659,8 @@ class Image_(commands.Cog, name="Image",
                 if not is_found:
                     url = ctx.author.avatar_url_as(format="png", size=1024)
             else:
-                try:
-                    member = await commands.MemberConverter().convert(ctx, url)
-                    url = member.avatar_url_as(format="png", size=1024)
-                except commands.BadArgument:
-                    try:
-                        member = await commands.UserConverter().convert(ctx, url)
-                        url = member.avatar_url_as(format="png", size=1024)
-                    except commands.BadArgument:
-                        pass
+                if isinstance(url, (discord.Member, discord.User)):
+                    url = url.avatar_url_as(format="png", size=1024)
 
             if isinstance(url, (discord.Attachment, discord.Asset)):
                 fp = io.BytesIO(await url.read())
