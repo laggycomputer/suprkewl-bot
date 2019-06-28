@@ -232,25 +232,7 @@ class Utilities(commands.Cog):
 
         comic_to_get = random.randint(0, int(latest_comic))
 
-        async with ctx.bot.http2.get(f"https://xkcd.com/{comic_to_get}/info.0.json") as resp:
-            text = await resp.json()
-
-        emb = discord.Embed(
-            color=ctx.bot.embed_color,
-            description=f"Here you are! xkcd comic #{comic_to_get}. Credits to [xkcd](https://xkcd.com/{comic_to_get})."
-        )
-        emb.set_image(url=text["img"])
-
-        emb.set_author(
-            name=ctx.me.name,
-            icon_url=ctx.me.avatar_url
-        )
-        emb.set_footer(
-            text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
-            icon_url=ctx.author.avatar_url
-        )
-
-        await ctx.send(embed=emb)
+        await self.xkcd_get(ctx, comic_to_get)
 
     async def xkcd_latest(self, ctx):
         async with ctx.bot.http2.get("https://xkcd.com/info.0.json") as resp:
