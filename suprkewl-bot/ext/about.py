@@ -305,7 +305,7 @@ class About(commands.Cog):
     async def source(self, ctx, *, command=None):
         """Find my source code for a specific command."""
 
-        source_url = "https://github.com/laggycomputer/suprkewl-bot/blob/untested/"
+        source_url = "https://github.com/laggycomputer/suprkewl-bot/blob/untested"
         if command is None:
             return await ctx.send("https://github.com/laggycomputer/suprkewl-bot/tree/untested")
 
