@@ -236,19 +236,20 @@ L
             content += winmsg
         elif winner == "comp":
             content += losemsg
-            await asyncio.sleep(2)
-            msg = await ctx.send(f"{ctx.author.mention} :fist: Rock...")
-            await asyncio.sleep(1)
 
-            await msg.edit(content=f"{ctx.author.mention} :newspaper: Paper...")
-            await asyncio.sleep(1)
-            await msg.edit(content=f"{ctx.author.mention} :scissors: Scissors...")
-            await asyncio.sleep(1)
+        await asyncio.sleep(2)
+        msg = await ctx.send(f"{ctx.author.mention} :fist: Rock...")
+        await asyncio.sleep(1)
 
-            await msg.edit(content=f"{ctx.author.mention} :gun: Shoot! :boom:")
-            await asyncio.sleep(0.5)
+        await msg.edit(content=f"{ctx.author.mention} :newspaper: Paper...")
+        await asyncio.sleep(1)
+        await msg.edit(content=f"{ctx.author.mention} :scissors: Scissors...")
+        await asyncio.sleep(1)
 
-            await msg.edit(content=content)
+        await msg.edit(content=f"{ctx.author.mention} :gun: Shoot! :boom:")
+        await asyncio.sleep(0.5)
+
+        await msg.edit(content=content)
 
     @commands.group(
         aliases=["roll"],
