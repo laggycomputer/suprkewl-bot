@@ -300,6 +300,7 @@ class About(commands.Cog):
 
     # From R. Danny
     @commands.command(
+        aliases=["sauce"], 
         description="Use dots or spaces to find source code for subcommands, e.g. `clear info` or `clear.info`."
     )
     async def source(self, ctx, *, command=None):
