@@ -22,22 +22,22 @@ from discord.ext import commands
 from jishaku.codeblocks import CodeblockConverter
 
 
-class Admin(commands.Cog):
+class Admin(commands.Cog, command_attrs=dict(hidden=True)):
 
     async def cog_check(self, ctx):
         return await ctx.bot.is_owner(ctx.author)
 
-    @commands.command(hidden=True, aliases=["procm", "procmanager", "supervisor", "supervisorctl"])
+    @commands.command(aliases=["procm", "procmanager", "supervisor", "supervisorctl"])
     async def proc(self, ctx, *, args):
         conv = await CodeblockConverter().convert(ctx, f"/usr/local/bin/supervisorctl {args}")
         await ctx.invoke(ctx.bot.get_command("jsk sh"), argument=conv)
 
-    @commands.command(hidden=True, aliases=["redis-cli"])
+    @commands.command(aliases=["redis-cli"])
     async def redis(self, ctx, *, args):
         conv = await CodeblockConverter().convert(ctx, f"/usr/bin/redis-cli {args}")
         await ctx.invoke(ctx.bot.get_command("jsk sh"), argument=conv)
 
-    @commands.command(hidden=True, name="del")
+    @commands.command(name="del")
     async def deletemsg(self, ctx, message: discord.Message):
         """Delete a specific message."""
 
@@ -47,7 +47,7 @@ class Admin(commands.Cog):
         except discord.Forbidden:
             await ctx.send(":x: I do not have permission to delete that message.")
 
-    @commands.command(hidden=True)
+    @commands.command()
     async def statustoggle(self, ctx):
         if ctx.bot.change_status:
             resp = "Disabling status change."
@@ -57,7 +57,7 @@ class Admin(commands.Cog):
 
         await ctx.send(resp)
 
-    @commands.command(hidden=True)
+    @commands.command()
     async def statuschange(self, ctx, *, status):
         await ctx.bot.change_presence(activity=discord.Game(name=status), status=discord.Status.idle)
         await ctx.send(f":white_check_mark: Changed to `{status}`")
