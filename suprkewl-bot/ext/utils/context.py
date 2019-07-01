@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 
 
@@ -20,3 +21,39 @@ class Context(commands.Context):
             await self.register_response(sent)
 
         return sent
+
+    async def paginate_with_embeds(self, content, *, without_annotation=False, prefix="```\n", suffix="```"):
+        if not isinstance(prefix, str) or not isinstance(suffix, str) or not isinstance(content, str):
+            raise TypeError
+
+        if len(content) > (2048 - len(prefix) - len(suffix)):
+            by_line = content.split("\n")
+            current_length = 0
+            current_index = 0
+            while current_length <= 2048:
+                current_length += len(by_line[current_index]) + len("\n")
+                current_index += 1
+
+            part1 = prefix + "\n".join(by_line[:current_index - 1]) + suffix
+            part2 = prefix + "\n".join(by_line[current_index:]) + suffix
+
+            emb1 = discord.Embed(description=part1, color=self.bot.embed_color)
+            emb2 = discord.Embed(description=part2, color=self.bot.embed_color)
+
+            if not without_annotation:
+                emb1.set_author(name=self.me.name, icon_url=self.me.avatar_url)
+                emb2.set_footer(
+                    text=f"{self.bot.embed_footer} Requested by {self.author}", icon_url=self.author.avatar_url)
+
+            await self.send(embed=emb1)
+            await self.send(embed=emb2)
+        else:
+            emb = discord.Embed(description=prefix + content + suffix, color=self.bot.embed_color)
+
+            if not without_annotation:
+                emb.set_thumbnail(url=self.me.avatar_url)
+                emb.set_author(name=self.me.name, icon_url=self.me.avatar_url)
+                emb.set_footer(
+                    text=f"{self.bot.embed_footer} Requested by {self.author}", icon_url=self.author.avatar_url)
+
+            await self.send(embed=emb)

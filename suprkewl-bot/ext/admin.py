@@ -17,6 +17,10 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import io
+import traceback
+
+import aioredis
 import discord
 from discord.ext import commands
 from jishaku.codeblocks import CodeblockConverter
@@ -33,9 +37,19 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
         await ctx.invoke(ctx.bot.get_command("jsk sh"), argument=conv)
 
     @commands.command(aliases=["redis-cli"])
-    async def redis(self, ctx, *, args):
-        conv = await CodeblockConverter().convert(ctx, f"/usr/bin/redis-cli {args}")
-        await ctx.invoke(ctx.bot.get_command("jsk sh"), argument=conv)
+    async def redis(self, ctx, *args):
+        """Execute Redis code"""
+
+        try:
+            resp = await ctx.bot.redis.execute(*args)
+        except aioredis.RedisError as e:
+            file = io.StringIO()
+            traceback.print_exception(type(e), e, e.__traceback__, file=file)
+            file.seek(0)
+            tb = file.read()
+            return await ctx.paginate_with_embeds(tb, without_annotation=True, prefix="```py\n")
+
+        await ctx.paginate_with_embeds(resp, without_annotation=True)
 
     @commands.command(name="del")
     async def deletemsg(self, ctx, message: discord.Message):

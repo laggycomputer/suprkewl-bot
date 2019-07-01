@@ -87,7 +87,7 @@ class Text(commands.Cog):
 
         @async_executor()
         def get_lyrics(a, s):
-            PyLyrics.getLyrics(a, s)
+            return PyLyrics.getLyrics(a, s)
 
         try:
             lyrics = await get_lyrics(author, song)
@@ -97,32 +97,10 @@ class Text(commands.Cog):
         if isinstance(lyrics, bytes):  # This library can be dum-dum
             lyrics = lyrics.decode("utf-8")
 
-        if len(lyrics) > 2048:
-            by_line = lyrics.split("\n")
-            current_length = 0
-            current_index = 0
-            while current_length <= 2048:
-                current_length += len(by_line[current_index]) + len("\n")
-                current_index += 1
+        if lyrics is None:
+            return await ctx.send("Your song seems to have no lyrics on record.")
 
-            part1 = "\n".join(by_line[:current_index - 1])
-            part2 = "\n".join(by_line[current_index:])
-
-            emb1 = discord.Embed(description=part1, color=ctx.bot.embed_color)
-            emb1.set_author(name=ctx.me.name, icon_url=ctx.me.avatar_url)
-            emb2 = discord.Embed(description=part2, color=ctx.bot.embed_color)
-            emb2.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
-
-            await ctx.send(embed=emb1)
-            await ctx.send(embed=emb2)
-        else:
-            emb = discord.Embed(description=lyrics, color=ctx.bot.embed_color)
-
-            emb.set_thumbnail(url=ctx.me.avatar_url)
-            emb.set_author(name=ctx.me.name, icon_url=ctx.me.avatar_url)
-            emb.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
-
-            await ctx.send(embed=emb)
+        await ctx.paginate_with_embeds(lyrics, prefix="", suffix="")
 
 
 def setup(bot):
