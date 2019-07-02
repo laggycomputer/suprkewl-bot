@@ -440,7 +440,7 @@ L
             rolls = []
             total = 0
 
-            await msg.edit(content=":game_die: Rollling dice at the speed of sound...")
+            await msg.edit(content=":game_die: Rolling dice at the speed of sound...")
             await asyncio.sleep(1)
             await msg.edit(content="*A sonic :boom: echoes in the background*")
             await asyncio.sleep(1)
