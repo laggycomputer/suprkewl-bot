@@ -413,7 +413,7 @@ L
 
     @commands.group(
         aliases=["roll"],
-        description="Rolls the dice specified, in AdB format. For example, 'dice 3d6' would roll 3 six-sided dice.",
+        description="Rolls the dice specified, in AdB format. For example, `dice 3d6` would roll 3 six-sided dice.",
         invoke_without_subcommand=True
     )
     @commands.cooldown(1, 5, commands.BucketType.user)
@@ -784,7 +784,7 @@ L
         await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
 
     @commands.command(
-        description="Reacts with a sheep emoji to sheep-related messages. Send 's!stop' to end the sheepiness."
+        description="Reacts with a sheep emoji to sheep-related messages. Send `s!stop` to end the sheepiness."
     )
     async def sheep(self, ctx):
         """React to messages with a sheep emoji."""
@@ -813,7 +813,7 @@ L
             await ctx.send(":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command.")
 
     @commands.command(
-        description="Reacts with a duck emoji to duck-related messages. Send 's!stop' to end the quackery."
+        description="Reacts with a duck emoji to duck-related messages. Send `s!stop` to end the quackery."
     )
     async def duck(self, ctx):
         """React to messages with a duck emoji."""
@@ -843,7 +843,7 @@ L
             await ctx.send(":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command.")
 
     @commands.command(
-        description="Reacts with a dog emoji to dog-related messages. Send 's!stop' to end the borkiness."
+        description="Reacts with a dog emoji to dog-related messages. Send `s!stop` to end the borkiness."
     )
     async def dog(self, ctx):
         """React to messages with a dog emoji."""
