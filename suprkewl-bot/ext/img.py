@@ -30,6 +30,7 @@ import discord
 from discord.ext import commands
 import numpy as np
 from PIL import Image
+import PIL.ImageFilter
 import PIL.ImageOps
 
 from .utils import async_executor
@@ -395,6 +396,15 @@ def _grayscale(img):
     return fp
 
 
+@async_executor()
+def _emboss(img):
+    fp = io.BytesIO()
+    img.filter(PIL.ImageFilter.EMBOSS).save(fp, "png")
+    fp.seek(0)
+
+    return fp
+
+
 async def process_single_arg(ctx, argument):
     if argument is None:
         is_found = False
@@ -579,6 +589,19 @@ class Image_(commands.Cog, name="Image",
 
         flipped = await invert_along(url, "y")
         fp = discord.File(flipped, "image.png")
+        await ctx.send(":white_check_mark:", file=fp)
+
+    @commands.command(aliases=["emb"])
+    async def emboss(self, ctx, *, url=None):
+        """Generate an embossed version of an image."""
+
+        url = await process_single_arg(ctx, url)
+        if url is None:  # An error message was sent
+            return
+
+        fp = await _emboss(url)
+        fp = discord.File(fp, "embossed.png")
+
         await ctx.send(":white_check_mark:", file=fp)
 
     @commands.command(
