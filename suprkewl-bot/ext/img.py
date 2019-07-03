@@ -241,7 +241,7 @@ def normalise(v):
 
 
 @async_executor()
-def combine(one, two):
+def _combine(one, two):
     a = Image.open(one).resize((256, 256)).convert("RGBA")
     b = Image.open(two).resize((256, 256)).convert("RGBA")
     lx, ly = a.size
@@ -261,7 +261,7 @@ def combine(one, two):
 
 
 @async_executor()
-def invert(img):
+def _invert(img):
     inverted = PIL.ImageOps.invert(img)
 
     fp = io.BytesIO()
@@ -272,7 +272,7 @@ def invert(img):
 
 
 @async_executor()
-def posterize(img):
+def _posterize(img):
     postered = PIL.ImageOps.posterize(img, 1)
 
     fp = io.BytesIO()
@@ -283,7 +283,7 @@ def posterize(img):
 
 
 @async_executor()
-def solarize(img):
+def _solarize(img):
     solarized = PIL.ImageOps.solarize(img)
 
     fp = io.BytesIO()
@@ -469,11 +469,11 @@ class Image_(commands.Cog, name="Image",
         await ctx.send(f"That took about {t} seconds", file=fp)
 
     @commands.command(
-        name="combine", aliases=["cmb"],
+        aliases=["cmb"],
         description="Combine your avatar and that of another user. Example: `s!transform \"Too Laggy#3878\" @SuprKewl"
                     " Bot`"
     )
-    async def combine_(
+    async def combine(
             self, ctx,
             user1: typing.Union[discord.Member, discord.User],
             *, user2: typing.Union[discord.Member, discord.User] = None
@@ -491,24 +491,23 @@ class Image_(commands.Cog, name="Image",
             a1 = io.BytesIO(await user1.avatar_url_as(format="png").read())
             a2 = io.BytesIO(await user2.avatar_url_as(format="png").read())
 
-            f = await combine(a1, a2)
+            f = await _combine(a1, a2)
             f = discord.File(f, "combined.png")
 
         await ctx.send(":white_check_mark:", file=f)
 
     @commands.command(
-        name="invert",
         aliases=["inv"],
         description="Invert an image. Specify a member, image URL, or attach an image. Defaults to your avatar."
     )
-    async def invert_(self, ctx, *, url=None):
+    async def invert(self, ctx, *, url=None):
         """Invert the colors of an image."""
 
         url = await process_single_arg(ctx, url)
         if url is None:  # An error message was sent
             return
 
-        inverted = await invert(url)
+        inverted = await _invert(url)
         fp = discord.File(inverted, "image.png")
         await ctx.send(":white_check_mark:", file=fp)
 
@@ -540,23 +539,22 @@ class Image_(commands.Cog, name="Image",
         if url is None:  # An error message was sent
             return
 
-        postered = await posterize(url)
+        postered = await _posterize(url)
         fp = discord.File(postered, "poster.png")
         await ctx.send(":white_check_mark:", file=fp)
 
     @commands.command(
-        name="solarize",
         aliases=["sz"],
         description="Solarize an image. Specify a member, image URL, or attach an image. Defaults to your avatar."
     )
-    async def solarize_(self, ctx, *, url=None):
+    async def solarize(self, ctx, *, url=None):
         """Invert all pixels of an an image above a certain brightness."""
 
         url = await process_single_arg(ctx, url)
         if url is None:  # An error message was sent
             return
 
-        solarized = await solarize(url)
+        solarized = await _solarize(url)
         fp = discord.File(solarized, "image.png")
         await ctx.send(":white_check_mark:", file=fp)
 
