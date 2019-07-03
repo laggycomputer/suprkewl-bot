@@ -386,6 +386,15 @@ def process_transform(img1, img2):
     return buff
 
 
+@async_executor()
+def _grayscale(img):
+    fp = io.BytesIO()
+    PIL.ImageOps.grayscale(img).save(fp, "png")
+    fp.seek(0)
+
+    return fp
+
+
 async def process_single_arg(ctx, argument):
     if argument is None:
         is_found = False
@@ -504,9 +513,7 @@ class Image_(commands.Cog, name="Image",
         if url is None:  # An error message was sent
             return
 
-        fp = io.BytesIO()
-        PIL.ImageOps.grayscale(url).save(fp, "png")
-        fp.seek(0)
+        fp = await _grayscale(url)
 
         fp = discord.File(fp, "gray.png")
         await ctx.send(":white_check_mark:", file=fp)
