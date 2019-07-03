@@ -405,6 +405,21 @@ def _emboss(img):
     return fp
 
 
+@async_executor()
+def _blur(img):
+    frames = []
+
+    for i in range(0, 200, 20):
+        frames.append(img.filter(PIL.ImageFilter.BoxBlur(i / 10)))
+
+    fp = io.BytesIO()
+    frames[0].save(fp, "gif", save_all=True, append_images=frames[1:] + list(reversed(frames)), loop=0,
+                   duration=100)
+    fp.seek(0)
+
+    return fp
+
+
 async def process_single_arg(ctx, argument):
     if argument is None:
         is_found = False
@@ -596,6 +611,19 @@ class Image_(commands.Cog, name="Image",
 
         fp = await _emboss(url)
         fp = discord.File(fp, "embossed.png")
+
+        await ctx.send(":white_check_mark:", file=fp)
+
+    @commands.command(aliases=["bl"])
+    async def blur(self, ctx, *, url=None):
+        """Generate a GIF that blurs and unblurs an image."""
+
+        url = await process_single_arg(ctx, url)
+        if url is None:  # An error message was sent
+            return
+
+        fp = await _blur(url)
+        fp = discord.File(fp, "blurred.gif")
 
         await ctx.send(":white_check_mark:", file=fp)
 
