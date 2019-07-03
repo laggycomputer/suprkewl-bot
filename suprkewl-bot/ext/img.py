@@ -448,9 +448,7 @@ class Image_(commands.Cog, name="Image",
      a message attachment. If nothing is given, the message author's avatar is used."""
 
     @commands.command(
-        aliases=["df"],
-        description="Specify a member to use their avatar, or no URL to use yours. If you attach an image, that will"
-                    " be used as the image, ignoring any other arguments."
+        aliases=["df"]
     )
     async def deepfry(self, ctx, *, url=None):
         """Deepfry an image."""
@@ -498,7 +496,7 @@ class Image_(commands.Cog, name="Image",
 
     @commands.command(
         aliases=["inv"],
-        description="Invert an image. Specify a member, image URL, or attach an image. Defaults to your avatar."
+        description="Invert an image."
     )
     async def invert(self, ctx, *, url=None):
         """Invert the colors of an image."""
@@ -513,7 +511,7 @@ class Image_(commands.Cog, name="Image",
 
     @commands.command(
         aliases=["gs"],
-        description="Grayscale an image. Specify a member, image URL, or attach an image. Defaults to your avatar."
+        description="Grayscale an image."
     )
     async def grayscale(self, ctx, *, url=None):
         """Convert an image to grayscale."""
@@ -529,8 +527,7 @@ class Image_(commands.Cog, name="Image",
 
     @commands.command(
         aliases=["dk"],
-        description="Darken all pixels of an image. Specify a member, image URL, or attach an image. Defaults to your"
-                    " avatar."
+        description="Darken all pixels of an image."
     )
     async def darken(self, ctx, *, url=None):
         """Darken an image."""
@@ -545,7 +542,7 @@ class Image_(commands.Cog, name="Image",
 
     @commands.command(
         aliases=["sz"],
-        description="Solarize an image. Specify a member, image URL, or attach an image. Defaults to your avatar."
+        description="Solarize an image."
     )
     async def solarize(self, ctx, *, url=None):
         """Invert all pixels of an an image above a certain brightness."""
