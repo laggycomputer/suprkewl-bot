@@ -76,8 +76,23 @@ def current_time():
 async def get_latest_build_status(cs):
     repo_id = 9109252
     token = config.travis_token
+    time_format = "%Y-%m-%dT%H:%M:%SZ"
+
+    def seconds_to_string(seconds):
+        if seconds >= 60:
+            minutes, seconds = divmod(seconds, 60)
+            ret = f"{minutes} minutes"
+
+            if seconds:
+                ret += f" and {seconds} seconds"
+        else:
+            ret = str(seconds) + " seconds"
+
+        return ret
+
     headers = {"Travis-API-Version": "3", "Authorization": f"token {token}"}
-    async with cs.get(f"https://api.travis-ci.com/repo/{repo_id}/branches", headers=headers) as resp:
+    async with cs.get(
+            f"https://api.travis-ci.com/repo/{repo_id}/branches?include=build.jobs", headers=headers) as resp:
         text = await resp.json()
         branches = text["branches"]
     ret = {}
@@ -86,28 +101,29 @@ async def get_latest_build_status(cs):
         key = branch["name"]
         ret[key] = {}
 
-        duration = branch["last_build"]["duration"]
+        duration = seconds_to_string(branch["last_build"]["duration"])
 
         started_at, finished_at = branch["last_build"]["started_at"], branch["last_build"]["finished_at"]
 
         if finished_at is not None:
-            if duration >= 60:
-                minutes, seconds = divmod(duration, 60)
-                duration = f"{minutes} minutes"
-
-                if seconds:
-                    duration += f" and {seconds} seconds"
+            if branch["last_build"]["state"] == "canceled":
+                val = "Canceled"
             else:
-                duration = str(duration) + " seconds"
+                job_times = []
+                for job in branch["last_build"]["jobs"]:
+                    job_times.append(round(
+                        (datetime.datetime.strptime(job["finished_at"], time_format)
+                         - datetime.datetime.strptime(job["started_at"], time_format))
+                        .total_seconds())
+                    )  # Round because greatest precision is seconds anyway. This seems to return a float.
+                longest_job_time = seconds_to_string(max(job_times))
 
-            build_status = branch["last_build"]["state"].title()
-            val = f"{build_status} after {duration}"
+                build_status = branch["last_build"]["state"].title()
+                dt = datetime.datetime.strptime(finished_at, time_format)
+                offset = t_utils.human_timedelta(dt, accuracy=1)
 
-            dt = datetime.datetime.strptime(finished_at, "%Y-%m-%dT%H:%M:%SZ")
-            offset = t_utils.human_timedelta(dt, accuracy=1)
-
-            val += ", " + offset
-
+                val = f"{build_status} {offset}. Ran for a total of {duration}. The longest job took" \
+                    f" {longest_job_time}."
             ret[key]["status"] = val
         else:
             val = "Build in progress"
