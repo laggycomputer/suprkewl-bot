@@ -505,7 +505,7 @@ class Image_(commands.Cog, name="Image",
             return
 
         fp = io.BytesIO()
-        url.save(fp, "png")
+        PIL.ImageOps.grayscale(url).save(fp, "png")
         fp.seek(0)
 
         fp = discord.File(fp, "gray.png")
