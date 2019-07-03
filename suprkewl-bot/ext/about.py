@@ -81,12 +81,12 @@ async def get_latest_build_status(cs):
     def seconds_to_string(seconds):
         if seconds >= 60:
             minutes, seconds = divmod(seconds, 60)
-            ret = f"{minutes} minutes"
+            ret = f"{minutes} minutes" if minutes > 1 else "1 minute"
 
             if seconds:
-                ret += f" and {seconds} seconds"
+                ret += f" and {seconds} seconds" if seconds > 1 else "1 second"
         else:
-            ret = str(seconds) + " seconds"
+            ret = str(seconds) + " seconds" if seconds > 1 else "1 second"
 
         return ret
 
