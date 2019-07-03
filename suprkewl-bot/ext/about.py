@@ -101,14 +101,13 @@ async def get_latest_build_status(cs):
         key = branch["name"]
         ret[key] = {}
 
-        duration = seconds_to_string(branch["last_build"]["duration"])
-
         started_at, finished_at = branch["last_build"]["started_at"], branch["last_build"]["finished_at"]
 
         if finished_at is not None:
             if branch["last_build"]["state"] == "canceled":
                 val = "Canceled"
             else:
+                duration = seconds_to_string(branch["last_build"]["duration"])
                 job_times = []
                 for job in branch["last_build"]["jobs"]:
                     job_times.append(round(
