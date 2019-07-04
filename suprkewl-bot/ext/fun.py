@@ -965,10 +965,10 @@ L
             "Very doubtful.", "My reply is no."
         ]))
 
-    @commands.command(description="On your turn, react with a number to place a counter on that row, or react with"
+    @commands.command(aliases=["connect4"],
+                      description="On your turn, react with a number to place a counter on that row, or react with"
                                   " :arrow_double_down: to switch sides. You may react with :stop_button: to stop the"
-                                  " game at any time."
-                      )
+                                  " game at any time.")
     async def c4(self, ctx, *, member: typing.Union[discord.Member, discord.User]):
         """Play Connect4 with someone."""
 
