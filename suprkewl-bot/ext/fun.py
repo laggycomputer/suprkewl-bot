@@ -206,7 +206,7 @@ class C4():
             elif str(reaction) == "\N{BLACK SQUARE FOR STOP}":
                 with contextlib.suppress(discord.HTTPException):
                     await self.message.clear_reactions()
-                await self.message.edit(content="This game has been stopped.")
+                await self.message.edit(content=f"This game was stopped by {user.mention}.")
                 return
             else:
                 await self.parse_reaction(str(reaction))
