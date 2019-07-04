@@ -618,14 +618,19 @@ class Image_(commands.Cog, name="Image",
     async def blur(self, ctx, *, url=None):
         """Generate a GIF that blurs and unblurs an image."""
 
-        url = await process_single_arg(ctx, url)
-        if url is None:  # An error message was sent
-            return
+        async with ctx.typing():
+            t = time.time()
 
-        fp = await _blur(url)
-        fp = discord.File(fp, "blurred.gif")
+            url = await process_single_arg(ctx, url)
+            if url is None:  # An error message was sent
+                return
 
-        await ctx.send(":white_check_mark:", file=fp)
+            fp = await _blur(url)
+            fp = discord.File(fp, "blurred.gif")
+
+            t = round(time.time() - t, 3)
+
+        await ctx.send(f":white_check_mark: That took {t} seconds.", file=fp)
 
     @commands.command(
         aliases=["ts", "tf"],
