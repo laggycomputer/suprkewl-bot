@@ -445,7 +445,7 @@ async def process_single_arg(ctx, argument):
     try:
         async with ctx.bot.http2.get(url) as resp:
             try:
-                img = Image.open(io.BytesIO(await resp.content.read())).convert("RGB")
+                img = Image.open(io.BytesIO(await resp.content.read())).convert("RGB").resize((256, 256))
             except OSError:
                 await ctx.send(":x: That URL is not an image.")
                 return
