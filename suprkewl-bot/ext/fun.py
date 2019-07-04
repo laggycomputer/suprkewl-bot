@@ -135,7 +135,7 @@ class C4():
             if self.board[i][num] == self.filler:
                 return i
 
-    async def phrase_reaction(self, reaction):
+    async def parse_reaction(self, reaction):
         num = self.emojis.index(reaction)
         next = await self.find_free(num)
         if next is None:
@@ -209,7 +209,7 @@ class C4():
                 await self.message.edit(content="This game has been stopped.")
                 return
             else:
-                await self.phrase_reaction(str(reaction))
+                await self.parse_reaction(str(reaction))
 
         with contextlib.suppress(discord.HTTPException):
             await self.message.clear_reactions()
