@@ -128,6 +128,7 @@ class C4():
         for r in self.emojis:
             await self.message.add_reaction(r)
         await self.message.add_reaction("\N{BLACK DOWN-POINTING DOUBLE TRIANGLE}")
+        await self.message.add_reaction("\N{BLACK SQUARE FOR STOP}")
 
     async def find_free(self, num):
         for i in range(6)[::-1]:
@@ -173,6 +174,15 @@ class C4():
                 self.is_running = False
                 return
 
+    def check_reaction(self, reaction, user):
+        valid_emojis = self.emojis + ["\N{BLACK DOWN-POINTING DOUBLE TRIANGLE}"]
+        same_message = reaction.message.id == self.message.id
+        curent_player_action = user == self.current_player and str(reaction) in valid_emojis
+        player_reacted_with_stop = (user.id in (self.player_one.id, self.player_two.id)
+                                    and str(reaction) == "\N{BLACK SQUARE FOR STOP}")
+
+        return same_message and (curent_player_action or player_reacted_with_stop)
+
     async def do_game(self):
         self.message = await self.ctx.send(embed=self.make_embed())
         await self.add_reactions()
@@ -180,11 +190,7 @@ class C4():
             try:
                 reaction, user = await self.ctx.bot.wait_for(
                     "reaction_add",
-                    check=lambda r, u: (
-                        r.message.id == self.message.id
-                        and u == self.current_player
-                        and str(r) in self.emojis + ["\N{BLACK DOWN-POINTING DOUBLE TRIANGLE}"]
-                    ),
+                    check=self.check_reaction,
                     timeout=300
                 )
             except asyncio.TimeoutError:
@@ -197,6 +203,11 @@ class C4():
                 await self.message.delete()
                 self.message = await self.ctx.send(embed=self.make_embed(inverse=True))
                 await self.add_reactions()
+            elif str(reaction) == "\N{BLACK SQUARE FOR STOP}":
+                with contextlib.suppress(discord.HTTPException):
+                    await self.message.clear_reactions()
+                await self.message.edit(content="This game has been stopped.")
+                return
             else:
                 await self.phrase_reaction(str(reaction))
 
@@ -954,7 +965,10 @@ L
             "Very doubtful.", "My reply is no."
         ]))
 
-    @commands.command()
+    @commands.command(description="On your turn, react with a number to place a counter on that row, or react with"
+                                  " :arrow_double_down: to switch sides. You may react with :stop_button: to stop the"
+                                  " game at any time."
+                      )
     async def c4(self, ctx, *, member: typing.Union[discord.Member, discord.User]):
         """Play Connect4 with someone."""
 
