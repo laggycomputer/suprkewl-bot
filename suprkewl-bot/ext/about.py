@@ -158,6 +158,8 @@ async def get_recent_builds_on(cs, branch):
             ret.append(":white_check_mark:")
         elif build["state"] == "canceled":
             ret.append(":grey_question:")
+        elif build["state"] == "errored":
+            ret.append(":bangbang:")
         else:
             ret.append(":x:")
 
