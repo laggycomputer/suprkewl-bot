@@ -23,6 +23,7 @@ import io
 import math
 import random
 import re
+import typing
 
 import discord
 from discord.ext import commands
@@ -291,7 +292,7 @@ L
         await ctx.send(f"{ctx.author.mention} wants me to say '{message}'")
 
     @commands.command(aliases=["burn"])
-    async def roast(self, ctx, *, target: discord.Member):
+    async def roast(self, ctx, *, target: typing.Union[discord.Member, discord.User]):
         """Roast someone. ⌐■_■"""
 
         roasts = [
@@ -417,7 +418,7 @@ L
         invoke_without_subcommand=True
     )
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def dice(self, ctx, *, dice: str):
+    async def dice(self, ctx, *, dice):
         """Now you can roll 1000-sided dice!"""
 
         if dice == "info":
@@ -498,7 +499,7 @@ L
         description="Starts a fight between the command invoker and the specified <target>."
     )
     @commands.cooldown(1, 10, commands.BucketType.user)
-    async def fight(self, ctx, target: discord.Member):
+    async def fight(self, ctx, *, target: typing.Union[discord.Member, discord.User]):
         """FIGHT"""
 
         # Yes, this entire command is an eyesore. I'll get to it. Soon.
@@ -954,7 +955,7 @@ L
         ]))
 
     @commands.command()
-    async def c4(self, ctx, *, member: discord.Member):
+    async def c4(self, ctx, *, member: typing.Union[discord.Member, discord.User]):
         """Play Connect4 with someone."""
 
         if member == ctx.author:
