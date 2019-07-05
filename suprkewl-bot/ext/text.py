@@ -34,7 +34,7 @@ class Text(commands.Cog):
     async def text(self, ctx):
         """Don't ask what this does."""
 
-        files = ["bee.txt", "lettuce.txt", "rickroll.txt", "uwu.txt"]
+        files = ["bee.txt", "lettuce.txt", "rickroll.txt", "tnt.txt", "uwu.txt"]
         with open(f"assets/{random.choice(files)}", "rb") as fp:
             await ctx.send(file=discord.File(fp, filename="love_letter.txt"))
 
