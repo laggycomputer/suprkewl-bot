@@ -154,12 +154,11 @@ async def get_recent_builds_on(cs, branch):
     for build in branch_info["recent_builds"]:
         if build["finished_at"] is None:
             ret.append(":clock:")
-        elif build["state"] == "passed":
-            ret.append(":white_check_mark:")
-        elif build["state"] == "canceled":
-            ret.append(":grey_question:")
-        elif build["state"] == "errored":
-            ret.append(":bangbang:")
+
+        state_to_emoji = {"passed": ":white_check_mark:", "canceled": ":gray_question:", "errored": ":bangbang:"}
+
+        if build["state"] in state_to_emoji:
+            ret.append(state_to_emoji[build["state"]])
         else:
             ret.append(":x:")
 
