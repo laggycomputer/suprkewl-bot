@@ -172,7 +172,7 @@ class About(commands.Cog):
         """Get info about the Git repository for this bot."""
 
         emb = discord.Embed(name="GitHub info", color=ctx.bot.embed_color, description=get_last_commits())
-        emb.add_field(name="Build status", value=f"See {ctx.prefix}buildinfo command for build status.")
+        emb.add_field(name="Build status", value=f"See `{ctx.prefix}buildinfo` for build status.")
         emb.set_thumbnail(url=ctx.me.avatar_url)
         emb.set_author(
             name=ctx.me.name,
