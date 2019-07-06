@@ -522,42 +522,22 @@ L
             return await ctx.send(":x: You can't fight yourself!")
 
         if (await ctx.bot.redis.exists(f"{ctx.author.id}:fighting")):
-            emb = discord.Embed(
-                color=ctx.bot.embed_color,
-                description=f"{ctx.author.mention} :x: You can't fight multiple people at once! You're not Bruce Lee."
-            )
+            emb = ctx.default_embed
+            emb.description = f"{ctx.author.mention} :x: You can't fight multiple people at once! You're not Bruce" \
+                f" Lee."
             fp = discord.File("assets/brucelee.gif", "image.gif")
-            emb.set_image(
-                url="attachment://image.gif"
-            )
-            emb.set_thumbnail(url=ctx.me.avatar_url)
-            emb.set_author(
-                name=ctx.me.name,
-                icon_url=ctx.me.avatar_url
-            )
-            emb.set_footer(
-                text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             await ctx.send(embed=emb, file=fp)
 
             return
         if (await ctx.bot.redis.exists(f"{target.id}:fighting")):
-            emb = discord.Embed(
-                color=ctx.bot.embed_color,
-                description=f"{ctx.author.mention} :x: Don't make {target.mention} fight multiple people at once!"
+            emb = ctx.default_embed
+            emb.description = f"{ctx.author.mention} :x: Don't make {target.mention} fight multiple people at once!" \
                 f" They're not Bruce Lee."
-            )
             fp = discord.File("assets/brucelee.gif", "image.gif")
             emb.set_image(
                 url="attachment://image.gif"
             )
-            emb.set_thumbnail(url=ctx.me.avatar_url)
-            emb.set_author(
-                name=ctx.me.name,
-                icon_url=ctx.me.avatar_url
-            )
-            emb.set_footer(
-                text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             return await ctx.send(embed=emb, file=fp)
 
@@ -978,33 +958,14 @@ L
             return await ctx.send("You can't play bots!")
 
         if (await ctx.bot.redis.exists(f"{ctx.author.id}:c4")):
-            emb = discord.Embed(
-                color=ctx.bot.embed_color,
-                description=f"{ctx.author.mention} :x: You can't play multiple Connect4 games at once!"
-            )
-            emb.set_thumbnail(url=ctx.me.avatar_url)
-            emb.set_author(
-                name=ctx.me.name,
-                icon_url=ctx.me.avatar_url
-            )
-            emb.set_footer(
-                text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            emb = ctx.default_embed
+            emb.description = f"{ctx.author.mention} :x: You can't play multiple Connect4 games at once!"
 
             return await ctx.send(embed=emb)
 
         if (await ctx.bot.redis.exists(f"{member.id}:c4")):
-            emb = discord.Embed(
-                color=ctx.bot.embed_color,
-                description=f"{ctx.author.mention} :x: {member.mention} is already in a Connect4 game."
-            )
-
-            emb.set_thumbnail(url=ctx.me.avatar_url)
-            emb.set_author(
-                name=ctx.me.name,
-                icon_url=ctx.me.avatar_url
-            )
-            emb.set_footer(
-                text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            emb = ctx.default_embed
+            emb.description = f"{ctx.author.mention} :x: {member.mention} is already in a Connect4 game."
 
             return await ctx.send(embed=emb)
 

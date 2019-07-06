@@ -67,12 +67,20 @@ class Context(commands.Context):
             await self.send(embed=emb1)
             await self.send(embed=emb2)
         else:
-            emb = discord.Embed(description=prefix + content + suffix, color=self.bot.embed_color)
-
             if not without_annotation:
-                emb.set_thumbnail(url=self.me.avatar_url)
-                emb.set_author(name=self.me.name, icon_url=self.me.avatar_url)
-                emb.set_footer(
-                    text=f"{self.bot.embed_footer} Requested by {self.author}", icon_url=self.author.avatar_url)
+                emb = self.default_embed
+            else:
+                emb = discord.Embed(color=self.bot.embed_color)
+
+            emb.description = prefix + content + suffix,
 
             await self.send(embed=emb)
+
+    @property
+    def default_embed(self):
+        emb = discord.Embed(color=self.bot.embed_color)
+        emb.set_thumbnail(url=self.me.avatar_url)
+        emb.set_author(name=self.me.name, icon_url=self.me.avatar_url)
+        emb.set_footer(text=f"{self.bot.embed_footer} Requested by {self.author}", icon_url=self.author.avatar_url)
+
+        return emb

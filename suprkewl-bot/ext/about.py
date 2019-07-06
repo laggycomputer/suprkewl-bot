@@ -171,17 +171,10 @@ class About(commands.Cog):
     async def git(self, ctx):
         """Get info about the Git repository for this bot."""
 
-        emb = discord.Embed(name="GitHub info", color=ctx.bot.embed_color, description=get_last_commits())
+        emb = ctx.default_embed
+        emb.name = "GitHub Info"
+        emb.description = get_last_commits()
         emb.add_field(name="Build status", value=f"See `{ctx.prefix}buildinfo` for build status.")
-        emb.set_thumbnail(url=ctx.me.avatar_url)
-        emb.set_author(
-            name=ctx.me.name,
-            icon_url=ctx.me.avatar_url
-        )
-        emb.set_footer(
-            text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
-            icon_url=ctx.author.avatar_url
-        )
 
         await ctx.send(embed=emb)
 
@@ -190,7 +183,7 @@ class About(commands.Cog):
         """Gets Travis CI info for the bot."""
 
         status = await get_latest_build_status(ctx.bot.http2)
-        emb = discord.Embed(color=ctx.bot.embed_color)
+        emb = ctx.default_embed
 
         desc = ""
 
@@ -200,18 +193,7 @@ class About(commands.Cog):
 
             past_status = await get_recent_builds_on(ctx.bot.http2, k)
             desc += f"**10 most recent builds:** {''.join(past_status)}\n\n"
-
         emb.description = desc
-
-        emb.set_thumbnail(url=ctx.me.avatar_url)
-        emb.set_author(
-            name=ctx.me.name,
-            icon_url=ctx.me.avatar_url
-        )
-        emb.set_footer(
-            text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
-            icon_url=ctx.author.avatar_url
-        )
 
         await ctx.send(embed=emb)
 
@@ -219,7 +201,8 @@ class About(commands.Cog):
     async def stats(self, ctx):
         """Get some bot stats."""
 
-        emb = discord.Embed(name="Bot status", color=ctx.bot.embed_color)
+        emb = ctx.default_embed
+        emb.name = "Bot Stats"
         emb.add_field(name="Line count", value=linecount())
         cmds_used = ctx.bot.commands_used
         msgs_seen = ctx.bot.messages_seen
@@ -233,16 +216,6 @@ class About(commands.Cog):
             f" {len(ctx.bot.commands)} commands"
         )
 
-        emb.set_thumbnail(url=ctx.me.avatar_url)
-        emb.set_author(
-            name=ctx.me.name,
-            icon_url=ctx.me.avatar_url
-        )
-        emb.set_footer(
-            text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
-            icon_url=ctx.author.avatar_url
-        )
-
         await ctx.send(embed=emb)
 
     @commands.command(aliases=["info"])
@@ -250,7 +223,8 @@ class About(commands.Cog):
         """Give some general bot info."""
 
         async with ctx.typing():
-            emb = discord.Embed(name="Bot info", color=ctx.bot.embed_color)
+            emb = ctx.default_embed
+            emb.name = "Bot info"
 
             emb.add_field(name="Support Server", value="[Here](https://www.discord.gg/CRBBJVY \"Boo!\")")
             emb.add_field(name="System Time", value=current_time())
@@ -287,15 +261,6 @@ class About(commands.Cog):
                 owner = None
             if owner is not None:
                 emb.add_field(name="Bot owner", value=f"<@{owner_id}>")
-            emb.set_thumbnail(url=ctx.me.avatar_url)
-            emb.set_author(
-                name=ctx.me.name,
-                icon_url=ctx.me.avatar_url
-            )
-            emb.set_footer(
-                text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
-                icon_url=ctx.author.avatar_url
-            )
 
         await ctx.send(embed=emb)
 

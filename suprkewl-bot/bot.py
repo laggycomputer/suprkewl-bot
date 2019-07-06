@@ -235,30 +235,21 @@ class suprkewl_bot(commands.Bot):
             await ctx.send_help(ctx.command)  # Hey shineydev
 
         elif isinstance(error, commands.DisabledCommand):
-
-            emb = discord.Embed(color=self.embed_color)
+            emb = ctx.default_embed
             emb.add_field(name="Disabled Command", value=f":x: `{ctx.prefix}{ctx.command}` has been disabled!")
-            emb.set_thumbnail(url=self.user.avatar_url)
-            emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
-            emb.set_footer(text=f"{self.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             return await ctx.send(embed=emb)
 
         elif isinstance(error, commands.NoPrivateMessage):
-
-            emb = discord.Embed(color=self.embed_color)
+            emb = ctx.default_embed
             emb.add_field(
                 name="This command is disabled in DMs",
                 value=f":x: `{ctx.prefix}{ctx.command}` can only be used in servers, not in DMs or DM groups."
             )
-            emb.set_thumbnail(url=self.user.avatar_url)
-            emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
-            emb.set_footer(text=f"{self.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             return await ctx.send(embed=emb)
 
         elif isinstance(error, commands.CommandOnCooldown):
-
             retry = round(error.retry_after, 2)
 
             human_readable_cooldown = {
@@ -272,57 +263,43 @@ class suprkewl_bot(commands.Bot):
 
             cooldown_type = human_readable_cooldown[error.cooldown.type]
 
-            emb = discord.Embed(color=self.embed_color)
+            emb = ctx.default_embed
             emb.add_field(
                 name="Command on Cooldown",
                 value=f"Woah there! You just triggered a {cooldown_type} cooldown trying to run "
                 f"`{ctx.prefix}{ctx.command}`. Wait {retry} seconds."
             )
-            emb.set_thumbnail(url=self.user.avatar_url)
-            emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
-            emb.set_footer(text=f"{self.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             return await ctx.send(embed=emb)
 
         elif isinstance(error, commands.MissingPermissions):
-
-            emb = discord.Embed(color=self.embed_color)
+            emb = ctx.default_embed
             missing_perms = perms_list(error.missing_perms)
             emb.add_field(
                 name="User Missing Permissions",
                 value=f":x: Permission denied to run `{ctx.prefix}{ctx.command}`."
                 f" You need to be able to {missing_perms}."
             )
-            emb.set_thumbnail(url=self.user.avatar_url)
-            emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
-            emb.set_footer(text=f"{self.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             return await ctx.send(embed=emb)
 
         elif isinstance(error, commands.BotMissingPermissions):
-
-            emb = discord.Embed(color=self.embed_color)
+            emb = ctx.default_embed
             missing_perms = perms_list(error.missing_perms)
             emb.add_field(
                 name="Bot Missing Permissions",
                 value=f":x: I don't have the proper permissions to run `{ctx.prefix}{ctx.command}`."
                 f" I need to be allowed to {missing_perms}."
             )
-            emb.set_thumbnail(url=self.user.avatar_url)
-            emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
-            emb.set_footer(text=f"{self.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             return await ctx.send(embed=emb)
 
         elif isinstance(error, commands.NotOwner):
-            emb = discord.Embed(color=self.embed_color)
+            emb = ctx.default_embed
             emb.add_field(
                 name="Permission denied",
                 value=f":x: You must be a bot owner to run `{ctx.prefix}{ctx.command}`."
             )
-            emb.set_thumbnail(url=self.user.avatar_url)
-            emb.set_author(name=self.user.name, icon_url=self.user.avatar_url)
-            emb.set_footer(text=f"{self.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
             return await ctx.send(embed=emb)
 

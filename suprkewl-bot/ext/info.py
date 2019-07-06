@@ -90,15 +90,12 @@ class Info(commands.Cog):
     async def roleinfo(self, ctx, *, role: discord.Role):
         """Gives info on a passed role."""
 
-        emb = discord.Embed(title=f"Info for '{role}', a role in '{ctx.guild}'", color=role.color)
-        emb.set_author(name='Me', icon_url=ctx.me.avatar_url)
+        emb = ctx.default_embed
+        emb.title = f"Info for '{role}', a role in '{ctx.guild}'"
+        emb.color = role.color
         emb.add_field(name="Role Color (Hex)", value=role.color)
         emb.add_field(name="Members with Role", value=str(len(role.members)))
         emb.add_field(name="Role ID", value=role.id)
-
-        emb.set_thumbnail(url=ctx.me.avatar_url)
-        emb.set_author(name=ctx.me.name, icon_url=ctx.me.avatar_url)
-        emb.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
 
         disp_hoist = "No"
         if role.hoist:
@@ -117,10 +114,9 @@ class Info(commands.Cog):
     async def roleperms(self, ctx, *, role: discord.Role):
         """Get permissions for a role"""
 
-        emb = discord.Embed(title=f"Perms for '{role}', a role in '{ctx.guild}'", color=ctx.bot.embed_color)
-        emb.set_thumbnail(url=ctx.me.avatar_url)
-        emb.set_author(name=ctx.me.name, icon_url=ctx.me.avatar_url)
-        emb.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        emb = ctx.default_embed
+        emb.title = f"Perms for '{role}', a role in '{ctx.guild}'"
+        emb.color = role.color
 
         perms = role.permissions
 

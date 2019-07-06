@@ -158,7 +158,7 @@ class Moderation(commands.Cog):
                         await target.kick()
 
                         if sent is None:
-                            sent = await ctx.send(f":boom: RIP {target.mention}.")
+                            await ctx.send(f":boom: RIP {target.mention}.")
                         else:
                             await sent.edit(content=f":boom: RIP {target.mention}.")
 
@@ -255,8 +255,8 @@ class Moderation(commands.Cog):
     async def banlist(self, ctx):
         """Gives a list of banned users."""
 
-        emb = discord.Embed(color=ctx.bot.embed_color)
-        bans = []
+        emb = ctx.default_embed
+
         banlist = await ctx.guild.bans()
         if not any(banlist):
             await ctx.send(":white_check_mark: The server has no bans!")
@@ -264,13 +264,6 @@ class Moderation(commands.Cog):
 
         msg = ", ".join(bans)
         emb.add_field(name=f"Banned users for {ctx.guild}", value=msg)
-
-        emb.set_thumbnail(url=ctx.me.avatar_url)
-        emb.set_author(name=ctx.me.name, icon_url=ctx.me.avatar_url)
-        emb.set_footer(
-            text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
-            icon_url=ctx.author.avatar_url
-        )
 
         await ctx.send(embed=emb)
 
