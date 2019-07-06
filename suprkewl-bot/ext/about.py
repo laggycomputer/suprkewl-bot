@@ -172,7 +172,7 @@ class About(commands.Cog):
         """Get info about the Git repository for this bot."""
 
         emb = ctx.default_embed
-        emb.name = "GitHub Info"
+        emb.title = "GitHub Info"
         emb.description = get_last_commits()
         emb.add_field(name="Build status", value=f"See `{ctx.prefix}buildinfo` for build status.")
 
@@ -202,7 +202,7 @@ class About(commands.Cog):
         """Get some bot stats."""
 
         emb = ctx.default_embed
-        emb.name = "Bot Stats"
+        emb.title = "Bot Stats"
         emb.add_field(name="Line count", value=linecount())
         cmds_used = ctx.bot.commands_used
         msgs_seen = ctx.bot.messages_seen
@@ -224,7 +224,7 @@ class About(commands.Cog):
 
         async with ctx.typing():
             emb = ctx.default_embed
-            emb.name = "Bot info"
+            emb.title = "Bot info"
 
             emb.add_field(name="Support Server", value="[Here](https://www.discord.gg/CRBBJVY \"Boo!\")")
             emb.add_field(name="System Time", value=current_time())
