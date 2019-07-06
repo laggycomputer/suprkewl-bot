@@ -33,6 +33,8 @@ class Admin(commands.Cog):
 
     @commands.command(aliases=["procm", "procmanager", "supervisor", "supervisorctl"])
     async def proc(self, ctx, *, args):
+        """Check supervisorctl on the shell."""
+
         conv = await CodeblockConverter().convert(ctx, f"/usr/local/bin/supervisorctl {args}")
         await ctx.invoke(ctx.bot.get_command("jsk sh"), argument=conv)
 
@@ -63,6 +65,8 @@ class Admin(commands.Cog):
 
     @commands.command()
     async def statustoggle(self, ctx):
+        """Enable or disable status change."""
+
         if ctx.bot.change_status:
             resp = "Disabling status change."
         else:
@@ -73,11 +77,14 @@ class Admin(commands.Cog):
 
     @commands.command()
     async def statuschange(self, ctx, *, status):
+        """Change playing status of the bot."""
+
         await ctx.bot.change_presence(activity=discord.Game(name=status), status=discord.Status.idle)
         await ctx.send(f":white_check_mark: Changed to `{status}`")
 
     @commands.command()
     async def log(self, ctx):
+        """Show the log file."""
 
         conv = await CodeblockConverter().convert(ctx, "cat suprkewl.log")
         await ctx.invoke(ctx.bot.get_command("jsk sh"), argument=conv)
