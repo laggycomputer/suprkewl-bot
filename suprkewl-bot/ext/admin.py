@@ -26,7 +26,7 @@ from discord.ext import commands
 from jishaku.codeblocks import CodeblockConverter
 
 
-class Admin(commands.Cog, command_attrs=dict(hidden=True)):
+class Admin(commands.Cog):
 
     async def cog_check(self, ctx):
         return await ctx.bot.is_owner(ctx.author)
