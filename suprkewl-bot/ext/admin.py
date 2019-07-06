@@ -76,6 +76,12 @@ class Admin(commands.Cog):
         await ctx.bot.change_presence(activity=discord.Game(name=status), status=discord.Status.idle)
         await ctx.send(f":white_check_mark: Changed to `{status}`")
 
+    @commands.command()
+    async def log(self, ctx):
+
+        conv = await CodeblockConverter().convert(ctx, "cat suprkewl.log")
+        await ctx.invoke(ctx.bot.get_command("jsk sh"), argument=conv)
+
 
 def setup(bot):
     bot.add_cog(Admin())
