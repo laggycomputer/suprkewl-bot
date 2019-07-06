@@ -210,9 +210,9 @@ class About(commands.Cog):
         all_members = len(set(ctx.bot.get_all_members()))
         emb.add_field(
             name="Stats",
-            value=f"{cmds_used} commands used since start, {msgs_seen} messages seen since start,"
-            f" {guilds} guilds, {all_members} members (average of about {round(all_members / guilds, 2)} per guild),"
-            f" {len(ctx.bot.commands)} commands"
+            value=f"{cmds_used} commands and {msgs_seen} messages seen since start.\n{guilds} guilds with a combined"
+            f" total of {all_members} members (average of about {round(all_members / guilds, 2)} per guild).\n"
+            f"{len(ctx.bot.commands)} commands registered."
         )
 
         await ctx.send(embed=emb)
