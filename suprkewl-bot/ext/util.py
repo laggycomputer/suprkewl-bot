@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import base64
 import binascii
-from datetime import datetime
+import datetime
 import io
 import json
 import os
@@ -115,9 +115,9 @@ class Utilities(commands.Cog):
         try:
             token_epoch = 1293840000
             decoded = int.from_bytes(base64.standard_b64decode(t[1] + "=="), "big")
-            timestamp = datetime.utcfromtimestamp(decoded)
+            timestamp = datetime.datetime.utcfromtimestamp(decoded)
             if timestamp.year < 2015:
-                timestamp = datetime.utcfromtimestamp(decoded + token_epoch)
+                timestamp = datetime.datetime.utcfromtimestamp(decoded + token_epoch)
             date = timestamp.strftime("%Y-%m-%d %H:%M:%S")
         except binascii.Error:
             return await ctx.send("Failed to decode timestamp.")
@@ -195,15 +195,9 @@ class Utilities(commands.Cog):
 
         month, day, year = text["month"], text["day"], text["year"]
 
-        months = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ]
-
-        dt = datetime(int(year), int(month), int(day))
+        dt = datetime.datetime(int(year), int(month), int(day))
         delta = human_timedelta(dt, accuracy=4)
-        month = months[int(month) - 1]
-        date = f"{month} {day}, {year}"
+        date = dt.strftime("%B %d, %Y")
 
         emb = discord.Embed(
             color=ctx.bot.embed_color,
