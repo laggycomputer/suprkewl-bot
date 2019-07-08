@@ -44,6 +44,7 @@ async def download_file(ctx, data):
     return data
 
 token_re = re.compile(r"[a-zA-Z0-9]{24}\.[a-zA-Z0-9]{6}\.[a-zA-Z0-9_\-]{27}|mfa\.[a-zA-Z0-9_\-]{84}")
+EPOCH = 1420070400000
 
 
 class Utilities(commands.Cog):
@@ -233,6 +234,23 @@ class Utilities(commands.Cog):
             text = await resp.json()
 
         await self.xkcd_get(ctx, text["num"])
+
+    @commands.command(aliases=["sftime", "snowtime", "snowstamp", "ss"])
+    async def snowflaketime(self, ctx, *, id: int):  # Shadowing, yeah I know.
+        """Get the creation date of a Discord ID/Snowflake."""
+
+        unix_time = ((id >> 22) + EPOCH) / 1000
+        dt = datetime.datetime.utcfromtimestamp(unix_time)
+        if dt <= datetime.datetime.utcfromtimestamp(EPOCH / 1000):
+            return await ctx.send("That object seems like it was created on the Discord epoch. Is the ID valid?")
+        human_readable = dt.strftime("%A, %B %d, at %H:%M:%S UTC")
+
+        delta = human_timedelta(dt)
+
+        await ctx.send(
+            f"The object was created {delta}, on {human_readable} in {dt.year}. That's Unix time {unix_time}.\n\n"
+            f"P.S. Looking for the formula? See `{ctx.prefix}source {ctx.invoked_with}`."
+        )
 
 
 def setup(bot):
