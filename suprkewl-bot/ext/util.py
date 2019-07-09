@@ -256,8 +256,8 @@ class Utilities(commands.Cog):
         delta = human_timedelta(dt)
 
         await ctx.send(
-            f"The object was created {delta}, on {human_readable} in {dt.year}. That's Unix time {unix_time}.\n\n"
-            f"P.S. Looking for the formula? See `{ctx.prefix}source {ctx.invoked_with}`."
+            f"This object with ID {id} was created {delta}, on {human_readable} in {dt.year}. That's Unix time"
+            f" {unix_time}.\n\nP.S. Looking for the formula? See `{ctx.prefix}source {ctx.invoked_with}`."
         )
 
 
