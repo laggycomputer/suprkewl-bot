@@ -25,6 +25,7 @@ import json
 import os
 import random
 import re
+import typing
 
 import discord
 from discord.ext import commands
@@ -236,8 +237,15 @@ class Utilities(commands.Cog):
         await self.xkcd_get(ctx, text["num"])
 
     @commands.command(aliases=["sftime", "snowtime", "snowstamp", "ss"])
-    async def snowflaketime(self, ctx, *, id: int):  # Shadowing, yeah I know.
+    async def snowflaketime(
+            self, ctx, *,
+            id: typing.Union[
+                discord.Member, discord.User, discord.Message, discord.TextChannel, discord.VoiceChannel,
+                discord.CategoryChannel, discord.Role, discord.Emoji, discord.PartialEmoji, int]):  # Yuck.
         """Get the creation date of a Discord ID/Snowflake."""
+
+        if not isinstance(id, int):
+            id = id.id  # Ugly, huh?
 
         unix_time = ((id >> 22) + EPOCH) / 1000
         dt = datetime.datetime.utcfromtimestamp(unix_time)
