@@ -407,6 +407,8 @@ def _emboss(img):
 
 @async_executor()
 def _blur(img):
+    img = img.resize((256, 256))
+
     frames = []
 
     for i in range(0, 200, 20):
@@ -445,7 +447,7 @@ async def process_single_arg(ctx, argument):
     try:
         async with ctx.bot.http2.get(url) as resp:
             try:
-                img = Image.open(io.BytesIO(await resp.content.read())).convert("RGB").resize((256, 256))
+                img = Image.open(io.BytesIO(await resp.content.read())).convert("RGB")
             except OSError:
                 await ctx.send(":x: That URL is not an image.")
                 return
