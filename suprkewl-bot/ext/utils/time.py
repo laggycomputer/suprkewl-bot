@@ -21,48 +21,61 @@ import datetime
 
 from dateutil.relativedelta import relativedelta
 
-from .format_and_convert import Plural
+from .format_and_convert import Plural, human_join
 
 
-def human_timedelta(dt, *, source=None, accuracy=None):  # From R. Danny.
+def human_timedelta(dt, *, source=None, accuracy=3, brief=False, suffix=True):
     now = source or datetime.datetime.utcnow()
+    # Ignore microsecond
+    now = now.replace(microsecond=0)
+    dt = dt.replace(microsecond=0)
+
     if dt > now:
         delta = relativedelta(dt, now)
         suffix = ""
     else:
         delta = relativedelta(now, dt)
-        suffix = " ago"
+        suffix = " ago" if suffix else ""
 
-    if delta.microseconds and delta.seconds:
-        delta = delta + relativedelta(seconds=+1)
-
-    attrs = ["years", "months", "days", "hours", "minutes", "seconds"]
+    attrs = [
+        ("year", "y"),
+        ("month", "mo"),
+        ("day", "d"),
+        ("hour", "h"),
+        ("minute", "m"),
+        ("second", "s"),
+    ]
 
     output = []
-    for attr in attrs:
-        elem = getattr(delta, attr)
+    for attr, brief_attr in attrs:
+        elem = getattr(delta, attr + "s")
         if not elem:
             continue
 
-        if attr == "days":
+        if attr == "day":
             weeks = delta.weeks
             if weeks:
-                elem -= delta.weeks * 7
-                output.append(format(Plural(weeks), "week"))
+                elem -= weeks * 7
+                if not brief:
+                    output.append(format(Plural(weeks), "week"))
+                else:
+                    output.append(f"{weeks}w")
 
-        if elem > 1:
-            output.append(f"{elem} {attr}")
+        if elem <= 0:
+            continue
+
+        if brief:
+            output.append(f"{elem}{brief_attr}")
         else:
-            output.append(f"{elem} {attr[:-1]}")
+            output.append(format(Plural(elem), attr))
 
     if accuracy is not None:
         output = output[:accuracy]
 
     if len(output) == 0:
         return "now"
-    elif len(output) == 1:
-        return output[0] + suffix
-    elif len(output) == 2:
-        return f"{output[0]} and {output[1]}{suffix}"
     else:
-        return f"{output[0]}, {output[1]} and {output[2]}{suffix}"
+        if not brief:
+            return human_join(output, final="and") + suffix
+        else:
+            return " ".join(output) + suffix
