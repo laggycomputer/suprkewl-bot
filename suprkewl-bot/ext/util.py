@@ -240,8 +240,8 @@ class Utilities(commands.Cog):
     async def snowflaketime(
             self, ctx, *,
             id: typing.Union[
-                discord.Member, discord.User, discord.Message, discord.TextChannel, discord.VoiceChannel,
-                discord.CategoryChannel, discord.Role, discord.Emoji, discord.PartialEmoji, int]):  # Yuck.
+                int, discord.Member, discord.User, discord.Message, discord.TextChannel, discord.VoiceChannel,
+                discord.CategoryChannel, discord.Role, discord.Emoji, discord.PartialEmoji]):  # Yuck.
         """Get the creation date of a Discord ID/Snowflake."""
 
         if not isinstance(id, int):
