@@ -84,62 +84,6 @@ class Info(commands.Cog):
 
         await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```")
 
-    @commands.command(description="Gives info on role <permsRole> in server (ping the role).")
-    @commands.guild_only()
-    @commands.bot_has_permissions(manage_roles=True)
-    async def roleinfo(self, ctx, *, role: discord.Role):
-        """Gives info on a passed role."""
-
-        emb = ctx.default_embed
-        emb.title = f"Info for '{role}', a role in '{ctx.guild}'"
-        emb.color = role.color
-        emb.add_field(name="Role Color (Hex)", value=role.color)
-        emb.add_field(name="Members with Role", value=str(len(role.members)))
-        emb.add_field(name="Role ID", value=role.id)
-
-        disp_hoist = "No"
-        if role.hoist:
-            disp_hoist = "Yes"
-        emb.add_field(name="'Display role member seperately from online members'", value=disp_hoist)
-
-        await ctx.send(embed=emb)
-
-    @commands.command(
-        description="Gives perms on the given role. The bot must have the 'Manage Roles' permission, and the user must "
-                    "have a role called 'suprkewl-viewPerms'. Perms may be overridden."
-    )
-    @commands.guild_only()
-    @commands.has_any_role("suprkewl-viewPerms")
-    @commands.bot_has_permissions(manage_roles=True)
-    async def roleperms(self, ctx, *, role: discord.Role):
-        """Get permissions for a role"""
-
-        emb = ctx.default_embed
-        emb.title = f"Perms for '{role}', a role in '{ctx.guild}'"
-        emb.color = role.color
-
-        perms = role.permissions
-
-        order = [
-            1, 28, 13, 16, 11, 10, 3, 6, 4, 15, 12, 17, 23, 24, 25, 14, 8, 2, 22, 18, 9, 0, 5, 26, 20, 7, 19, 27, 21
-        ]
-        permtuples = []
-
-        for permTuple in iter(perms):
-            readablename = permissions_converter[permTuple[0]]
-            permtuples.append((readablename, permTuple[1]))
-
-        for number in order:
-            fieldname = permtuples[number][0]
-
-            if permtuples[number][1]:
-                fieldval = "Yes"
-            else:
-                fieldval = "No"
-            emb.add_field(name=fieldname, value=fieldval)
-
-        await ctx.send(embed=emb)
-
     # Thanks to Takaru, PendragonLore/TakaruBot
     @commands.command()
     async def pypi(self, ctx, *, name):
