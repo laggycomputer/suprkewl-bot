@@ -24,7 +24,7 @@ from urllib.parse import quote as urlquote
 import discord
 from discord.ext import commands
 
-from .utils import permissions_converter, escape_codeblocks, format_json
+from .utils import escape_codeblocks, format_json
 
 
 class Info(commands.Cog):
