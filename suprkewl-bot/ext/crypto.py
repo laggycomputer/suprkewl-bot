@@ -493,6 +493,88 @@ class Cryptography(commands.Cog):
         else:
             await ctx.send(to_send)
 
+    @commands.group(aliases=["b85"])
+    async def base85(self, ctx):
+        """Perform operations with the base85 encoding."""
+
+        if ctx.invoked_subcommand is None:
+            await ctx.send("You must specify a valid subcommand.")
+
+    @base85.command(name="encode", aliases=["e"])
+    async def base85_encode(self, ctx, *, data):
+        """Encode with base85."""
+
+        encoded = base64.b85encode(data.encode("utf-8")).decode("utf-8")
+        to_send = f"```\n{encoded}```"
+
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(encoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(encoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
+        else:
+            await ctx.send(to_send)
+
+    @base85.command(name="decode", aliases=["d"])
+    async def base85_decode(self, ctx, *, data):
+        """Decode with Ascii85."""
+
+        decoded = base64.b85decode(data.encode("utf-8")).decode("utf-8")
+        to_send = f"```\n{decoded}```"
+
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(decoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(decoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
+        else:
+            await ctx.send(to_send)
+
+    @commands.group(aliases=["a85"])
+    async def ascii85(self, ctx):
+        """Perform operations with the Ascii85 encoding."""
+
+        if ctx.invoked_subcommand is None:
+            await ctx.send("You must specify a valid subcommand.")
+
+    @ascii85.command(name="encode", aliases=["e"])
+    async def ascii85_encode(self, ctx, *, data):
+        """Encode with Ascii85."""
+
+        encoded = base64.a85encode(data.encode("utf-8")).decode("utf-8")
+        to_send = f"```\n{encoded}```"
+
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(encoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(encoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
+        else:
+            await ctx.send(to_send)
+
+    @ascii85.command(name="decode", aliases=["d"])
+    async def ascii85_decode(self, ctx, *, data):
+        """Decode with Ascii85."""
+
+        decoded = base64.a85decode(data.encode("utf-8")).decode("utf-8")
+        to_send = f"```\n{decoded}```"
+
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(decoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(decoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
+        else:
+            await ctx.send(to_send)
+
 
 def setup(bot):
     bot.add_cog(Cryptography())
