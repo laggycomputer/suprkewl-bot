@@ -18,9 +18,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 
+import base64
+import binascii
 import hashlib
 import io
 
+import aiohttp
 import discord
 from discord.ext import commands
 
@@ -354,6 +357,141 @@ class Cryptography(commands.Cog):
                 f":x: Invalid algorithm. Remember that algorithm names are case-sensitive. See"
                 f" `{ctx.prefix}{ctx.invoked_with} list` for the list of available algorithms."
             )
+
+    @commands.group(aliases=["b64"])
+    async def base64(self, ctx):
+        """Perform operations with the base64 encoding."""
+
+        if ctx.invoked_subcommand is None:
+            await ctx.send("You must specify a valid subcommand.")
+
+    @base64.command(name="encode", aliases=["e"])
+    async def base64_encode(self, ctx, *, data):
+        """Encode with base64."""
+
+        encoded = base64.standard_b64encode(data.encode("utf-8")).decode("utf-8")
+        to_send = f"```\n{encoded}```"
+
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(encoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(encoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
+        else:
+            await ctx.send(to_send)
+
+    @base64.command(name="decode", aliases=["d"])
+    async def base64_decode(self, ctx, *, data):
+        """Decode with base64"""
+
+        try:
+            decoded = base64.standard_b64decode(data.encode("utf-8")).decode("utf-8")
+        except binascii.Error:
+            return await ctx.send("Your input code is invalid.")
+
+        to_send = f"```\n{decoded}```"
+
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(decoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(decoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
+        else:
+            await ctx.send(to_send)
+
+    @commands.group(aliases=["b32"])
+    async def base32(self, ctx):
+        """Perform operations with the base32 encoding."""
+
+        if ctx.invoked_subcommand is None:
+            await ctx.send("You must specify a valid subcommand.")
+
+    @base32.command(name="encode", aliases=["e"])
+    async def base32_encode(self, ctx, *, data):
+        """Encode with base64."""
+
+        encoded = base64.b32encode(data.encode("utf-8")).decode("utf-8")
+        to_send = f"```\n{encoded}```"
+
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(encoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(encoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
+        else:
+            await ctx.send(to_send)
+
+    @base32.command(name="decode", aliases=["d"])
+    async def base32_decode(self, ctx, *, data):
+        """Decode with base32"""
+
+        try:
+            decoded = base64.b32decode(data.encode("utf-8")).decode("utf-8")
+        except binascii.Error:
+            return await ctx.send("Your input code was invalid.")
+
+        to_send = f"```\n{decoded}```"
+
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(decoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(decoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
+        else:
+            await ctx.send(to_send)
+
+    @commands.group(aliases=["b16"])
+    async def base16(self, ctx):
+        """Perform operations with the base16 encoding."""
+
+        if ctx.invoked_subcommand is None:
+            await ctx.send("You must specify a valid subcommand.")
+
+    @base16.command(name="encode", aliases=["e"])
+    async def base16_encode(self, ctx, *, data):
+        """Encode with base16."""
+
+        encoded = base64.b16encode(data.encode("utf-8")).decode("utf-8")
+        to_send = f"```\n{encoded}```"
+
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(encoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(encoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
+        else:
+            await ctx.send(to_send)
+
+    @base16.command(name="decode", aliases=["d"])
+    async def base16_decode(self, ctx, *, data):
+        """Decode with base16"""
+
+        try:
+            decoded = base64.b16decode(data.encode("utf-8")).decode("utf-8")
+        except binascii.Error:
+            return await ctx.send("Your input code is invalid.")
+
+        to_send = f"```\n{decoded}```"
+
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(decoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(decoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
+        else:
+            await ctx.send(to_send)
 
 
 def setup(bot):
