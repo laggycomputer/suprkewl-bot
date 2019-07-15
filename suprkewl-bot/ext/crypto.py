@@ -175,18 +175,34 @@ class Cryptography(commands.Cog):
         """Encodes a message with the caesar cipher. See https://en.wikipedia.org/wiki/Caesar_cipher."""
 
         encoded = caesar_translate(message, shift)
-        encoded = f"```\n{encoded}```"
+        to_send = f"```\n{encoded}```"
 
-        await ctx.send(encoded)
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(encoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(encoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
+        else:
+            await ctx.send(to_send)
 
     @caesar.command(name="decode", aliases=["d", "decrypt", "decipher"])
     async def caesar_decode(self, ctx, shift: int, *, message):
         """Decodes a message that was encoded with the given shift. See https://en.wikipedia.org/wiki/Caesar_cipher."""
 
         decoded = caesar_translate(message, -shift)
-        decoded = f"```\n{decoded}```"
+        to_send = f"```\n{decoded}```"
 
-        await ctx.send(decoded)
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(decoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(decoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
+        else:
+            await ctx.send(to_send)
 
     @caesar.command(name="crack", aliases=["c"])
     async def caesar_crack(self, ctx, *, message):
@@ -217,17 +233,17 @@ class Cryptography(commands.Cog):
 
         output = caesar_translate(message, 13)
 
-        msg = f"Your output is: ```\n{output}```"
+        to_send = f"Your output is: ```\n{output}```"
 
-        if len(msg) > 2000:
-            fp = io.BytesIO(output.encode("utf-8"))
-
-            await ctx.send(
-                content=f":white_check_mark: Attached is your output.",
-                file=discord.File(fp, "rot13.txt")
-            )
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(output)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(output.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
         else:
-            await ctx.send(msg)
+            await ctx.send(to_send)
 
     @commands.group(
         aliases=["sub"],
@@ -254,36 +270,34 @@ class Cryptography(commands.Cog):
         """Decodes a message with the given key using the substitution cipher."""
 
         decoded = decode_sub(message, key)
+        to_send = f":white_check_mark: Your message decodes to: ```\n{decoded}```"
 
-        msg = f":white_check_mark: Your message decodes to: ```\n{decoded}```"
-        if len(msg) > 2000:
-            fp = io.BytesIO(decoded.encode("utf-8"))
-
-            await ctx.send(
-                "Your message was decoded. Because the resulting message is longer than 2000 characters, your output"
-                " has been placed in the attached file.",
-                file=discord.File(fp, "decoded.txt")
-            )
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(decoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(decoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
         else:
-            await ctx.send(msg)
+            await ctx.send(to_send)
 
     @substitution.command(name="encode", aliases=["e", "encipher", "encrypt"])
     async def substitution_encode(self, ctx, key, *, message):
         """Encodes a message with the given key using the substitution cipher."""
 
         encoded = encode_sub(message, key)
+        to_send = f":white_check_mark: Your message encodes to: ```\n{encoded}```"
 
-        msg = f":white_check_mark: Your message encodes to: ```\n{encoded}```"
-        if len(msg) > 2000:
-            fp = io.BytesIO(encoded.encode("utf-8"))
-
-            await ctx.send(
-                "Your message was encoded. Because the resulting message is longer than 2000 characters, your output"
-                " has been placed in the attached file.",
-                file=discord.File(fp, "encoded.txt")
-            )
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(encoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(encoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
         else:
-            await ctx.send(msg)
+            await ctx.send(to_send)
 
     @commands.group(
         aliases=["@bash", "@b"],
@@ -300,36 +314,34 @@ class Cryptography(commands.Cog):
         """Encodes a message with Atbash."""
 
         encoded = encode_sub(message, str(abc_list_backward))
+        to_send = f":white_check_mark: Your message encodes to: ```\n{encoded}```"
 
-        msg = f":white_check_mark: Your message encodes to: ```\n{encoded}```"
-        if len(msg) > 2000:
-            fp = io.BytesIO(encoded.encode("utf-8"))
-
-            await ctx.send(
-                "Your message was encoded. Because the resulting message is longer than 2000 characters, your output"
-                " has been placed in the attached file.",
-                file=discord.File(fp, "encoded.txt")
-            )
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(encoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(encoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
         else:
-            await ctx.send(msg)
+            await ctx.send(to_send)
 
     @atbash.command(name="decode", aliases=["d", "decrypt", "decipher"])
     async def atbash_decode(self, ctx, *, message):
         """Decodes a message with Atbash."""
 
         decoded = decode_sub(message, str(abc_list_backward))
+        to_send = f":white_check_mark: Your message decodes to: ```\n{decoded}```"
 
-        msg = f":white_check_mark: Your message decodes to: ```\n{decoded}```"
-        if len(msg) > 2000:
-            fp = io.BytesIO(decoded.encode("utf-8"))
-
-            await ctx.send(
-                "Your message was decoded. Because the resulting message is longer than 2000 characters, your output"
-                " has been placed in the attached file.",
-                file=discord.File(fp, "decoded.txt")
-            )
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(decoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(decoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
         else:
-            await ctx.send(msg)
+            await ctx.send(to_send)
 
     @commands.command(
         aliases=["cs"],

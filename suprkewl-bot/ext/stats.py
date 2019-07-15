@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import io
 
+import aiohttp
 import discord
 from discord.ext import commands
 import matplotlib.figure
@@ -130,10 +131,12 @@ class Stats(commands.Cog):
         fp = discord.File(fp, filename="chart.png")
 
         if len(fmt) > 2000:
-            fmt = io.BytesIO(fmt.encode("utf-8"))
-            fp2 = discord.File(fmt, "key.txt")
-
-            await ctx.send(":white_check_mark: Attached is your output and pie-chart.", files=[fp, fp2])
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(fmt)
+                await ctx.send(hastebin_url, file=fp)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp2 = discord.File(io.BytesIO(fmt.encode("utf-8")), "out.txt")
+                await ctx.send("Attached are your chart and key:", files=(fp, fp2))
         else:
             await ctx.send(fmt, file=fp)
 

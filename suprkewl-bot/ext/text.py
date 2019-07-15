@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import io
 import random
 
+import aiohttp
 import discord
 from discord.ext import commands
 from PyLyrics import PyLyrics
@@ -44,17 +45,17 @@ class Text(commands.Cog):
         """Make text L O N G E R."""
 
         ret = "\n".join((" " * a).join(list(text)) for a in [*range(0, 5), *range(5, -1, -1)])
+        to_send = f"```\n{ret}```"
 
-        if len(ret) > 2000:
-            fp = io.BytesIO(ret.encode("utf-8"))
-
-            await ctx.send(
-                ":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this"
-                " file:",
-                file=discord.File(fp, "stretch.txt")
-            )
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(ret)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(ret.encode("utf-8")), "out.txt")
+                await ctx.send("Your output was too long for Discord, and hastebin is not working.", file=fp)
         else:
-            await ctx.send("```\n%s\n```" % ret)
+            await ctx.send(to_send)
 
     @commands.command()
     @commands.cooldown(1, 2, commands.BucketType.channel)
@@ -64,17 +65,17 @@ class Text(commands.Cog):
         ranges = list(range(1, radius + 1)) + list(range(radius, 0, -1))
 
         ret = "\n".join((string * c).center(len(radius * string)) for c in ranges)
+        to_send = f"```\n{ret}```"
 
-        if len(ret) > 2000:
-            fp = io.BytesIO(ret.encode("utf-8"))
-
-            await ctx.send(
-                ":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this"
-                " file:",
-                file=discord.File(fp, "square.txt")
-            )
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(ret)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(ret.encode("utf-8")), "out.txt")
+                await ctx.send("Your ouput was too long for Discord, and hastebin is not working.", file=fp)
         else:
-            await ctx.send("```\n%s\n```" % ret)
+            await ctx.send(to_send)
 
     @commands.command(description="Format your arguments like author/song.")
     @commands.cooldown(1, 1.5, commands.BucketType.channel)
