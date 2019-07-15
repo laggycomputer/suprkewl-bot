@@ -379,6 +379,15 @@ class suprkewl_bot(commands.Bot):
 
         await super().logout()
 
+    async def post_to_hastebin(self, data):
+        data = data.encode("utf-8")
+        async with self.http2.post("https://hastebin.com/documents", data=data) as resp:
+            out = await resp.json()
+
+        assert "key" in out
+
+        return "https://hastebin.com/" + out["key"]
+
     @property
     def embed_footer(self):
         return random.choice((
