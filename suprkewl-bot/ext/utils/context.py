@@ -23,9 +23,6 @@ from discord.ext import commands
 
 class Context(commands.Context):
 
-    async def register_response(self, msg):
-        await self.bot.register_response(msg, self.message)
-
     async def send(self, *args, **kwargs):
         try:
             register = kwargs.pop("register_response")
@@ -37,7 +34,7 @@ class Context(commands.Context):
         )
 
         if register:
-            await self.register_response(sent)
+            await self.bot.register_response(sent, self.message)
 
         return sent
 
