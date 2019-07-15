@@ -384,7 +384,7 @@ class Cryptography(commands.Cog):
 
     @base64.command(name="decode", aliases=["d"])
     async def base64_decode(self, ctx, *, data):
-        """Decode with base64"""
+        """Decode with base64."""
 
         try:
             decoded = base64.standard_b64decode(data.encode("utf-8")).decode("utf-8")
@@ -412,7 +412,7 @@ class Cryptography(commands.Cog):
 
     @base32.command(name="encode", aliases=["e"])
     async def base32_encode(self, ctx, *, data):
-        """Encode with base64."""
+        """Encode with base32."""
 
         encoded = base64.b32encode(data.encode("utf-8")).decode("utf-8")
         to_send = f"```\n{encoded}```"
@@ -429,7 +429,7 @@ class Cryptography(commands.Cog):
 
     @base32.command(name="decode", aliases=["d"])
     async def base32_decode(self, ctx, *, data):
-        """Decode with base32"""
+        """Decode with base32."""
 
         try:
             decoded = base64.b32decode(data.encode("utf-8")).decode("utf-8")
@@ -474,7 +474,7 @@ class Cryptography(commands.Cog):
 
     @base16.command(name="decode", aliases=["d"])
     async def base16_decode(self, ctx, *, data):
-        """Decode with base16"""
+        """Decode with base16."""
 
         try:
             decoded = base64.b16decode(data.encode("utf-8")).decode("utf-8")
