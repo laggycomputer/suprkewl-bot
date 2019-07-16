@@ -410,6 +410,8 @@ class suprkewl_bot(commands.Bot):
             "Regex by trial and error: Combining dots slashes and dots until a thing happens."
             "The center of a donut is 100% fat free.",
             "The word utopia is derived from the Latin 'Utopia', meaning 'nothing, impossible'.",
+            "There are two kinds of people at a party; the ones that want to stay and those who want to leave. The"
+            " problem is they are usually married to each other.",
             "To succeed in life, you need three things; a wishbone, a backbone and a funny bone. - Reba McEntire",
             linecount(),
             "You can edit a command invocation to change my response."
