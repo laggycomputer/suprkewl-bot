@@ -361,9 +361,9 @@ class Cryptography(commands.Cog):
             message = message.encode("utf-8")
             m = getattr(hashlib, algorithm)()
             m.update(message)
-            hash = m.hexdigest()
+            ret = m.hexdigest()
 
-            await ctx.send(f":white_check_mark: The hash of your message is `{hash}`.")
+            await ctx.send(f":white_check_mark: The hash of your message is `{ret}`.")
         else:
             await ctx.send(
                 f":x: Invalid algorithm. Remember that algorithm names are case-sensitive. See"
