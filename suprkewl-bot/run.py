@@ -27,10 +27,9 @@ import config
 
 logger = logging.getLogger("discord")
 logger.setLevel(config.loglevel)
-if config.clearLog:
-    handler = logging.FileHandler(filename=config.logpath, encoding="utf-8", mode="w")
-else:
-    handler = logging.FileHandler(filename=config.logpath, encoding="utf-8", mode="a")
+mode = "w" if config.clearLog else "a"
+handler = logging.FileHandler(filename=config.logpath, encoding="utf-8", mode=mode)
+
 handler.setFormatter(logging.Formatter("%(asctime)s: %(levelname)s: %(name)s: %(message)s"))
 logger.addHandler(handler)
 
