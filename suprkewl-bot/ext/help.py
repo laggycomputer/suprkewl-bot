@@ -138,6 +138,8 @@ class HelpCommand(commands.HelpCommand):
             filtered = await self.filter_commands(cog_commands)
 
             if filtered:
+                embedinator.add_embed_page()
+                embedinator.add_field(name=f"{cog.qualified_name} cog:", value="\u200b", inline=False)
                 for command in filtered:
                     self.add_command_field(embedinator, command)
 
