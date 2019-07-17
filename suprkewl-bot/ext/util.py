@@ -171,10 +171,7 @@ class Utilities(commands.Cog):
 
         asset = ctx.guild.icon_url_as(format="png")
 
-        if asset is None:
-            await ctx.send("This guild has no icon!")
-        else:
-            await ctx.send(asset)
+        await ctx.send(asset or "This guild has no set icon!")
 
     @commands.group(description="Gets an xkcd comic.", invoke_without_command=True)
     @commands.cooldown(1, 3, commands.BucketType.channel)
