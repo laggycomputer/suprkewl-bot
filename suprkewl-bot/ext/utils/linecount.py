@@ -31,7 +31,7 @@ def linecount():
             if name.endswith(".py"):
                 file_amount += 1
                 with codecs.open(path_to_search + str(pathlib.PurePath(path, name)), "r", "utf-8") as f:
-                    for i, l in enumerate(f):
+                    for l in list(f)[20:]:
                         if l.strip().startswith("#") or len(l.strip()) == 0:
                             pass
                         else:
