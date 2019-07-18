@@ -36,7 +36,7 @@ class Text(commands.Cog):
         """Don't ask what this does."""
 
         files = ["bee.txt", "lettuce.txt", "rickroll.txt", "tnt.txt", "uwu.txt"]
-        with open(f"assets/{random.choice(files)}", "rb") as fp:
+        with open(f"assets/random-text/{random.choice(files)}", "rb") as fp:
             await ctx.send(file=discord.File(fp, filename="love_letter.txt"))
 
     @commands.command()

@@ -100,7 +100,7 @@ def add_noise(img, factor):
 def add_flares(img, coords):
     ret = img.copy()
 
-    flare = Image.open("assets/lens_flare.png")
+    flare = Image.open("assets/frying/lens_flare.png")
     for coord in coords:
         ret.paste(flare, (int(coord[0] - flare.size[0] / 2), int(coord[1] - flare.size[1] / 2)), flare)
 
@@ -110,7 +110,7 @@ def add_flares(img, coords):
 def add_b_emojis(img, coords):
     tmp = img.copy()
 
-    b = Image.open("assets/B.png")
+    b = Image.open("assets/frying/B.png")
     for coord in coords:
         if np.random.random(1)[0] < 0.1:
             resized = b.copy()
@@ -123,7 +123,7 @@ def add_b_emojis(img, coords):
 def add_laughing_emojis(img, max_emojis):
     ret = img.copy()
 
-    emoji = Image.open("assets/smilelaugh.png")
+    emoji = Image.open("assets/frying/smilelaugh.png")
     for i in range(int(np.random.random(1)[0] * max_emojis)):
         coord = np.random.random(2) * np.array([img.width, img.height])
         resized = emoji.copy()
