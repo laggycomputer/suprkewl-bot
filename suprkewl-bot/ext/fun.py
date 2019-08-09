@@ -318,6 +318,7 @@ L
             f"{target.mention}, what'll you do to get a face after that baboon wants his face back?",
             f"{target.mention}, I don't exactly hate you, but if you were on fire and I had water, I'd drink the"
             f" water.",
+            "They say people look like their pets. I'm assuming you have an elephant?",
             f"{target.mention}, I'll never forget the first time we met, although I'll keep trying.",
             f"{target.mention}, I don't I can think of an insult bad enough for you.",
             f"{target.mention}, There are more calories in your stomach than in the local supermarket!",
