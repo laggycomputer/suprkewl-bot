@@ -97,7 +97,7 @@ class Stats(commands.Cog):
                 fp.seek(0)
 
                 fmt = "\n" + "\n".join(user_friendly_prc)
-                fmt = fmt.replace("@everyone", "\\@everyone")
+                fmt = fmt.replace("@everyone", "`@everyone`")
 
                 return [fmt, fp]
             else:
