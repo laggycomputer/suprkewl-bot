@@ -90,7 +90,7 @@ class HelpCommand(commands.HelpCommand):
         embed.title = self.get_command_name(command)
         embed.description = command.short_doc or "No description"
         embed.add_field(name="Extended info", value=command.description or "No further info", inline=False)
-        embed.set_footer(text=f"Category: {command.cog_name}")
+        embed.set_footer(text=f"Category: {command.cog_name}. {self.context.bot.embed_footer}")
 
         destination = self.get_destination()
         await destination.send(embed=embed)
@@ -108,6 +108,8 @@ class HelpCommand(commands.HelpCommand):
             for command in filtered:
                 self.add_command_field(embedinator, command)
 
+        embedinator.set_footer(text=self.context.bot.embed_footer,
+                               icon_url=self.context.me.avatar_url)
         await embedinator.send()
         await embedinator.handle()
 
