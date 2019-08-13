@@ -33,8 +33,10 @@ import redis
 
 class suprkewl_bot(commands.Bot):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, extra_owners=[], *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.extra_owners = extra_owners
 
         self.embed_color = 0xf92f2f
 
@@ -291,6 +293,9 @@ class suprkewl_bot(commands.Bot):
         print(f"Ignoring exception in command {ctx.prefix}{ctx.command}:")
 
         traceback.print_exception(type(error), error, error.__traceback__)
+
+    async def is_owner(self, user):
+        return await super().is_owner(user) or user.id in self.extra_owners
 
     async def track_message(self, message):
         if await self.redis.exists(message):

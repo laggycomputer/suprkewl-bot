@@ -34,6 +34,7 @@ handler.setFormatter(logging.Formatter("%(asctime)s: %(levelname)s: %(name)s: %(
 logger.addHandler(handler)
 
 client = bot.suprkewl_bot(
+    config.extra_owners,
     status=discord.Status.idle,
     command_prefix=bot.get_pre
 )
