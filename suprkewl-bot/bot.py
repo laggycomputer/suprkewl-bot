@@ -142,10 +142,6 @@ class suprkewl_bot(commands.Bot):
     async def on_command_completion(self, ctx):
         self.commands_used += 1
 
-    async def process_commands(self, message):
-        ctx = await self.get_context(message, cls=Context)
-        await self.invoke(ctx)
-
     async def on_raw_message_edit(self, payload):
         if not self.is_ready():
             return
@@ -293,6 +289,10 @@ class suprkewl_bot(commands.Bot):
         print(f"Ignoring exception in command {ctx.prefix}{ctx.command}:")
 
         traceback.print_exception(type(error), error, error.__traceback__)
+
+    async def process_commands(self, message):
+        ctx = await self.get_context(message, cls=Context)
+        await self.invoke(ctx)
 
     async def is_owner(self, user):
         return await super().is_owner(user) or user.id in self.extra_owners
