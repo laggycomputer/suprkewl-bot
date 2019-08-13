@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import asyncio
 import platform
 import random
+import textwrap
 import traceback
 
 import aiohttp
@@ -61,13 +62,16 @@ class suprkewl_bot(commands.Bot):
             "jishaku"
         ]
 
+        loaded = []
         for extension in startup_extensions:
             try:
                 self.load_extension(extension)
-                print(f"Loaded cog {extension}.")
+                loaded.append(extension)
             except Exception as e:
                 exc = f"{e.__name__}: {e}"
                 print(f"Failed to load extension {extension}\n{exc}")
+
+        print("Loaded extensions: " + "\n" + "\n".join(textwrap.wrap(", ".join(loaded))))
 
     async def on_ready(self):
         if not self.redis:
@@ -76,37 +80,18 @@ class suprkewl_bot(commands.Bot):
         if not self.http2:
             self.http2 = aiohttp.ClientSession()
 
-        print(
-            f"Logged in as {self.user.name} (UID {self.user.id}) | Connected to {len(self.guilds)} servers and their "
-            f"combined {len(set(self.get_all_members()))} members"
-        )
+        print(f"Logged in as {self.user.name} (UID {self.user.id})")
         print("-" * 8)
-        print(
-            f"Current discord.py version: {discord.__version__} | Current Python version: {platform.python_version()}"
-        )
+        print(f"discord.py {discord.__version__} | Python {platform.python_version()}")
         print("-" * 8)
         print("Use this link to invite this bot:")
-        invite = discord.utils.oauth_url(self.user.id, discord.Permissions(permissions=8))
+        invite = discord.utils.oauth_url(self.user.id)
         print(invite)
         print("-" * 8)
 
     async def on_message(self, message):
         if not self.is_ready():
             return
-        try:
-            print(f"Got message '{message.content}'")
-            print(f"From @{message.author}")
-            print(f"In server {message.guild}")
-            print(f"In channel {message.channel}")
-
-        except UnicodeDecodeError:
-            print("Message properties not printable")
-
-        if len(message.embeds) > 0:
-            embeds = ""
-            for emb in message.embeds:
-                embeds += str(emb.to_dict())
-            print(f"With embed(s):\n{embeds}")
 
         self.messages_seen += 1
 
