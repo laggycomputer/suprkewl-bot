@@ -410,7 +410,7 @@ class suprkewl_bot(commands.Bot):
 
 async def get_pre(bot, message):
     pre = ["s!"]
-    is_owner = (await bot.is_owner(message.author))
+    is_owner = await bot.is_owner(message.author)
     if isinstance(message.channel, discord.DMChannel) or is_owner:
         pre.append("")
 
