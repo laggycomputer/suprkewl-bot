@@ -19,9 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Sorry about the ignore tactics, this really is my way of doing it.
 
-from .context import *  # noqa
-from .format_and_convert import *  # noqa
-from .embedinator import *  # noqa
-from .linecount import *  # noqa
-from .run_in_exec import *  # noqa
-from .time import *  # noqa
+from .context import *  # noqa: F401, F403
+from .format_and_convert import *  # noqa: F401, F403
+from .embedinator import *  # noqa: F401, F403
+from .linecount import *  # noqa: F401, F403
+from .run_in_exec import *  # noqa: F401, F403
+from .time import *  # noqa: F401, F403
