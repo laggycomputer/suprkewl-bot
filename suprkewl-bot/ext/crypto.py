@@ -169,6 +169,7 @@ class Cryptography(commands.Cog):
 
         if ctx.invoked_subcommand is None:
             await ctx.send(":x: Please provide a valid subcommand!")
+            await ctx.send_help(ctx.command)
 
     @caesar.command(name="encode", aliases=["e", "encipher", "encrypt"])
     async def caesar_encode(self, ctx, shift: int, *, message):
@@ -235,6 +236,7 @@ class Cryptography(commands.Cog):
 
         if ctx.invoked_subcommand is None:
             await ctx.send(":x: Please provide a valid subcommand!")
+            await ctx.send_help(ctx.command)
 
     @substitution.command(name="keyword", aliases=["k", "key", "keywords", "kw"])
     async def substitution_keyword(self, ctx, *, kw):

@@ -47,6 +47,7 @@ class Stats(commands.Cog):
 
         if ctx.invoked_subcommand is None:
             await ctx.send(":x: You must specify a valid subcommand.")
+            await ctx.send_help(ctx.command)
 
     @pie.command(
         name="role",

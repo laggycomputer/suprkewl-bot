@@ -39,6 +39,7 @@ class Info(commands.Cog):
 
         if ctx.invoked_subcommand is None:
             await ctx.send(":x: Please provide a valid subcommand!")
+            await ctx.send_help(ctx.command)
 
     @raw.command(name="message", aliases=["msg"])
     async def raw_message(self, ctx, *, message: discord.Message):
