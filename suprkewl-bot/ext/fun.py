@@ -17,6 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import aiohttp
 import asyncio
 import contextlib
 import io
@@ -472,12 +473,15 @@ L
                 # Yes, this is blocking, but given current limits responses are almost always ~4000 characters max.
                 file_content = "Rolls: {1}{0}{1}Total: {2}{1}Average: {3}{1}".format(
                     "\n".join(rolls), "\n", total, avg)
-                fp = io.BytesIO(file_content.encode("utf-8"))
-                await ctx.send(
-                    ":white_check_mark: Your output was longer than 2000 characters and was therefore placed in this"
-                    " file:",
-                    file=discord.File(fp, "rolls.txt")
-                )
+                try:
+                    await msg.edit(content=await ctx.bot.post_to_hastebin(file_content))
+                except (aiohttp.ContentTypeError, AssertionError):
+                    fp = io.BytesIO(file_content.encode("utf-8"))
+                    await ctx.send(
+                        ":white_check_mark: Your output was longer than 2000 characters and was therefore placed in"
+                        " this file:",
+                        file=discord.File(fp, "rolls.txt")
+                    )
 
             else:
                 await msg.edit(content=content)
