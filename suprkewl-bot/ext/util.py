@@ -37,10 +37,7 @@ import config
 
 async def download_rtex_file(ctx, data):
     cs = ctx.bot.http2
-    async with cs.post(f"http://{config.rtex_server}/api/v2", data={
-        "code": data,
-        "format": "png"
-    }) as resp:
+    async with cs.post(f"http://{config.rtex_server}/api/v2", data=dict(code=data, format="png")) as resp:
         data = await resp.json()
     return data
 
