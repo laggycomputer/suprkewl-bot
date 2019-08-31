@@ -35,7 +35,7 @@ from .utils import async_executor, human_timedelta
 import config
 
 
-async def download_file(ctx, data):
+async def download_rtex_file(ctx, data):
     cs = ctx.bot.http2
     async with cs.post(f"http://{config.rtex_server}/api/v2", data={
         "code": data,
@@ -67,7 +67,7 @@ class Utilities(commands.Cog):
             for key, value in replacements.items():
                 code = code.replace(key, value)
 
-            ret = await download_file(ctx, template.replace("#CONTENT", code))
+            ret = await download_rtex_file(ctx, template.replace("#CONTENT", code))
             log = ret.pop("log")
 
         if ret["status"] == "error":
