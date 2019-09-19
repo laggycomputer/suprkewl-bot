@@ -35,14 +35,26 @@ from .utils import async_executor, human_timedelta
 import config
 
 
+token_re = re.compile(r"[a-zA-Z0-9]{24}\.[a-zA-Z0-9]{6}\.[a-zA-Z0-9_\-]{27}|mfa\.[a-zA-Z0-9_\-]{84}")
+EPOCH = 1420070400000
+
+
+def to_datetime(obj):
+    if not isinstance(obj, int):
+        id_ = obj.id
+    else:
+        id_ = obj
+
+    unix_time = ((id_ >> 22) + EPOCH) / 1000
+
+    return unix_time, datetime.datetime.utcfromtimestamp(unix_time)
+
+
 async def download_rtex_file(ctx, data):
     cs = ctx.bot.http2
     async with cs.post(f"http://{config.rtex_server}/api/v2", data=dict(code=data, format="png")) as resp:
         data = await resp.json()
     return data
-
-token_re = re.compile(r"[a-zA-Z0-9]{24}\.[a-zA-Z0-9]{6}\.[a-zA-Z0-9_\-]{27}|mfa\.[a-zA-Z0-9_\-]{84}")
-EPOCH = 1420070400000
 
 
 class Utilities(commands.Cog):
@@ -230,7 +242,10 @@ class Utilities(commands.Cog):
 
         await self.xkcd_get(ctx, text["num"])
 
-    @commands.command(aliases=["sftime", "snowtime", "snowstamp", "ss"])
+    @commands.group(
+        aliases=["sftime", "snowtime", "snowstamp", "ss"],
+        description="NOTE: If you use `compare`, `c`, or `cmp` as an argument, I will try to invoke the subcommand. If"
+                    " this happens, try using the actual ID instead of the name.")
     async def snowflaketime(
             self, ctx, *,
             id: typing.Union[
@@ -238,11 +253,8 @@ class Utilities(commands.Cog):
                 discord.CategoryChannel, discord.Role, discord.Emoji, discord.PartialEmoji]):  # Yuck.
         """Get the creation date of a Discord ID/Snowflake."""
 
-        if not isinstance(id, int):
-            id = id.id  # Ugly, huh?
+        unix_time, dt = to_datetime(id)
 
-        unix_time = ((id >> 22) + EPOCH) / 1000
-        dt = datetime.datetime.utcfromtimestamp(unix_time)
         if dt <= datetime.datetime.utcfromtimestamp(EPOCH / 1000):
             return await ctx.send("That object seems like it was created on the Discord epoch. Is the ID valid?")
         human_readable = dt.strftime("%A, %B %d, at %H:%M:%S UTC")

@@ -929,7 +929,7 @@ L
         await ctx.send(file=discord.File(io.BytesIO(raw), "achieved.png"))
 
     @commands.command()
-    async def supreme(self, ctx, *, text):
+    async def supreme(self, ctx, *, text="Supreme"):
         """Draw a Supreme sticker with your text."""
 
         async with ctx.typing():
