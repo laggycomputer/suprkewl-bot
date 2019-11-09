@@ -89,6 +89,20 @@ class Admin(commands.Cog):
         conv = await CodeblockConverter().convert(ctx, "cat suprkewl.log")
         await ctx.invoke(ctx.bot.get_command("jsk sh"), argument=conv)
 
+    @commands.command()
+    async def noprefix(self, ctx, *, arg: bool = None):
+        """Toggle owner-only no prefix privileges."""
+
+        if arg is not None:
+            ctx.bot.owner_no_prefix = not arg
+
+        ret = "dis" if ctx.bot.owner_no_prefix else "en"
+
+        if arg is None:
+            await ctx.send(f"Owner-only no prefix is currently **{ret}abled**.")
+        else:
+            await ctx.send(f"Owner-only no prefix is now **{ret}abled**.")
+
 
 def setup(bot):
     bot.add_cog(Admin())

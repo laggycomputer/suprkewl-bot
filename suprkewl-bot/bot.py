@@ -48,6 +48,7 @@ class suprkewl_bot(commands.Bot):
 
         self.bg_task = self.loop.create_task(self.playingstatus())
         self.change_status = True
+        self.owner_no_prefix = False
 
         startup_extensions = [
             "ext.about",
@@ -411,7 +412,7 @@ class suprkewl_bot(commands.Bot):
 async def get_pre(bot, message):
     pre = ["s!"]
     is_owner = await bot.is_owner(message.author)
-    if isinstance(message.channel, discord.DMChannel) or is_owner:
+    if isinstance(message.channel, discord.DMChannel) or (is_owner and not bot.owner_no_prefix):
         pre.append("")
 
     return pre
