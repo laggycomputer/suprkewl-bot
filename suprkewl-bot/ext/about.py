@@ -65,7 +65,7 @@ def current_time():
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "November", "December"
     ]
-    month = months[month]
+    month = months[month - 1]
     disptime = f"{dayofweek}, {month} {dayofmonth}, {year}; {hour}:{minute}:{second}, Pacific Standard Time"
     if isdst:
         disptime += " (DST)"
