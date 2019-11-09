@@ -253,6 +253,9 @@ class Utilities(commands.Cog):
                 discord.CategoryChannel, discord.Role, discord.Emoji, discord.PartialEmoji]):  # Yuck.
         """Get the creation date of a Discord ID/Snowflake."""
 
+        if not isinstance(id, int):
+            id = id.id
+
         unix_time, dt = to_datetime(id)
 
         if dt <= datetime.datetime.utcfromtimestamp(EPOCH / 1000):
