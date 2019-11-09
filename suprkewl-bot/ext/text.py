@@ -103,6 +103,13 @@ class Text(commands.Cog):
 
         await ctx.paginate_with_embeds(lyrics, prefix="", suffix="")
 
+    @commands.command()
+    @commands.cooldown(1, 1, commands.BucketType.user)
+    async def wbrb(self, ctx):
+        """We'll Be Right Back"""
+
+        await ctx.send("We'll\nBe\nRight\nBack")
+
 
 def setup(bot):
     bot.add_cog(Text())
