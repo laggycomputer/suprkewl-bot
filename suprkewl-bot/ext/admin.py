@@ -103,6 +103,21 @@ class Admin(commands.Cog):
         else:
             await ctx.send(f"Owner-only no prefix is now **{ret}abled**.")
 
+    @commands.command()
+    async def songlist(self, ctx):
+        """Bored? List every visible Spotiy status with this command."""
+
+        seen_ids = []
+        msgs = []
+        for m in ctx.bot.get_all_members():
+            if isinstance(m.activity, discord.Spotify):
+                if m.id not in seen_ids:
+                    seen_ids.append(m.id)
+                    msgs.append("Artist(s): " + ", ".join(m.activity.artists) + " | Name: " + m.activity.title
+                                + " | Username: " + str(m))
+
+        await ctx.send(await ctx.bot.post_to_hastebin("\n".join(msgs)))
+
 
 def setup(bot):
     bot.add_cog(Admin())
