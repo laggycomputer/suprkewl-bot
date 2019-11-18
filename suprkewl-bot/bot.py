@@ -28,6 +28,7 @@ import discord
 from discord.ext import commands
 from ext.utils import permissions_converter, linecount, Context
 
+import config
 import redis
 
 
