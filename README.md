@@ -10,10 +10,7 @@ An open-sourced Discord bot, written with `discord.py==1.2.2`.
 
 If you want to host this bot:
 
-* Copy `suprkewl-bot/config.py.example` to `suprkewl-bot/config.py`. Fill in your Discord bot token.
-* Repeat with your Redis server IP (can be internal) and port, and password (don't set one if you don't want to use one).
-* Then, install Redis on your host of choice, and set it up with the same password that you configured.
-* Fill in all the extra API values, and you're all set.
+* Copy `suprkewl-bot/config.py.example` to `suprkewl-bot/config.py`. Fill out the config parameters.
 * Finally, you can use `pip3 install -r requirements.txt` at the root of this repo to install the requirements.
 
 **Please ensure that you run the bot with the repo root as your current directory.**
