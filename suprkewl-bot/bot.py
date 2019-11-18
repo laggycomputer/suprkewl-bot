@@ -46,7 +46,8 @@ class suprkewl_bot(commands.Bot):
         self.redis = None
         self.http2 = None
 
-        self.bg_task = self.loop.create_task(self.playingstatus())
+        self.ps_task = self.loop.create_task(self.playingstatus())
+        self.dbl_task = self.loop.create_task(self.dbl_guild_update())
         self.change_status = True
         self.owner_no_prefix = False
 
@@ -362,6 +363,17 @@ class suprkewl_bot(commands.Bot):
 
             await self.change_presence(activity=discord.Game(name=status), status=discord.Status.idle)
             await asyncio.sleep(120)
+
+    async def dbl_guild_update(self):
+        await self.wait_until_ready()
+
+        while not self.is_closed():
+            await self.http2.post(
+                f"https://discordbots.org/api/bots/{self.user.id}/stats",
+                json=dict(server_count=len(self.guilds)),
+                headers={"Content-Type": "application/json", "Authorization": config.dbl_token}
+            )
+            await asyncio.sleep(1800)
 
     async def logout(self):
         if not self.http2.closed:

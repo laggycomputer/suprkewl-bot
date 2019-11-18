@@ -28,3 +28,6 @@ travis_token = ""
 
 # rTeX config: use http://rtex.probablyaweb.site, or set up your own instance, see DXSmiley/rtex
 rtex_server = "rtex.probablyaweb.site"
+
+# Discord Bot List token - see top.gg/api/docs
+dbl_token = ""
