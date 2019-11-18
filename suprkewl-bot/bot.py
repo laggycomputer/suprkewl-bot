@@ -325,7 +325,6 @@ class suprkewl_bot(commands.Bot):
             )
 
     async def playingstatus(self):
-
         await self.wait_until_ready()
 
         playing_statuses = [
