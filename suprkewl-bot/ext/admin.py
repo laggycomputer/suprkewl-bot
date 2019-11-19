@@ -23,7 +23,7 @@ import traceback
 import aioredis
 import discord
 from discord.ext import commands
-from jishaku.codeblocks import CodeblockConverter
+from jishaku.codeblocks import codeblock_converter
 
 
 class Admin(commands.Cog):
@@ -35,7 +35,7 @@ class Admin(commands.Cog):
     async def proc(self, ctx, *, args):
         """Check supervisorctl on the shell."""
 
-        conv = await CodeblockConverter().convert(ctx, f"/usr/local/bin/supervisorctl {args}")
+        conv = codeblock_converter(f"/usr/local/bin/supervisorctl {args}")
         await ctx.invoke(ctx.bot.get_command("jsk sh"), argument=conv)
 
     @commands.command(aliases=["redis-cli"])
@@ -86,7 +86,7 @@ class Admin(commands.Cog):
     async def log(self, ctx):
         """Show the log file."""
 
-        conv = await CodeblockConverter().convert(ctx, "cat suprkewl.log")
+        conv = await codeblock_converter("cat suprkewl.log")
         await ctx.invoke(ctx.bot.get_command("jsk sh"), argument=conv)
 
     @commands.command()
