@@ -73,7 +73,7 @@ class Text(commands.Cog):
                 await ctx.send(hastebin_url)
             except (aiohttp.ContentTypeError, AssertionError):
                 fp = discord.File(io.BytesIO(ret.encode("utf-8")), "out.txt")
-                await ctx.send("Your ouput was too long for Discord, and hastebin is not working.", file=fp)
+                await ctx.send("Your output was too long for Discord, and hastebin is not working.", file=fp)
         else:
             await ctx.send(to_send)
 
