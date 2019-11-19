@@ -5,7 +5,7 @@
 <a href="./LICENSE-agpl3.txt"><img src="https://img.shields.io/github/license/laggycomputer/suprkewl-bot.svg?style=popout"></a>
 <a href=https://travis-ci.com/laggycomputer/suprkewl-bot><img src=https://travis-ci.com/laggycomputer/suprkewl-bot.svg?branch=master></a>
 <br>
-<img src="https://top.gg/api/widget/408869071946514452.png">
+<a href="https://top.gg/bot/408869071946514452"><img src="https://top.gg/api/widget/408869071946514452.png"></a>
 </p>
 
 An open-sourced Discord bot, written with `discord.py==1.2.4`. 
