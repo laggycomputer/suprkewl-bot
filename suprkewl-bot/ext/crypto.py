@@ -158,6 +158,47 @@ def encode_sub(plaintext, keyword):
     return encoded
 
 
+def decode_a1z26(message):
+    for letter in abc_list_backward:
+        message = message.replace(str(abc_list.index(letter) + 1), letter.lower())
+
+    return message.replace("-", "")
+
+
+def encode_a1z26(message):
+    split_message = []
+    for word in message.split(" "):
+        split_message.append(word)
+    for i in range(len(split_message)):
+        split_message[i] = list(split_message[i])
+
+    new_words = []
+    current_word = []
+    to_append = ""
+
+    for word in split_message:
+        current_word = []
+        to_append = ""
+        for letter in word:
+            if not letter.isalpha():
+                current_word.append(letter)
+            else:
+                current_word.append(abc_list.index(letter.upper()) + 1)
+
+        for i in range(len(current_word)):
+            to_append += str(current_word[i])
+            if i == len(current_word) - 1 or not (
+                isinstance(current_word[i], int) and isinstance(current_word[i + 1], int)
+            ):
+                continue
+            else:
+                to_append += "-"
+        print(to_append)
+        new_words.append(to_append)
+
+    return " ".join(new_words)
+
+
 class Cryptography(commands.Cog):
 
     @commands.group(
@@ -306,6 +347,52 @@ class Cryptography(commands.Cog):
                 f":x: Invalid algorithm. Remember that algorithm names are case-sensitive. See"
                 f" `{ctx.prefix}{ctx.invoked_with} list` for the list of available algorithms."
             )
+
+    @commands.group(
+        description="Perform operations with A1Z26, a substitution cipher. Replaces A with 1, B with 2, and so on. This"
+                    " cipher uses dashes to seperate letters.",
+        aliases=["a1"]  # Haha!
+    )
+    async def a1z26(self, ctx):
+        """Operate with the A1Z26 cipher."""
+
+        if ctx.invoked_subcommand is None:
+            await ctx.send("You must use a subcommand.")
+            await ctx.send_help(ctx.command)
+
+    @a1z26.command(name="encode", aliases=["e"])
+    async def a1z26_encode(self, ctx, *, message):
+        """Encode in A1Z26."""
+
+        encoded = encode_a1z26(message)
+        to_send = f"```\n{encoded}```"
+
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(encoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(encoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
+        else:
+            await ctx.send(to_send)
+
+    @a1z26.command(name="decode", aliases=["d"])
+    async def a1z26_decode(self, ctx, *, message):
+        """Decode in A1Z26."""
+
+        decoded = decode_a1z26(message)
+        to_send = f"```\n{decoded}```"
+
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(decoded)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(decoded.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
+        else:
+            await ctx.send(to_send)
 
     @commands.command(aliases=["e"])
     async def encode(self, ctx, alg, *, data=None):
