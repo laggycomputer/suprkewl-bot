@@ -331,7 +331,8 @@ L
             "{}, You're so ugly, when your mom dropped you off at school she got a fine for littering.",
             "{}, You're so fat the only letters of the alphabet you know are KFC.",
             "I don't forget a single face, but in your case, {}, I'll make an exception.",
-            "Yo {}, looks like you traded in your neck for an extra chin..."
+            "Yo {}, looks like you traded in your neck for an extra chin...",
+            "Oh no, look at you, {}! Was anybody else hurt in that accident?"
         ]
 
         await ctx.send(random.choice(roasts).replace("{}", target.display_name))
