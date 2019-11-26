@@ -410,7 +410,7 @@ class suprkewl_bot(commands.Bot):
             " even number?",
             "Man cannot live by bread alone; he must have peanut butter.",
             "May all your bacon burn.",
-            "Regex by trial and error: Combining dots slashes and dots until a thing happens."
+            "Regex by trial and error: Combining dots slashes and dots until a thing happens.",
             "The center of a donut is 100% fat free.",
             "The word utopia is derived from the Latin 'Utopia', meaning 'nothing, impossible'.",
             "There are two kinds of people at a party; the ones that want to stay and those who want to leave. The"
