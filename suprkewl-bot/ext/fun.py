@@ -309,32 +309,31 @@ L
         """Roast someone. ⌐■_■"""
 
         roasts = [
-            f"You spend your time on this thingy {target.display_name}? I bet you don't even know what it does. By the"
-            f" way,"
-            f" can you even read this?",
-            f"{target.display_name}, I fart to make you smell better.",
-            f"{target.display_name}, Your parents hated you so much your bath toys were an iron and a toaster."
-            f" ~~go commit toaster bath~~",
-            f"{target.display_name}, Why don't you check eBay and see if they have a life for sale?",
-            f"{target.display_name}, You bring everyone a lot of joy, when you leave the room.",
-            f"{target.display_name}, you're as bright as a black hole, and twice as dense.",
-            f"{target.display_name}, what'll you do to get a face after that baboon wants his face back?",
-            f"{target.display_name}, I don't exactly hate you, but if you were on fire and I had water, I'd drink the"
-            f" water.",
+            "You spend your time on this thingy {}? I bet you don't even know what it does. By the"
+            " way,"
+            " can you even read this?",
+            "{}, I fart to make you smell better.",
+            "{}, Your parents hated you so much your bath toys were an iron and a toaster."
+            " ~~go commit toaster bath~~",
+            "{}, Why don't you check eBay and see if they have a life for sale?",
+            "{}, You bring everyone a lot of joy, when you leave the room.",
+            "{}, you're as bright as a black hole, and twice as dense.",
+            "{}, what'll you do to get a face after that baboon wants his face back?",
+            "{}, I don't exactly hate you, but if you were on fire and I had water, I'd drink the"
+            " water.",
             "They say people look like their pets. I'm assuming you have an elephant?",
-            f"{target.display_name}, I'll never forget the first time we met, although I'll keep trying.",
-            f"{target.display_name}, I don't I can think of an insult bad enough for you.",
-            f"{target.display_name}, There are more calories in your stomach than in the local supermarket!",
-            f"{target.display_name}, You shouldn't play hide and seek, no one would look for you.",
-            f"{target.display_name}, If I gave you a penny for your thoughts, I'd get change.",
-            f"{target.display_name}, So you've changed your mind, does this one work any better?",
-            f"{target.display_name}, You're so ugly, when your mom dropped you off at school she got a fine for"
-            f" littering.",
-            f"{target.display_name}, You're so fat the only letters of the alphabet you know are KFC.",
-            f"I don't forget a single face, but in your case, {target.display_name}, I'll make an exception."
+            "{}, I'll never forget the first time we met, although I'll keep trying.",
+            "{}, I don't I can think of an insult bad enough for you.",
+            "{}, There are more calories in your stomach than in the local supermarket!",
+            "{}, You shouldn't play hide and seek, no one would look for you.",
+            "{}, If I gave you a penny for your thoughts, I'd get change.",
+            "{}, So you've changed your mind, does this one work any better?",
+            "{}, You're so ugly, when your mom dropped you off at school she got a fine for littering.",
+            "{}, You're so fat the only letters of the alphabet you know are KFC.",
+            "I don't forget a single face, but in your case, {}, I'll make an exception."
         ]
 
-        await ctx.send(random.choice(roasts))
+        await ctx.send(random.choice(roasts).replace("{}", target.display_name))
 
     @commands.command(aliases=["card"], description="Draw from a standard, 52-card deck, no jokers.")
     async def draw(self, ctx):
