@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import io
 import traceback
 
+import aiohttp
 import aioredis
 import discord
 from discord.ext import commands
@@ -116,7 +117,13 @@ class Admin(commands.Cog):
                     msgs.append("Artist(s): " + ", ".join(m.activity.artists) + " | Name: " + m.activity.title
                                 + " | Username: " + str(m))
 
-        await ctx.send(await ctx.bot.post_to_hastebin("\n".join(msgs)))
+        ret = "\n".join(msgs)
+        try:
+            hastebin_url = await ctx.bot.post_to_hastebin(ret)
+            await ctx.send(hastebin_url)
+        except (aiohttp.ContentTypeError, AssertionError):
+            fp = discord.File(io.BytesIO(ret.encode("utf-8")), "out.txt")
+            await ctx.send(file=fp)
 
 
 def setup(bot):
