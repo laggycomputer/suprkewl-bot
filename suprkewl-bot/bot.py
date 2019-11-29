@@ -60,6 +60,7 @@ class suprkewl_bot(commands.Bot):
             "ext.help",
             "ext.img",
             "ext.info",
+            "ext.markov",
             "ext.mod",
             "ext.stats",
             "ext.text",
