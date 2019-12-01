@@ -125,6 +125,15 @@ class Admin(commands.Cog):
             fp = discord.File(io.BytesIO(ret.encode("utf-8")), "out.txt")
             await ctx.send(file=fp)
 
+    @commands.command()
+    @commands.guild_only()
+    @commands.bot_has_permissions(change_nickname=True)
+    async def nick(self, ctx, *, name):
+        """Change my nickname on this server."""
+
+        await ctx.guild.me.edit(nick=name)
+        await ctx.send(":ok_hand:")
+
 
 def setup(bot):
     bot.add_cog(Admin())
