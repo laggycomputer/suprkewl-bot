@@ -31,3 +31,6 @@ rtex_server = "rtex.probablyaweb.site"
 
 # Discord Bot List token - see top.gg/api/docs
 dbl_token = ""
+
+# Place the IDs of other users you'd like the bot to regard as owners (if needed) as integers.
+extra_owners = []
