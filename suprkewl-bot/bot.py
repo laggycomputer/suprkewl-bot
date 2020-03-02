@@ -381,6 +381,7 @@ class suprkewl_bot(commands.Bot):
             await self.http2.close()
             await asyncio.sleep(0)
 
+        self.redis.disconnect()  # yes this not a coro
         await super().logout()
 
     async def post_to_hastebin(self, data):
