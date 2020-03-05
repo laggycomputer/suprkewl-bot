@@ -23,6 +23,9 @@ redis_port = "6379"
 # CHANGE IT
 redis_password = "testing"
 
+# Path to the SQLite 3 DB you wish to use.
+db_path = "skbot.db"
+
 # Travis CI Config.
 travis_token = ""
 

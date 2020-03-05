@@ -24,6 +24,7 @@ import textwrap
 import traceback
 
 import aiohttp
+import aiosqlite
 import discord
 from discord.ext import commands
 from ext.utils import permissions_converter, linecount, Context
@@ -46,6 +47,7 @@ class suprkewl_bot(commands.Bot):
 
         self.redis = None
         self.http2 = None
+        self.db = None
 
         self.ps_task = self.loop.create_task(self.playingstatus())
         self.dbl_task = self.loop.create_task(self.dbl_guild_update())
@@ -85,6 +87,8 @@ class suprkewl_bot(commands.Bot):
             await self.redis.connect()
         if not self.http2:
             self.http2 = aiohttp.ClientSession()
+        if not self.db:
+            self.db = await aiosqlite.connect(config.db_path)
 
         print(f"Logged in as {self.user.name} (UID {self.user.id})")
         print("-" * 8)
@@ -380,8 +384,8 @@ class suprkewl_bot(commands.Bot):
         if not self.http2.closed:
             await self.http2.close()
             await asyncio.sleep(0)
-
         self.redis.disconnect()  # yes this not a coro
+        await self.db.close()
         await super().logout()
 
     async def post_to_hastebin(self, data):

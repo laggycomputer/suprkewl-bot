@@ -6,3 +6,4 @@
 .cache/
 /suprkewl-bot/config.py
 !/suprkewl-bot/config.py.example
+skbot.db

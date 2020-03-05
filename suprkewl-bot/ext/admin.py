@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import io
+import sqlite3
 import traceback
 
 import aiohttp
@@ -25,6 +26,8 @@ import aioredis
 import discord
 from discord.ext import commands
 from jishaku.codeblocks import codeblock_converter
+
+from .utils import TabularData
 
 
 class Admin(commands.Cog):
@@ -133,6 +136,35 @@ class Admin(commands.Cog):
 
         await ctx.guild.me.edit(nick=name)
         await ctx.send(":ok_hand:")
+
+    @commands.command()
+    async def sql(self, ctx, *, query):
+        if query.startswith("```") and query.endswith("```"):
+            query = "\n".join(query.split("\n")[1:])
+        else:
+            query.strip("` \n")
+
+        try:
+            cur = await ctx.bot.db.execute(query)
+        except sqlite3.DatabaseError:
+            return await ctx.send(f'```py\n{traceback.format_exc()}\n```')
+
+        await ctx.bot.db.commit()
+        results = await cur.fetchall()
+
+        if not len(results):
+            return await ctx.send(":white_check_mark:")
+
+        table = TabularData()
+        table.set_columns([c[0] for c in cur.description])
+        table.add_rows(results)
+        ret = table.render()
+        to_send = f"```{ret}```"
+
+        if len(to_send) > 2000:
+            await ctx.send("Too many results! " + await ctx.bot.post_to_hastebin(ret))
+        else:
+            await ctx.send(to_send)
 
 
 def setup(bot):
