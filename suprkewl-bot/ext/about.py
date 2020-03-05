@@ -23,6 +23,7 @@ import itertools
 import os
 import pkg_resources
 import platform
+import sys
 import time
 
 import discord
@@ -237,7 +238,7 @@ class About(commands.Cog):
                 value=platform.platform(aliased=True)
             )
             emb.add_field(
-                name="Python Version", value=f"Python {platform.python_branch()},"
+                name="Python Version", value=f"Python {'.'.join(map(str, sys.version_info[:3]))}-{sys.version_info[3]},"
                 f" build date {platform.python_build()[1]}"
             )
             emb.add_field(
@@ -248,7 +249,8 @@ class About(commands.Cog):
                 name="Jishaku version",
                 value=pkg_resources.get_distribution("jishaku").version
             )
-            emb.add_field(name="Processor name", value=platform.processor())
+            if platform.processor():
+                emb.add_field(name="Processor name", value=platform.processor())
             emb.add_field(
                 name="Current server count",
                 value=str(len(ctx.bot.guilds))
