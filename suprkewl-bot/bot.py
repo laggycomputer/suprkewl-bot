@@ -220,11 +220,12 @@ class suprkewl_bot(commands.Bot):
                 " quotes.")
 
         elif isinstance(error, bad_arg_errors):
-            await ctx.send(":x: Your argument(s) could not be converted.")
+            await ctx.send(":x: Your argument(s) could not be converted. If you are looking for a channel or message,"
+                           "please ensure that I have permission to see that channel or message.")
 
         elif isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(f"`{error.param.name}` is a missing required argument.")
-            await ctx.send_help(ctx.command)  # Hey shineydev
+            await ctx.send_help(ctx.command)
 
         elif isinstance(error, commands.DisabledCommand):
             emb = ctx.default_embed

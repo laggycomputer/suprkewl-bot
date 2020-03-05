@@ -137,6 +137,28 @@ class Admin(commands.Cog):
         await ctx.guild.me.edit(nick=name)
         await ctx.send(":ok_hand:")
 
+    @commands.command(aliases=["sup"])
+    async def suppress(self, ctx, *, msg: discord.Message):
+        """Suppress embeds on a message. Either the message must be owned by the bot or the bot has Manage Messages in
+        that channel."""
+
+        try:
+            await msg.edit(suppress=True)
+            return await ctx.send(":white_check_mark:")
+        except discord.HTTPException:
+            await ctx.send(":x: Permission denied or guild/channel/group/message was deleted.")
+
+    @commands.command(aliases=["usup"])
+    async def unsuppress(self, ctx, *, msg: discord.Message):
+        """Unsuppress embeds on a message. Either the message must be owned by the bot or the bot has Manage Messages in
+        that channel."""
+
+        try:
+            await msg.edit(suppress=False)
+            return await ctx.send(":ok_hand:")
+        except discord.HTTPException:
+            await ctx.send(":bangbang: Permission denied or guild/channel/group/message was deleted.")
+
     @commands.command()
     async def sql(self, ctx, *, query):
         if query.startswith("```") and query.endswith("```"):
