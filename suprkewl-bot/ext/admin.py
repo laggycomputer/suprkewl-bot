@@ -128,7 +128,6 @@ class Admin(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(change_nickname=True)
-    @commands.has_permissions(manage_nicknames=True)
     async def nick(self, ctx, *, name):
         """Change my nickname on this server."""
 
