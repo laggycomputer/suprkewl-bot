@@ -130,11 +130,12 @@ class suprkewl_bot(commands.Bot):
 
                         await message.channel.send(embed=emb, file=fp)
 
-                    owner = (await self.application_info()).owner
-                    m1 = f"<@!{owner.id}>"
-                    m2 = f"<@{owner.id}>"
-                    if (message.content.startswith(m1) or message.content.startswith(m2)) and message.author != owner:
-                        await message.channel.send("<:angryping:564532599918297117>")
+                    for m in message.mentions:
+                        if await self.is_owner(m) and not await self.is_owner(message.author):
+                            try:
+                                await message.channel.send("<:angryping:564532599918297117>")
+                            except discord.HTTPException:
+                                pass
 
                     await self.process_commands(message)
 
