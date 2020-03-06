@@ -8,7 +8,7 @@
 <a href="https://top.gg/bot/408869071946514452"><img src="https://top.gg/api/widget/408869071946514452.png"></a>
 </p>
 
-An open-sourced Discord bot, written with `discord.py==1.2.4`. 
+An open-sourced Discord bot, written with `discord.py==1.3.2`. 
 
 If you want to host this bot:
 
