@@ -7,3 +7,4 @@
 /suprkewl-bot/config.py
 !/suprkewl-bot/config.py.example
 skbot.db
+skbot.db-journal
