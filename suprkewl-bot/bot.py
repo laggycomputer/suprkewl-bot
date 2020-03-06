@@ -363,7 +363,7 @@ class suprkewl_bot(commands.Bot):
             "helping the community",
             "I don't game...",
             "idling",
-            "living under the GPL3!",
+            "living under the AGPL3!",
             "mafia",
             "meme-scrolling",
             "ping and run",
