@@ -78,6 +78,7 @@ class Settings(commands.Cog):
         """Reset the guild prefix."""
 
         await ctx.bot.db.execute(f"DELETE FROM guilds WHERE id={ctx.guild.id};")
+        await ctx.bot.db.commit()
         await ctx.send(
             f":ok_hand: The guild prefix has been reset! You can set it again with `{ctx.prefix}prefix <prefix>`."
         )
