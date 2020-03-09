@@ -233,7 +233,6 @@ TAKE THAT: ( ͡0 ͜ʖ ͡ 0)----@-
 The generic tf2 pyro lenny:( ͡w ͜+ ͡m1)
 2long4u:( ͡0 ͜ʖ ͡ 0)
 Confused:( ͠° ͟ʖ ͡°)
-Jew Lenny: (͡ ͡° ͜ つ ͡͡°)
 Strong:ᕦ( ͡° ͜ʖ ͡°)ᕤ
 The Mino Lenny: ˙͜>˙
 Nazi Lenny: ( ͡卐 ͜ʖ ͡卐)
@@ -257,9 +256,6 @@ Imposter:{ ͡• ͜ʖ ͡•}
 Voldemort:( ͡° ͜V ͡°)
 Happy:( ͡^ ͜ʖ ͡^)
 Satisfied:( ‾ʖ̫‾)
-Sensei dong:( ͡°╭͜ʖ╮͡° )
-Sensei doing Dong dong woo:ᕦ( ͡°╭͜ʖ╮͡° )ᕤ
-Donger bill:[̲̅$̲̅(̲̅ ͡° ͜ʖ ͡°̲̅)̲̅$̲̅]
 Spider lenny://( ͡°͡° ͜ʖ ͡°͡°)/\
 The noseless lenny:( ͡° ͜ ͡°)
 Cool lenny: (⌐■_■)
@@ -267,7 +263,6 @@ Cheeky Lenny:: (͡o‿O͡)
 Arrow Lenny: ⤜( ͠° ͜ʖ °)⤏
 Table Lenny: (╯°□°)╯︵ ┻━┻
 cONFUSED lenny乁( ⁰͡ Ĺ̯ ⁰͡ ) ㄏ
-nazi lennys: ( ͡° ͜ʖ ͡°)/ ( ͡° ͜ʖ ͡°)/ ( ͡° ͜ʖ ͡°)/ ( ͡° ͜ʖ ͡°)/ 卐卐卐
 Oh hay: (◕ ◡ ◕)
 Manly Lenny: ᕦ( ͡͡~͜ʖ ͡° )ᕤ
 Put ur dongers up or I'll shoot:(ง ͡° ͜ʖ ͡°)=/̵͇̿/'̿'̿̿̿ ̿ ̿̿
