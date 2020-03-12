@@ -51,7 +51,7 @@ class Moderation(commands.Cog):
 
         await ctx.send(
             f"<:suprKewl:508479728613851136> Done! Deleted {deleted} messages, failed to delete {errorcnt} messages."
-            f" See `{ctx.prefix}{ctx.invoked_with}` info for more."
+            f" See `{ctx.prefix}{ctx.invoked_with} info` for more."
         )
 
     @clear.command(name="info")
