@@ -628,11 +628,12 @@ class Image_(commands.Cog, name="Image",
                 return
 
             fp = await _blur(url)
-            fp = discord.File(fp, "blurred.gif")
+            fp = discord.File(fp, "blurred.gif", spoiler=True)  # This really messes with your eyes
 
             t = round(time.time() - t, 3)
 
-        await ctx.send(f":white_check_mark: That took {t} seconds.", file=fp)
+        await ctx.send(f":white_check_mark: That took {t} seconds.\n Warning - staring at this for too long might make "
+                       "your eyes hurt...", file=fp)
 
     @commands.command(
         aliases=["ts", "tf"],
