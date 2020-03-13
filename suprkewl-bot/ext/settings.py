@@ -31,7 +31,7 @@ class Settings(commands.Cog):
         if prefix is None:
             if ctx.invoked_subcommand is None:
                 results = await (
-                    await ctx.bot.db.execute("SELECT prefix FROM guilds WHERE id == %s;" % ctx.guild.id)
+                    await ctx.bot.db.execute("SELECT prefix FROM guilds WHERE id == ?;", (ctx.guild.id,))
                 ).fetchall()
                 if not results:
                     await ctx.send("This server has no custom prefix set. You can set one with"
@@ -47,7 +47,7 @@ class Settings(commands.Cog):
                     return await ctx.send(":x: The prefix cannot be longer than 10 characters!")
 
                 results = await (
-                    await ctx.bot.db.execute("SELECT prefix FROM guilds WHERE id == %s;" % ctx.guild.id)
+                    await ctx.bot.db.execute("SELECT prefix FROM guilds WHERE id == ?;", (ctx.guild.id,))
                 ).fetchall()
                 if not results:
                     # The row does not exist, create it instead of update it.
@@ -77,7 +77,7 @@ class Settings(commands.Cog):
     async def clearprefix(self, ctx):
         """Reset the guild prefix."""
 
-        await ctx.bot.db.execute(f"DELETE FROM guilds WHERE id={ctx.guild.id};")
+        await ctx.bot.db.execute(f"DELETE FROM guilds WHERE id=?;", (ctx.guild.id,))
         await ctx.bot.db.commit()
         await ctx.send(
             f":ok_hand: The guild prefix has been reset! You can set it again with `{ctx.prefix}prefix <prefix>`."
