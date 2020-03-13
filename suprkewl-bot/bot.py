@@ -119,8 +119,8 @@ class suprkewl_bot(commands.Bot):
                             "assets/eyes.png",
                         ]
 
-                        resp = await (
-                            await self.db.execute(f"SELECT prefix FROM guilds WHERE id={message.guild.id};")
+                        resp = await(
+                            await self.db.execute(f"SELECT prefix FROM guilds WHERE id=?;", (message.guild.id,))
                         ).fetchall()
 
                         if resp:
