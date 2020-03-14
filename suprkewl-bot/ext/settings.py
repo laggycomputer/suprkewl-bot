@@ -46,19 +46,11 @@ class Settings(commands.Cog):
                 if len(prefix) > 10:
                     return await ctx.send(":x: The prefix cannot be longer than 10 characters!")
 
-                results = await (
-                    await ctx.bot.db.execute("SELECT prefix FROM guilds WHERE id == ?;", (ctx.guild.id,))
-                ).fetchall()
-                if not results:
-                    # The row does not exist, create it instead of update it.
-                    query = f"INSERT INTO guilds (id, prefix) VALUES ({ctx.guild.id}, ?);"
-                    await ctx.bot.db.execute(query, (prefix,))
-                    await ctx.bot.db.commit()
-                else:
-                    # Since it exists already, update the row instead of creating it.
-                    query = f"UPDATE guilds SET prefix=? WHERE id={ctx.guild.id};"
-                    await ctx.bot.db.execute(query, (prefix,))
-                    await ctx.bot.db.commit()
+                await ctx.bot.db.execute(
+                    f"INSERT INTO GUILDS (id, prefix) VALUES ({ctx.guild.id}, ?) ON CONFLICT (id) DO UPDATE SET "
+                    f"prefix='?' WHERE id={ctx.guild.id};", (prefix,)
+                )
+                await ctx.bot.db.commit()
 
                 await ctx.send(f":ok_hand: The prefix is now `{prefix}`.")
             else:  # Emulate the error handling.
