@@ -26,12 +26,13 @@ import os
 import random
 import re
 import typing
+from urllib.parse import quote as urlquote
 
 import discord
 from discord.ext import commands
 import gtts
 
-from .utils import async_executor, human_timedelta
+from .utils import async_executor, escape_codeblocks, format_json, human_timedelta
 import config
 
 
@@ -268,6 +269,88 @@ class Utilities(commands.Cog):
             f"This object with ID {id} was created {delta}, on {human_readable} in {dt.year}. That's Unix time"
             f" {unix_time}.\n\nP.S. Looking for the formula? See `{ctx.prefix}source {ctx.invoked_with}`."
         )
+
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.group(
+        description="Gives the data under a message, channel, or member in a JSON format, as received from the"
+                    " Discord API."
+    )
+    async def raw(self, ctx):
+        """Returns a dict version of some objects."""
+
+        if ctx.invoked_subcommand is None:
+            await ctx.send(":x: Please provide a valid subcommand!")
+            await ctx.send_help(ctx.command)
+
+    @raw.command(name="message", aliases=["msg"])
+    async def raw_message(self, ctx, *, message: discord.Message):
+        """Return a message as a dict."""
+
+        raw = await ctx.bot.http.get_message(message.channel.id, message.id)
+
+        try:
+            await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```")
+        except discord.HTTPException:
+            fp = io.BytesIO(format_json(raw))
+            fp = discord.File(fp, "raw.txt")
+
+            await ctx.send("Your output was placed in the attached file:", file=fp)
+
+    @raw.command(name="member", aliases=["user"])
+    async def raw_member(self, ctx, *, user: discord.User = None):
+        """Return a member as a dict."""
+        if user is None:
+            user = ctx.author
+
+        route = discord.http.Route("GET", f"/users/{user.id}")
+        raw = await ctx.bot.http.request(route)
+
+        await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```")
+
+    @raw.command(name="channel")
+    async def raw_channel(
+            self, ctx, *, channel: typing.Union[
+                discord.TextChannel, discord.VoiceChannel, discord.CategoryChannel
+            ] = None
+    ):
+        """Return a channel as a dict."""
+
+        if channel is None:
+            channel = ctx.channel
+
+        route = discord.http.Route("GET", f"/channels/{channel.id}")
+        try:
+            raw = await ctx.bot.http.request(route)
+        except discord.Forbidden:
+            return await ctx.send(":x: I can't see info on that channel!")
+
+        await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```")
+
+    # Thanks to Takaru, PendragonLore/TakaruBot
+    @commands.command()
+    async def pypi(self, ctx, *, name):
+        data = await (await ctx.bot.http2.get(f"https://pypi.org/pypi/{urlquote(name, safe='')}/json")).json()
+
+        embed = discord.Embed(
+            title=data["info"]["name"],
+            url=data["info"]["package_url"],
+            color=discord.Color.dark_blue()
+        )
+        embed.set_author(name=data["info"]["author"])
+        embed.description = data["info"]["summary"] or "No short description."
+        embed.add_field(
+            name="Classifiers",
+            value="\n".join(data["info"]["classifiers"]) or "No classifiers.")
+        embed.set_footer(
+            text=f"Latest: {data['info']['version']} |"
+                 f" Keywords: {data['info']['keywords'] or 'No keywords.'}"
+        )
+        fp = discord.File("assets/pypi.png", "image.png")
+        embed.set_thumbnail(
+            url="attachment://image.png"
+        )
+
+        await ctx.send(embed=embed, file=fp)
 
 
 def setup(bot):
