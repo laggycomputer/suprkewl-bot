@@ -128,8 +128,9 @@ class Embedinator:
     async def cleanup(self):
         try:
             await self.message.edit(content=":white_check_mark:", embed=None)
-        except discord.NotFound:
-            traceback.print_exc()
+            await self.message.clear_reactions()
+        except discord.HTTPException:
+            pass
 
         self.active = False
 
