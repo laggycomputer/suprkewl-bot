@@ -352,6 +352,42 @@ class Utilities(commands.Cog):
 
         await ctx.send(embed=embed, file=fp)
 
+    @commands.command(description="Snipe a deleted message", aliases=["sniperino"])
+    async def snipe(self, ctx, channel: discord.TextChannel = None):
+        channel = channel or ctx.channel
+        sniped = await ctx.bot.db.execute(
+            "SELECT * FROM snipes WHERE channel_id=? AND guild_id=?",
+            (channel.id,
+             ctx.guild.id)
+        )
+        if not await sniped.fetchall():
+            return await ctx.send("Nothing to snipe... yet.")
+        if channel.is_nsfw() is True and ctx.channel.is_nsfw() is False:
+            return await ctx.send("You cannot snipe from a normal channel into an NSFW one.")
+
+        desc = [c_name[0] for c_name in sniped.description]
+        sniped = (await sniped.fetchall())[0]
+        guild = ctx.bot.get_guild(sniped[desc.index("guild_id")])
+        user = ctx.bot.get_user(sniped[desc.index("user_id")])
+        chnl = discord.utils.get(guild.text_channels, id=sniped[desc.index("channel_id")])
+        message_id = sniped[desc.index("message_id")]
+        msg_content = sniped[desc.index("message")]
+        foot = f"Message ID {message_id} | Channel ID {chnl.id} | Guild ID {guild.id}"
+        if sniped[desc.index("msg_type")] == 1:
+            e = discord.Embed(
+                color=ctx.bot.embed_color, description="The image may not be visible"
+            )
+            e.set_author(name=f"{user.name} sent in {chnl.name}")
+            e.set_image(url=msg_content)
+            e.set_footer(text=foot)
+            await ctx.send(embed=e)
+        else:
+            e = ctx.default_embed
+            e.description = msg_content
+            e.set_author(name=f"{user.name} said in #{chnl.name}")
+            e.set_footer(text=foot)
+            await ctx.send(embed=e)
+
 
 def setup(bot):
     bot.add_cog(Utilities())

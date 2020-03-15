@@ -164,6 +164,25 @@ class suprkewl_bot(commands.Bot):
     async def on_command_completion(self, ctx):
         self.commands_used += 1
 
+    async def on_message_delete(self, message):
+        content = message.content
+        message_type = 0
+        if message.attachments:
+            content = message.attachments[0].proxy_url
+            message_type = 1
+        if message.embeds:
+            content = message.embeds[0].description
+            message_type = 2
+
+        await self.db.execute(
+            "INSERT INTO snipes (guild_id, user_id, channel_id, message_id, message, msg_type) "
+            "VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT (channel_id) DO UPDATE SET user_id = ?, message_id = ?, "
+            "message = ?, msg_type = ?;",
+            (message.guild.id, message.author.id, message.channel.id, message.id, content, message_type,
+             message.author.id, message.id, content, message_type)
+        )
+        await self.db.commit()
+
     async def on_raw_message_edit(self, payload):
         if not self.is_ready():
             return
