@@ -119,22 +119,17 @@ class suprkewl_bot(commands.Bot):
 
             is_blacklisted, mod_id = await self.is_blacklisted(message.author.id)
             if starts_with_prefix and is_blacklisted:
-                if message.guild:
-                    try:
-                        message.channel.send(
-                            f"You are not allowed to use this bot. You were blacklisted by {mod_id}."
-                        )
-                    except discord.Forbidden:
-                        await message.author.send(
-                            f"You are not allowed to use this bot. You were blacklisted by {mod_id}."
-                        )
-                else:
+                try:
+                    await message.channel.send(
+                        f"You are not allowed to use this bot. You were blacklisted by {mod_id}."
+                    )
+                except discord.Forbidden:
                     try:
                         await message.author.send(
                             f"You are not allowed to use this bot. You were blacklisted by {mod_id}."
                         )
-                    except discord.Forbidden:
-                        pass
+                    except:
+                        pass  # :(
 
                 return
 
