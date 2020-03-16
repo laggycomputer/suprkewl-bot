@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import io
 import sqlite3
 import traceback
+import typing
 
 import aiohttp
 import aioredis
@@ -187,6 +188,29 @@ class Owner(commands.Cog):
             await ctx.send("Too many results! " + await ctx.bot.post_to_hastebin(ret))
         else:
             await ctx.send(to_send)
+
+    @commands.command(aliases=["blist"])
+    async def blacklist(self, ctx, *, target: typing.Union[discord.Member, discord.User]):
+        """Blacklist a user from using this bot."""
+
+        if await ctx.bot.is_owner(target):
+            return await ctx.send("You cannot blacklist an owner.")
+
+        await ctx.bot.db.execute(
+            "INSERT INTO blacklist VALUES (user_id, mod_id) VALUES (?, ?) ON CONFLICT (mod_id) DO UPDATE SET "
+            "mod_id = ? WHERE user_id == ?;",
+            (target.id, ctx.author.id, ctx.author.id, target.id)
+        )
+        await ctx.bot.db.commit()
+        await ctx.send(f"{target} was successfully blacklisted.")
+
+    @commands.command(aliases=["ublist"])
+    async def unblacklist(self, ctx, *, target: typing.Union[discord.Member, discord.User]):
+        """Unblacklist a user from using this bot."""
+
+        await ctx.bot.db.execute("DELETE FROM blacklist WHERE user_id == ?;", (target.id,))
+        await ctx.bot.db.commit()
+        await ctx.send(f"{target} was successfully removed from the blacklist.")
 
 
 def setup(bot):
