@@ -353,27 +353,29 @@ class Utilities(commands.Cog):
         await ctx.send(embed=embed, file=fp)
 
     @commands.command(description="Snipe a deleted message", aliases=["sniperino"])
-    async def snipe(self, ctx, channel: discord.TextChannel = None):
+    async def snipe(self, ctx, *, channel: discord.TextChannel = None):
         channel = channel or ctx.channel
         sniped = await ctx.bot.db.execute(
-            "SELECT * FROM snipes WHERE channel_id=? AND guild_id=?",
+            "SELECT * FROM snipes WHERE channel_id=? AND guild_id=?;",
             (channel.id,
              ctx.guild.id)
         )
-        if not await sniped.fetchall():
+        fetched = (await sniped.fetchall())
+        if not fetched:
             return await ctx.send("Nothing to snipe... yet.")
         if channel.is_nsfw() is True and ctx.channel.is_nsfw() is False:
             return await ctx.send("You cannot snipe from a normal channel into an NSFW one.")
 
+        fetched = fetched[0]
+
         desc = [c_name[0] for c_name in sniped.description]
-        sniped = (await sniped.fetchall())[0]
-        guild = ctx.bot.get_guild(sniped[desc.index("guild_id")])
-        user = ctx.bot.get_user(sniped[desc.index("user_id")])
-        chnl = discord.utils.get(guild.text_channels, id=sniped[desc.index("channel_id")])
-        message_id = sniped[desc.index("message_id")]
-        msg_content = sniped[desc.index("message")]
+        guild = ctx.bot.get_guild(fetched[desc.index("guild_id")])
+        user = ctx.bot.get_user(fetched[desc.index("user_id")])
+        chnl = discord.utils.get(guild.text_channels, id=fetched[desc.index("channel_id")])
+        message_id = fetched[desc.index("message_id")]
+        msg_content = fetched[desc.index("message")]
         foot = f"Message ID {message_id} | Channel ID {chnl.id} | Guild ID {guild.id}"
-        if sniped[desc.index("msg_type")] == 1:
+        if fetched[desc.index("msg_type")] == 1:
             e = discord.Embed(
                 color=ctx.bot.embed_color, description="The image may not be visible"
             )
