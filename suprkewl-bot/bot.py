@@ -153,7 +153,14 @@ class suprkewl_bot(commands.Bot):
                     await self.process_commands(message)
 
                 else:
-                    if message.content.startswith("s!"):
+                    resp = await(
+                        await self.db.execute(f"SELECT prefix FROM guilds WHERE id == ?;", (message.guild.id,))
+                    ).fetchall()
+                    if resp:
+                        starts_with_cust = message.content.startswith(resp[0][0])
+                    else:
+                        starts_with_cust = False
+                    if message.content.startswith("s!") or starts_with_cust:
                         try:
                             await message.author.send(":x: I can't send messages there! Perhaps try again elsewhere?")
                         except discord.Forbidden:
