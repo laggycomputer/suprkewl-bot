@@ -205,7 +205,7 @@ class About(commands.Cog):
         emb = ctx.default_embed
         emb.title = "Bot Stats"
         emb.add_field(name="Line count", value=linecount())
-        cmds_used = ctx.bot.commands_used
+        cmds_used = ctx.bot.commands_used + 1  # + this one
         msgs_seen = ctx.bot.messages_seen
         guilds = len(ctx.bot.guilds)
         all_members = len(set(ctx.bot.get_all_members()))
