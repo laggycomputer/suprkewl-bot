@@ -119,7 +119,7 @@ class suprkewl_bot(commands.Bot):
                         ]
 
                         resp = await(
-                            await self.db.execute(f"SELECT prefix FROM guilds WHERE id=?;", (message.guild.id,))
+                            await self.db.execute(f"SELECT prefix FROM guilds WHERE id == ?;", (message.guild.id,))
                         ).fetchall()
 
                         if resp:
@@ -464,7 +464,7 @@ class suprkewl_bot(commands.Bot):
 async def get_pre(bot, message):
     pre = ["s!"]
     resp = await(
-        await bot.db.execute(f"SELECT prefix FROM guilds WHERE id=?;", (message.guild.id,))
+        await bot.db.execute(f"SELECT prefix FROM guilds WHERE id == ?;", (message.guild.id,))
     ).fetchall()
 
     if resp:
