@@ -32,13 +32,13 @@ class Settings(commands.Cog):
             if ctx.invoked_subcommand is None:
                 results = await (
                     await ctx.bot.db.execute("SELECT prefix FROM guilds WHERE id == ?;", (ctx.guild.id,))
-                ).fetchall()
+                ).fetchone()
                 if not results:
                     await ctx.send("This server has no custom prefix set. You can set one with"
                                    f" `{ctx.prefix}prefix <prefix>`.")
                 else:
                     await ctx.send(
-                        f"The guild prefix is currently `{results[0][0]}`. You can change it with"
+                        f"The guild prefix is currently `{results[0]}`. You can change it with"
                         f" `{ctx.prefix}prefix <prefix>`."
                     )
         else:

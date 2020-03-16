@@ -360,13 +360,11 @@ class Utilities(commands.Cog):
             (channel.id,
              ctx.guild.id)
         )
-        fetched = (await sniped.fetchall())
+        fetched = await sniped.fetchone()
         if not fetched:
             return await ctx.send("Nothing to snipe... yet.")
         if channel.is_nsfw() is True and ctx.channel.is_nsfw() is False:
             return await ctx.send("You cannot snipe from a normal channel into an NSFW one.")
-
-        fetched = fetched[0]
 
         desc = [c_name[0] for c_name in sniped.description]
         guild = ctx.bot.get_guild(fetched[desc.index("guild_id")])

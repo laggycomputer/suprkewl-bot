@@ -112,12 +112,12 @@ class suprkewl_bot(commands.Bot):
             if message.guild:
                 resp = await(
                     await self.db.execute(f"SELECT prefix FROM guilds WHERE id == ?;", (message.guild.id,))
-                ).fetchall()
+                ).fetchone()
                 if resp:
-                    starts_with_cust = message.content.startswith(resp[0][0])
+                    starts_with_cust = message.content.startswith(resp[0])
             starts_with_prefix = message.content.startswith("s!") or starts_with_cust
 
-            is_blacklisted, mod_id = await self.is_blacklisted(message.author.id)[0]
+            is_blacklisted, mod_id = await self.is_blacklisted(message.author.id)
             if starts_with_prefix and is_blacklisted:
                 if message.guild:
                     try:
@@ -150,13 +150,13 @@ class suprkewl_bot(commands.Bot):
 
                         resp = await(
                             await self.db.execute(f"SELECT prefix FROM guilds WHERE id == ?;", (message.guild.id,))
-                        ).fetchall()
+                        ).fetchone()
 
                         if resp:
                             emb = discord.Embed(
                                 color=self.embed_color,
                                 description=f":eyes: Who pinged? My prefix is `s!` and the custom server prefix is "
-                                            f"`{resp[0][0]}`. If you are in a DM with me, or you are my owner, I do "
+                                            f"`{resp[0]}`. If you are in a DM with me, or you are my owner, I do "
                                             f"not require a prefix."
                             )
                         else:
@@ -503,10 +503,10 @@ async def get_pre(bot, message):
     pre = ["s!"]
     resp = await(
         await bot.db.execute(f"SELECT prefix FROM guilds WHERE id == ?;", (message.guild.id,))
-    ).fetchall()
+    ).fetchone()
 
     if resp:
-        pre.append(resp[0][0])
+        pre.append(resp[0])
 
     is_owner = await bot.is_owner(message.author)
     if isinstance(message.channel, discord.DMChannel) or (is_owner and not bot.owner_no_prefix):
