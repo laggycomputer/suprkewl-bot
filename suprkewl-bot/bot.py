@@ -56,13 +56,13 @@ class suprkewl_bot(commands.Bot):
 
         startup_extensions = [
             "ext.about",
-            "ext.admin",
             "ext.crypto",
             "ext.fun",
             "ext.help",
             "ext.img",
             "ext.markov",
             "ext.mod",
+            "ext.owner",
             "ext.settings",
             "ext.stats",
             "ext.text",

@@ -30,7 +30,7 @@ from jishaku.codeblocks import codeblock_converter
 from .utils import TabularData
 
 
-class Admin(commands.Cog):
+class Owner(commands.Cog):
 
     async def cog_check(self, ctx):
         return await ctx.bot.is_owner(ctx.author)
@@ -190,4 +190,4 @@ class Admin(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Admin())
+    bot.add_cog(Owner())
