@@ -462,6 +462,7 @@ class suprkewl_bot(commands.Bot):
             "Did you know? If you are in a DM with me, you don't need to use a prefix.",
             "Don't run the code and no errors will appear.",
             "I am Nobody, nobody is perfect, therefore I am perfect. - Dandi Daley Mackall",
+            "I ate a clock just now - it was rather time-consuming.",
             "I dream of a better world where chickens can cross the road without having their motives called into"
             " serious question by members of another species.",
             "If plan A fails, don't worry; there are still 25 more letters in the alphabet.",
@@ -478,6 +479,7 @@ class suprkewl_bot(commands.Bot):
             "Regex by trial and error: Combining dots slashes and dots until a thing happens.",
             "The center of a donut is 100% fat free.",
             "The word utopia is derived from the Latin 'Utopia', meaning 'nothing, impossible'.",
+            "This sentence hass tree errors.",
             "There are two kinds of people at a party; the ones that want to stay and those who want to leave. The"
             " problem is they are usually married to each other.",
             "To succeed in life, you need three things; a wishbone, a backbone and a funny bone. - Reba McEntire",
