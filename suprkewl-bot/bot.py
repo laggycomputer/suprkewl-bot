@@ -128,8 +128,8 @@ class suprkewl_bot(commands.Bot):
                         await message.author.send(
                             f"You are not allowed to use this bot. You were blacklisted by {mod_id}."
                         )
-                    except:
-                        pass  # :(
+                    except discord.Forbidden:  # NOT COOL
+                        pass
 
                 return
 
