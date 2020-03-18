@@ -197,7 +197,7 @@ class Owner(commands.Cog):
             return await ctx.send("You cannot blacklist an owner.")
 
         await ctx.bot.db.execute(
-            "INSERT INTO blacklist (user_id, mod_id) VALUES (?, ?) ON CONFLICT (mod_id) DO UPDATE SET "
+            "INSERT INTO blacklist (user_id, mod_id) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET "
             "mod_id = ? WHERE user_id == ?;",
             (target.id, ctx.author.id, ctx.author.id, target.id)
         )
