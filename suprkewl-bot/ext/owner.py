@@ -110,7 +110,7 @@ class Owner(commands.Cog):
 
     @commands.command()
     async def songlist(self, ctx):
-        """Bored? List every visible Spotiy status with this command."""
+        """Bored? List every visible Spotify status with this command."""
 
         seen_ids = []
         msgs = []
