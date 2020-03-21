@@ -112,22 +112,29 @@ class Owner(commands.Cog):
     async def songlist(self, ctx):
         """Bored? List every visible Spotify status with this command."""
 
-        seen_ids = []
-        msgs = []
-        for m in ctx.bot.get_all_members():
-            if isinstance(m.activity, discord.Spotify):
-                if m.id not in seen_ids:
-                    seen_ids.append(m.id)
-                    msgs.append("Artist(s): " + ", ".join(m.activity.artists) + " | Name: " + m.activity.title
-                                + " | Username: " + str(m))
+        table = TabularData()
+        table.set_columns(("User", "Artist(s)", "Song"))
+        unique = {}
+        raw_listeners = [m for m in ctx.bot.get_all_members() if isinstance(m.activity, discord.Spotify)]
+        for listener in raw_listeners:
+            if listener.id not in list(unique.keys()):
+                unique[listener.id] = listener
 
-        ret = "\n".join(msgs)
-        try:
-            hastebin_url = await ctx.bot.post_to_hastebin(ret)
-            await ctx.send(hastebin_url)
-        except (aiohttp.ContentTypeError, AssertionError):
-            fp = discord.File(io.BytesIO(ret.encode("utf-8")), "out.txt")
-            await ctx.send(file=fp)
+        table.add_rows(
+            [(str(m), ", ".join(m.activity.artists), m.activity.title) for m in unique.values()]
+        )
+        ret = table.render()
+        to_send = f"```{ret}```"
+
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(ret)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(ret.encode("utf-8")), "out.txt")
+                await ctx.send(file=fp)
+        else:
+            await ctx.send(to_send)
 
     @commands.command()
     @commands.guild_only()
