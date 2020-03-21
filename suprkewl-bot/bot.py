@@ -277,7 +277,7 @@ class suprkewl_bot(commands.Bot):
                 " quotes.")
 
         elif isinstance(error, bad_arg_errors):
-            await ctx.send(":x: Your argument(s) could not be converted. If you are looking for a channel or message,"
+            await ctx.send(":x: Your argument(s) could not be converted. If you are looking for a channel or message, "
                            "please ensure that I have permission to see that channel or message.")
 
         elif isinstance(error, commands.MissingRequiredArgument):
