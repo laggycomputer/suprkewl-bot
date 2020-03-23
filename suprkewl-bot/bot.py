@@ -391,7 +391,7 @@ class suprkewl_bot(commands.Bot):
 
     async def playingstatus(self):
         await self.wait_until_ready()
-
+        await asyncio.sleep(3)  # Sleep such that all users are loaded
         playing_statuses = [
             " ",
             "and plotting pranks",
