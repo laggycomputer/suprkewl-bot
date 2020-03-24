@@ -76,7 +76,6 @@ class Context(commands.Context):
     @property
     def default_embed(self):
         emb = discord.Embed(color=self.bot.embed_color)
-        emb.set_thumbnail(url=self.me.avatar_url)
         emb.set_author(name=self.me.name, icon_url=self.me.avatar_url)
         emb.set_footer(text=f"{self.bot.embed_footer} Requested by {self.author}", icon_url=self.author.avatar_url)
 
