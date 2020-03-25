@@ -226,46 +226,45 @@ class Fun(commands.Cog):
         """( ͡° ͜ʖ ͡°) """
 
         msg = """**LENNY FACES**
-Regular:( ͡° ͜ʖ ͡°)
+Regular: ( ͡° ͜ʖ ͡°)
 Eyebrow Lenny: ( ͠° ͜ʖ ͡°)
 chienese lenny: （͡°͜ʖ͡°）
 TAKE THAT: ( ͡0 ͜ʖ ͡ 0)----@-
-The generic tf2 pyro lenny:( ͡w ͜+ ͡m1)
-2long4u:( ͡0 ͜ʖ ͡ 0)
-Confused:( ͠° ͟ʖ ͡°)
-Strong:ᕦ( ͡° ͜ʖ ͡°)ᕤ
+The generic tf2 pyro lenny: ( ͡w ͜+ ͡m1)
+2long4u: ( ͡0 ͜ʖ ͡ 0)
+Confused: ( ͠° ͟ʖ ͡°)
+Strong: ᕦ( ͡° ͜ʖ ͡°)ᕤ
 The Mino Lenny: ˙͜>˙
-Nazi Lenny: ( ͡卐 ͜ʖ ͡卐)
-Cat Lenny:( ͡° ᴥ ͡°)
+Cat Lenny: ( ͡° ᴥ ͡°)
 Praise the sun!: [T]/﻿
 Dorito Lenny: ( ͡V ͜ʖ ͡V )
-Wink:( ͡~ ͜ʖ ͡°)
-swiggity swootey:( ͡o ͜ʖ ͡o)
-ynneL:( ͜。 ͡ʖ ͜。)﻿
+Wink: ( ͡~ ͜ʖ ͡°)
+swiggity swootey: ( ͡o ͜ʖ ͡o)
+ynneL: ( ͜。 ͡ʖ ͜。)﻿
 Wink 2: ͡° ͜ʖ ͡ -
-I see u:( ͡͡ ° ͜ ʖ ͡ °)﻿
-Alien:( ͡ ͡° ͡° ʖ ͡° ͡°)
-U WOT M8:(ง ͠° ͟ل͜ ͡°)ง
+I see u: ( ͡͡ ° ͜ ʖ ͡ °)﻿
+Alien: ( ͡ ͡° ͡° ʖ ͡° ͡°)
+U WOT M8:( ง ͠° ͟ل͜ ͡°)ง
 Lenny Gang: ( ͡°( ͡° ͜ʖ( ͡° ͜ʖ ͡°)ʖ ͡°) ͡°)
-dErP:( ͡° ͜ʖ ͡ °)
-Kitty?:(ʖ ͜° ͜ʖ)
+dErP: ( ͡° ͜ʖ ͡ °)
+Kitty?: (ʖ ͜° ͜ʖ)
 monster lenny: ( ͜。 ͡ʖ ͡O)
-Square:[ ͡° ͜ʖ ͡°]
-Raise Your Donger:ヽ༼ຈل͜ຈ༽ﾉ
-Imposter:{ ͡• ͜ʖ ͡•}
-Voldemort:( ͡° ͜V ͡°)
-Happy:( ͡^ ͜ʖ ͡^)
-Satisfied:( ‾ʖ̫‾)
-Spider lenny://( ͡°͡° ͜ʖ ͡°͡°)/\
-The noseless lenny:( ͡° ͜ ͡°)
+Square: [ ͡° ͜ʖ ͡°]
+Raise Your Donger: ヽ༼ຈل͜ຈ༽ﾉ
+Imposter: { ͡• ͜ʖ ͡•}
+Voldemort: ( ͡° ͜V ͡°)
+Happy: ( ͡^ ͜ʖ ͡^)
+Satisfied: ( ‾ʖ̫‾)
+Spider lenny: //( ͡°͡° ͜ʖ ͡°͡°)/\
+The noseless lenny: ( ͡° ͜ ͡°)
 Cool lenny: (⌐■_■)
 Cheeky Lenny:: (͡o‿O͡)
 Arrow Lenny: ⤜( ͠° ͜ʖ °)⤏
 Table Lenny: (╯°□°)╯︵ ┻━┻
-cONFUSED lenny乁( ⁰͡ Ĺ̯ ⁰͡ ) ㄏ
+cONFUSED lenny: 乁( ⁰͡ Ĺ̯ ⁰͡ ) ㄏ
 Oh hay: (◕ ◡ ◕)
 Manly Lenny: ᕦ( ͡͡~͜ʖ ͡° )ᕤ
-Put ur dongers up or I'll shoot:(ง ͡° ͜ʖ ͡°)=/̵͇̿/'̿'̿̿̿ ̿ ̿̿
+Put ur dongers up or I'll shoot: (ง ͡° ͜ʖ ͡°)=/̵͇̿/'̿'̿̿̿ ̿ ̿̿
 Badass Lenny: ̿ ̿'̿'̵͇̿з=(⌐■ʖ■)=ε/̵͇̿/'̿̿ ̿
 """
         await ctx.send(msg)
