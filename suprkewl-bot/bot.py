@@ -459,18 +459,24 @@ class suprkewl_bot(commands.Bot):
     @property
     def embed_footer(self):
         return random.choice((
+            "Baby, do you need toilet paper? 'Cause I can be your Prince Charmin.",
+            "Baby it's COOOOVID-19 outside...",
             "Did you know? If you are in a DM with me, you don't need to use a prefix.",
             "Don't run the code and no errors will appear.",
+            "Hey babe! Can I buy- sorry- ship you a drink?",
             "I am Nobody, nobody is perfect, therefore I am perfect. - Dandi Daley Mackall",
             "I ate a clock just now - it was rather time-consuming.",
             "I dream of a better world where chickens can cross the road without having their motives called into"
             " serious question by members of another species.",
+            "If coronavirus doesn't take you out... can I?",
             "If plan A fails, don't worry; there are still 25 more letters in the alphabet.",
+            "I saw you from across the bar. Stay there."
             "If two wrongs don't make a right, try three.",
             "If you work 8 hours a day as a regular worker, you may one day be promoted to boss and work 12 hours a"
             " day.",
             "Instant gratification takes too long - Carrie Fisher",
             "Interestingly enough, Moses owned the first cloud-synced tablet.",
+            "Is that hand sanitizer in your pocket, or are you happy to stay 6 feet away from me?",
             "It's called a miracle because it doesn't happen.",
             "Just read that 4,153,237 people got married last year, not to cause any trouble but shouldn't that be an"
             " even number?",
@@ -478,13 +484,17 @@ class suprkewl_bot(commands.Bot):
             "May all your bacon burn.",
             "Regex by trial and error: Combining dots slashes and dots until a thing happens.",
             "The center of a donut is 100% fat free.",
+            "Since all the public libraries are closed, I'm checking you out instead.",
             "The word utopia is derived from the Latin 'Utopia', meaning 'nothing, impossible'.",
             "This sentence hass tree errors.",
             "There are two kinds of people at a party; the ones that want to stay and those who want to leave. The"
             " problem is they are usually married to each other.",
             "To succeed in life, you need three things; a wishbone, a backbone and a funny bone. - Reba McEntire",
             linecount(),
-            "You can edit a command invocation to change my response."
+            "Without you my life is as empty as the supermarket shelf.",
+            "You can edit a command invocation to change my response.",
+            "You can't spell coronavirus without U and I.",
+            "You can't spell quarantine without URAQT."
         ))
 
     async def is_blacklisted(self, user_id):
