@@ -135,7 +135,7 @@ class Utilities(commands.Cog):
             return await ctx.send("Failed to decode timestamp.")
 
         fmt = f"**Valid token: **\n\n**User ID is**: {id_} ({user or '*Not fetchable*.'}).\n" \
-              f"**Created at**: {date}\n**Cryptographic component**: {t[2]}\n"
+              f"**Token created at (yyyy-mm-dd)**: {date}\n**Cryptographic component**: {t[2]}\n"
 
         if user:
             if not user.bot:
