@@ -139,7 +139,7 @@ class Utilities(commands.Cog):
 
         if user:
             if not user.bot:
-                fmt += f"** Invite **: {discord.utils.oauth_url(id_, discord.Permissions.none())}"
+                fmt += f"** Invite **: {discord.utils.oauth_url(id_)}"
 
         await ctx.send(fmt)
 
