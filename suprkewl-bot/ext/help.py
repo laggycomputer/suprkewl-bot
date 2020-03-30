@@ -108,8 +108,10 @@ class HelpCommand(commands.HelpCommand):
             for command in filtered:
                 self.add_command_field(embedinator, command)
 
-        embedinator.set_footer(text=self.context.bot.embed_footer,
-                               icon_url=self.context.me.avatar_url)
+        embedinator.base_embed.set_footer(
+            text=f"{self.context.bot.embed_footer} Requested by {self.context.author}",
+            icon_url=self.context.author.avatar_url
+        )
         await embedinator.send()
         await embedinator.handle()
 
@@ -127,6 +129,10 @@ class HelpCommand(commands.HelpCommand):
                 self.add_command_field(embedinator, command)
 
         await embedinator.send()
+        embedinator.base_embed.set_footer(
+            text=f"{self.context.bot.embed_footer} Requested by {self.context.author}",
+            icon_url=self.context.author.avatar_url
+        )
         await embedinator.handle()
 
     async def send_bot_help(self, mapping):
