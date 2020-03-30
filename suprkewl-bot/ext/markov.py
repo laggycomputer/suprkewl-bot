@@ -120,10 +120,9 @@ class Markov(commands.Cog):
 
     @commands.command()
     async def markov(self, ctx, name, num_tokens: int):
-        """Generate Markov chains."""
+        """Generate Markov chains. Use s!listchains to list options."""
 
         new_name = name + ".txt" + str(random.randint(1, 3))
-        await ctx.send(new_name)
         if new_name not in self.markov:
             return await ctx.send(
                 f"{name} is not a valid chain name.  The valid names are `obama`, `rickroll`, and `trump`. See "
