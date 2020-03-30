@@ -33,6 +33,12 @@ import config
 import redis
 
 
+MOYAI_GUILD_ID = 679073831629094922
+MOYAI_CHANNEL_ID = 679073833717596300
+ALFALFA_GUILD_ID = 555087033652215830
+ALFALFA_CHANNEL_ID = 694313862295715870
+
+
 class suprkewl_bot(commands.Bot):
 
     def __init__(self, extra_owners=[], *args, **kwargs):
@@ -136,7 +142,26 @@ class suprkewl_bot(commands.Bot):
             await self.track_message(f"tracked_message {message.id}")
 
             if isinstance(message.channel, discord.abc.GuildChannel):
+                if message.guild.id == MOYAI_GUILD_ID and message.channel.id == MOYAI_CHANNEL_ID:
+                    if not await self.is_blacklisted(message.author.id):
+                        if message.channel.permissions_for(message.guild.me).add_reactions:
+                            await message.add_reaction(":moyai:")
+                            if message.content:
+                                demoyaified = message.content.replace(":moyai:", "").replace("moyai", "")
+                                if not demoyaified or demoyaified.isspace():
+                                    await message.add_reaction(":regional_indicator_m:")
+                                    await message.add_reaction(":regional_indicator_o:")
+                                    await message.add_reaction(":regional_indicator_y:")
+                                    await message.add_reaction(":regional_indicator_a:")
+                                    await message.add_reaction(":regional_indicator_i:")
+
                 if message.channel.permissions_for(message.guild.me).send_messages:
+                    if message.guild.id == ALFALFA_GUILD_ID and message.channel.id == ALFALFA_CHANNEL_ID:
+                        if not await self.is_blacklisted(message.author.id):
+                            if await self.is_owner(message.author) and message.content.endswith("lfa"):
+                                if len(message.content) + 3 <= 2000:
+                                    await message.channel.send(message.content + "lfa")
+
                     if message.guild.me in message.mentions:
                         ping_images = [
                             "assets/angery,gif",
@@ -185,6 +210,14 @@ class suprkewl_bot(commands.Bot):
                             pass
             else:
                 await self.process_commands(message)
+
+    async def on_member_join(self, member):
+        if member.guild.id == MOYAI_GUILD_ID:
+            try:
+                await member.edit(nick="moyai")
+            except discord.Forbidden:
+                # :(
+                pass
 
     async def on_command_completion(self, ctx):
         self.commands_used += 1
