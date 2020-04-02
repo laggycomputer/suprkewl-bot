@@ -51,10 +51,6 @@ class suprkewl_bot(commands.Bot):
         self.commands_used = 0
         self.messages_seen = 0
 
-        self.redis = None
-        self.http2 = None
-        self.db = None
-
         self.ps_task = self.loop.create_task(self.playingstatus())
         self.dbl_task = self.loop.create_task(self.dbl_guild_update())
         self.change_status = True
@@ -87,22 +83,18 @@ class suprkewl_bot(commands.Bot):
 
         print("Loaded extensions: " + "\n" + "\n".join(textwrap.wrap(", ".join(loaded))))
 
-    async def on_ready(self):
-        if not self.redis:
-            self.redis = redis.Redis()
-            await self.redis.connect()
-        if not self.http2:
-            self.http2 = aiohttp.ClientSession()
-        if not self.db:
-            self.db = await aiosqlite.connect(config.db_path)
+        self.redis = redis.Redis()
+        await self.redis.connect()
+        self.http2 = aiohttp.ClientSession()
+        self.db = await aiosqlite.connect(config.db_path)
 
+    async def on_ready(self):
         print(f"Logged in as {self.user.name} (UID {self.user.id})")
         print("-" * 8)
         print(f"discord.py {discord.__version__} | Python {platform.python_version()}")
         print("-" * 8)
         print("Use this link to invite this bot:")
-        invite = discord.utils.oauth_url(self.user.id)
-        print(invite)
+        print(discord.utils.oauth_url(self.user.id))
         print("-" * 8)
 
     async def on_message(self, message):
