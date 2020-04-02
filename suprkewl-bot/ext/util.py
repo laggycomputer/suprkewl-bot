@@ -374,21 +374,21 @@ class Utilities(commands.Cog):
         chnl = discord.utils.get(guild.text_channels, id=fetched[desc.index("channel_id")])
         message_id = fetched[desc.index("message_id")]
         msg_content = fetched[desc.index("message")]
-        foot = f"Message ID {message_id} | Channel ID {chnl.id} | Guild ID {guild.id}"
+
+        e = ctx.default_embed
         if fetched[desc.index("msg_type")] == 1:
-            e = discord.Embed(
-                color=ctx.bot.embed_color, description="The image may not be visible"
-            )
+            e.description = "The image may not be visible"
             e.set_author(name=f"{user.name} sent in {chnl.name}")
             e.set_image(url=msg_content)
-            e.set_footer(text=foot)
-            await ctx.send(embed=e)
+        elif fetched[desc.index("msg_type")] == 2:
+            e.set_author(name=f"{user.name} said in an embed in #{chnl.name}:")
+            e.description = msg_content
         else:
-            e = ctx.default_embed
             e.description = msg_content
             e.set_author(name=f"{user.name} said in #{chnl.name}")
-            e.set_footer(text=foot)
-            await ctx.send(embed=e)
+
+        e.set_footer(f"Message ID {message_id} | Channel ID {chnl.id} | Guild ID {guild.id}")
+        await ctx.send(embed=e)
 
 
 def setup(bot):
