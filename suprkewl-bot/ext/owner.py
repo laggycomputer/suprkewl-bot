@@ -59,14 +59,32 @@ class Owner(commands.Cog):
         await ctx.paginate_with_embeds(resp, without_annotation=True)
 
     @commands.command(name="del")
-    async def deletemsg(self, ctx, message: discord.Message):
+    async def deletemsg(self, ctx, *messages: discord.Message):
         """Delete a specific message."""
 
-        try:
-            await message.delete()
-            await ctx.send(":white_check_mark:")
-        except discord.Forbidden:
-            await ctx.send(":x: I do not have permission to delete that message.")
+        if len(messages) == 1:
+            try:
+                await messages[0].delete()
+                await ctx.send(":white_check_mark:")
+            except (discord.Forbidden, discord.NotFound):
+                await ctx.send(":x: I do not have permission to delete that message.")
+        else:
+            tries = len(messages)
+            fails = 0
+            successes = 0
+            for msg in messages:
+                try:
+                    await msg.delete()
+                    successes += 1
+                except (discord.Forbidden, discord.NotFound):
+                    fails += 1
+
+            if fails == 0:
+                await ctx.send(":white_check_mark:")
+            else:
+                await ctx.send(
+                    f":bangbang: {fails} of {tries} messages ({round(fails / tries * 100, 2)}%) could not be deleted."
+                )
 
     @commands.command()
     async def statustoggle(self, ctx):
