@@ -83,10 +83,14 @@ class suprkewl_bot(commands.Bot):
 
         print("Loaded extensions: " + "\n" + "\n".join(textwrap.wrap(", ".join(loaded))))
 
-        self.redis = redis.Redis()
-        await self.redis.connect()
-        self.http2 = aiohttp.ClientSession()
-        self.db = await aiosqlite.connect(config.db_path)
+    async def on_connect(self):
+        if not self.redis:
+            self.redis = redis.Redis()
+            await self.redis.connect()
+        if not self.http2:
+            self.http2 = aiohttp.ClientSession()
+        if not self.db:
+            self.db = await aiosqlite.connect(config.db_path)
 
     async def on_ready(self):
         print(f"Logged in as {self.user.name} (UID {self.user.id})")
