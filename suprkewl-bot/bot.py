@@ -51,6 +51,10 @@ class suprkewl_bot(commands.Bot):
         self.commands_used = 0
         self.messages_seen = 0
 
+        self.redis = None
+        self.http2 = None
+        self.db = None
+
         self.ps_task = self.loop.create_task(self.playingstatus())
         self.dbl_task = self.loop.create_task(self.dbl_guild_update())
         self.change_status = True
