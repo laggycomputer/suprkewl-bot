@@ -73,7 +73,7 @@ def human_timedelta(dt, *, source=None, accuracy=3, brief=False, suffix=True):
         output = output[:accuracy]
 
     if len(output) == 0:
-        return "now"
+        return "just now"
     else:
         if not brief:
             return human_join(output, final="and") + suffix
