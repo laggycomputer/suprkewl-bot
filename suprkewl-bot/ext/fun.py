@@ -32,7 +32,7 @@ from discord.ext import commands
 
 # C4 stuff from StarrFox/DiscordChan
 
-c4_diagonal_data = [
+C4_DIAGONALS = [
     [(3, 0), (2, 1), (1, 2), (0, 3)],
     [(4, 0), (3, 1), (2, 2), (1, 3)],
     [(3, 1), (2, 2), (1, 3), (0, 4)],
@@ -167,7 +167,7 @@ class C4:
                     self.is_running = False
                     return
         diagonals = []
-        for c4_d in c4_diagonal_data:
+        for c4_d in C4_DIAGONALS:
             diagonals.append([self.board[i[0]][i[1]] for i in c4_d])
         for d in diagonals:
             if check_slice(d):
