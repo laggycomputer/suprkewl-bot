@@ -333,16 +333,24 @@ class Mastermind:
                 ":white_check_mark::white_check_mark::thinking::thinking:, you know that the colors in your latest " \
                 "guess should not be changed, and that you should keep reordering them until you win.\nA good " \
                 "starting strategy is to guess as many different colors as possible, then use the feedback to figure " \
-                "out which colors belong and which don't.\n\nYou have 24 tries at cracking the code. Good luck " \
-                "beating the Mastermind!"
+                "out which colors belong and which don't.\n\nYou have 24 tries at cracking the code.\n**Please react " \
+                "with a :white_check_mark: below to start the game.**\nGood luck beating the Mastermind!"
         try:
-            await self.ctx.author.send(rules)
+            msg = await self.ctx.author.send(rules)
         except discord.Forbidden:
-            await self.ctx.send(rules)
+            msg = await self.ctx.send(rules)
         except discord.NotFound:  # lol why did you delete your account in the middle of a mastermind game
             return
 
-        await asyncio.sleep(3)
+        await msg.add_reaction("\U00002705")
+        try:
+            react, user = await self.ctx.bot.wait_for(
+                "reaction_add",
+                check=lambda r, u: u == self.ctx.author and r.emoji == "\U00002705" and r.message.id == msg.id,
+                timeout=60.0
+            )
+        except asyncio.TimeoutError:
+            return
 
         while True:
             if self.round >= 25:
