@@ -18,8 +18,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from .context import *
-from .format_and_convert import *
 from .embedinator import *
+from .format_and_convert import *
 from .games import *
 from .linecount import *
 from .run_in_exec import *

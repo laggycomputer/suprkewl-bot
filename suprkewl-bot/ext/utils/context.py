@@ -69,7 +69,7 @@ class Context(commands.Context):
             else:
                 emb = discord.Embed(color=self.bot.embed_color)
 
-            emb.description = prefix + content + suffix,
+            emb.description = prefix + content + suffix
 
             await self.send(embed=emb)
 

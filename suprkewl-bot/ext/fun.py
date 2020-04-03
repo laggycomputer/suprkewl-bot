@@ -18,7 +18,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import asyncio
-import aiohttp
 import contextlib
 import io
 import math
@@ -26,10 +25,11 @@ import random
 import re
 import typing
 
+import aiohttp
 import discord
 from discord.ext import commands
 
-from .utils import Fighter, C4
+from .utils import C4, Fighter
 
 
 class Fun(commands.Cog):
@@ -242,7 +242,7 @@ L
     @commands.group(
         aliases=["roll"],
         description="Rolls the dice specified, in AdB format. For example, `dice 3d6` would roll 3 six-sided dice.",
-        invoke_without_subcommand=True
+        invoke_without_command=True
     )
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def dice(self, ctx, *, dice):

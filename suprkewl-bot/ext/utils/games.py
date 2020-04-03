@@ -130,10 +130,10 @@ class C4:
 
     async def parse_reaction(self, reaction):
         num = self.emojis.index(reaction)
-        next = await self.find_free(num)
-        if next is None:
+        next_ = await self.find_free(num)
+        if next_ is None:
             return
-        self.board[next][num] = self.red if self.current_player == self.player_one else self.blue
+        self.board[next_][num] = self.red if self.current_player == self.player_one else self.blue
         await self.check_wins()
         self.is_first_run = False
         self.last_play = num
