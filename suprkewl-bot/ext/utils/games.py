@@ -210,16 +210,25 @@ class C4:
             await self.message.clear_reactions()
 
 
-MASTERMIND_NONE = ":grey_question:"
+MASTERMIND_NONE = "\U00002754"
 
 
 class MastermindColors(enum.Enum):
-    BLACK = ":black_large_square:"
-    WHITE = ":white_large_square:"
-    RED = ":red_square:"
-    PURPLE = ":purple_square:"
-    YELLOW = ":yellow_square:"
-    GREEN = ":green_square:"
+    BLACK = "\U00002b1b"
+    WHITE = "\U00002b1c"
+    RED = "\U0001f7e5"
+    PURPLE = "\U0001f7ea"
+    YELLOW = "\U0001f7e8"
+    GREEN = "\U0001f7e9"
+
+
+class MastermindEscapes(enum.Enum):
+    BLACK = "\\:black_large_square:"
+    WHITE = "\\:white_large_square:"
+    RED = "\\:red_square:"
+    PURPLE = "\\:purple_square:"
+    YELLOW = "\\:yellow_square:"
+    GREEN = "\\:green_square:"
 
 
 class MastermindFeedback(enum.Enum):
@@ -253,10 +262,9 @@ class Mastermind:
         for index, guesses_and_responses in enumerate((zip(self.guesses, self.responses))):
             guesses, responses = guesses_and_responses
             desc.append(
-                f"`{(index + 1):02}`. {''.join(guesses)} :arrow_right: "
-                f"{''.join(responses)}"
+                f"`{(index + 1):02}`. {''.join(guesses)} \U000027a1 {''.join(responses)}"
             )
-        description = "Your guess :arrow_right: My response:\n" + "\n".join(desc)
+        description = "Your guess \U000027a1 My response:\n" + "\n".join(desc)
 
         # The following code is just the paginate_with_embeds function, but I want extra fields...
         by_line = description.split("\n")
@@ -279,7 +287,7 @@ class Mastermind:
 
         emb3.add_field(
             name="Please input a guess below using only the following emojis:",
-            value="\n".join([f"{c.value}: \\{c.value}" for c in list(MastermindColors)])
+            value="\n".join([f"{c.value}: {e.value}" for c, e in zip(list(MastermindColors), list(MastermindEscapes))])
                   + "\nYou can also use the first letter of a color instead of the emoji.\n**WRITE YOUR ENTIRE CODE IN "
                     "ONE MESSAGE. BE CAREFUL - THERE IS NO WAY TO CHANGE YOUR GUESS!**",
             inline=False
