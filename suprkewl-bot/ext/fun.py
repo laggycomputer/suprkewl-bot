@@ -29,7 +29,7 @@ import aiohttp
 import discord
 from discord.ext import commands
 
-from .utils import C4, Fighter
+from .utils import C4, Fighter, Mastermind
 
 
 class Fun(commands.Cog):
@@ -795,6 +795,57 @@ L
         await board.do_game()
 
         await ctx.bot.redis.delete(f"{ctx.author.id}:c4", f"{member.id}:c4")
+
+    @commands.group(aliases=["mm"], invoke_without_command=True)
+    @commands.bot_has_permissions(add_reactions=True)
+    async def mastermind(self, ctx):
+        """[VERY SPAMMY] Play Mastermind, with the bot making the code. See the rules subcommand for info."""
+
+        if (await ctx.bot.redis.exists(f"channel{ctx.channel.id}mm")):
+            await ctx.message.add_reaction("\U0000203c")
+            try:
+                return await ctx.author.send(
+                    ":x: There is already another game in that channel. You can also play Mastermind in this DM, "
+                    "if you'd like..."
+                )
+            except discord.Forbidden:
+                return await ctx.send(
+                    ":x: There is already another game in that channel. You can also play Mastermind in this DM, if "
+                    "you'd like..."
+                )
+
+        if (await ctx.bot.redis.exists(f"user{ctx.author.id}:mm")):
+            return await ctx.send(":x: You cannot play two Mastermind games at once.")
+
+        await ctx.bot.redis.execute("SET", f"user{ctx.author.id}:mm", "mm")
+        await ctx.bot.redis.execute("SET", f"channel{ctx.channel.id}mm", "mm")
+
+        game = Mastermind(ctx)
+        await game.run()
+
+        await ctx.bot.redis.delete(f"user{ctx.author.id}:c4", f"channel{ctx.channel.id}:c4")
+
+    @mastermind.command(name="rules", aliases=["r"])
+    async def mastermind_rules(self, ctx):
+        """Displays the rules for Mastermind. Useful when kept in your back pocket."""
+
+        rules = "**Mastermind rules:**\n\nI have a code of four colors that you need to guess. The possible colors " \
+                "are black, white, red, blue, yellow, and green. *Repeat colors are possible in the code.*" \
+                "You get 24 attempts to guess the code before I reveal it.\nEvery time you guess the four-digit " \
+                "code, I will reply with another four-digit code:\nA :white_check_mark: means your digit is of the " \
+                "correct color, and is in the right place.\nA :thinking: means your digit is of the correct color, " \
+                "but it needs to be in a different spot.\nFinally, :x: means your digit is the wrong color, and you " \
+                "need to try a different color.\n\nThe four-digit code I give you after a guess is in no particular " \
+                "order. This means that if the first digit in my response is :white_check_mark:, that does not " \
+                "*necessarily* mean that the first digit of your guess was correct.\n\nBefore you play, a few " \
+                "hints:\nRemember to use your feedback to your advantage. If you get, for example, " \
+                ":white_check_mark::white_check_mark::thinking::thinking:, you know that the colors in your latest " \
+                "guess should not be changed, and that you should keep reordering them until you win.\nA good " \
+                "starting strategy is to guess as many different colors as possible, then use the feedback to figure " \
+                "out which colors belong and which don't.\n\nYou have 24 tries at cracking the code. Good luck " \
+                "beating the Mastermind!"
+
+        await ctx.send(rules)
 
 
 def setup(bot):

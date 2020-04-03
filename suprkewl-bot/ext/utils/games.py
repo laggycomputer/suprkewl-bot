@@ -19,6 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import asyncio
 import contextlib
+import enum
+import random
 
 import discord
 
@@ -206,3 +208,213 @@ class C4:
 
         with contextlib.suppress(discord.HTTPException):
             await self.message.clear_reactions()
+
+
+MASTERMIND_NONE = ":grey_question:"
+
+
+class MastermindColors(enum.Enum):
+    BLACK = ":black_large_square:"
+    WHITE = ":white_large_square:"
+    RED = ":red_square:"
+    PURPLE = ":purple_square:"
+    YELLOW = ":yellow_square:"
+    GREEN = ":green_square:"
+
+
+class MastermindFeedback(enum.Enum):
+    BLACK = ":white_check_mark:"
+    WHITE = ":thinking:"
+    BLANK = ":x:"
+
+
+class Mastermind:
+    def __init__(self, ctx):
+        self.ctx = ctx
+        self.code = [random.choice(list(MastermindColors)) for _ in range(4)]
+        self.embed_footer = ""
+        self.latest_messages = (None, None)
+        self.guesses = [[MASTERMIND_NONE] * 4] * 24  # 24x4 of soon-to-be user guesses
+        self.responses = [[MASTERMIND_NONE] * 4] * 24  # 24x4 of soon-to-be feedback codes
+        self.latest_guess = [MASTERMIND_NONE] * 4
+        self.round = 1
+        self.last_messages = (None, None)
+
+        self.possible_emotes = ["\U00002b1b", "\U00002b1c", "\U0001f7e5", "\U0001f7ea", "\U0001f7e8", "\U0001f7e9"]
+        self.possible_letters = list("bwrpyg")
+
+    async def send_embed(self):
+        emb = self.ctx.default_embed
+        self.embed_footer = emb.footer.text
+        emb.set_footer(text=self.embed_footer)  # Prevent footer from changing
+
+        emb.title = "Mastermind"
+        desc = []
+        for index, guesses_and_responses in enumerate((zip(self.guesses, self.responses))):
+            guesses, responses = guesses_and_responses
+            desc.append(
+                f"`{(index + 1):02}`. {''.join(guesses)} :arrow_right: "
+                f"{''.join(responses)}"
+            )
+        description = "Your guess :arrow_right: My response:\n" + "\n".join(desc)
+
+        # The following code is just the paginate_with_embeds function, but I want extra fields...
+        by_line = description.split("\n")
+        current_length = 0
+        current_index = 0
+        while current_length <= 2048:
+            current_length += len(by_line[current_index]) + len("\n")
+            current_index += 1
+
+        part1 = "\n".join(by_line[:current_index - 1])
+        part2 = "\n".join(by_line[current_index:])
+
+        emb1 = discord.Embed(description=part1, color=self.ctx.bot.embed_color)
+        emb2 = discord.Embed(description=part2, color=self.ctx.bot.embed_color)
+        emb3 = discord.Embed(color=self.ctx.bot.embed_color)
+
+        emb1.set_author(name=self.ctx.me.name, icon_url=self.ctx.me.avatar_url)
+        emb3.set_footer(
+            text=f"{self.ctx.bot.embed_footer} Requested by {self.ctx.author}", icon_url=self.ctx.author.avatar_url)
+
+        emb3.add_field(
+            name="Please input a guess below using only the following emojis:",
+            value="\n".join([f"{c.value}: \\{c.value}" for c in list(MastermindColors)])
+                  + "\nYou can also use the first letter of a color instead of the emoji.\n**WRITE YOUR ENTIRE CODE IN "
+                    "ONE MESSAGE. BE CAREFUL - THERE IS NO WAY TO CHANGE YOUR GUESS!**",
+            inline=False
+        )
+        emb3.add_field(
+            name="Had enough?",
+            value="React with :stop_button: below to stop the game.",
+            inline=False
+        )
+
+        m1 = await self.ctx.send(embed=emb1)
+        m2 = await self.ctx.send(embed=emb2)
+        m3 = await self.ctx.send(embed=emb3)
+        await m3.add_reaction("\U000023F9")
+        return m1, m2, m3
+
+    def validate_message(self, message):
+        if message.author != self.ctx.author or message.channel != self.ctx.channel:
+            return False
+
+        new_split = []
+
+        for char in message.content.strip():
+            if char in self.possible_emotes:
+                new_split.append(char)
+            if char.lower() in self.possible_letters:
+                new_split.append(self.possible_emotes[self.possible_letters.index(char.lower())])
+
+        if len(new_split) != 4:
+            return False
+
+        return True
+
+    def validate_reaction(self, reaction, user):
+        if user != self.ctx.author or reaction.message.id != self.latest_messages[-1].id:
+            return False
+
+        return reaction.emoji == "\U000023F9"
+
+    async def run(self):
+        rules = "**Mastermind rules:**\n\nI have a code of four colors that you need to guess. The possible colors " \
+                "are black, white, red, blue, yellow, and green. *Repeat colors are possible in the code.*" \
+                "You get 24 attempts to guess the code before I reveal it.\nEvery time you guess the four-digit " \
+                "code, I will reply with another four-digit code:\nA :white_check_mark: means your digit is of the " \
+                "correct color, and is in the right place.\nA :thinking: means your digit is of the correct color, " \
+                "but it needs to be in a different spot.\nFinally, :x: means your digit is the wrong color, and you " \
+                "need to try a different color.\n\nThe four-digit code I give you after a guess is in no particular " \
+                "order. This means that if the first digit in my response is :white_check_mark:, that does not " \
+                "*necessarily* mean that the first digit of your guess was correct.\n\nBefore you play, a few " \
+                "hints:\nRemember to use your feedback to your advantage. If you get, for example, " \
+                ":white_check_mark::white_check_mark::thinking::thinking:, you know that the colors in your latest " \
+                "guess should not be changed, and that you should keep reordering them until you win.\nA good " \
+                "starting strategy is to guess as many different colors as possible, then use the feedback to figure " \
+                "out which colors belong and which don't.\n\nYou have 24 tries at cracking the code. Good luck " \
+                "beating the Mastermind!"
+        try:
+            await self.ctx.author.send(rules)
+        except discord.Forbidden:
+            await self.ctx.send(rules)
+        except discord.NotFound:  # lol why did you delete your account in the middle of a mastermind game
+            return
+
+        await asyncio.sleep(3)
+
+        while True:
+            if self.round >= 25:
+                break
+
+            self.last_messages = self.latest_messages
+            for message in self.last_messages:
+                if message is not None:
+                    try:
+                        await message.delete()
+                    except discord.NotFound:
+                        pass
+
+            self.latest_messages = await self.send_embed()
+
+            if self.latest_guess == [c.value for c in self.code]:
+                break
+
+            done, pending = await asyncio.wait(
+                [self.ctx.bot.wait_for("message", check=self.validate_message, timeout=120.0),
+                 self.ctx.bot.wait_for("reaction_add", check=self.validate_reaction, timeout=120.0)],
+                return_when=asyncio.FIRST_COMPLETED
+            )
+
+            try:
+                finished_task = done.pop().result()
+            except discord.HTTPException:
+                return  # An error means something is wrong enough to end the game.
+            except asyncio.TimeoutError:
+                break
+
+            for future in pending:
+                future.cancel()  # In the last words of John Wilkes Booth: useless, useless.
+
+            if isinstance(finished_task, tuple):  # This would denote that the return is from a reaction_add event
+                break
+            else:
+                new_split = []
+
+                for char in finished_task.content.strip():
+                    if char in self.possible_emotes:
+                        new_split.append(char)
+                    if char.lower() in self.possible_letters:
+                        new_split.append(self.possible_emotes[self.possible_letters.index(char.lower())])
+
+                guesses = [list(MastermindColors)[self.possible_emotes.index(e)] for e in new_split]
+
+                responses = [MASTERMIND_NONE] * 4
+                for index, color in enumerate(guesses):
+                    if self.code[index] == color:
+                        responses[index] = MastermindFeedback.BLACK.value
+                    elif self.code.count(color) == guesses.count(color):
+                        responses[index] = MastermindFeedback.WHITE.value
+                    else:
+                        responses[index] = MastermindFeedback.BLANK.value
+
+                def sort(response):
+                    if response == MastermindFeedback.BLACK.value:
+                        return 0
+                    elif response == MastermindFeedback.WHITE.value:
+                        return 1
+                    elif response == MastermindFeedback.BLANK.value:
+                        return 2
+                    else:
+                        return 3
+
+                self.guesses[self.round - 1] = [g.value for g in guesses]
+                self.latest_guess = [g.value for g in guesses]
+                responses = sorted(responses, key=sort)
+
+                self.responses[self.round - 1] = responses
+
+            self.round += 1
+
+        await self.ctx.send(f"Game over! The code was {''.join([c.value for c in self.code])}.")
