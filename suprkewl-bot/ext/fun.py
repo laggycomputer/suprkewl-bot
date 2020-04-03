@@ -801,7 +801,7 @@ L
     async def mastermind(self, ctx):
         """[VERY SPAMMY] Play Mastermind, with the bot making the code. See the rules subcommand for info."""
 
-        if (await ctx.bot.redis.exists(f"channel{ctx.channel.id}mm")):
+        if (await ctx.bot.redis.exists(f"channel{ctx.channel.id}:mm")):
             await ctx.message.add_reaction("\U0000203c")
             try:
                 return await ctx.author.send(
@@ -818,7 +818,7 @@ L
             return await ctx.send(":x: You cannot play two Mastermind games at once.")
 
         await ctx.bot.redis.execute("SET", f"user{ctx.author.id}:mm", "mm")
-        await ctx.bot.redis.execute("SET", f"channel{ctx.channel.id}mm", "mm")
+        await ctx.bot.redis.execute("SET", f"channel{ctx.channel.id}:mm", "mm")
 
         game = Mastermind(ctx)
         await game.run()
