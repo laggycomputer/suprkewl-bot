@@ -823,7 +823,7 @@ L
         game = Mastermind(ctx)
         await game.run()
 
-        await ctx.bot.redis.delete(f"user{ctx.author.id}:c4", f"channel{ctx.channel.id}:c4")
+        await ctx.bot.redis.delete(f"user{ctx.author.id}:mm", f"channel{ctx.channel.id}:mm")
 
     @mastermind.command(name="rules", aliases=["r"])
     async def mastermind_rules(self, ctx):
