@@ -281,10 +281,8 @@ class Mastermind:
             text=f"{self.ctx.bot.embed_footer} Requested by {self.ctx.author}", icon_url=self.ctx.author.avatar_url)
 
         emb3.add_field(
-            name="Please input a guess below using only the following emojis:",
-            value="\n".join([f"{c.value}: {e.value}" for c, e in zip(list(MastermindColors), list(MastermindEscapes))])
-                  + "\nYou can also use the first letter of a color instead of the emoji.\n**WRITE YOUR ENTIRE CODE IN "
-                    "ONE MESSAGE. BE CAREFUL - THERE IS NO WAY TO CHANGE YOUR GUESS!**",
+            name="Formatting instructions",
+            value="See the introduction message for formatting information.",
             inline=False
         )
         emb3.add_field(
@@ -331,13 +329,19 @@ class Mastermind:
                 "but it needs to be in a different spot.\nFinally, :x: means your digit is the wrong color, and you " \
                 "need to try a different color.\n\nThe four-digit code I give you after a guess is in no particular " \
                 "order. This means that if the first digit in my response is :white_check_mark:, that does not " \
-                "*necessarily* mean that the first digit of your guess was correct.\n\nBefore you play, a few " \
-                "hints:\nRemember to use your feedback to your advantage. If you get, for example, " \
-                ":white_check_mark::white_check_mark::thinking::thinking:, you know that the colors in your latest " \
-                "guess should not be changed, and that you should keep reordering them until you win.\nA good " \
-                "starting strategy is to guess as many different colors as possible, then use the feedback to figure " \
-                "out which colors belong and which don't.\n\nYou have 24 tries at cracking the code.\n**Please react " \
-                "with a :white_check_mark: below to start the game.**\nGood luck beating the Mastermind!"
+                "*necessarily* mean that the first digit of your guess was correct.\n\nOn every round, type a guess " \
+                "using the following emojis:\n"
+
+        rules += "\n".join([f"{c.value}: {e.value}" for c, e in zip(list(MastermindColors), list(MastermindEscapes))])
+        rules += "\nYou can also use the first letter of a color instead of the emoji.\n**WRITE YOUR ENTIRE CODE " \
+                 "IN ONE MESSAGE. BE CAREFUL - THERE IS NO WAY TO CHANGE YOUR GUESS!**\n\nBefore you play, a few " \
+                 "hints:\nRemember to use your feedback to your advantage. If you get, for example, " \
+                 ":white_check_mark::white_check_mark::thinking::thinking:, you know that the colors in your latest " \
+                 "guess should not be changed, and that you should keep reordering them until you win.\nA good " \
+                 "starting strategy is to guess as many different colors as possible, then use the feedback to " \
+                 "figure out which colors belong and which don't.\nYou have 24 tries at cracking the code.\n**Please " \
+                 "react with a :white_check_mark: below to start the game.**\nGood luck beating the Mastermind!"
+
         try:
             msg = await self.ctx.author.send(rules)
         except discord.Forbidden:
