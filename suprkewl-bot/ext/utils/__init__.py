@@ -17,8 +17,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-# Sorry about the ignore tactics, this really is my way of doing it.
-
 from .context import *
 from .format_and_convert import *
 from .embedinator import *
