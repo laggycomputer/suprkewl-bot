@@ -91,6 +91,7 @@ class suprkewl_bot(commands.Bot):
         if not self.redis:
             self.redis = redis.Redis()
             await self.redis.connect()
+            await self.redis.execute("FLUSHDB")
         if not self.http2:
             self.http2 = aiohttp.ClientSession()
         if not self.db:
