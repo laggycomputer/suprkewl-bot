@@ -75,8 +75,7 @@ class FighterData:
         self.p2 = p2
 
 
-class C4():
-
+class C4:
     def __init__(self, p1, p2, ctx):
         self.player_one = p1
         self.player_two = p2
