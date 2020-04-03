@@ -387,7 +387,7 @@ class Utilities(commands.Cog):
             e.description = msg_content
             e.set_author(name=f"{user.name} said in #{chnl.name}")
 
-        e.set_footer(f"Message ID {message_id} | Channel ID {chnl.id} | Guild ID {guild.id}")
+        e.set_footer(text=f"Message ID {message_id} | Channel ID {chnl.id} | Guild ID {guild.id}")
         await ctx.send(embed=e)
 
 
