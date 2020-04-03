@@ -268,14 +268,9 @@ class Mastermind:
 
         # The following code is just the paginate_with_embeds function, but I want extra fields...
         by_line = description.split("\n")
-        current_length = 0
-        current_index = 0
-        while current_length <= 2048:
-            current_length += len(by_line[current_index]) + len("\n")
-            current_index += 1
 
-        part1 = "\n".join(by_line[:current_index - 1])
-        part2 = "\n".join(by_line[current_index:])
+        part1 = "\n".join(by_line[:len(by_line) // 2])
+        part2 = "\n".join(by_line[len(by_line) // 2:])
 
         emb1 = discord.Embed(description=part1, color=self.ctx.bot.embed_color)
         emb2 = discord.Embed(description=part2, color=self.ctx.bot.embed_color)
