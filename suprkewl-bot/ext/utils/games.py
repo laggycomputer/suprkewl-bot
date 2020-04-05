@@ -297,22 +297,27 @@ class Mastermind:
         await m3.add_reaction("\U000023F9")
         return m1, m2, m3
 
+    def parse_message(self, content):
+        content = content.strip()
+        ret = []
+        for char in content.strip():
+            if char in self.possible_emotes:
+                ret.append(char)
+            elif char.lower() in self.possible_letters:
+                ret.append(self.possible_emotes[self.possible_letters.index(char.lower())])
+
+        if len(ret) != 4:
+            return []
+
+        return ret
+
     def validate_message(self, message):
         if message.author != self.ctx.author or message.channel != self.ctx.channel:
             return False
 
-        new_split = []
+        parsed = self.parse_message(message.content)
 
-        for char in message.content.strip():
-            if char in self.possible_emotes:
-                new_split.append(char)
-            if char.lower() in self.possible_letters:
-                new_split.append(self.possible_emotes[self.possible_letters.index(char.lower())])
-
-        if len(new_split) != 4:
-            return False
-
-        return True
+        return parsed and parsed not in self.guesses
 
     def validate_reaction(self, reaction, user):
         if user != self.ctx.author or reaction.message.id != self.latest_messages[-1].id:
@@ -334,7 +339,8 @@ class Mastermind:
 
         rules += "\n".join([f"{c.value}: {e.value}" for c, e in zip(list(MastermindColors), list(MastermindEscapes))])
         rules += "\nYou can also use the first letter of a color instead of the emoji.\n**WRITE YOUR ENTIRE CODE " \
-                 "IN ONE MESSAGE. BE CAREFUL - THERE IS NO WAY TO CHANGE YOUR GUESS!**\n\nBefore you play, a few " \
+                 "IN ONE MESSAGE. BE CAREFUL - THERE IS NO WAY TO CHANGE YOUR GUESS!**\nRepeat guesses are useless, " \
+                 "so I will ignore you if you try to guess something you've already tried.\n\nBefore you play, a few " \
                  "hints:\nRemember to use your feedback to your advantage. If you get, for example, " \
                  ":white_check_mark::white_check_mark::thinking::thinking:, you know that the colors in your latest " \
                  "guess should not be changed, and that you should keep reordering them until you win.\nA good " \
@@ -395,16 +401,9 @@ class Mastermind:
             if isinstance(finished_task, tuple):  # This would denote that the return is from a reaction_add event
                 break
             else:
-                new_split = []
+                u_input = self.parse_message(finished_task.content.strip())
 
-                for char in finished_task.content.strip():
-                    if char in self.possible_emotes:
-                        new_split.append(char)
-                    if char.lower() in self.possible_letters:
-                        new_split.append(self.possible_emotes[self.possible_letters.index(char.lower())])
-
-                guesses = [list(MastermindColors)[self.possible_emotes.index(e)] for e in new_split]
-
+                guesses = [list(MastermindColors)[self.possible_emotes.index(e)] for e in u_input]
                 responses = [MASTERMIND_NONE] * 4
                 for index, color in enumerate(guesses):
                     if self.code[index] == color:
