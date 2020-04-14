@@ -355,6 +355,7 @@ class Utilities(commands.Cog):
         await ctx.send(embed=embed, file=fp)
 
     @commands.command(description="Snipe a deleted message", aliases=["sniperino"])
+    @commands.guild_only()
     async def snipe(self, ctx, *, channel: discord.TextChannel = None):
         channel = channel or ctx.channel
         sniped = await ctx.bot.db.execute(
