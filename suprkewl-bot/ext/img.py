@@ -647,18 +647,15 @@ class Image_(commands.Cog, name="Image",
     ):
         """Transform the avatar of one user to that of another and back."""
 
-        other = other or ctx.author
+        if not other:
+            user, other = ctx.author, user
 
         # Save bandwidth
         im1 = Image.open(io.BytesIO(await user.avatar_url_as(format="png", size=256).read()))
         im2 = Image.open(io.BytesIO(await other.avatar_url_as(format="png", size=256).read()))
         async with ctx.typing():
             t = time.time()
-
-            if other == ctx.author:
-                buff = await process_transform(im2, im1)
-            else:
-                buff = await process_transform(im1, im2)
+            buff = await process_transform(im2, im1)
 
             t = round(time.time() - t, 3)
 
