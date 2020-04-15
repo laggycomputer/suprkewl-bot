@@ -115,17 +115,9 @@ class suprkewl_bot(commands.Bot):
         if message.author.bot:
             return
         else:
-            starts_with_cust = False
-            if message.guild:
-                resp = await(
-                    await self.db.execute(f"SELECT prefix FROM guilds WHERE id == ?;", (message.guild.id,))
-                ).fetchone()
-                if resp:
-                    starts_with_cust = message.content.startswith(resp[0])
-            starts_with_prefix = message.content.startswith("s!") or starts_with_cust
-
+            ctx = await self.get_context(message)
             is_blacklisted, mod_id = await self.is_blacklisted(message.author.id)
-            if starts_with_prefix and is_blacklisted:
+            if ctx.valid and is_blacklisted:
                 try:
                     await message.channel.send(
                         f"You are not allowed to use this bot. You were blacklisted by {mod_id}."
@@ -204,7 +196,7 @@ class suprkewl_bot(commands.Bot):
                     await self.process_commands(message)
 
                 else:
-                    if starts_with_prefix:
+                    if ctx.valid:
                         try:
                             await message.author.send(":x: I can't send messages there! Perhaps try again elsewhere?")
                         except discord.Forbidden:
