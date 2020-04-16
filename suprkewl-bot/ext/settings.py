@@ -23,7 +23,7 @@ from discord.ext import commands
 class Settings(commands.Cog):
     """Change server-specific bot settings here."""
 
-    @commands.group()
+    @commands.command()
     @commands.guild_only()
     async def prefix(self, ctx, *, prefix=None):
         """Operate on the guild prefix for this bot."""
