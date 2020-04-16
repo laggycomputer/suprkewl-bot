@@ -142,7 +142,8 @@ L
             "{}, You're so fat the only letters of the alphabet you know are KFC.",
             "I don't forget a single face, but in your case, {}, I'll make an exception.",
             "Yo {}, looks like you traded in your neck for an extra chin...",
-            "Oh no, look at you, {}! Was anybody else hurt in that accident?"
+            "Oh no, look at you, {}! Was anybody else hurt in that accident?",
+            "I would roast {}, but I'm told burning trash is bad for the environment."
         ]
 
         await ctx.send(random.choice(roasts).replace("{}", target.display_name))
