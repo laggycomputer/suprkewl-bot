@@ -48,7 +48,7 @@ class Settings(commands.Cog):
 
                 await ctx.bot.db.execute(
                     f"INSERT INTO GUILDS (id, prefix) VALUES (?, ?) ON CONFLICT (id) DO UPDATE SET "
-                    f"prefix = '?' WHERE id == ?;", (ctx.guild.id, prefix, prefix, ctx.guild.id)
+                    f"prefix = ? WHERE id == ?;", (ctx.guild.id, prefix, prefix, ctx.guild.id)
                 )
                 await ctx.bot.db.commit()
 
