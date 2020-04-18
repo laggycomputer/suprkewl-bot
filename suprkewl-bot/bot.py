@@ -189,7 +189,7 @@ class suprkewl_bot(commands.Bot):
                     for m in message.mentions:
                         if await self.is_owner(m) and not await self.is_owner(message.author):
                             try:
-                                await message.channel.send("<:angryping:564532599918297117>")
+                                await message.channel.send("<:pingsock:700885664601997363>")
                             except discord.HTTPException:
                                 pass
 
