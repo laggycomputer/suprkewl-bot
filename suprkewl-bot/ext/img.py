@@ -17,6 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import asyncio
 import copy
 import io
 import math
@@ -29,6 +30,7 @@ import cv2
 import discord
 from discord.ext import commands
 import numpy as np
+import PIL
 from PIL import Image
 import PIL.ImageFilter
 import PIL.ImageOps
@@ -637,8 +639,9 @@ class Image_(commands.Cog, name="Image",
 
     @commands.command(
         aliases=["ts", "tf"],
-        description="If you only specify one member, I will transform their avatar to yours."
-                    " Example: `s!transform \"Too Laggy#3878\" @SuprKewl Bot`"
+        description="If you only specify one member, I will transform their avatar to yours. "
+                    "Example: `s!transform \"Too Laggy#3878\" @SuprKewl Bot\"\nTo use other images, use the "
+                    "s!transforminteractive command."
     )
     async def transform(
             self, ctx,
@@ -664,6 +667,68 @@ class Image_(commands.Cog, name="Image",
 
             await ctx.send(
                 f":white_check_mark: That took about {t} seconds.", file=discord.File(buff, "transform.gif"))
+
+    @commands.command(
+        aliases=["tsi", "tfi"])
+    async def transforminteractive(self, ctx):
+        """The transform command, except in interactive mode so that you can use other images."""
+
+        async def attempt_conversion(message):
+            try:
+                u = await commands.MemberConverter().convert(ctx, message.content)
+                return Image.open(io.BytesIO(await u.avatar_url_as(format="png", size=256).read()))
+            except commands.CommandError:
+                try:
+                    u = await commands.UserConverter().convert(ctx, message.content)
+                    return Image.open(io.BytesIO(await u.avatar_url_as(format="png", size=256).read()))
+                except commands.CommandError:
+                    for a in message.attachments:
+                        if a.height:
+                            async with ctx.bot.http2.get(a.proxy_url) as resp:
+                                return Image.open(io.BytesIO(await resp.content.read()))
+                    try:
+                        async with ctx.bot.http2.get(message.content.strip()) as resp:
+                            return Image.open(io.BytesIO(await resp.content.read()))
+                    except (OSError, aiohttp.InvalidURL, PIL.UnidentifiedImageError):
+                        return None
+
+        async def verify_message(msg):
+            if msg.author != ctx.author:
+                return
+            if msg.content.startswith("s!abort"):
+                return True
+            return await attempt_conversion(msg) is not None
+
+        await ctx.send(
+            "You are selecting the **start** image. Please do one of the following:\n\nSay `s!abort` to cancel.\n"
+            "Send a user's nickname, username, ID, mention, or name#discriminator.\nAttach an image.\nSend an URL to "
+            "an image.\n\n__If you want to use an emoji, use it in a message, right click it, and click 'Copy Link'. "
+            "Then paste that into this command."
+        )
+        try:
+            im1 = await attempt_conversion(await ctx.bot.wait_for("message", check=verify_message, timeout=30.0))
+        except asyncio.TimeoutError:
+            return await ctx.send(":bangbang: Timed out.")
+
+        await ctx.send(
+            "You are selecting the **target** image. Please do one of the following:\n\nSay `s!abort` to cancel.\n"
+            "Send a user's nickname, username, ID, mention, or name#discriminator.\nAttach an image.\nSend an URL to "
+            "an image.\n\n__If you want to use an emoji, use it in a message, right click it, and click 'Copy Link'. "
+            "Then paste that into this command."
+        )
+        try:
+            im2 = await attempt_conversion(await ctx.bot.wait_for("message", check=verify_message, timeout=30.0))
+            await ctx.send(":ok_hand: On it.")
+        except asyncio.TimeoutError:
+            return await ctx.send(":bangbang: Timed out.")
+
+        async with ctx.typing():
+            t = time.time()
+            buff = await process_transform(im1, im2)
+            t = round(time.time() - t, 3)
+
+        await ctx.send(
+            f":white_check_mark: That took about {t} seconds.", file=discord.File(buff, "transform.gif"))
 
 
 def setup(bot):
