@@ -703,7 +703,7 @@ class Image_(commands.Cog, name="Image",
             "You are selecting the **start** image. Please do one of the following:\n\nSay `s!abort` to cancel.\n"
             "Send a user's nickname, username, ID, mention, or name#discriminator.\nAttach an image.\nSend an URL to "
             "an image.\n\n__If you want to use an emoji, use it in a message, right click it, and click 'Copy Link'. "
-            "Then paste that into this command."
+            "Then paste that into this command.__"
         )
         try:
             im1 = await attempt_conversion(await ctx.bot.wait_for("message", check=verify_message, timeout=30.0))
@@ -714,7 +714,7 @@ class Image_(commands.Cog, name="Image",
             "You are selecting the **target** image. Please do one of the following:\n\nSay `s!abort` to cancel.\n"
             "Send a user's nickname, username, ID, mention, or name#discriminator.\nAttach an image.\nSend an URL to "
             "an image.\n\n__If you want to use an emoji, use it in a message, right click it, and click 'Copy Link'. "
-            "Then paste that into this command."
+            "Then paste that into this command.__"
         )
         try:
             im2 = await attempt_conversion(await ctx.bot.wait_for("message", check=verify_message, timeout=30.0))
