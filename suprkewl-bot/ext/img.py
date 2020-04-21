@@ -645,23 +645,18 @@ class Image_(commands.Cog, name="Image",
     )
     async def transform(
             self, ctx,
-            user: typing.Union[discord.Member, discord.User],
-            *, other: typing.Union[discord.Member, discord.User] = None
+            start: typing.Union[discord.Member, discord.User],
+            *, target: typing.Union[discord.Member, discord.User]
     ):
         """Transform the avatar of one user to that of another and back."""
 
-        other = other or ctx.author
-
         # Save bandwidth
-        im1 = Image.open(io.BytesIO(await user.avatar_url_as(format="png", size=256).read()))
-        im2 = Image.open(io.BytesIO(await other.avatar_url_as(format="png", size=256).read()))
+        im1 = Image.open(io.BytesIO(await start.avatar_url_as(format="png", size=256).read()))
+        im2 = Image.open(io.BytesIO(await target.avatar_url_as(format="png", size=256).read()))
         async with ctx.typing():
             t = time.time()
 
-            if other == ctx.author:
-                buff = await process_transform(im2, im1)
-            else:
-                buff = await process_transform(im1, im2)
+            buff = await process_transform(im1, im2)
 
             t = round(time.time() - t, 3)
 
