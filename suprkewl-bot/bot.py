@@ -188,6 +188,8 @@ class suprkewl_bot(commands.Bot):
 
                     for m in message.mentions:
                         if await self.is_owner(m) and not await self.is_owner(message.author):
+                            if message.guild and message.guild.id in [609496545569800192, 555087033652215830]:
+                                break
                             try:
                                 await message.channel.send("<:pingsock:700885664601997363>")
                             except discord.HTTPException:
