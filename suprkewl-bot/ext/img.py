@@ -669,12 +669,13 @@ class Image_(commands.Cog, name="Image",
         """The transform command, except in interactive mode so that you can use other images."""
 
         async def attempt_conversion(message):
+            content = message.content
             try:
-                u = await commands.MemberConverter().convert(ctx, message.content)
+                u = await commands.MemberConverter().convert(ctx, content)
                 return Image.open(io.BytesIO(await u.avatar_url_as(format="png", size=256).read()))
             except commands.CommandError:
                 try:
-                    u = await commands.UserConverter().convert(ctx, message.content)
+                    u = await commands.UserConverter().convert(ctx, content)
                     return Image.open(io.BytesIO(await u.avatar_url_as(format="png", size=256).read()))
                 except commands.CommandError:
                     for a in message.attachments:
@@ -682,7 +683,7 @@ class Image_(commands.Cog, name="Image",
                             async with ctx.bot.http2.get(a.proxy_url) as resp:
                                 return Image.open(io.BytesIO(await resp.content.read()))
                     try:
-                        async with ctx.bot.http2.get(message.content.strip()) as resp:
+                        async with ctx.bot.http2.get(content) as resp:
                             return Image.open(io.BytesIO(await resp.content.read()))
                     except (OSError, aiohttp.InvalidURL, PIL.UnidentifiedImageError):
                         return None
