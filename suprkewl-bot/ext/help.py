@@ -55,7 +55,6 @@ class HelpCommand(commands.HelpCommand):
             name=self.context.me.name,
             icon_url=self.context.me.avatar_url
         )
-        embed.set_thumbnail(url=self.context.me.avatar_url)
         embed.set_footer(
             text=f"{self.context.bot.embed_footer} Requested by {self.context.author}",
             icon_url=self.context.author.avatar_url
@@ -77,7 +76,6 @@ class HelpCommand(commands.HelpCommand):
             name=self.context.me.name,
             icon_url=self.context.me.avatar_url
         )
-        embedinator.set_thumbnail(url=self.context.me.avatar_url)
         embedinator.base_embed.set_footer(
             text=f"{self.context.bot.embed_footer} Requested by {self.context.author}",
             icon_url=self.context.author.avatar_url
