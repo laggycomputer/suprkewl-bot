@@ -171,7 +171,9 @@ class Help(commands.Cog):
         self.original_help_command = bot.help_command
         bot.help_command = HelpCommand()
         bot.help_command.cog = self
-        self.bot.get_command("help").hidden = True
+        new_cmd = self.bot.get_command("help")
+        new_cmd.hidden = True
+        new_cmd.verify_checks = False
 
     def cog_unload(self):
         self.bot.help_command = self.original_help_command
