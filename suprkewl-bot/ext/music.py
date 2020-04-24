@@ -112,7 +112,7 @@ class Music(commands.Cog):
 
         return True
 
-    @commands.command(aliases=["p"])
+    @commands.command(aliases=["p", "pl", "ply"])
     async def play(self, ctx, *, query: str):
         """Play a song."""
 
@@ -137,12 +137,12 @@ class Music(commands.Cog):
                 player.add(requester=ctx.author.id, track=track)
 
             e.set_author(name=f"Playlist queued by {ctx.author}")
-            e.description = f'{results["playlistInfo"]["name"]} - {len(tracks)} songs'
+            e.description = f"{results['playlistInfo']['name']} - {len(tracks)} songs"
             await ctx.send(embed=e)
         else:
             track = results["tracks"][0]
             e.set_author(name=f"Song queued by {ctx.author}")
-            e.description = f'[{track["info"]["title"]}]({track["info"]["uri"]})'
+            e.description = f"[{track['info']['title']}]({track['info']['uri']})"
             await ctx.send(embed=e)
             player.add(requester=ctx.author.id, track=track)
 
@@ -168,8 +168,8 @@ class Music(commands.Cog):
         e.add_field(name="Duration", value=f"[{position}/{duration}]")
         await ctx.send(embed=e)
 
-    @commands.command()
-    async def seek(self, ctx, *, time: str):
+    @commands.command(aliases=["s"])
+    async def seek(self, ctx, *, time):
         """Move to a different point in the song."""
 
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
@@ -198,7 +198,7 @@ class Music(commands.Cog):
         await player.skip()
         await ctx.send("Skipped.", delete_after=30)
 
-    @commands.command()
+    @commands.command(aliases=["st"])
     async def stop(self, ctx):
         """Stops the song currently playing and empties the queue."""
 
@@ -208,7 +208,7 @@ class Music(commands.Cog):
         await player.stop()
         await ctx.send("Stopped.", delete_after=30)
 
-    @commands.command(aliases=["resume"])
+    @commands.command(aliases=["resume", "res", "r"])
     async def pause(self, ctx):
         """Pause the song currently playing."""
 
@@ -229,13 +229,13 @@ class Music(commands.Cog):
 
         if not volume:
             return await ctx.send(
-                f"My current player volume is `{player.volume}`%", delete_after=30
+                f"My current player volume is `{player.volume}`%.", delete_after=30
             )
 
         await player.set_volume(volume)
-        await ctx.send(f"Set player volume to `{player.volume}`%", delete_after=30)
+        await ctx.send(f"Set player volume to `{player.volume}`%.", delete_after=30)
 
-    @commands.command(aliases=["dc"])
+    @commands.command(aliases=["dc", "dcon"])
     async def disconnect(self, ctx):
         """Disconnect from the voice channel and empty the queue."""
 
@@ -272,7 +272,7 @@ class Music(commands.Cog):
         )
         await ctx.send(embed=e)
 
-    @commands.command()
+    @commands.command(alises=["rm"])
     async def remove(self, ctx, index: int):
         """Remove a certain song from the queue."""
 
@@ -288,7 +288,7 @@ class Music(commands.Cog):
 
         await ctx.send(f"Removed `{removed.title}` from the queue.")
 
-    @commands.command()
+    @commands.command(name="musicplayer", aliases=["mp"])
     async def music_player(self, ctx):
         """Get info on the server music player."""
 
