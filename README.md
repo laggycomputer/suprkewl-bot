@@ -13,6 +13,7 @@ An open-sourced Discord bot, written with `discord.py==1.3.2`.
 If you want to host this bot:
 
 * Copy `suprkewl-bot/config.py.example` to `suprkewl-bot/config.py`. Fill out the config parameters.
+* You need to set up both a Redis and a Lavalink instance and fill out the credentials in config.
 * Finally, you can use `pip3 install -r requirements.txt` at the root of this repo to install the requirements.
 
 **Please ensure that you run the bot with the repo root as your current directory.**

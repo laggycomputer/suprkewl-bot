@@ -34,3 +34,8 @@ rtex_server = "rtex.probablyaweb.site"
 
 # Discord Bot List token - see top.gg/api/docs
 dbl_token = ""
+
+# Lavalink server IP and password
+lavalink_ip = "127.0.0.1"
+lavalink_port = 2333
+lavalink_pw = ""  # It's a good idea to change this on public accessible servers

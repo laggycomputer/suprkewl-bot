@@ -27,9 +27,10 @@ import aiohttp
 import aiosqlite
 import discord
 from discord.ext import commands
+import lavalink
 
 import config
-from ext.utils import Context, linecount, permissions_converter
+from ext.utils import BotNotInVC, Context, linecount, permissions_converter, UserInWrongVC, UserNotInVC
 import redis
 
 
@@ -54,6 +55,7 @@ class suprkewl_bot(commands.Bot):
         self.redis = None
         self.http2 = None
         self.db = None
+        self.lavalink = None
 
         self.ps_task = self.loop.create_task(self.playingstatus())
         self.dbl_task = self.loop.create_task(self.dbl_guild_update())
@@ -68,6 +70,7 @@ class suprkewl_bot(commands.Bot):
             "ext.img",
             "ext.markov",
             "ext.mod",
+            "ext.music",
             "ext.owner",
             "ext.settings",
             "ext.stats",
@@ -96,6 +99,20 @@ class suprkewl_bot(commands.Bot):
             self.http2 = aiohttp.ClientSession()
         if not self.db:
             self.db = await aiosqlite.connect(config.db_path)
+
+        if not self.lavalink:
+            self.lavalink = lavalink.Client(self.user.id)
+            self.lavalink.add_node(
+                config.lavalink_ip,
+                config.lavalink_port,
+                config.lavalink_pw,
+                "us",
+                "us-west",
+            )
+            self.add_listener(
+                self.lavalink.voice_update_handler, "on_socket_response"
+            )
+            self.lavalink.add_event_hook(self.track_hook)
 
     async def on_ready(self):
         print(f"Logged in as {self.user.name} (UID {self.user.id})")
@@ -378,6 +395,33 @@ class suprkewl_bot(commands.Bot):
             emb.add_field(
                 name="Permission denied",
                 value=f":x: You must be a bot owner to run `{ctx.prefix}{ctx.command}`."
+            )
+
+            return await ctx.send(embed=emb)
+
+        elif isinstance(error, UserNotInVC):
+            emb = ctx.default_embed
+            emb.add_field(
+                name="Not in voice channel",
+                value=f":x: You must be connected to a voice channel to run `{ctx.prefix}{ctx.command}`."
+            )
+
+            return await ctx.send(embed=emb)
+
+        elif isinstance(error, BotNotInVC):
+            emb = ctx.default_embed
+            emb.add_field(
+                name="Bot not in voice channel",
+                value=f":x: I must be connected to a voice channel to run `{ctx.prefix}{ctx.command}`."
+            )
+
+            return await ctx.send(embed=emb)
+
+        elif isinstance(error, UserInWrongVC):
+            emb = ctx.default_embed
+            emb.add_field(
+                name="User in wrong channel",
+                value=f":x: You must be in the same voice channel as the bot to run `{ctx.prefix}{ctx.command}`."
             )
 
             return await ctx.send(embed=emb)

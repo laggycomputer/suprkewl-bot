@@ -2,7 +2,7 @@ aiodns
 aioredis
 aiosqlite
 cchardet
-discord.py
+discord.py[voice]
 gtts
 jishaku
 matplotlib
@@ -11,3 +11,4 @@ Pillow
 pygit2
 PyLyrics
 python-dateutil
+lavalink
