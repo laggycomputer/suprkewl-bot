@@ -27,9 +27,9 @@ import aiohttp
 import aiosqlite
 import discord
 from discord.ext import commands
-from ext.utils import permissions_converter, linecount, Context
 
 import config
+from ext.utils import Context, linecount, permissions_converter
 import redis
 
 
