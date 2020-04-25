@@ -118,7 +118,7 @@ class Music(commands.Cog):
 
     @commands.command(aliases=["p", "pl", "ply"])
     async def play(self, ctx, *, query: str):
-        """Play a song."""
+        """Play a track."""
 
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
@@ -130,7 +130,7 @@ class Music(commands.Cog):
         results = await player.node.get_tracks(query)
 
         if not results or not results["tracks"]:
-            return await ctx.send(":grey_question: No song found.")
+            return await ctx.send(":grey_question: No track found.")
 
         e = discord.Embed(color=ctx.bot.embed_color)
 
@@ -141,11 +141,11 @@ class Music(commands.Cog):
                 player.add(requester=ctx.author.id, track=track)
 
             e.set_author(name=f"Playlist queued by {ctx.author}")
-            e.description = f"{results['playlistInfo']['name']} - {len(tracks)} songs"
+            e.description = f"{results['playlistInfo']['name']} - {len(tracks)} tracks"
             await ctx.send(embed=e)
         else:
             track = results["tracks"][0]
-            e.set_author(name=f"Song queued by {ctx.author}")
+            e.set_author(name=f"track queued by {ctx.author}")
             e.description = f"[{track['info']['title']}]({track['info']['uri']})"
             await ctx.send(embed=e)
             player.add(requester=ctx.author.id, track=track)
@@ -155,7 +155,7 @@ class Music(commands.Cog):
 
     @commands.command(aliases=["np", "n", "playing", "now"])
     async def nowplaying(self, ctx):
-        """Show the song currently playing in this server."""
+        """Show the track currently playing in this server."""
 
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
@@ -174,7 +174,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def seek(self, ctx, *, time):
-        """Move to a different point in the song."""
+        """Move to a different point in the track."""
 
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
@@ -191,11 +191,11 @@ class Music(commands.Cog):
         track_time = player.position + seconds
         await player.seek(track_time)
 
-        await ctx.send(f":ok_hand: Moved song to `{lavalink.utils.format_time(track_time)}`")
+        await ctx.send(f":ok_hand: Moved track to `{lavalink.utils.format_time(track_time)}`")
 
     @commands.command(aliases=["sk", "s"])
     async def skip(self, ctx):
-        """Skip the song currently playing."""
+        """Skip the track currently playing."""
 
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
@@ -204,7 +204,7 @@ class Music(commands.Cog):
 
     @commands.command(aliases=["st"])
     async def stop(self, ctx):
-        """Stops the song currently playing and empties the queue."""
+        """Stops the track currently playing and empties the queue."""
 
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
@@ -214,7 +214,7 @@ class Music(commands.Cog):
 
     @commands.command(aliases=["resume", "res", "r"])
     async def pause(self, ctx):
-        """Pause the song currently playing."""
+        """Pause the track currently playing."""
 
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
@@ -270,7 +270,7 @@ class Music(commands.Cog):
             queue_list += f"{index + 1} - [{track.title}]({track.uri})\n"
 
         e = discord.Embed(colour=ctx.bot.embed_color, description=queue_list)
-        e.set_author(name=f"{len(player.queue)} songs in the queue ({page}/{pages})")
+        e.set_author(name=f"{len(player.queue)} tracks in the queue ({page}/{pages})")
         e.set_footer(
             text=f"To change pages use `{ctx.prefix}{ctx.command} page`, replacing page with the desired page number."
         )
@@ -278,7 +278,7 @@ class Music(commands.Cog):
 
     @commands.command(alises=["rm"])
     async def remove(self, ctx, index: int):
-        """Remove a certain song from the queue."""
+        """Remove a certain track from the queue."""
 
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
@@ -303,7 +303,7 @@ class Music(commands.Cog):
         e.set_author(name=f"Player info for {ctx.guild}")
         e.add_field(name="Volume", value=f"{player.volume}/1000", inline=False)
         e.add_field(
-            name=f"Current song",
+            name=f"Current track",
             value=f"[{player.current.title}]({player.current.uri})",
             inline=False,
         )
