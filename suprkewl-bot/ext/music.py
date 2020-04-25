@@ -109,10 +109,7 @@ class Music(commands.Cog):
 
             player.store("channel", ctx.channel.id)
             await self.connect_to(ctx.guild.id, str(ctx.author.voice.channel.id))
-        if (
-                (ctx.author.voice or ctx.author.voice_channel)
-                and player.is_connected and int(player.channel_id) != ctx.author.voice.channel.id
-        ):
+        if ctx.author.voice and player.is_connected and int(player.channel_id) != ctx.author.voice.channel.id:
             raise UserInWrongVC
 
         return True
