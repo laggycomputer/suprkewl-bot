@@ -143,11 +143,13 @@ class Music(commands.Cog):
 
             e.set_author(name=f"Playlist queued by {ctx.author}")
             e.description = f"{results['playlistInfo']['name']} - {len(tracks)} tracks"
+            e.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=e)
         else:
             track = results["tracks"][0]
             e.set_author(name=f"track queued by {ctx.author}")
             e.description = f"[{track['info']['title']}]({track['info']['uri']})"
+            e.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=e)
             player.add(requester=ctx.author.id, track=track)
 
@@ -171,6 +173,8 @@ class Music(commands.Cog):
             description=f"[{player.current.title}]({player.current.uri})",
         )
         e.add_field(name="Duration", value=f"[{position}/{duration}]")
+        e.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+
         await ctx.send(embed=e)
 
     @commands.command()
@@ -314,6 +318,7 @@ class Music(commands.Cog):
             inline=False,
         )
         e.add_field(name="Paused?", value=is_paused, inline=False)
+        e.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=e)
 
 
