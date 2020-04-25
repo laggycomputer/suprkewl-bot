@@ -83,7 +83,7 @@ class Music(commands.Cog):
             "disconnect",
             "queue",
             "remove",
-            "music_player",
+            "musicplayer",
         ]
 
         if not ctx.author.voice or not ctx.author.voice.channel:
