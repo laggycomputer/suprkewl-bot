@@ -172,7 +172,7 @@ class Music(commands.Cog):
         e.add_field(name="Duration", value=f"[{position}/{duration}]")
         await ctx.send(embed=e)
 
-    @commands.command(aliases=["s"])
+    @commands.command()
     async def seek(self, ctx, *, time):
         """Move to a different point in the song."""
 
@@ -193,7 +193,7 @@ class Music(commands.Cog):
 
         await ctx.send(f":ok_hand: Moved song to `{lavalink.utils.format_time(track_time)}`")
 
-    @commands.command(aliases=["sk"])
+    @commands.command(aliases=["sk", "s"])
     async def skip(self, ctx):
         """Skip the song currently playing."""
 
