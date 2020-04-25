@@ -535,6 +535,7 @@ class suprkewl_bot(commands.Bot):
             "Baby it's COOOOVID-19 outside...",
             "Did you know? If you are in a DM with me, you don't need to use a prefix.",
             "Don't run the code and no errors will appear.",
+            "Don't watch the clock. Do what it does - keep moving.",
             "Hey babe! Can I buy- sorry- ship you a drink?",
             "I am Nobody, nobody is perfect, therefore I am perfect. - Dandi Daley Mackall",
             "I ate a clock just now - it was rather time-consuming.",
