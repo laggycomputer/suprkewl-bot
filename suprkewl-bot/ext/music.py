@@ -304,7 +304,7 @@ class Music(commands.Cog):
 
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
-        is_paused = "No" if player.paused else "Yes"
+        is_paused = "Yes" if player.paused else "No"
         e = discord.Embed(color=ctx.bot.embed_color)
         e.set_author(name=f"Player info for {ctx.guild}")
         e.add_field(name="Volume", value=f"{player.volume}/1000", inline=False)
