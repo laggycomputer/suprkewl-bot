@@ -161,7 +161,7 @@ class Music(commands.Cog):
             duration = lavalink.utils.format_time(player.current.duration)
 
         e = discord.Embed(
-            color=0x7289DA,
+            color=ctx.bot.embed_color,
             description=f"[{player.current.title}]({player.current.uri})",
         )
         e.add_field(name="Duration", value=f"[{position}/{duration}]")
@@ -264,7 +264,7 @@ class Music(commands.Cog):
         for index, track in enumerate(player.queue[start:end], start=start):
             queue_list += f"{index + 1} - [{track.title}]({track.uri})\n"
 
-        e = discord.Embed(colour=0x7289DA, description=queue_list)
+        e = discord.Embed(colour=ctx.bot.embed_color, description=queue_list)
         e.set_author(name=f"{len(player.queue)} songs in the queue ({page}/{pages})")
         e.set_footer(
             text=f"To change pages do `{ctx.prefix}{ctx.command} PAGE` replacing page with the desired page number."
