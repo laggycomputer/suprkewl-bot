@@ -27,7 +27,7 @@ import lavalink
 from .utils.errors import BotNotInVC, UserInWrongVC, UserNotInVC
 
 
-TIME_RE = re.compile("[0-9]+")
+TIME_RE = re.compile("-?[0-9]+")
 URL_RE = re.compile("https?://(?:www.)?.+")
 
 
