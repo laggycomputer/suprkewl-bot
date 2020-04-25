@@ -46,8 +46,7 @@ class Music(commands.Cog):
                 if channel:
                     duration = lavalink.utils.format_time(event.track.duration)
                     await channel.send(
-                        f"Started song `{event.track.title}` with duration `{duration}`.",
-                        delete_after=30,
+                        f"Started song `{event.track.title}` with duration `{duration}`."
                     )
         elif isinstance(event, lavalink.TrackEndEvent):
             channel = event.player.fetch("channel")
@@ -57,9 +56,9 @@ class Music(commands.Cog):
                     await event.player.stop()
                     await self.connect_to(channel.guild.id, None)
                     return await channel.send(
-                        f"Disconnecting because queue is over...", delete_after=30
+                        f"Disconnecting because queue is over..."
                     )
-                await channel.send(f"Song ended...", delete_after=30)
+                await channel.send(f"Song ended...")
 
     async def connect_to(self, guild_id: int, channel_id: str):
         ws = self.bot._connection._get_websocket(guild_id)
@@ -126,7 +125,7 @@ class Music(commands.Cog):
         results = await player.node.get_tracks(query)
 
         if not results or not results["tracks"]:
-            return await ctx.send("No song found...", delete_after=30)
+            return await ctx.send("No song found...")
 
         e = discord.Embed(color=ctx.bot.embed_color)
 
@@ -177,7 +176,7 @@ class Music(commands.Cog):
         seconds = TIME_RE.search(time)
         if not seconds:
             return await ctx.send(
-                "Please specify a time in seconds to skip.", delete_after=30
+                ":grey_question: Please specify a time in seconds to skip."
             )
 
         seconds = int(seconds.group()) * 1000
@@ -196,7 +195,7 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
         await player.skip()
-        await ctx.send("Skipped.", delete_after=30)
+        await ctx.send("Skipped.")
 
     @commands.command(aliases=["st"])
     async def stop(self, ctx):
@@ -206,7 +205,7 @@ class Music(commands.Cog):
 
         player.queue.clear()
         await player.stop()
-        await ctx.send("Stopped.", delete_after=30)
+        await ctx.send("Stopped.")
 
     @commands.command(aliases=["resume", "res", "r"])
     async def pause(self, ctx):
@@ -216,10 +215,10 @@ class Music(commands.Cog):
 
         if player.paused:
             await player.set_pause(False)
-            await ctx.send(":play_pause: Resumed.", delete_after=30)
+            await ctx.send(":play_pause: Resumed.")
         else:
             await player.set_pause(True)
-            await ctx.send(":pause_button: Paused.", delete_after=30)
+            await ctx.send(":pause_button: Paused.")
 
     @commands.command(aliases=["vol"])
     async def volume(self, ctx, volume: int = None):
@@ -229,11 +228,11 @@ class Music(commands.Cog):
 
         if not volume:
             return await ctx.send(
-                f"My current player volume is `{player.volume}`%.", delete_after=30
+                f"My current player volume is `{player.volume}`%."
             )
 
         await player.set_volume(volume)
-        await ctx.send(f"Set player volume to `{player.volume}`%.", delete_after=30)
+        await ctx.send(f"Set player volume to `{player.volume}`%.")
 
     @commands.command(aliases=["dc", "dcon"])
     async def disconnect(self, ctx):
@@ -244,7 +243,7 @@ class Music(commands.Cog):
         player.queue.clear()
         await player.stop()
         await self.connect_to(ctx.guild.id, None)
-        await ctx.send(":ok_hand: Disconnected.", delete_after=30)
+        await ctx.send(":ok_hand: Disconnected.")
 
     @commands.command(aliases=["q"])
     async def queue(self, ctx, page: int = 1):
@@ -253,7 +252,7 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
         if not player.queue:
-            return await ctx.send("Nothing queued.", delete_after=30)
+            return await ctx.send("Nothing queued.")
 
         items_per_page = 10
         pages = math.ceil(len(player.queue) / items_per_page)
