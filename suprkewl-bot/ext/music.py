@@ -179,6 +179,9 @@ class Music(commands.Cog):
 
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
+        if player.current is None:
+            return await ctx.send(":x: Nothing is playing!")
+
         seconds = TIME_RE.search(time)
         if not seconds:
             return await ctx.send(
@@ -190,8 +193,10 @@ class Music(commands.Cog):
             seconds *= -1
 
         track_time = player.position + seconds
-        await player.seek(track_time)
+        if not 0 <= track_time <= player.current.duration:
+            return await ctx.send(":x: You can't seek that far!")
 
+        await player.seek(track_time)
         await ctx.send(f":ok_hand: Moved track to `{lavalink.utils.format_time(track_time)}`")
 
     @commands.command(aliases=["sk", "s"])
