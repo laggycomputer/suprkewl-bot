@@ -74,7 +74,7 @@ class Music(commands.Cog):
 
         should_connect = ctx.command.name in [
             "play",
-            "now",
+            "nowplaying",
             "seek",
             "skip",
             "stop",
@@ -148,8 +148,8 @@ class Music(commands.Cog):
         if not player.is_playing:
             await player.play()
 
-    @commands.command(aliases=["np", "n", "playing"])
-    async def now(self, ctx):
+    @commands.command(aliases=["np", "n", "playing", "now"])
+    async def nowplaying(self, ctx):
         """Show the song currently playing in this server."""
 
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
