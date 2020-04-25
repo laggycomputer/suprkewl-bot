@@ -112,7 +112,6 @@ class suprkewl_bot(commands.Bot):
             self.add_listener(
                 self.lavalink.voice_update_handler, "on_socket_response"
             )
-            self.lavalink.add_event_hook(self.track_hook)
 
     async def on_ready(self):
         print(f"Logged in as {self.user.name} (UID {self.user.id})")

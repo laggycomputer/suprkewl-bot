@@ -35,6 +35,9 @@ class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    def cog_load(self):
+        self.bot.lavalink.add_event_hook(self.track_hook)
+
     def cog_unload(self):
         self.bot.lavalink._event_hooks.clear()
 
