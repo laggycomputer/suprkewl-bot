@@ -92,7 +92,8 @@ class Music(commands.Cog):
         ]
 
         if (not ctx.author.voice or not ctx.author.voice.channel) and not does_not_require_user_connect:
-            raise UserNotInVC
+            if not await ctx.bot.is_owner(ctx.author):
+                raise UserNotInVC
 
         if not player.is_connected:
             if not should_connect:
@@ -109,8 +110,8 @@ class Music(commands.Cog):
             player.store("channel", ctx.channel.id)
             await self.connect_to(ctx.guild.id, str(ctx.author.voice.channel.id))
         if (
-            player.is_connected
-            and int(player.channel_id) != ctx.author.voice.channel.id
+                (ctx.author.voice or ctx.author.voice_channel)
+                and player.is_connected and int(player.channel_id) != ctx.author.voice.channel.id
         ):
             raise UserInWrongVC
 
