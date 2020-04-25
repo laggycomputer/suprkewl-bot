@@ -96,10 +96,10 @@ class Music(commands.Cog):
             permissions = ctx.author.voice.channel.permissions_for(ctx.me)
 
             if not permissions.connect:
-                raise commands.MissingPermissions(["connect"])
+                raise commands.BotMissingPermissions(["connect"])
 
             if not permissions.speak:
-                raise commands.MissingPermissions(["speak"])
+                raise commands.BotMissingPermissions(["speak"])
 
             player.store("channel", ctx.channel.id)
             await self.connect_to(ctx.guild.id, str(ctx.author.voice.channel.id))
