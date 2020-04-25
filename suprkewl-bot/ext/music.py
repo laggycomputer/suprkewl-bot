@@ -46,7 +46,7 @@ class Music(commands.Cog):
                 if channel:
                     duration = lavalink.utils.format_time(event.track.duration)
                     await channel.send(
-                        f"Started song `{event.track.title}` with duration `{duration}`."
+                        f"Now playing `{event.track.title}` of duration `{duration}`."
                     )
         elif isinstance(event, lavalink.TrackEndEvent):
             channel = event.player.fetch("channel")
@@ -56,9 +56,8 @@ class Music(commands.Cog):
                     await event.player.stop()
                     await self.connect_to(channel.guild.id, None)
                     return await channel.send(
-                        f"Disconnecting because queue is over..."
+                        f"Disconnecting because queue is empty."
                     )
-                await channel.send(f"Song ended...")
 
     async def connect_to(self, guild_id: int, channel_id: str):
         ws = self.bot._connection._get_websocket(guild_id)
@@ -86,7 +85,13 @@ class Music(commands.Cog):
             "musicplayer",
         ]
 
-        if not ctx.author.voice or not ctx.author.voice.channel:
+        does_not_require_user_connect = ctx.command in [
+            "nowplaying",
+            "queue",
+            "musicplayer"
+        ]
+
+        if (not ctx.author.voice or not ctx.author.voice.channel) and not does_not_require_user_connect:
             raise UserNotInVC
 
         if not player.is_connected:
@@ -125,7 +130,7 @@ class Music(commands.Cog):
         results = await player.node.get_tracks(query)
 
         if not results or not results["tracks"]:
-            return await ctx.send("No song found...")
+            return await ctx.send(":grey_question: No song found.")
 
         e = discord.Embed(color=ctx.bot.embed_color)
 
@@ -186,7 +191,7 @@ class Music(commands.Cog):
         track_time = player.position + seconds
         await player.seek(track_time)
 
-        await ctx.send(f"Moved song to `{lavalink.utils.format_time(track_time)}`")
+        await ctx.send(f":ok_hand: Moved song to `{lavalink.utils.format_time(track_time)}`")
 
     @commands.command(aliases=["sk"])
     async def skip(self, ctx):
@@ -195,7 +200,7 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
         await player.skip()
-        await ctx.send("Skipped.")
+        await ctx.send(":track_next: Skipped.")
 
     @commands.command(aliases=["st"])
     async def stop(self, ctx):
@@ -205,7 +210,7 @@ class Music(commands.Cog):
 
         player.queue.clear()
         await player.stop()
-        await ctx.send("Stopped.")
+        await ctx.send(":stop_button: Stopped.")
 
     @commands.command(aliases=["resume", "res", "r"])
     async def pause(self, ctx):
@@ -228,11 +233,11 @@ class Music(commands.Cog):
 
         if not volume:
             return await ctx.send(
-                f"My current player volume is `{player.volume}`%."
+                f":speaker: My current player volume is `{player.volume}`%."
             )
 
         await player.set_volume(volume)
-        await ctx.send(f"Set player volume to `{player.volume}`%.")
+        await ctx.send(f":speaker: Set player volume to `{player.volume}`%.")
 
     @commands.command(aliases=["dc", "dcon"])
     async def disconnect(self, ctx):
@@ -252,7 +257,7 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
         if not player.queue:
-            return await ctx.send("Nothing queued.")
+            return await ctx.send(":x: Nothing queued.")
 
         items_per_page = 10
         pages = math.ceil(len(player.queue) / items_per_page)
@@ -267,7 +272,7 @@ class Music(commands.Cog):
         e = discord.Embed(colour=ctx.bot.embed_color, description=queue_list)
         e.set_author(name=f"{len(player.queue)} songs in the queue ({page}/{pages})")
         e.set_footer(
-            text=f"To change pages do `{ctx.prefix}{ctx.command} PAGE` replacing page with the desired page number."
+            text=f"To change pages use `{ctx.prefix}{ctx.command} page`, replacing page with the desired page number."
         )
         await ctx.send(embed=e)
 
@@ -279,13 +284,13 @@ class Music(commands.Cog):
 
         if index > len(player.queue) or index < 1:
             return await ctx.send(
-                f"Invalid index, please use an index of `1`-`{len(player.queue)}`."
+                f":grey_question: Invalid index, please use an index of `1`-`{len(player.queue)}`."
             )
 
         index -= 1
         removed = player.queue.pop(index)
 
-        await ctx.send(f"Removed `{removed.title}` from the queue.")
+        await ctx.send(f":eject: Removed `{removed.title}` from the queue.")
 
     @commands.command(name="musicplayer", aliases=["mp"])
     async def music_player(self, ctx):
@@ -302,7 +307,7 @@ class Music(commands.Cog):
             value=f"[{player.current.title}]({player.current.uri})",
             inline=False,
         )
-        e.add_field(name="Is paused", value=is_paused, inline=False)
+        e.add_field(name="Paused?", value=is_paused, inline=False)
         await ctx.send(embed=e)
 
 
