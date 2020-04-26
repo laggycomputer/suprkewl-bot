@@ -74,6 +74,7 @@ class Music(commands.Cog):
 
         should_connect = ctx.command.name in [
             "play",
+            "playskip",
             "nowplaying",
             "seek",
             "skip",
@@ -92,8 +93,8 @@ class Music(commands.Cog):
             "musicplayer"
         ]
 
-        if (not ctx.author.voice or not ctx.author.voice.channel) and not does_not_require_user_connect:
-            if not await ctx.bot.is_owner(ctx.author):
+        if (ctx.author.voice is None or ctx.author.voice.channel is None) and not does_not_require_user_connect:
+            if not (player.is_connected and await ctx.bot.is_owner(ctx.author)):
                 raise UserNotInVC
 
         if not player.is_connected:
@@ -153,6 +154,46 @@ class Music(commands.Cog):
 
         if not player.is_playing:
             await player.play()
+
+    @commands.command(aliases=["ps", "plys"])
+    async def playskip(self, ctx, *, query: str):
+        """Play a track, skipping through all tracks in the queue, if any."""
+
+        player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
+
+        query = query.strip("<>")
+
+        if not URL_RE.match(query):
+            query = f"ytsearch:{query}"
+
+        results = await player.node.get_tracks(query)
+
+        if not results or not results["tracks"]:
+            return await ctx.send(":grey_question: No track found.")
+
+        await player.stop()
+
+        e = discord.Embed(color=ctx.bot.embed_color)
+
+        if results["loadType"] == "PLAYLIST_LOADED":
+            tracks = results["tracks"]
+
+            for track in tracks:
+                player.add(requester=ctx.author.id, track=track)
+
+            e.set_author(name=f"Skipping to playlist queued by {ctx.author}")
+            e.description = f"{results['playlistInfo']['name']} - {len(tracks)} tracks"
+            e.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=e)
+        else:
+            track = results["tracks"][0]
+            e.set_author(name=f"Skipping to track queued by {ctx.author}")
+            e.description = f"[{track['info']['title']}]({track['info']['uri']})"
+            e.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=e)
+            player.add(requester=ctx.author.id, track=track)
+
+        await player.play()
 
     @commands.command(aliases=["np", "n", "playing", "now"])
     async def nowplaying(self, ctx):
