@@ -25,9 +25,6 @@ from .utils import Embedinator
 
 class HelpCommand(commands.HelpCommand):
 
-    def __init__(self):
-        super().__init__()
-
     def command_not_found(self, string):
         return f"Command or category `{self.context.prefix}{string}` not found. Try again..."
 
@@ -169,11 +166,8 @@ class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.original_help_command = bot.help_command
-        bot.help_command = HelpCommand()
+        bot.help_command = HelpCommand(verify_checks=False, hidden=True)
         bot.help_command.cog = self
-        new_cmd = self.bot.get_command("help")
-        new_cmd.hidden = True
-        new_cmd.verify_checks = False
 
     def cog_unload(self):
         self.bot.help_command = self.original_help_command
