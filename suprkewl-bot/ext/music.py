@@ -58,9 +58,7 @@ class Music(commands.Cog):
                 if len(event.player.queue) == 0:
                     await event.player.stop()
                     await self.connect_to(channel.guild.id, None)
-                    return await channel.send(
-                        f"Disconnecting because queue is empty."
-                    )
+                    return await channel.send("Queue is empty, disconnecting.")
 
     async def connect_to(self, guild_id: int, channel_id: str):
         ws = self.bot._connection._get_websocket(guild_id)
@@ -119,7 +117,7 @@ class Music(commands.Cog):
 
     @commands.command(aliases=["p", "pl", "ply"])
     async def play(self, ctx, *, query: str):
-        """Play a track."""
+        """Play or enqueue a track."""
 
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
@@ -147,7 +145,7 @@ class Music(commands.Cog):
             await ctx.send(embed=e)
         else:
             track = results["tracks"][0]
-            e.set_author(name=f"track queued by {ctx.author}")
+            e.set_author(name=f"Track queued by {ctx.author}")
             e.description = f"[{track['info']['title']}]({track['info']['uri']})"
             e.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=e)
@@ -189,7 +187,7 @@ class Music(commands.Cog):
         seconds = TIME_RE.search(time)
         if not seconds:
             return await ctx.send(
-                ":grey_question: Please specify a time in seconds to skip."
+                ":grey_question: Please specify a time in seconds to seek to."
             )
 
         seconds = int(seconds.group()) * 1000
@@ -280,9 +278,9 @@ class Music(commands.Cog):
             queue_list += f"{index + 1} - [{track.title}]({track.uri})\n"
 
         e = discord.Embed(colour=ctx.bot.embed_color, description=queue_list)
-        e.set_author(name=f"{len(player.queue)} tracks in the queue ({page}/{pages})")
+        e.set_author(name=f"There are {len(player.queue)} tracks in the queue (page {page}/{pages}):")
         e.set_footer(
-            text=f"To change pages use `{ctx.prefix}{ctx.command} page`, replacing page with the desired page number."
+            text=f"To change pages use \"{ctx.prefix}{ctx.command} page\", replacing page with the desired page number."
         )
         await ctx.send(embed=e)
 
@@ -294,7 +292,7 @@ class Music(commands.Cog):
 
         if index > len(player.queue) or index < 1:
             return await ctx.send(
-                f":grey_question: Invalid index, please use an index of `1`-`{len(player.queue)}`."
+                f":grey_question: Invalid index, please use an index in the range `1`-`{len(player.queue)}`."
             )
 
         index -= 1
@@ -311,7 +309,7 @@ class Music(commands.Cog):
         is_paused = "Yes" if player.paused else "No"
         e = discord.Embed(color=ctx.bot.embed_color)
         e.set_author(name=f"Player info for {ctx.guild}")
-        e.add_field(name="Volume", value=f"{player.volume}/1000", inline=False)
+        e.add_field(name="Volume", value=f"{player.volume}%/1000%", inline=False)
         e.add_field(
             name=f"Current track",
             value=f"[{player.current.title}]({player.current.uri})",
