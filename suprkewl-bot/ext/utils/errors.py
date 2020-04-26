@@ -20,13 +20,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from discord.ext import commands
 
 
-class UserNotInVC(commands.CommandError):
+class UserNotInVC(commands.CheckFailure):
     pass
 
 
-class BotNotInVC(commands.CommandError):
+class BotNotInVC(commands.CheckFailure):
     pass
 
 
-class UserInWrongVC(commands.CommandError):
+class UserInWrongVC(commands.CheckFailure):
     pass
