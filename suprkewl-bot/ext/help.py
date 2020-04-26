@@ -30,7 +30,7 @@ class HelpCommand(commands.HelpCommand):
 
     def subcommand_not_found(self, command, string):
         if isinstance(command, commands.Group) and len(command.all_commands) > 0:
-            return f"Command `{self.context.prefix}{command.qualified_name}` has no subcommand named {string}"
+            return f"Command `{self.context.prefix}{command.qualified_name}` has no subcommand named {string}."
         else:
             return f"Command `{self.context.prefix}{command.qualified_name}` has no subcommands."
 
