@@ -30,7 +30,7 @@ from discord.ext import commands
 import lavalink
 
 import config
-from ext.utils import BotNotInVC, Context, linecount, permissions_converter, UserInWrongVC, UserNotInVC
+from ext.utils import BotNotInVC, Context, DJRequired, linecount, permissions_converter, UserInWrongVC, UserNotInVC
 import redis
 
 
@@ -421,6 +421,16 @@ class suprkewl_bot(commands.Bot):
             emb.add_field(
                 name="User in wrong channel",
                 value=f":x: You must be in the same voice channel as the bot to run `{ctx.prefix}{ctx.command}`."
+            )
+
+            return await ctx.send(embed=emb)
+
+        elif isinstance(error, DJRequired):
+            emb = ctx.default_embed
+            emb.add_field(
+                name="DJ role required",
+                value=f":x: There are multiple people listening to music, so you need a role called 'DJ' to run "
+                      f"`{ctx.prefix}{ctx.command}`."
             )
 
             return await ctx.send(embed=emb)

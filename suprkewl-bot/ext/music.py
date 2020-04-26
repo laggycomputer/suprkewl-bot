@@ -24,14 +24,59 @@ import discord
 from discord.ext import commands
 import lavalink
 
-from .utils.errors import BotNotInVC, UserInWrongVC, UserNotInVC
+from .utils.errors import BotNotInVC, DJRequired, UserInWrongVC, UserNotInVC
 
 
 TIME_RE = re.compile("-?[0-9]+")
 URL_RE = re.compile("https?://(?:www.)?.+")
 
 
+def requires_dj():
+    async def pred(ctx):
+        try:
+            await ctx.cog.cog_check(ctx)  # hackerman
+        except commands.CheckFailure as exc:
+            raise exc from None
+
+        if await ctx.bot.is_owner(ctx.author):
+            return True
+
+        player = ctx.bot.lavalink.player_manager.players.get(ctx.guild.id)
+
+        jammers = 0
+        for state in ctx.author.voice.channel.voice_states.values():
+            if not (state.deaf or state.self_deaf):
+                jammers += 1
+
+        if jammers <= 1:
+            return True
+        else:
+            has_dj = False
+            for r in ctx.guild.roles:
+                if r.name.strip().upper() == "DJ":
+                    if ctx.author in r.members:
+                        has_dj = True
+
+            if ctx.command.name == "skip" and player.current.requester == ctx.author.id:
+                return True
+            elif ctx.command.name == "playskip":
+                songs = [player.current] + player.queue
+                for s in songs:
+                    if s.requester != ctx.author.id and not has_dj:
+                        raise DJRequired
+            else:
+                try:
+                    assert has_dj
+                    return has_dj
+                except AssertionError:
+                    raise DJRequired from None
+
+    return commands.check(pred)
+
+
 class Music(commands.Cog):
+    """Some commands require a role called "DJ" when multiple people are in the same voice channel."""
+
     def __init__(self, bot):
         self.bot = bot
 
@@ -156,6 +201,7 @@ class Music(commands.Cog):
             await player.play()
 
     @commands.command(aliases=["ps", "plys"])
+    @requires_dj()
     async def playskip(self, ctx, *, query: str):
         """Play a track, skipping through all tracks in the queue, if any."""
 
@@ -217,6 +263,7 @@ class Music(commands.Cog):
         await ctx.send(embed=e)
 
     @commands.command()
+    @requires_dj()
     async def seek(self, ctx, *, time):
         """Move to a different point in the track."""
 
@@ -243,6 +290,7 @@ class Music(commands.Cog):
         await ctx.send(f":ok_hand: Moved track to `{lavalink.utils.format_time(track_time)}`")
 
     @commands.command(aliases=["sk", "s"])
+    @requires_dj()
     async def skip(self, ctx):
         """Skip the track currently playing."""
 
@@ -252,6 +300,7 @@ class Music(commands.Cog):
         await ctx.send(":track_next: Skipped.")
 
     @commands.command(aliases=["st"])
+    @requires_dj()
     async def stop(self, ctx):
         """Stops the track currently playing and empties the queue."""
 
@@ -262,6 +311,7 @@ class Music(commands.Cog):
         await ctx.send(":stop_button: Stopped.")
 
     @commands.command(aliases=["resume", "res", "r"])
+    @requires_dj()
     async def pause(self, ctx):
         """Pause the track currently playing."""
 
@@ -275,6 +325,7 @@ class Music(commands.Cog):
             await ctx.send(":pause_button: Paused.")
 
     @commands.command(aliases=["vol"])
+    @requires_dj()
     async def volume(self, ctx, volume: int = None):
         """Change the volume level of the music player."""
 
@@ -289,6 +340,7 @@ class Music(commands.Cog):
         await ctx.send(f":speaker: Set player volume to `{player.volume}`%.")
 
     @commands.command(aliases=["dc", "dcon"])
+    @requires_dj()
     async def disconnect(self, ctx):
         """Disconnect from the voice channel and empty the queue."""
 
@@ -326,6 +378,7 @@ class Music(commands.Cog):
         await ctx.send(embed=e)
 
     @commands.command(alises=["rm"])
+    @requires_dj()
     async def remove(self, ctx, index: int):
         """Remove a certain track from the queue."""
 
@@ -359,6 +412,17 @@ class Music(commands.Cog):
         e.add_field(name="Paused?", value=is_paused, inline=False)
         e.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=e)
+
+    @commands.command(name="shuffle", aliases=["shuf"])
+    @requires_dj()
+    async def shuffle_(self, ctx, *, shuffle: bool = None):
+        """Toggle shuffle play."""
+
+        player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
+        proposed_state = shuffle if shuffle is not None else not player.shuffle
+
+        player.shuffle = proposed_state
+        await ctx.send(f":twisted_rightwards_arrows: Shuffle play is now {'on' if proposed_state else 'off'}.")
 
 
 def setup(bot):

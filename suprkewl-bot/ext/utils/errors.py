@@ -30,3 +30,7 @@ class BotNotInVC(commands.CheckFailure):
 
 class UserInWrongVC(commands.CheckFailure):
     pass
+
+
+class DJRequired(commands.CheckFailure):
+    pass
