@@ -44,7 +44,9 @@ def requires_dj():
         player = ctx.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
         jammers = 0
-        for state in ctx.author.voice.channel.voice_states.values():
+        states = ctx.author.voice.channel.voice_states
+        states.pop(ctx.bot.user.id)
+        for state in states:
             if not (state.deaf or state.self_deaf):
                 jammers += 1
 
