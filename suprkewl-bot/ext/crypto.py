@@ -24,6 +24,9 @@ import hashlib
 import io
 
 import aiohttp
+from argon2 import PasswordHasher
+# This import is used via globals, so ignore your IDE/linter here.
+from Cryptodome.Hash import *  # noqa F403, F401
 import discord
 from discord.ext import commands
 
@@ -197,6 +200,25 @@ def encode_a1z26(message):
     return " ".join(new_words)
 
 
+def do_hash(alg, msg):
+    if alg in hashlib.algorithms_guaranteed:
+        hash_obj = getattr(hashlib, alg)()
+        hash_obj.update(msg)
+        return hash_obj.hexdigest()
+    elif alg.startswith("sha"):
+        num = alg.replace("sha", "")
+        if "/" in num:
+            attr = f"SHA{num.split('/')[0]}"
+            return globals()[attr].new(data=msg, truncate=num.split("/")[1]).hexdigest()
+        else:
+            attr = f"SHA{num}"
+            return globals()[attr].new(data=msg).hexdigest()
+    elif alg == "argon2":
+        return PasswordHasher().hash(msg)
+    else:  # This is an MDx alg
+        return globals()[alg.upper()].new(data=msg).hexdigest()
+
+
 class Cryptography(commands.Cog):
 
     @commands.group(
@@ -327,23 +349,31 @@ class Cryptography(commands.Cog):
     async def checksum(self, ctx, algorithm, *, message=None):
         """Generate cryptographic checksums."""
 
-        allowed_alg = hashlib.algorithms_guaranteed
+        algorithm = algorithm.lower()
 
-        if algorithm == "list" and message is None:
-            algorithms = ", ".join(f"`{alg}`" for alg in allowed_alg)
-            return await ctx.send(":white_check_mark: The allowed algorithms are as follows: \n" + algorithms)
+        allowed_algs = list(hashlib.algorithms_guaranteed)
+        allowed_algs += ["sha" + n for n in ["224", "256", "384", "512", "512/224", "512/256"]]
+        allowed_algs += ["md2", "md5", "argon2"]
 
-        if algorithm in allowed_alg:
+        for alg in ["blake2s", "blake2b"]:
+            del allowed_algs[allowed_algs.index(alg)]
+
+        if message is None:
+            if algorithm == "list":
+                algorithms = ", ".join(f"`{alg}`" for alg in allowed_algs)
+                return await ctx.send(":white_check_mark: The allowed algorithms are as follows: \n" + algorithms)
+            else:
+                return await ctx.send(":x: Where's your message?")
+
+        if algorithm in allowed_algs:
             message = message.encode("utf-8")
-            m = getattr(hashlib, algorithm)()
-            m.update(message)
-            ret = m.hexdigest()
+            ret = do_hash(algorithm, message)
 
             await ctx.send(f"{ctx.author.mention}\n> `{ret}`")
         else:
             await ctx.send(
-                f":x: Invalid algorithm. Remember that algorithm names are case-sensitive. See"
-                f" `{ctx.prefix}{ctx.invoked_with} list` for the list of available algorithms."
+                f":x: Invalid algorithm. See `{ctx.prefix}{ctx.invoked_with} list` for the list of available "
+                f"algorithms."
             )
 
     @commands.group(

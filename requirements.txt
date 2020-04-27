@@ -1,6 +1,7 @@
 aiodns
 aioredis
 aiosqlite
+argon2-cffi
 cchardet
 discord.py[voice]
 gtts
@@ -9,6 +10,7 @@ lavalink
 matplotlib
 opencv-python
 Pillow
+pycryptodomex
 pygit2
 PyLyrics
 python-dateutil
