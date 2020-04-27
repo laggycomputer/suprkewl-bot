@@ -5,10 +5,10 @@ cchardet
 discord.py[voice]
 gtts
 jishaku
+lavalink
 matplotlib
 opencv-python
 Pillow
 pygit2
 PyLyrics
 python-dateutil
-lavalink
