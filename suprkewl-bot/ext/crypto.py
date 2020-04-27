@@ -173,8 +173,6 @@ def encode_a1z26(message):
         split_message[i] = list(split_message[i])
 
     new_words = []
-    current_word = []
-    to_append = ""
 
     for word in split_message:
         current_word = []
