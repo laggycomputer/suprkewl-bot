@@ -320,7 +320,7 @@ class Cryptography(commands.Cog):
             await ctx.send(to_send)
 
     @commands.command(
-        aliases=["cs"],
+        aliases=["cs", "hash"],
         description="Generate a checksum using <alg> for your <message>. Files are currently unsupported. Use the"
                     " algorithm `list` with no message to list available algorithms."
     )
@@ -339,7 +339,7 @@ class Cryptography(commands.Cog):
             m.update(message)
             ret = m.hexdigest()
 
-            await ctx.send(f":white_check_mark: The hash of your message is `{ret}`.")
+            await ctx.send(f"{ctx.author.mention}\n> `{ret}`")
         else:
             await ctx.send(
                 f":x: Invalid algorithm. Remember that algorithm names are case-sensitive. See"
