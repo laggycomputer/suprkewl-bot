@@ -553,7 +553,7 @@ class suprkewl_bot(commands.Bot):
             " serious question by members of another species.",
             "If coronavirus doesn't take you out... can I?",
             "If plan A fails, don't worry; there are still 25 more letters in the alphabet.",
-            "I saw you from across the bar. Stay there."
+            "I saw you from across the bar. Stay there.",
             "If two wrongs don't make a right, try three.",
             "If you work 8 hours a day as a regular worker, you may one day be promoted to boss and work 12 hours a"
             " day.",
