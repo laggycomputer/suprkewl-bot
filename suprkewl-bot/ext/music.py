@@ -54,6 +54,8 @@ def requires_dj():
             return True
         else:
             has_dj = False
+            if ctx.author.guild_permissions.administrator:
+                has_dj = True
             for r in ctx.guild.roles:
                 if r.name.strip().upper() == "DJ":
                     if ctx.author in r.members:
