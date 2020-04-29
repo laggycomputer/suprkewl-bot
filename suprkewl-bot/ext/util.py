@@ -26,6 +26,7 @@ import os
 import random
 import re
 import typing
+import unicodedata
 from urllib.parse import quote as urlquote
 
 import discord
@@ -390,6 +391,19 @@ class Utilities(commands.Cog):
 
         e.set_footer(text=f"Message ID {message_id} | User ID {user.id} | Channel ID {chnl.id} | Guild ID {guild.id}")
         await ctx.send(embed=e)
+
+    @commands.command(aliases=["ci", "char", "ch", "c"])
+    async def charinfo(self, ctx, *, characters):
+        """Shows you Unicode information about the given characters."""
+
+        def to_string(c):
+            digit = f"{ord(c):x}"
+            name = unicodedata.name(c, "Name not found.")
+            return f"`\\U{digit:>08}`: {name} - {c} \N{EM DASH} <http://www.fileformat.info/info/unicode/char/{digit}>"
+        msg = ctx.author.mention + "\n" + "\n".join(map(to_string, characters))
+        if len(msg) > 2000:
+            return await ctx.send(":x: Output too long to display, try using less characters.")
+        await ctx.send(msg)
 
 
 def setup(bot):
