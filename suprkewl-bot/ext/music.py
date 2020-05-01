@@ -404,6 +404,12 @@ class Music(commands.Cog):
 
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
+        position = lavalink.utils.format_time(player.position)
+        if player.current.stream:
+            duration = "Live"
+        else:
+            duration = lavalink.utils.format_time(player.current.duration)
+
         is_paused = "Yes" if player.paused else "No"
         e = discord.Embed(color=ctx.bot.embed_color)
         e.set_author(name=f"Player info for {ctx.guild}")
@@ -413,7 +419,11 @@ class Music(commands.Cog):
             value=f"[{player.current.title}]({player.current.uri})",
             inline=False,
         )
+        e.add_field(name="Duration", value=f"[{position}/{duration}]")
         e.add_field(name="Paused?", value=is_paused, inline=False)
+        e.add_field(name="Shuffling queue?", value="Yes" if player.shuffle else "No")
+        e.add_field(name="Looping queue?", value="Yes" if player.repeat else "No")
+
         e.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=e)
 
