@@ -381,7 +381,7 @@ class Music(commands.Cog):
         )
         await ctx.send(embed=e)
 
-    @commands.command(alises=["rm"])
+    @commands.command(aliases=["rm"])
     @requires_dj()
     async def remove(self, ctx, index: int):
         """Remove a certain track from the queue."""
