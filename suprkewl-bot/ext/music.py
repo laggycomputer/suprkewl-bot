@@ -428,6 +428,17 @@ class Music(commands.Cog):
         player.shuffle = proposed_state
         await ctx.send(f":twisted_rightwards_arrows: Shuffle play is now {'on' if proposed_state else 'off'}.")
 
+    @commands.command(name="loop", aliases=["lp", "repeat", "rp"])
+    @requires_dj()
+    async def loop_(self, ctx, *, loop: bool = None):
+        """Toggle shuffle play."""
+
+        player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
+        proposed_state = loop if loop is not None else not player.repeat
+
+        player.repeat = proposed_state
+        await ctx.send(f":repeat_one: Queue loop is now {'on' if proposed_state else 'off'}.")
+
 
 def setup(bot):
     bot.add_cog(Music(bot))
