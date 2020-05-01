@@ -4,6 +4,8 @@ import logging
 token = ""
 # You may specify the IDs of additional users that are to be registered as owners here:
 extra_owners = []
+# Here you can specify guild IDs to exclude from owner ping responses.
+ignore_guilds = []
 # Logging path and level.
 logpath = "suprkewl.log"
 loglevels = (logging.CRITICAL, logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG)
