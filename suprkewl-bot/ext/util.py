@@ -110,7 +110,7 @@ class Utilities(commands.Cog):
         """Parse a Discord auth token."""
 
         if not token_re.match(token):
-            await ctx.send("Not a valid token.")
+            return await ctx.send("Not a valid token.")
 
         t = token.split(".")
         if len(t) != 3:
