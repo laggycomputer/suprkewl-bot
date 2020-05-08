@@ -157,7 +157,7 @@ class Owner(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(change_nickname=True)
-    async def nick(self, ctx, *, name):
+    async def nick(self, ctx, *, name=None):
         """Change my nickname on this server."""
 
         await ctx.guild.me.edit(nick=name)
