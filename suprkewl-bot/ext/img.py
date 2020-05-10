@@ -309,6 +309,18 @@ def invert_along(img, axis):
     return fp
 
 
+@async_executor()
+def _blurple(img):
+    ret = img.convert("L")
+    ret = PIL.ImageOps.colorize(ret, (78, 93, 148), (255, 255, 255), (114, 137, 218))
+
+    fp = io.BytesIO()
+    ret.save(fp, "png")
+    fp.seek(0)
+
+    return fp
+
+
 def link(arr, arr2):
     rgb1 = arr.reshape((arr.shape[0] * arr.shape[1], 3))
     rgb2 = list(map(tuple, arr2.reshape((arr2.shape[0] * arr2.shape[1], 3))))
@@ -636,6 +648,19 @@ class Image_(commands.Cog, name="Image",
 
         await ctx.send(f":white_check_mark: That took {t} seconds.\n Warning - staring at this for too long might make "
                        "your eyes hurt...", file=fp)
+
+    @commands.command(aliases=["blp"])
+    async def blurple(self, ctx, *, url=None):
+        """Hooray for Project Blurple! Create your own blurple image with this command."""
+
+        url = await process_single_arg(ctx, url)
+        if url is None:  # An error message was sent
+            return
+
+        fp = await _blurple(url)
+        fp = discord.File(fp, "blurpled.png")
+
+        await ctx.send(":white_check_mark:", file=fp)
 
     @commands.command(
         aliases=["ts", "tf"],
