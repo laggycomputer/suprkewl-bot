@@ -154,10 +154,10 @@ class Owner(commands.Cog):
         else:
             await ctx.send(to_send)
 
-    @commands.command()
+    @commands.command(aliases=["nick", "nk"])
     @commands.guild_only()
     @commands.bot_has_permissions(change_nickname=True)
-    async def nick(self, ctx, *, name=None):
+    async def nickname(self, ctx, *, name=None):
         """Change my nickname on this server."""
 
         await ctx.guild.me.edit(nick=name)
