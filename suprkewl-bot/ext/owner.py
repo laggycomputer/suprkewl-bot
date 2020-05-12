@@ -210,7 +210,12 @@ class Owner(commands.Cog):
         to_send = f"```{ret}```"
 
         if len(to_send) > 2000:
-            await ctx.send("Too many results! " + await ctx.bot.post_to_hastebin(ret))
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(ret)
+                await ctx.send("Too many results! " + hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(ret.encode("utf-8")), "out.txt")
+                await ctx.send(":thinking: Your data was too long for Discord, and hastebin is not working.", file=fp)
         else:
             await ctx.send(to_send)
 
