@@ -726,7 +726,7 @@ L
 
         data = {"percent": percent}
 
-        async with ctx.bot.http2.get("https://cdn.welcomer.fun/minecraftxp", data=data) as resp:
+        async with ctx.bot.session.get("https://cdn.welcomer.fun/minecraftxp", data=data) as resp:
             raw = await resp.content.read()
 
         fp = discord.File(io.BytesIO(raw), "xp.png")
@@ -738,7 +738,7 @@ L
         """Generate a Minecraft achievement notification with your text."""
 
         async with ctx.typing():
-            async with ctx.bot.http2.get(f"https://api.alexflipnote.dev/achievement?text={text}") as resp:
+            async with ctx.bot.session.get(f"https://api.alexflipnote.dev/achievement?text={text}") as resp:
                 raw = await resp.content.read()
 
         await ctx.send(file=discord.File(io.BytesIO(raw), "achieved.png"))
@@ -748,7 +748,7 @@ L
         """Draw a Supreme sticker with your text."""
 
         async with ctx.typing():
-            async with ctx.bot.http2.get(f"https://api.alexflipnote.dev/supreme?text={text}") as resp:
+            async with ctx.bot.session.get(f"https://api.alexflipnote.dev/supreme?text={text}") as resp:
                 raw = await resp.content.read()
 
         await ctx.send(file=discord.File(io.BytesIO(raw), "supreme.png"))

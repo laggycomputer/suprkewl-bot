@@ -53,7 +53,7 @@ class suprkewl_bot(commands.Bot):
         self.messages_seen = 0
 
         self.redis = None
-        self.http2 = None
+        self.session = None
         self.db = None
         self.lavalink = None
 
@@ -95,8 +95,8 @@ class suprkewl_bot(commands.Bot):
             self.redis = redis.Redis()
             await self.redis.connect()
             await self.redis.execute("FLUSHDB")
-        if not self.http2:
-            self.http2 = aiohttp.ClientSession()
+        if not self.session:
+            self.session = aiohttp.ClientSession()
         if not self.db:
             self.db = await aiosqlite.connect(config.db_path)
 
@@ -514,7 +514,7 @@ class suprkewl_bot(commands.Bot):
         await self.wait_until_ready()
 
         while not self.is_closed():
-            await self.http2.post(
+            await self.session.post(
                 f"https://discordbots.org/api/bots/{self.user.id}/stats",
                 json=dict(server_count=len(self.guilds)),
                 headers={"Content-Type": "application/json", "Authorization": config.dbl_token}
@@ -522,8 +522,8 @@ class suprkewl_bot(commands.Bot):
             await asyncio.sleep(1800)
 
     async def logout(self):
-        if not self.http2.closed:
-            await self.http2.close()
+        if not self.session.closed:
+            await self.session.close()
             await asyncio.sleep(0)
         self.redis.disconnect()  # yes this not a coro
         await self.db.close()
@@ -531,7 +531,7 @@ class suprkewl_bot(commands.Bot):
 
     async def post_to_hastebin(self, data):
         data = data.encode("utf-8")
-        async with self.http2.post("https://hastebin.com/documents", data=data) as resp:
+        async with self.session.post("https://hastebin.com/documents", data=data) as resp:
             out = await resp.json()
 
         assert "key" in out

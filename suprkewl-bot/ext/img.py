@@ -459,7 +459,7 @@ async def process_single_arg(ctx, argument):
                 url = argument
 
     try:
-        async with ctx.bot.http2.get(url) as resp:
+        async with ctx.bot.session.get(url) as resp:
             try:
                 img = Image.open(io.BytesIO(await resp.content.read())).convert("RGB")
             except OSError:
@@ -705,10 +705,10 @@ class Image_(commands.Cog, name="Image",
                 except commands.CommandError:
                     for a in message.attachments:
                         if a.height:
-                            async with ctx.bot.http2.get(a.proxy_url) as resp:
+                            async with ctx.bot.session.get(a.proxy_url) as resp:
                                 return Image.open(io.BytesIO(await resp.content.read()))
                     try:
-                        async with ctx.bot.http2.get(content) as resp:
+                        async with ctx.bot.session.get(content) as resp:
                             return Image.open(io.BytesIO(await resp.content.read()))
                     except (OSError, aiohttp.InvalidURL, PIL.UnidentifiedImageError):
                         return None

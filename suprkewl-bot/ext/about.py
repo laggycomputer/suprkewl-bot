@@ -183,7 +183,7 @@ class About(commands.Cog):
     async def buildinfo(self, ctx):
         """Gets Travis CI info for the bot."""
 
-        status = await get_latest_build_status(ctx.bot.http2)
+        status = await get_latest_build_status(ctx.bot.session)
         emb = ctx.default_embed
 
         desc = ""
@@ -192,7 +192,7 @@ class About(commands.Cog):
             desc += f"`{k}`:\n"
             desc += f"**Latest build:** {v['status']}\n"
 
-            past_status = await get_recent_builds_on(ctx.bot.http2, k)
+            past_status = await get_recent_builds_on(ctx.bot.session, k)
             desc += f"**10 most recent builds:** {''.join(past_status)}\n\n"
         emb.description = desc
 

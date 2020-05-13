@@ -53,7 +53,7 @@ def to_datetime(obj):
 
 
 async def download_rtex_file(ctx, data):
-    cs = ctx.bot.http2
+    cs = ctx.bot.session
     async with cs.post(f"http://{config.rtex_server}/api/v2", data=dict(code=data, format="png")) as resp:
         data = await resp.json()
     return data
@@ -83,7 +83,7 @@ class Utilities(commands.Cog):
 
         if ret["status"] == "error":
             data = log.encode("utf-8")
-            async with ctx.bot.http2.post("https://hastebin.com/documents", data=data) as resp:
+            async with ctx.bot.session.post("https://hastebin.com/documents", data=data) as resp:
                 out = await resp.json()
                 if "key" not in out:
                     return await ctx.send("Something wrong happened while rendering. Perhaps your input was invalid?")
@@ -96,7 +96,7 @@ class Utilities(commands.Cog):
 
             fname = ret["filename"]
 
-            async with ctx.bot.http2.get(f"http://{config.rtex_server}/api/v2/" + fname) as resp:
+            async with ctx.bot.session.get(f"http://{config.rtex_server}/api/v2/" + fname) as resp:
                 fp = io.BytesIO(await resp.content.read())
 
         await ctx.send(
@@ -200,7 +200,7 @@ class Utilities(commands.Cog):
             await self.xkcd_get(ctx, arg)
 
     async def xkcd_get(self, ctx, number):
-        async with ctx.bot.http2.get(f"https://xkcd.com/{number}/info.0.json") as resp:
+        async with ctx.bot.session.get(f"https://xkcd.com/{number}/info.0.json") as resp:
             if resp.status == 404:
                 return await ctx.send(":x: Comic not found!")
             text = await resp.json()
@@ -232,7 +232,7 @@ class Utilities(commands.Cog):
     async def xkcd_random(self, ctx):
         """Gets a random comic."""
 
-        async with ctx.bot.http2.get("https://xkcd.com/info.0.json") as resp:
+        async with ctx.bot.session.get("https://xkcd.com/info.0.json") as resp:
             text = await resp.json()
         latest_comic = text["num"]
 
@@ -241,7 +241,7 @@ class Utilities(commands.Cog):
         await self.xkcd_get(ctx, comic_to_get)
 
     async def xkcd_latest(self, ctx):
-        async with ctx.bot.http2.get("https://xkcd.com/info.0.json") as resp:
+        async with ctx.bot.session.get("https://xkcd.com/info.0.json") as resp:
             text = await resp.json()
 
         await self.xkcd_get(ctx, text["num"])
@@ -332,7 +332,7 @@ class Utilities(commands.Cog):
     # Thanks to Takaru, PendragonLore/TakaruBot
     @commands.command()
     async def pypi(self, ctx, *, name):
-        data = await (await ctx.bot.http2.get(f"https://pypi.org/pypi/{urlquote(name, safe='')}/json")).json()
+        data = await (await ctx.bot.session.get(f"https://pypi.org/pypi/{urlquote(name, safe='')}/json")).json()
 
         embed = discord.Embed(
             title=data["info"]["name"],
