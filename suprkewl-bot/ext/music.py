@@ -415,9 +415,8 @@ class Music(commands.Cog):
         e.set_author(name=f"Player info for {ctx.guild}")
         e.add_field(name="Volume", value=f"{player.volume}%/1000%", inline=False)
         e.add_field(
-            name=f"Current track",
-            value=f"[{player.current.title}]({player.current.uri})",
-            inline=False,
+            name="Current track", value=f"[{player.current.title}]({player.current.uri})",
+            inline=False
         )
         e.add_field(name="Duration", value=f"[{position}/{duration}]")
         e.add_field(name="Paused?", value=is_paused, inline=False)

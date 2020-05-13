@@ -178,7 +178,7 @@ class suprkewl_bot(commands.Bot):
                         ]
 
                         resp = await(
-                            await self.db.execute(f"SELECT prefix FROM guilds WHERE id == ?;", (message.guild.id,))
+                            await self.db.execute("SELECT prefix FROM guilds WHERE id == ?;", (message.guild.id,))
                         ).fetchone()
 
                         if resp:
@@ -191,8 +191,8 @@ class suprkewl_bot(commands.Bot):
                         else:
                             emb = discord.Embed(
                                 color=self.embed_color,
-                                description=f":eyes: Who pinged? My prefix is `s!`. If you are in a DM with"
-                                            f" me, or you are my owner, I do not require a prefix."
+                                description=":eyes: Who pinged? My prefix is `s!`. If you are in a DM with me, or you "
+                                            "are my owner, I do not require a prefix."
                             )
                         fname = random.choice(ping_images)
                         ext = fname.split(".")[-1]
@@ -593,7 +593,7 @@ async def get_pre(bot, message):
     pre = ["s!"]
     if message.guild:
         resp = await(
-            await bot.db.execute(f"SELECT prefix FROM guilds WHERE id == ?;", (message.guild.id,))
+            await bot.db.execute("SELECT prefix FROM guilds WHERE id == ?;", (message.guild.id,))
         ).fetchone()
 
         if resp:
