@@ -160,6 +160,9 @@ class Owner(commands.Cog):
     async def nickname(self, ctx, *, name=None):
         """Change my nickname on this server."""
 
+        if len(name) > 32:
+            return await ctx.send("That nickname is too long.")
+
         await ctx.guild.me.edit(nick=name)
         await ctx.send(":ok_hand:")
 
