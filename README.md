@@ -2,6 +2,8 @@
 
 <p align="center">
 <a href="https://discord.gg/CRBBJVY"><img src="https://img.shields.io/discord/498185249952366602.svg"></a>
+<img src="https://img.shields.io/github/repo-size/laggycomputer/suprkewl-bot">
+<img src="https://img.shields.io/github/last-commit/laggycomputer/suprkewl-bot">
 <a href="./LICENSE-agpl3.txt"><img src="https://img.shields.io/github/license/laggycomputer/suprkewl-bot.svg?style=popout"></a>
 <a href=https://travis-ci.com/laggycomputer/suprkewl-bot><img src=https://travis-ci.com/laggycomputer/suprkewl-bot.svg?branch=master></a>
 <br>
