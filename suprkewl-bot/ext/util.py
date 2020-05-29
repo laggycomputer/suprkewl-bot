@@ -246,10 +246,7 @@ class Utilities(commands.Cog):
 
         await self.xkcd_get(ctx, text["num"])
 
-    @commands.group(
-        aliases=["sftime", "snowtime", "snowstamp", "ss"],
-        description="NOTE: If you use `compare`, `c`, or `cmp` as an argument, I will try to invoke the subcommand. If"
-                    " this happens, try using the actual ID instead of the name.")
+    @commands.group(aliases=["sftime", "snowtime", "snowstamp", "ss"])
     async def snowflaketime(
             self, ctx, *,
             id: typing.Union[
