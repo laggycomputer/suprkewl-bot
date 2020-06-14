@@ -33,7 +33,7 @@ import discord
 from discord.ext import commands
 import gtts
 
-from .utils import async_executor, escape_codeblocks, format_json, human_timedelta
+from .utils import async_executor, Embedinator, escape_codeblocks, format_json, human_timedelta
 import config
 
 
@@ -407,6 +407,57 @@ class Utilities(commands.Cog):
         if len(msg) > 2000:
             return await ctx.send(":x: Output too long to display, try using less characters.")
         await ctx.send(msg)
+
+    @commands.command(aliases=["namemc", "mcname", "mcign", "ign"])
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def minecraftign(self, ctx, *, ign):
+        """Get history on a Minecraft name."""
+
+        ign = ign.replace("-", "")  # This has no affect on names, but works on UUIDs
+
+        async with ctx.bot.session.get(f"https://api.mojang.com/users/profiles/minecraft/{ign}") as resp:
+            if resp.status not in [204, 404]:
+                get_by_name = await resp.json()
+            else:
+                get_by_name = None
+
+        if get_by_name is not None:
+            proposed_uuid = get_by_name["id"]
+        else:
+            proposed_uuid = ign
+        async with ctx.bot.session.get(f"https://api.mojang.com/user/profiles/{proposed_uuid}/names") as resp:
+            if resp.status not in [204, 404]:
+                get_by_uuid = await resp.json()
+            else:
+                return await ctx.send(":x: Your input could not be interpreted as a UUID or currently valid name.")
+
+        emb = Embedinator(ctx.bot, ctx, color=ctx.bot.embed_color, member=ctx.author)
+        if get_by_name is not None:
+            name = ign
+            uuid = get_by_name["id"]
+            emb_name = f"The name {name} has UUID `{uuid}`."
+        else:
+            name = get_by_uuid[-1]["name"]
+            uuid = ign
+            emb_name = f"UUID `{uuid}` resolves to the name {name}."
+        emb.add_field(
+            name=emb_name,
+            value=f"[Plancke](https://plancke.io/hypixel/player/stats/{uuid}) "
+                  f"[NameMC](https://namemc.com/name/{name})\n\nUsername history:",
+            inline=False
+        )
+        for name_time_pair in reversed(get_by_uuid):
+            timestamp = name_time_pair.get("changedToAt", None)
+            if timestamp is None:
+                emb.add_field(name=f"Created as `{name_time_pair['name']}`", value="\u200b", inline=False)
+                break
+            else:
+                timestamp = datetime.datetime.utcfromtimestamp(timestamp / 1000).strftime("%c")
+                emb.add_field(name=f"Changed to `{name_time_pair['name']}`", value=f"On {timestamp}", inline=False)
+
+        emb.set_footer(text="All timestamps are in UTC.", icon_url=ctx.me.avatar_url)
+        await emb.send()
+        await emb.handle()
 
 
 def setup(bot):
