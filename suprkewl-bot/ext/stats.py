@@ -311,7 +311,7 @@ class Stats(commands.Cog):
         """Get potential name hoisters on the server."""
 
         cnt = 0
-        hoist_chars = ["(/%-#$'*+.!`\\[]<>;\""]
+        hoist_chars = ["(/%-#$\\'*+.!`\\[]<>;\""]
         for member in ctx.guild.members:
             if member.nick is not None:
                 if member.nick[0] in hoist_chars:
