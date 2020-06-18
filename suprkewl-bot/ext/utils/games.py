@@ -85,6 +85,7 @@ class C4:
         self.current_player = p1
         self.is_first_run = True
         self.last_play = None
+        self.moves = []
 
     def phrase_board(self):
         return "\n".join(map("".join, self.board)) + "\n" + "".join(self.emojis)
@@ -117,6 +118,7 @@ class C4:
                 embed.add_field(name="Current turn:", value=self.current_player.mention, inline=False)
         else:
             embed.add_field(name="Winner:", value=self.current_player.mention, inline=False)
+        embed.add_field(name="Current move list", value=self.current_moves)
         return embed
 
     async def add_reactions(self):
@@ -139,6 +141,7 @@ class C4:
         await self.check_wins()
         self.is_first_run = False
         self.last_play = num
+        self.moves.append(num + 1)
         await self.message.edit(embed=self.make_embed())
         self.current_player = self.player_two if self.current_player == self.player_one else self.player_one
 
@@ -208,6 +211,15 @@ class C4:
 
         with contextlib.suppress(discord.HTTPException):
             await self.message.clear_reactions()
+
+    @property
+    def current_moves(self):
+        ret = self.moves or "[no moves made]"
+
+        if type(ret) != str:
+            ret = "".join(map(str, ret))
+
+        return ret
 
 
 MASTERMIND_NONE = "\U00002754"
