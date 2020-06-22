@@ -484,11 +484,11 @@ class Image_(commands.Cog, name="Image",
     async def deepfry(self, ctx, *, url=None):
         """Deepfry an image."""
 
-        async with ctx.typing():
-            url = await process_single_arg(ctx, url)
-            if url is None:  # An error message was sent
-                return
+        url = await process_single_arg(ctx, url)
+        if url is None:  # An error message was sent
+            return
 
+        async with ctx.typing():
             t = time.time()
             img = await fry(url)
             t = round(time.time() - t, 3)
@@ -509,14 +509,13 @@ class Image_(commands.Cog, name="Image",
     ):
         """Combine two avatars."""
 
+        if not user2:
+            user2 = user1
+            user1 = ctx.author
+        if user1 == user2:
+            return await ctx.send(":question: You can't combine with yourself!")
+
         async with ctx.typing():
-            if not user2:
-                user2 = user1
-                user1 = ctx.author
-
-            if user1 == user2:
-                return await ctx.send(":question: You can't combine with yourself!")
-
             a1 = io.BytesIO(await user1.avatar_url_as(format="png").read())
             a2 = io.BytesIO(await user2.avatar_url_as(format="png").read())
 
@@ -634,13 +633,12 @@ class Image_(commands.Cog, name="Image",
     async def blur(self, ctx, *, url=None):
         """Generate a GIF that blurs and unblurs an image."""
 
+        url = await process_single_arg(ctx, url)
+        if url is None:  # An error message was sent
+            return
+
         async with ctx.typing():
             t = time.time()
-
-            url = await process_single_arg(ctx, url)
-            if url is None:  # An error message was sent
-                return
-
             fp = await _blur(url)
             fp = discord.File(fp, "blurred.gif", spoiler=True)  # This really messes with your eyes
 
@@ -680,9 +678,7 @@ class Image_(commands.Cog, name="Image",
         im2 = Image.open(io.BytesIO(await target.avatar_url_as(format="png", size=256).read()))
         async with ctx.typing():
             t = time.time()
-
             buff = await process_transform(im1, im2)
-
             t = round(time.time() - t, 3)
 
             await ctx.send(
