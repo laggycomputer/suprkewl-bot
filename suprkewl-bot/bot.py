@@ -586,7 +586,9 @@ class suprkewl_bot(commands.Bot):
         if not row:
             return False, 0
         else:
-            return True, row[0][0]
+            if not await self.is_owner(await self.fetch_user(user_id)):
+                return True, row[0][0]
+            return False, 0
 
 
 async def get_pre(bot, message):
