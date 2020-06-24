@@ -848,6 +848,32 @@ L
 
         await ctx.send(rules)
 
+    @commands.command(aliases=["scan"])
+    @commands.guild_only()
+    @commands.cooldown(3, 5, commands.BucketType.user)
+    async def search(self, ctx, reading, *, user: typing.Union[discord.Member, discord.TextChannel] = None):
+        """Use cutting-edge AI to search for qualities of a channel or user."""
+
+        user = user or ctx.channel
+        if isinstance(user, discord.abc.User):
+            user = user.display_name
+        else:
+            user = "#" + user.name
+
+        level = random.randint(1, 1000) / 10
+        ticks = int(level // 5)
+        not_ticks = 20 - ticks
+        ticks = "\U00002588" * ticks
+        not_ticks = "-" * not_ticks
+        emb = ctx.default_embed
+        emb.description = f"**{reading} levels for {user}:**"
+        emb.add_field(name="\u200b", value=f"```|{ticks}{not_ticks}|  {level}%  ```")
+        emb.add_field(name="\u200b", value="\u200b")
+
+        msg = await ctx.send(f"Calculating {reading} levels for {user}...")
+        await asyncio.sleep(2)
+        await msg.edit(content=None, embed=emb)
+
 
 def setup(bot):
     bot.add_cog(Fun())
