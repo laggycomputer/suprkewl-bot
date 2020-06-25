@@ -105,7 +105,7 @@ class Markov(commands.Cog):
                 self.markov[name] = load_chain(filename, chain_len)
 
         self.markov = dict()
-        for file in ["obama.txt", "rickroll.txt", "trump.txt"]:
+        for file in ["obama.txt", "rickroll.txt"]:
             load_file(file)
 
     @commands.command()
@@ -115,7 +115,6 @@ class Markov(commands.Cog):
         await ctx.send("""
 `obama` - Various Obama quotes.
 `rickroll` - The *Never Gonna Give You Up* lyrics.
-`trump` - A pile of Trump tweets. :eyes:
         """)
 
     @commands.command()
@@ -125,7 +124,7 @@ class Markov(commands.Cog):
         new_name = name + ".txt" + str(random.randint(1, 3))
         if new_name not in self.markov:
             return await ctx.send(
-                f"{name} is not a valid chain name.  The valid names are `obama`, `rickroll`, and `trump`. See "
+                f"{name} is not a valid chain name.  The valid names are `obama` and `rickroll`. See "
                 f"`{ctx.prefix}listchains` for more info.")
 
         chain = self.markov[new_name]
