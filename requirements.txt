@@ -3,6 +3,7 @@ aioredis
 aiosqlite
 argon2-cffi
 cchardet
+cython
 discord.py[voice]
 gtts
 jishaku
@@ -14,3 +15,4 @@ pycryptodomex
 pygit2
 PyLyrics
 python-dateutil
+tesserocr

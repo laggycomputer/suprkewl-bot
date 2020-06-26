@@ -17,6 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import locale
 import logging
 
 import discord
@@ -24,6 +25,8 @@ import discord
 import bot
 import config
 
+
+locale.setlocale(locale.LC_ALL, "C")  # Solves bot-crashing segfault caused by tesserocr
 
 logger = logging.getLogger("discord")
 logger.setLevel(config.loglevel)

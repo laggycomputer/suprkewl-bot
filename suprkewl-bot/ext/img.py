@@ -34,6 +34,7 @@ import PIL
 from PIL import Image
 import PIL.ImageFilter
 import PIL.ImageOps
+import tesserocr
 
 from .utils import async_executor
 
@@ -436,6 +437,11 @@ def _blur(img):
     return fp
 
 
+@async_executor()
+def do_text_search(img):
+    return tesserocr.image_to_text(img).strip()
+
+
 async def process_single_arg(ctx, argument):
     if argument is None:
         is_found = False
@@ -746,6 +752,27 @@ class Image_(commands.Cog, name="Image",
 
         await ctx.send(
             f":white_check_mark: That took about {t} seconds.", file=discord.File(buff, "transform.gif"))
+
+    @commands.command(aliases=["searchtext", "rt", "read"])
+    async def readtext(self, ctx, *, url=None):
+        """Try to read the text of an image. Works better with larger text."""
+
+        url = await process_single_arg(ctx, url)
+        if url is None:  # An error message was sent
+            return
+
+        found_text = await do_text_search(url)
+        to_send = f"```{found_text}```"
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(found_text)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                found_text = discord.File(io.BytesIO(found_text.encode("utf-8")), "out.txt")
+                await ctx.send(
+                    ":thinking: Your data was too long for Discord, and hastebin is not working.", file=found_text)
+        else:
+            await ctx.send(to_send)
 
 
 def setup(bot):
