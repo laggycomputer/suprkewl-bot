@@ -12,12 +12,12 @@ jobs:
         - make
         - sudo make install
         - cd ..
-        - sudo apt-get install g++ autoconf automake libtool pkg-config libpng-dev libjpeg8-dev libtiff5-dev zlib1g-dev
+        - sudo apt-get install libtiff5 libtiffxx5 zlib1g
         - wget https://github.com/tesseract-ocr/tesseract/archive/4.1.1.tar.gz
         - tar xzf 4.1.1.tar.gz
-        - cd 4.1.1
+        - cd tesseract-4.1.1
         - bash ./autogen.sh
-        - ./configrue
+        - ./configure
         - make 
         - sudo make install
     - name: "Python 3.7.1 on Ubuntu Xenial 16.04"
@@ -44,7 +44,7 @@ jobs:
       before_install:
         - choco install python --version 3.7.6
         - python -m pip install --upgrade pip
-        - python -m pip install https://github.com/simonflueckiger/tesserocr-windows_build/releases/download/tesserocr-v2.4.0-tesseract-4.0.0/tesserocr-2.4.0-cp36-cp36m-win_amd64.whl
+        - python -m pip install https://github.com/simonflueckiger/tesserocr-windows_build/releases/download/tesserocr-v2.4.0-tesseract-4.0.0/tesserocr-2.4.0-cp37-cp37m-win_amd64.whl
       env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
 
 
