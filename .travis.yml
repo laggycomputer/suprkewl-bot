@@ -5,31 +5,17 @@ jobs:
       python: 3.6           # this works for Linux but is ignored on Windows
       dist: xenial
       before-install:
-        - wget https://github.com/DanBloomberg/leptonica/releases/download/1.79.0/leptonica-1.79.0.tar.gz
-        - tar xzf leptonica-1.79.0.tar.gz
-        - cd leptonica-1.79.0
-        - ./configure
-        - make
-        - sudo make install
-        - cd ..
-        - sudo apt-get install libtiff5 libtiffxx5 zlib1g
-        - wget https://github.com/tesseract-ocr/tesseract/archive/4.1.1.tar.gz
-        - tar xzf 4.1.1.tar.gz
-        - cd tesseract-4.1.1
-        - bash ./autogen.sh
-        - ./configure
-        - make 
-        - sudo make install
+        - bash tesserocr-deps-linux.sh > /dev/null
     - name: "Python 3.7.1 on Ubuntu Xenial 16.04"
       python: 3.7           # this works for Linux but is ignored on Windows
       dist: xenial
       before-install:
-        - sudo apt install tesseract-ocr libtesseract-dev libleptonica-dev pkg-config
+        - bash tesserocr-deps-linux.sh > /dev/null
     - name: "Python 3.8.0 on Ubuntu Xenial 16.04"
       python: 3.8           # this works for Linux but is ignored on Windows
       dist: xenial
       before-install:
-        - sudo apt install tesseract-ocr libtesseract-dev libleptonica-dev pkg-config
+        - bash tesserocr-deps-linux.sh > /dev/null
     - name: "Python 3.6.8 on Windows Server 1809"
       os: windows
       language: shell       # 'language: python' is an error on Travis CI Windows
