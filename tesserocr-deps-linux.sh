@@ -14,3 +14,4 @@ bash ./autogen.sh
 make 
 sudo make install
 cd ..
+rm tesseract-4.1.1 leptonica-1.79.0 -rf
