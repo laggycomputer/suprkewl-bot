@@ -4,18 +4,27 @@ jobs:
     - name: "Python 3.6.7 on Ubuntu Xenial 16.04"
       python: 3.6           # this works for Linux but is ignored on Windows
       dist: xenial
+      before-install:
+        - apt install tesseract-ocr libtesseract-dev libleptonica-dev pkg-config
     - name: "Python 3.7.1 on Ubuntu Xenial 16.04"
       python: 3.7           # this works for Linux but is ignored on Windows
       dist: xenial
+      before-install:
+        - apt install tesseract-ocr libtesseract-dev libleptonica-dev pkg-config
     - name: "Python 3.8.0 on Ubuntu Xenial 16.04"
       python: 3.8           # this works for Linux but is ignored on Windows
       dist: xenial
+      before-install:
+        - apt install tesseract-ocr libtesseract-dev libleptonica-dev pkg-config
     - name: "Python 3.6.8 on Windows Server 1809"
       os: windows
       language: shell       # 'language: python' is an error on Travis CI Windows
       before_install:
         - choco install python --version 3.6.8
         - python -m pip install --upgrade pip
+        - wget https://github.com/simonflueckiger/tesserocr-windows_build/releases/download/tesserocr-v2.4.0-tesseract-4.0.0/tesserocr-2.4.0-cp36-cp36m-win_amd64.whl
+        - python -m pip install tesserocr-2.4.0-cp36-cp36m-win_amd64.whl
+        - rm tesserocr-2.4.0-cp36-cp36m-win_amd64.whl
       env: PATH=/c/Python36:/c/Python36/Scripts:$PATH
     - name: "Python 3.7.6 on Windows Server 1809"
       os: windows
@@ -23,14 +32,11 @@ jobs:
       before_install:
         - choco install python --version 3.7.6
         - python -m pip install --upgrade pip
+        - wget https://github.com/simonflueckiger/tesserocr-windows_build/releases/download/tesserocr-v2.4.0-tesseract-4.0.0/tesserocr-2.4.0-cp37-cp37m-win_amd64.whl
+        - python -m pip install tesserocr-2.4.0-cp37-cp37m-win_amd64.whl
+        - rm tesserocr-2.4.0-cp37-cp37m-win_amd64.whl
       env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
-    - name: "Python 3.8.2 on Windows Server 1809"
-      os: windows
-      language: shell       # 'language: python' is an error on Travis CI Windows
-      before_install:
-        - choco install python --version 3.8.2
-        - python -m pip install --upgrade pip
-      env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
+
 
 install:
   - pip3 install --upgrade pip
