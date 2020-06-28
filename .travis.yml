@@ -5,7 +5,21 @@ jobs:
       python: 3.6           # this works for Linux but is ignored on Windows
       dist: xenial
       before-install:
-        - sudo apt install tesseract-ocr libtesseract-dev libleptonica-dev pkg-config
+        - wget https://github.com/DanBloomberg/leptonica/releases/download/1.79.0/leptonica-1.79.0.tar.gz
+        - tar xzf leptonica-1.79.0.tar.gz
+        - cd leptonica-1.79.0
+        - ./configure
+        - make
+        - sudo make install
+        - cd ..
+        - sudo apt-get install g++ autoconf automake libtool pkg-config libpng-dev libjpeg8-dev libtiff5-dev zlib1g-dev
+        - wget https://github.com/tesseract-ocr/tesseract/archive/4.1.1.tar.gz
+        - tar xzf 4.1.1.tar.gz
+        - cd 4.1.1
+        - bash ./autogen.sh
+        - ./configrue
+        - make 
+        - sudo make install
     - name: "Python 3.7.1 on Ubuntu Xenial 16.04"
       python: 3.7           # this works for Linux but is ignored on Windows
       dist: xenial
@@ -22,9 +36,7 @@ jobs:
       before_install:
         - choco install python --version 3.6.8
         - python -m pip install --upgrade pip
-        - wget https://github.com/simonflueckiger/tesserocr-windows_build/releases/download/tesserocr-v2.4.0-tesseract-4.0.0/tesserocr-2.4.0-cp36-cp36m-win_amd64.whl
-        - python -m pip install tesserocr-2.4.0-cp36-cp36m-win_amd64.whl
-        - rm tesserocr-2.4.0-cp36-cp36m-win_amd64.whl
+        - python -m pip install https://github.com/simonflueckiger/tesserocr-windows_build/releases/download/tesserocr-v2.4.0-tesseract-4.0.0/tesserocr-2.4.0-cp36-cp36m-win_amd64.whl
       env: PATH=/c/Python36:/c/Python36/Scripts:$PATH
     - name: "Python 3.7.6 on Windows Server 1809"
       os: windows
@@ -32,9 +44,7 @@ jobs:
       before_install:
         - choco install python --version 3.7.6
         - python -m pip install --upgrade pip
-        - wget https://github.com/simonflueckiger/tesserocr-windows_build/releases/download/tesserocr-v2.4.0-tesseract-4.0.0/tesserocr-2.4.0-cp37-cp37m-win_amd64.whl
-        - python -m pip install tesserocr-2.4.0-cp37-cp37m-win_amd64.whl
-        - rm tesserocr-2.4.0-cp37-cp37m-win_amd64.whl
+        - python -m pip install https://github.com/simonflueckiger/tesserocr-windows_build/releases/download/tesserocr-v2.4.0-tesseract-4.0.0/tesserocr-2.4.0-cp36-cp36m-win_amd64.whl
       env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
 
 
