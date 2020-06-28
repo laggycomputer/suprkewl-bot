@@ -5,17 +5,17 @@ jobs:
       python: 3.6           # this works for Linux but is ignored on Windows
       dist: xenial
       before-install:
-        - apt install tesseract-ocr libtesseract-dev libleptonica-dev pkg-config
+        - sudo apt install tesseract-ocr libtesseract-dev libleptonica-dev pkg-config
     - name: "Python 3.7.1 on Ubuntu Xenial 16.04"
       python: 3.7           # this works for Linux but is ignored on Windows
       dist: xenial
       before-install:
-        - apt install tesseract-ocr libtesseract-dev libleptonica-dev pkg-config
+        - sudo apt install tesseract-ocr libtesseract-dev libleptonica-dev pkg-config
     - name: "Python 3.8.0 on Ubuntu Xenial 16.04"
       python: 3.8           # this works for Linux but is ignored on Windows
       dist: xenial
       before-install:
-        - apt install tesseract-ocr libtesseract-dev libleptonica-dev pkg-config
+        - sudo apt install tesseract-ocr libtesseract-dev libleptonica-dev pkg-config
     - name: "Python 3.6.8 on Windows Server 1809"
       os: windows
       language: shell       # 'language: python' is an error on Travis CI Windows
