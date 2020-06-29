@@ -7,16 +7,18 @@ jobs:
       before_install:
         - sudo apt update
         - sudo apt install tesseract-ocr libtesseract-dev libleptonica-dev
-    - name: "Python 3.7.1 on Ubuntu Xenial 16.04"
+    - name: "Python 3.7.1 on Ubuntu Bionic 18.04"
       python: 3.7           # this works for Linux but is ignored on Windows
-      dist: xenial
+      dist: bionic
       before_install:
-        - bash tesserocr-deps-linux.sh > /dev/null
-    - name: "Python 3.8.0 on Ubuntu Xenial 16.04"
+        - sudo apt update
+        - sudo apt install tesseract-ocr libtesseract-dev libleptonica-dev
+    - name: "Python 3.8.0 on Ubuntu Bionic 18.04"
       python: 3.8           # this works for Linux but is ignored on Windows
-      dist: xenial
-      before-install:
-        - bash tesserocr-deps-linux.sh > /dev/null
+      dist: bionic
+      before_install:
+        - sudo apt update
+        - sudo apt install tesseract-ocr libtesseract-dev libleptonica-dev
     - name: "Python 3.6.8 on Windows Server 1809"
       os: windows
       language: shell       # 'language: python' is an error on Travis CI Windows
