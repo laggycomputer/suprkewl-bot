@@ -5,6 +5,7 @@ jobs:
       python: 3.6           # this works for Linux but is ignored on Windows
       dist: bionic
       before_install:
+        - sudo apt update
         - sudo apt install tesseract-ocr libtesseract-dev libleptonica-dev
     - name: "Python 3.7.1 on Ubuntu Xenial 16.04"
       python: 3.7           # this works for Linux but is ignored on Windows
