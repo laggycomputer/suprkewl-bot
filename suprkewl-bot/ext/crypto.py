@@ -385,7 +385,7 @@ class Cryptography(commands.Cog):
         """Operate with the A1Z26 cipher."""
 
         if ctx.invoked_subcommand is None:
-            await ctx.send("You must use a subcommand.")
+            await ctx.send(":x: Please provide a valid subcommand!")
             await ctx.send_help(ctx.command)
 
     @a1z26.command(name="encode", aliases=["e"])

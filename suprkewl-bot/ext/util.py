@@ -516,7 +516,7 @@ class Utilities(commands.Cog):
         """Create or read QR codes."""
 
         if ctx.invoked_subcommand is None:
-            await ctx.send(":x: Please use a subcommand.")
+            await ctx.send(":x: Please provide a valid subcommand!")
             await ctx.send_help(ctx.command)
 
     @qr.command(name="create", aliases=["make", "e", "encode"])

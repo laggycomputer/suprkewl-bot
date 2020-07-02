@@ -46,7 +46,7 @@ class Stats(commands.Cog):
         """Generate pie charts."""
 
         if ctx.invoked_subcommand is None:
-            await ctx.send(":x: You must specify a valid subcommand.")
+            await ctx.send(":x: Please provide a valid subcommand!")
             await ctx.send_help(ctx.command)
 
     @pie.command(
