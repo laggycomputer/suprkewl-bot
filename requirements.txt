@@ -14,5 +14,7 @@ Pillow
 pycryptodomex
 pygit2
 PyLyrics
+pypng
 python-dateutil
+pyqrcode
 tesserocr

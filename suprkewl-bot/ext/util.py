@@ -32,6 +32,8 @@ from urllib.parse import quote as urlquote
 import discord
 from discord.ext import commands
 import gtts
+from PIL import Image
+import pyqrcode
 
 from .utils import async_executor, Embedinator, escape_codeblocks, format_json, human_timedelta
 import config
@@ -57,6 +59,21 @@ async def download_rtex_file(ctx, data):
     async with cs.post(f"http://{config.rtex_server}/api/v2", data=dict(code=data, format="png")) as resp:
         data = await resp.json()
     return data
+
+
+@async_executor()
+def create_qr(data):
+    fp = io.BytesIO()
+    qr = pyqrcode.create(data, error="H")
+    qr.png(fp)
+    fp.seek(0)
+    img = Image.open(fp)
+    img = img.resize((550, 550))
+    fp = io.BytesIO()
+    img.save(fp, "png")
+    fp.seek(0)
+
+    return fp
 
 
 class Utilities(commands.Cog):
@@ -458,6 +475,24 @@ class Utilities(commands.Cog):
         emb.set_footer(text="All timestamps are in UTC.", icon_url=ctx.me.avatar_url)
         await emb.send()
         await emb.handle()
+
+    @commands.command(aliases=["mkqr", "makeqr", "qr"])
+    @commands.cooldown(5, 1, commands.BucketType.user)
+    async def qrcode(self, ctx, *, text):
+        """Create a QR code based on input text."""
+
+        try:
+            text = int(text)
+        except ValueError:
+            pass
+
+        file = await create_qr(text)
+        fp = discord.File(file, "qr.png")
+
+        await ctx.send(
+            "**Warning**: Not all QRs on DIscord are safe! Be careful what you scan, it could compromise your account.",
+            file=fp
+        )
 
 
 def setup(bot):
