@@ -29,6 +29,7 @@ import typing
 import unicodedata
 from urllib.parse import quote as urlquote
 
+import aiohttp
 import discord
 from discord.ext import commands
 import gtts
@@ -69,6 +70,39 @@ def create_qr(data):
     fp.seek(0)
     img = Image.open(fp)
     img = img.resize((550, 550))
+    fp = io.BytesIO()
+    img.save(fp, "png")
+    fp.seek(0)
+
+    return fp
+
+
+async def process_qr(ctx, argument):
+    is_found = False
+    url = None
+    for att in ctx.message.attachments:
+        if att.height is not None and not is_found:
+            url = att.proxy_url
+            is_found = True
+
+    if not is_found:
+        url = argument
+
+    try:
+        async with ctx.bot.session.get(url) as resp:
+            try:
+                img = Image.open(io.BytesIO(await resp.content.read())).convert("RGB")
+                is_found = True
+            except OSError:
+                await ctx.send(":x: That URL is not an image.")
+                return
+    except aiohttp.InvalidURL:
+        await ctx.send(":x: That URL is invalid.")
+        return
+
+    if not is_found:
+        return None
+
     fp = io.BytesIO()
     img.save(fp, "png")
     fp.seek(0)
@@ -476,9 +510,17 @@ class Utilities(commands.Cog):
         await emb.send()
         await emb.handle()
 
-    @commands.command(aliases=["mkqr", "makeqr", "qr"])
-    @commands.cooldown(5, 1, commands.BucketType.user)
-    async def qrcode(self, ctx, *, text):
+    @commands.group()
+    @commands.cooldown(10, 10, commands.BucketType.user)
+    async def qr(self, ctx):
+        """Create or read QR codes."""
+
+        if ctx.invoked_subcommand is None:
+            await ctx.send(":x: Please use a subcommand.")
+            await ctx.send_help(ctx.command)
+
+    @qr.command(name="create", aliases=["make", "e", "encode"])
+    async def qr_create(self, ctx, *, text):
         """Create a QR code based on input text."""
 
         try:
@@ -493,6 +535,35 @@ class Utilities(commands.Cog):
             "**Warning**: Not all QRs on DIscord are safe! Be careful what you scan, it could compromise your account.",
             file=fp
         )
+
+    @qr.command(name="read", aliases=["parse", "d", "decode"])
+    async def qr_read(self, ctx, *, img):
+        """Decode a QR code given an URL or attached image."""
+
+        converted_img = await process_qr(ctx, img)
+        if converted_img is None:
+            return
+
+        async with ctx.bot.session.post(
+                "http://api.qrserver.com/v1/read-qr-code/", data={"file": converted_img}) as resp:
+            out = await resp.json()
+
+        try:
+            read_out = out[0]["symbol"][0]["data"]
+            # Escaping mentions is normally not needed. Then again, why the hell did you make a QR to ping someone?
+            to_send = discord.utils.escape_mentions(discord.utils.escape_markdown(read_out))
+            if len(read_out) > 6000:
+                try:
+                    hastebin_url = await ctx.bot.post_to_hastebin(read_out)
+                    await ctx.send(hastebin_url)
+                except (aiohttp.ContentTypeError, AssertionError):
+                    fp = discord.File(io.BytesIO(read_out.encode("utf-8")), "out.txt")
+                    await ctx.send("Your output was too long for Discord, and hastebin is not working.", file=fp)
+            else:
+                emb = discord.Embed(color=ctx.bot.embed_color, description=to_send)
+                await ctx.send(embed=emb)
+        except KeyError:
+            await ctx.send(":x: Unable to read QR code.")
 
 
 def setup(bot):
