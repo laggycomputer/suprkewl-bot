@@ -485,6 +485,7 @@ class suprkewl_bot(commands.Bot):
             "chess with Kasparov",
             "creeping through the shadows",
             "eating robot food, brb",
+            "help im stuck at this computer pretending to be a discord bot",
             "helping the community",
             "I don't game...",
             "idling",
@@ -500,7 +501,8 @@ class suprkewl_bot(commands.Bot):
             "with my Raspberry Pi",
             "with the community",
             "with the Discord API",
-            "with your emotions"
+            "with your emotions",
+            "you'd think these statuses would have more variety..."
         ]
 
         while self.is_ready() and self.change_status:
