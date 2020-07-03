@@ -528,7 +528,11 @@ class Utilities(commands.Cog):
         except ValueError:
             pass
 
-        file = await create_qr(text)
+        try:
+            file = await create_qr(text)
+        except ValueError:
+            return await ctx.send(":x: Your text does not fit into a valid QR code.")
+
         fp = discord.File(file, "qr.png")
 
         await ctx.send(
