@@ -541,7 +541,7 @@ class Utilities(commands.Cog):
         )
 
     @qr.command(name="read", aliases=["parse", "d", "decode"])
-    async def qr_read(self, ctx, *, img):
+    async def qr_read(self, ctx, *, img=None):
         """Decode a QR code given an URL or attached image."""
 
         converted_img = await process_qr(ctx, img)
@@ -554,7 +554,9 @@ class Utilities(commands.Cog):
 
         try:
             read_out = out[0]["symbol"][0]["data"]
+            assert read_out is not None
             # Escaping mentions is normally not needed. Then again, why the hell did you make a QR to ping someone?
+            await ctx.send(out)
             to_send = discord.utils.escape_mentions(discord.utils.escape_markdown(read_out))
             if len(read_out) > 6000:
                 try:
@@ -566,7 +568,7 @@ class Utilities(commands.Cog):
             else:
                 emb = discord.Embed(color=ctx.bot.embed_color, description=to_send)
                 await ctx.send(embed=emb)
-        except KeyError:
+        except (KeyError, AssertionError):
             await ctx.send(":x: Unable to read QR code.")
 
 
