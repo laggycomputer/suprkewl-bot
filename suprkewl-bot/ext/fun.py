@@ -596,7 +596,7 @@ L
         await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
 
     @commands.command(
-        description="Reacts with a sheep emoji to sheep-related messages. Send `s!stop` to end the sheepiness."
+        description="Reacts with a sheep emoji to sheep-related messages. Send `sk!stop` to end the sheepiness."
     )
     async def sheep(self, ctx):
         """React to messages with a sheep emoji."""
@@ -612,7 +612,7 @@ L
                 m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
                 if m is None:
                     break
-                if m.content.lower().startswith("s!stop") and m.author == ctx.author:
+                if m.content.lower().startswith("sk!stop") and m.author == ctx.author:
                     break
                 if any(i in m.content.lower() for i in ["sheep", "shep", "🐑", "ba", "wool"]):
                     with contextlib.suppress(discord.HTTPException):
@@ -622,10 +622,10 @@ L
 
             await ctx.send(":white_check_mark: Done.")
         else:
-            await ctx.send(":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command.")
+            await ctx.send(":x: Don't run this command twice in the same channel! Use `sk!stop` to stop this command.")
 
     @commands.command(
-        description="Reacts with a duck emoji to duck-related messages. Send `s!stop` to end the quackery."
+        description="Reacts with a duck emoji to duck-related messages. Send `sk!stop` to end the quackery."
     )
     async def duck(self, ctx):
         """React to messages with a duck emoji."""
@@ -642,7 +642,7 @@ L
                 m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
                 if m is None:
                     break
-                if m.content.lower().startswith("s!stop") and m.author == ctx.author:
+                if m.content.lower().startswith("sk!stop") and m.author == ctx.author:
                     break
                 r = re.search(pattern, m.content.lower())
                 if any(i in m.content.lower() for i in ["duck", "duk", "🦆", "ducc"]) or r:
@@ -652,10 +652,10 @@ L
 
             await ctx.send(":white_check_mark: Done.")
         else:
-            await ctx.send(":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command.")
+            await ctx.send(":x: Don't run this command twice in the same channel! Use `sk!stop` to stop this command.")
 
     @commands.command(
-        description="Reacts with a dog emoji to dog-related messages. Send `s!stop` to end the borkiness."
+        description="Reacts with a dog emoji to dog-related messages. Send `sk!stop` to end the borkiness."
     )
     async def dog(self, ctx):
         """React to messages with a dog emoji."""
@@ -674,7 +674,7 @@ L
                 m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
                 if m is None:
                     break
-                if m.content.lower().startswith("s!stop") and m.author == ctx.author:
+                if m.content.lower().startswith("sk!stop") and m.author == ctx.author:
                     break
                 r = any(re.search(p, m.content.lower()) is not None for p in patterns)
                 if r:
@@ -685,7 +685,7 @@ L
 
             await ctx.send(":white_check_mark: Done.")
         else:
-            await ctx.send(":x: Don't run this command twice in the same channel! Use `s!stop` to stop this command.")
+            await ctx.send(":x: Don't run this command twice in the same channel! Use `sk!stop` to stop this command.")
 
     # From spoo.py
     @commands.command()

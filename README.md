@@ -19,6 +19,6 @@ If you want to host this bot:
 * Finally, you can use `pip3 install -r requirements.txt` at the root of this repo to install the requirements.
 
 **Please ensure that you run the bot with the repo root as your current directory.**
-(If you forget about this and run the bot, you can use `s!jsk py import os; os.chdir("<repo root dir here>")`.)
+(If you forget about this and run the bot, you can use `sk!jsk py import os; os.chdir("<repo root dir here>")`.)
 
 Oh and hey, if you wanna PR this bot, I'm not merging/rebasing until the build passes. Thanks anyway.

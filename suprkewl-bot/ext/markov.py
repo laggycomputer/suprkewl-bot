@@ -119,7 +119,7 @@ class Markov(commands.Cog):
 
     @commands.command()
     async def markov(self, ctx, name, num_tokens: int):
-        """Generate Markov chains. Use s!listchains to list options."""
+        """Generate Markov chains. Use sk!listchains to list options."""
 
         new_name = name + ".txt" + str(random.randint(1, 3))
         if new_name not in self.markov:

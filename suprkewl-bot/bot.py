@@ -184,14 +184,14 @@ class suprkewl_bot(commands.Bot):
                         if resp:
                             emb = discord.Embed(
                                 color=self.embed_color,
-                                description=f":eyes: Who pinged? My prefix is `s!` and the custom server prefix is "
+                                description=f":eyes: Who pinged? My prefix is `sk!` and the custom server prefix is "
                                             f"`{resp[0]}`. If you are in a DM with me, or you are my owner, I do "
                                             f"not require a prefix."
                             )
                         else:
                             emb = discord.Embed(
                                 color=self.embed_color,
-                                description=":eyes: Who pinged? My prefix is `s!`. If you are in a DM with me, or you "
+                                description=":eyes: Who pinged? My prefix is `sk!`. If you are in a DM with me, or you "
                                             "are my owner, I do not require a prefix."
                             )
                         fname = random.choice(ping_images)
@@ -594,7 +594,7 @@ class suprkewl_bot(commands.Bot):
 
 
 async def get_pre(bot, message):
-    pre = ["s!"]
+    pre = ["sk!"]
     if message.guild:
         resp = await(
             await bot.db.execute("SELECT prefix FROM guilds WHERE id == ?;", (message.guild.id,))

@@ -505,7 +505,7 @@ class Image_(commands.Cog, name="Image",
 
     @commands.command(
         aliases=["cmb"],
-        description="Combine your avatar and that of another user. Example: `s!transform \"Too Laggy#3878\" @SuprKewl"
+        description="Combine your avatar and that of another user. Example: `sk!transform \"Too Laggy#3878\" @SuprKewl"
                     " Bot`"
     )
     async def combine(
@@ -669,8 +669,8 @@ class Image_(commands.Cog, name="Image",
     @commands.command(
         aliases=["ts", "tf"],
         description="If you only specify one member, I will transform their avatar to yours. "
-                    "Example: `s!transform \"Too Laggy#3878\" @SuprKewl Bot\"\nTo use other images, use the "
-                    "s!transforminteractive command."
+                    "Example: `sk!transform \"Too Laggy#3878\" @SuprKewl Bot\"\nTo use other images, use the "
+                    "sk!transforminteractive command."
     )
     async def transform(
             self, ctx,
@@ -718,15 +718,15 @@ class Image_(commands.Cog, name="Image",
         async def verify_message(msg):
             if msg.author != ctx.author:
                 return
-            if msg.content.startswith("s!abort"):
+            if msg.content.startswith("sk!abort"):
                 return True
             return await attempt_conversion(msg) is not None
 
         await ctx.send(
-            "You are selecting the **start** image. Please do one of the following:\n\nSay `s!abort` to cancel.\n"
-            "Send a user's nickname, username, ID, mention, or name#discriminator.\nAttach an image.\nSend an URL to "
-            "an image.\n\n__If you want to use an emoji, use it in a message, right click it, and click 'Copy Link'. "
-            "Then paste that into this command.__"
+            f"You are selecting the **start** image. Please do one of the following:\n\nSay `{ctx.prefix}abort` to "
+            f"cancel.\nSend a user's nickname, username, ID, mention, or name#discriminator.\nAttach an image.\nSend "
+            f"an URL to an image.\n\n__If you want to use an emoji, use it in a message, right click it, and click "
+            f"'Copy Link'. Then paste that into this command.__"
         )
         try:
             im1 = await attempt_conversion(await ctx.bot.wait_for("message", check=verify_message, timeout=30.0))
@@ -734,10 +734,10 @@ class Image_(commands.Cog, name="Image",
             return await ctx.send(":bangbang: Timed out.")
 
         await ctx.send(
-            "You are selecting the **target** image. Please do one of the following:\n\nSay `s!abort` to cancel.\n"
-            "Send a user's nickname, username, ID, mention, or name#discriminator.\nAttach an image.\nSend an URL to "
-            "an image.\n\n__If you want to use an emoji, use it in a message, right click it, and click 'Copy Link'. "
-            "Then paste that into this command.__"
+            f"You are selecting the **target** image. Please do one of the following:\n\nSay `{ctx.prefix}abort` to "
+            f"cancel.\nSend a user's nickname, username, ID, mention, or name#discriminator.\nAttach an image.\nSend "
+            f"an URL to an image.\n\n__If you want to use an emoji, use it in a message, right click it, and click "
+            f"'Copy Link'. Then paste that into this command.__"
         )
         try:
             im2 = await attempt_conversion(await ctx.bot.wait_for("message", check=verify_message, timeout=30.0))
