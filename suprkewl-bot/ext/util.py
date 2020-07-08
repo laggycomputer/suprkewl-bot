@@ -460,14 +460,14 @@ class Utilities(commands.Cog):
         await ctx.send(msg)
 
     @commands.command(aliases=["namemc", "mcname", "mcign", "ign"])
-    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.cooldown(5, 1, commands.BucketType.user)
     async def minecraftign(self, ctx, *, ign):
         """Get history on a Minecraft name."""
 
         ign = ign.replace("-", "")  # This has no affect on names, but works on UUIDs
 
         async with ctx.bot.session.get(f"https://api.mojang.com/users/profiles/minecraft/{ign}") as resp:
-            if resp.status not in [204, 404]:
+            if resp.status not in [204, 400, 404]:
                 get_by_name = await resp.json()
             else:
                 get_by_name = None
@@ -486,11 +486,16 @@ class Utilities(commands.Cog):
         if get_by_name is not None:
             name = ign
             uuid = get_by_name["id"]
-            emb_name = f"The name {name} has UUID `{uuid}`."
+            human_uuid = '-'.join(uuid[i:i + 4] for i in range(0, len(uuid), 4))
+            emb_name = f"The name {name} has UUID `{human_uuid}`."
         else:
-            name = get_by_uuid[-1]["name"]
+            try:
+                name = get_by_uuid[-1]["name"]
+            except KeyError:
+                return await ctx.send("Name or UUID appears invalid.")
             uuid = ign
-            emb_name = f"UUID `{uuid}` resolves to the name {name}."
+            human_uuid = '-'.join(uuid[i:i + 4] for i in range(0, len(uuid), 4))
+            emb_name = f"UUID `{human_uuid}` resolves to the name {name}."
         emb.add_field(
             name=emb_name,
             value=f"[Plancke](https://plancke.io/hypixel/player/stats/{uuid}) "
@@ -507,6 +512,7 @@ class Utilities(commands.Cog):
                 emb.add_field(name=f"Changed to `{name_time_pair['name']}`", value=f"On {timestamp}", inline=False)
 
         emb.set_footer(text="All timestamps are in UTC.", icon_url=ctx.me.avatar_url)
+        emb.set_thumbnail(url=f"https://crafatar.com/renders/body/{uuid}?overlay")
         await emb.send()
         await emb.handle()
 
