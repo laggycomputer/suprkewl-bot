@@ -30,6 +30,7 @@ db_path = "skbot.db"
 
 # Travis CI Config.
 travis_token = ""
+travis_repo_id = 9109252
 
 # rTeX config: use http://rtex.probablyaweb.site, or set up your own instance, see DXSmiley/rtex
 rtex_server = "rtex.probablyaweb.site"

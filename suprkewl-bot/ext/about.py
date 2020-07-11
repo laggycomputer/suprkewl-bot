@@ -75,7 +75,7 @@ def current_time():
 
 
 async def get_latest_build_status(cs):
-    repo_id = 9109252
+    repo_id = config.travis_repo_id
     token = config.travis_token
     time_format = "%Y-%m-%dT%H:%M:%SZ"
 
