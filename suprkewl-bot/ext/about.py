@@ -104,9 +104,10 @@ async def get_latest_build_status(cs):
 
         started_at, finished_at = branch["last_build"]["started_at"], branch["last_build"]["finished_at"]
 
+        ret[key]["link"] = f"https://travis-ci.com/" \
+                           f"{branch['repository']['slug']}/builds/{branch['last_build']['id']}"
+
         if finished_at is not None:
-            ret[key]["link"] = f"https://travis-ci.com/" \
-                               f"{branch['repository']['slug']}/builds/{branch['last_build']['id']}"
             if branch["last_build"]["state"] == "canceled":
                 val = "Canceled"
             else:
