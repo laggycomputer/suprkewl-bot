@@ -105,6 +105,8 @@ async def get_latest_build_status(cs):
         started_at, finished_at = branch["last_build"]["started_at"], branch["last_build"]["finished_at"]
 
         if finished_at is not None:
+            ret[key]["link"] = f"https://travis-ci.com/" \
+                               f"{branch['repository']['slug']}/builds/{branch['last_build']['id']}"
             if branch["last_build"]["state"] == "canceled":
                 val = "Canceled"
             else:
@@ -190,7 +192,7 @@ class About(commands.Cog):
 
         for k, v in status.items():
             desc += f"`{k}`:\n"
-            desc += f"**Latest build:** {v['status']}\n"
+            desc += f"**[Latest build]({v['link']}):** {v['status']}\n"
 
             past_status = await get_recent_builds_on(ctx.bot.session, k)
             desc += f"**10 most recent builds:** {''.join(past_status)}\n\n"
