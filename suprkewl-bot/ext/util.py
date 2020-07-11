@@ -562,7 +562,6 @@ class Utilities(commands.Cog):
             read_out = out[0]["symbol"][0]["data"]
             assert read_out is not None
             # Escaping mentions is normally not needed. Then again, why the hell did you make a QR to ping someone?
-            await ctx.send(out)
             to_send = discord.utils.escape_mentions(discord.utils.escape_markdown(read_out))
             if len(read_out) > 6000:
                 try:
