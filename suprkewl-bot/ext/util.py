@@ -492,7 +492,7 @@ class Utilities(commands.Cog):
             try:
                 name = get_by_uuid[-1]["name"]
             except KeyError:
-                return await ctx.send("Name or UUID appears invalid.")
+                return await ctx.send(":x: Your input could not be interpreted as a UUID or currently valid name.")
             uuid = ign
             human_uuid = '-'.join(uuid[i:i + 4] for i in range(0, len(uuid), 4))
             emb_name = f"UUID `{human_uuid}` resolves to the name {name}."
