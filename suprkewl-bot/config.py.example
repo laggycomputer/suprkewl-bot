@@ -42,3 +42,6 @@ dbl_token = ""
 lavalink_ip = "127.0.0.1"
 lavalink_port = 2333
 lavalink_pw = ""  # It's a good idea to change this on public accessible servers
+
+# Hypixel API credentials. Join the server and use /api new to get an API key. Or just use a friend's key.
+hypixel_key = ""

@@ -516,6 +516,130 @@ class Utilities(commands.Cog):
         await emb.send()
         await emb.handle()
 
+    @commands.command(aliases=["hyp"])
+    @commands.cooldown(3, 5, commands.BucketType.user)
+    async def hypixel(self, ctx, *, ign):
+        """Look up Hypixel stats for a user."""
+
+        ign = ign.replace("-", "")  # This has no affect on names, but works on UUIDs
+
+        async with ctx.bot.session.get(f"https://api.mojang.com/users/profiles/minecraft/{ign}") as resp:
+            if resp.status not in [204, 400, 404]:
+                get_by_name = await resp.json()
+            else:
+                get_by_name = None
+
+        if get_by_name is not None:
+            proposed_uuid = get_by_name["id"]
+        else:
+            proposed_uuid = ign
+        async with ctx.bot.session.get(f"https://api.mojang.com/user/profiles/{proposed_uuid}/names") as resp:
+            if resp.status not in [204, 404]:
+                get_by_uuid = await resp.json()
+            else:
+                return await ctx.send(":x: Your input could not be interpreted as a UUID or currently valid name.")
+
+        if get_by_name is not None:
+            uuid = get_by_name["id"]
+        else:
+            try:
+                name = get_by_uuid[-1]["name"]
+            except KeyError:
+                return await ctx.send(":x: Your input could not be interpreted as a UUID or currently valid name.")
+            uuid = ign
+
+        params = dict(key=config.hypixel_key, uuid=uuid)
+        async with ctx.bot.session.get("http://api.hypixel.net/player", params=params) as resp:
+            data = await resp.json()
+
+        if not data["success"]:
+            return await ctx.send(":x: Something went wrong fetching your data.")
+
+        msg = await ctx.send("Fetching...")
+
+        date_format = "%a %b %d, %Y at %H:%M:%S"
+        emb = ctx.default_embed
+        emb.set_thumbnail(url=f"https://crafatar.com/renders/body/{uuid}?overlay")
+
+        found_rank = None
+        if "prefix" in data["player"]:
+            found_rank = data["player"]["prefix"]
+            while "§" in found_rank:
+                index = found_rank.index("§")
+                if index != len(found_rank) - 1:
+                    found_rank = found_rank[:index] + found_rank[index + 2:]
+        else:
+            if "monthlyPackageRank" in data["player"]:
+                if data["player"]["monthlyPackageRank"] == "SUPERSTAR":
+                    found_rank = "[MVP++]"
+                else:
+                    found_rank = "[%s]" % data["player"]["monthlyPackageRank"]
+            else:
+                if "rank" in data["player"]:
+                    found_rank = "[%s]" % data["player"]["rank"]
+                else:
+                    if "packageRank" in data["player"]:
+                        found_rank = "[%s]" % data["player"]["packageRank"]
+                    else:
+                        pass
+        emb.description = f"{found_rank or '[NON]'} {get_by_uuid[-1]['name']}"
+
+        if "networkExp" in data["player"]:
+            exp = data["player"]["networkExp"]
+            lev = 0
+            while exp > 0:
+                exp -= 10000 + 2500 * lev
+                lev += 1
+            emb.add_field(name="Network Level:", value=lev)
+        if "karma" in data["player"]:
+            emb.add_field(name="Karma", value=data["player"]["karma"])
+        first_login = datetime.datetime.utcfromtimestamp(data["player"]["firstLogin"] // 1000)
+        emb.add_field(name="First login",
+                      value=f"{first_login.strftime(date_format)} ({human_timedelta(first_login, brief=True)})")
+        is_online = False
+
+        if "lastLogin" in data["player"]:
+            last_login = datetime.datetime.utcfromtimestamp(data["player"]["lastLogin"] // 1000)
+            emb.add_field(name="Last login",
+                          value=f"{last_login.strftime(date_format)} ({human_timedelta(last_login, brief=True)})")
+            is_online = data["player"]["lastLogin"] - data["player"]["lastLogout"] >= 0
+
+        if is_online:
+            async with ctx.bot.session.get("https://api.hypixel.net/status", params=params) as resp:
+                status_data = await resp.json()
+            should_brk = False
+            if not status_data["success"]:
+                should_brk = True
+            else:
+                if not status_data["session"]["online"]:
+                    # What?!
+                    should_brk = True
+            if not should_brk:
+                game = status_data["session"]["gameType"].lower()
+                version = data["player"]["mcVersionRp"]
+                emb.add_field(name="Online?", value=f"Yes, in game `{game}` on game version `{version}`.")
+        else:
+            if "lastLogout" in data["player"]:
+                logged_out_at = datetime.datetime.utcfromtimestamp(data["player"]["lastLogout"] // 1000)
+                emb.add_field(name="Online?",
+                              value=f"No, logged out on "
+                                    f"{logged_out_at.strftime(date_format)} "
+                                    f"({human_timedelta(logged_out_at, brief=True)})")
+
+            else:
+                emb.add_field(name="Online?", value="Unknown, player has disabled online/offline API")
+
+        async with ctx.bot.session.get(f"https://api.hypixel.net/guild?player={uuid}", params=params) as resp:
+            guild_data = await resp.json()
+        if guild_data["success"] and guild_data.get("guild", None) is not None:
+            g_name = guild_data["guild"]["name"]
+            emb.add_field(name="Guild",
+                          value=f"[{g_name}](https://plancke.io/hypixel/guild/name/{urlquote(g_name, safe='')})")
+
+        emb.add_field(name="Full stats here:", value=f"[Plancke](https://plancke.io/hypixel/player/stats/{uuid})",
+                      inline=False)
+        await msg.edit(content=None, embed=emb)
+
     @commands.group()
     @commands.cooldown(10, 10, commands.BucketType.user)
     async def qr(self, ctx):
