@@ -543,7 +543,7 @@ class Utilities(commands.Cog):
             uuid = get_by_name["id"]
         else:
             try:
-                name = get_by_uuid[-1]["name"]
+                get_by_uuid[-1]["name"]
             except KeyError:
                 return await ctx.send(":x: Your input could not be interpreted as a UUID or currently valid name.")
             uuid = ign
