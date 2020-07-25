@@ -110,6 +110,13 @@ class Text(commands.Cog):
 
         await ctx.send("We'll\nBe\nRight\nBack")
 
+    @commands.command()
+    @commands.cooldown(3, 2, commands.BucketType.channel)
+    async def dab(self, ctx):
+        """ASCII dabs"""
+
+        await ctx.send("<o/\n\\o>")
+
 
 def setup(bot):
     bot.add_cog(Text())
