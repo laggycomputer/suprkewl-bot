@@ -82,7 +82,8 @@ class Stats(commands.Cog):
                     del m_sorted[t_d]
 
                 prc = list(m_sorted[r] / guild_size * 100 for r in m_sorted)
-                user_friendly_prc = list(f"{r.name}: {prc[list(m_sorted.keys()).index(r)]}%" for r in m_sorted)
+                user_friendly_prc = list(
+                    f"{r.name}: {round(prc[list(m_sorted.keys()).index(r)], 3)}%" for r in m_sorted)
 
                 labels = list(r.name for r in roles)
                 sizes = prc
@@ -118,7 +119,7 @@ class Stats(commands.Cog):
 
                     return fp
 
-                prc = (sum(member._roles.has(role.id) for member in m) / guild_size) * 100
+                prc = round((sum(member._roles.has(role.id) for member in m) / guild_size) * 100, 3)
 
                 names = [f"Members with '{role.name}' role",
                          f"Members without '{role.name}' role"]
@@ -150,7 +151,7 @@ class Stats(commands.Cog):
 
         @async_executor()
         def pie_gen():
-            prc = sum(m.bot for m in ctx.guild.members) / len(ctx.guild.members) * 100
+            prc = round(sum(m.bot for m in ctx.guild.members) / len(ctx.guild.members) * 100, 3)
 
             labels = ["Bots", "Non-Bots"]
             sizes = [prc, 100 - prc]
@@ -179,11 +180,11 @@ class Stats(commands.Cog):
         """Generate a pie chart for the status of server members."""
 
         members = ctx.guild.members
-        offline_count = sum(m.status == discord.Status.offline for m in members) / len(members) * 100
-        idle_count = sum(m.status == discord.Status.idle for m in members) / len(members) * 100
-        dnd_count = sum(m.status == discord.Status.dnd for m in members) / len(members) * 100
-        online_count = sum(m.status == discord.Status.online for m in members) / len(members) * 100
-        other_count = sum(isinstance(m.status, str) for m in members) / len(members) * 100
+        offline_count = round(sum(m.status == discord.Status.offline for m in members) / len(members) * 100, 3)
+        idle_count = round(sum(m.status == discord.Status.idle for m in members) / len(members) * 100, 3)
+        dnd_count = round(sum(m.status == discord.Status.dnd for m in members) / len(members) * 100, 3)
+        online_count = round(sum(m.status == discord.Status.online for m in members) / len(members) * 100, 3)
+        other_count = round(sum(isinstance(m.status, str) for m in members) / len(members) * 100, 3)
 
         @async_executor()
         def pie_gen():
