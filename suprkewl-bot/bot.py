@@ -330,13 +330,13 @@ class suprkewl_bot(commands.Bot):
             await ctx.send_help(ctx.command)
 
         elif isinstance(error, commands.DisabledCommand):
-            emb = ctx.default_embed
+            emb = ctx.default_embed()
             emb.add_field(name="Disabled Command", value=f":x: `{ctx.prefix}{ctx.command}` has been disabled!")
 
             return await ctx.send(embed=emb)
 
         elif isinstance(error, commands.NoPrivateMessage):
-            emb = ctx.default_embed
+            emb = ctx.default_embed()
             emb.add_field(
                 name="This command is disabled in DMs",
                 value=f":x: `{ctx.prefix}{ctx.command}` can only be used in servers, not in DMs or DM groups."
@@ -358,7 +358,7 @@ class suprkewl_bot(commands.Bot):
 
             cooldown_type = human_readable_cooldown[error.cooldown.type]
 
-            emb = ctx.default_embed
+            emb = ctx.default_embed()
             emb.add_field(
                 name="Command on Cooldown",
                 value=f"Woah there! You just triggered a {cooldown_type} cooldown trying to run "
@@ -368,7 +368,7 @@ class suprkewl_bot(commands.Bot):
             return await ctx.send(embed=emb)
 
         elif isinstance(error, commands.MissingPermissions):
-            emb = ctx.default_embed
+            emb = ctx.default_embed()
             missing_perms = perms_list(error.missing_perms)
             emb.add_field(
                 name="User Missing Permissions",
@@ -379,7 +379,7 @@ class suprkewl_bot(commands.Bot):
             return await ctx.send(embed=emb)
 
         elif isinstance(error, commands.BotMissingPermissions):
-            emb = ctx.default_embed
+            emb = ctx.default_embed()
             missing_perms = perms_list(error.missing_perms)
             emb.add_field(
                 name="Bot Missing Permissions",
@@ -390,7 +390,7 @@ class suprkewl_bot(commands.Bot):
             return await ctx.send(embed=emb)
 
         elif isinstance(error, commands.NotOwner):
-            emb = ctx.default_embed
+            emb = ctx.default_embed()
             emb.add_field(
                 name="Permission denied",
                 value=f":x: You must be a bot owner to run `{ctx.prefix}{ctx.command}`."
@@ -399,7 +399,7 @@ class suprkewl_bot(commands.Bot):
             return await ctx.send(embed=emb)
 
         elif isinstance(error, UserNotInVC):
-            emb = ctx.default_embed
+            emb = ctx.default_embed()
             emb.add_field(
                 name="Not in voice channel",
                 value=f":x: You must be connected to a voice channel to run `{ctx.prefix}{ctx.command}`."
@@ -408,7 +408,7 @@ class suprkewl_bot(commands.Bot):
             return await ctx.send(embed=emb)
 
         elif isinstance(error, BotNotInVC):
-            emb = ctx.default_embed
+            emb = ctx.default_embed()
             emb.add_field(
                 name="Bot not in voice channel",
                 value=f":x: I must be connected to a voice channel to run `{ctx.prefix}{ctx.command}`."
@@ -417,7 +417,7 @@ class suprkewl_bot(commands.Bot):
             return await ctx.send(embed=emb)
 
         elif isinstance(error, UserInWrongVC):
-            emb = ctx.default_embed
+            emb = ctx.default_embed()
             emb.add_field(
                 name="User in wrong channel",
                 value=f":x: You must be in the same voice channel as the bot to run `{ctx.prefix}{ctx.command}`."
@@ -426,7 +426,7 @@ class suprkewl_bot(commands.Bot):
             return await ctx.send(embed=emb)
 
         elif isinstance(error, DJRequired):
-            emb = ctx.default_embed
+            emb = ctx.default_embed()
             emb.add_field(
                 name="DJ role required",
                 value=f":x: There are multiple people listening to music, so you need a role called 'DJ' to run "

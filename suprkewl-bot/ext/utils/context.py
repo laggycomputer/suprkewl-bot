@@ -65,18 +65,22 @@ class Context(commands.Context):
             await self.send(embed=emb2)
         else:
             if not without_annotation:
-                emb = self.default_embed
+                emb = self.default_embed()
             else:
-                emb = discord.Embed(color=self.bot.embed_color)
+                emb = self.colored_embed
 
             emb.description = prefix + content + suffix
 
             await self.send(embed=emb)
 
-    @property
-    def default_embed(self):
+    def default_embed(self, no_footer=False):
         emb = discord.Embed(color=self.bot.embed_color)
         emb.set_author(name=self.me.name, icon_url=self.me.avatar_url)
-        emb.set_footer(text=f"{self.bot.embed_footer} Requested by {self.author}", icon_url=self.author.avatar_url)
+        if not no_footer:
+            emb.set_footer(text=f"{self.bot.embed_footer} Requested by {self.author}", icon_url=self.author.avatar_url)
 
         return emb
+
+    @property
+    def colored_embed(self):
+        return discord.Embed(color=self.bot.embed_color)

@@ -54,7 +54,7 @@ class Settings(commands.Cog):
 
                 await ctx.send(f":ok_hand: The prefix is now `{prefix}`.")
             else:  # Emulate the error handling.
-                emb = ctx.default_embed
+                emb = ctx.default_embed()
                 emb.add_field(
                     name="User Missing Permissions",
                     value=f":x: Permission denied to run `{ctx.prefix}{ctx.command}`."

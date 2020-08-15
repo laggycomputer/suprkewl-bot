@@ -342,7 +342,7 @@ L
             return await ctx.send(":x: You can't fight yourself!")
 
         if (await ctx.bot.redis.exists(f"{ctx.author.id}:fighting")):
-            emb = ctx.default_embed
+            emb = ctx.default_embed()
             emb.description = f"{ctx.author.mention} :x: You can't fight multiple people at once! You're not Bruce" \
                 f" Lee."
             fp = discord.File("assets/brucelee.gif", "image.gif")
@@ -351,7 +351,7 @@ L
 
             return
         if (await ctx.bot.redis.exists(f"{target.id}:fighting")):
-            emb = ctx.default_embed
+            emb = ctx.default_embed()
             emb.description = f"{ctx.author.mention} :x: Don't make {target.mention} fight multiple people at once!" \
                 f" They're not Bruce Lee."
             fp = discord.File("assets/brucelee.gif", "image.gif")
@@ -778,13 +778,13 @@ L
             return await ctx.send("You can't play bots!")
 
         if (await ctx.bot.redis.exists(f"{ctx.author.id}:c4")):
-            emb = ctx.default_embed
+            emb = ctx.default_embed()
             emb.description = f"{ctx.author.mention} :x: You can't play multiple Connect4 games at once!"
 
             return await ctx.send(embed=emb)
 
         if (await ctx.bot.redis.exists(f"{member.id}:c4")):
-            emb = ctx.default_embed
+            emb = ctx.default_embed()
             emb.description = f"{ctx.author.mention} :x: {member.mention} is already in a Connect4 game."
 
             return await ctx.send(embed=emb)
@@ -865,7 +865,7 @@ L
         not_ticks = 20 - ticks
         ticks = "\U00002588" * ticks
         not_ticks = "-" * not_ticks
-        emb = ctx.default_embed
+        emb = ctx.default_embed()
         emb.description = f"**{reading} levels for {user}:**"
         emb.add_field(name="\u200b", value=f"```|{ticks}{not_ticks}|  {level}%  ```")
         emb.add_field(name="\u200b", value="\u200b")

@@ -175,7 +175,7 @@ class About(commands.Cog):
     async def git(self, ctx):
         """Get info about the Git repository for this bot."""
 
-        emb = ctx.default_embed
+        emb = ctx.default_embed()
         emb.title = "GitHub Info"
         emb.description = get_last_commits()
         emb.add_field(name="Build status", value=f"See `{ctx.prefix}buildinfo` for build status.")
@@ -187,7 +187,7 @@ class About(commands.Cog):
         """Gets Travis CI info for the bot."""
 
         status = await get_latest_build_status(ctx.bot.session)
-        emb = ctx.default_embed
+        emb = ctx.default_embed()
 
         desc = ""
 
@@ -205,7 +205,7 @@ class About(commands.Cog):
     async def stats(self, ctx):
         """Get some bot stats."""
 
-        emb = ctx.default_embed
+        emb = ctx.default_embed()
         emb.title = "Bot Stats"
         emb.add_field(name="Line count", value=linecount())
         cmds_used = ctx.bot.commands_used + 1  # + this one
@@ -226,7 +226,7 @@ class About(commands.Cog):
         """Give some general bot info."""
 
         async with ctx.typing():
-            emb = ctx.default_embed
+            emb = ctx.default_embed()
             emb.title = "Bot info"
 
             emb.add_field(name="Support Server", value="[Here](https://www.discord.gg/CRBBJVY \"Boo!\")")
@@ -274,8 +274,8 @@ class About(commands.Cog):
 
         latency = ctx.bot.latency * 1000
         latency = round(latency, 4)
-        emb = discord.Embed(
-            description=f":ping_pong: My current latency is {latency} milliseconds.", color=ctx.bot.embed_color)
+        emb = ctx.colored_embed
+        emb.description = f":ping_pong: My current latency is {latency} milliseconds."
         fp = discord.File("assets/catping.gif", "image.gif")
         emb.set_image(
             url="attachment://image.gif"

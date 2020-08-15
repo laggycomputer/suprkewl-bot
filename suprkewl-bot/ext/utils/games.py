@@ -265,7 +265,7 @@ class Mastermind:
         self.possible_letters = list("bwrpyg")
 
     async def send_embed(self):
-        emb = self.ctx.default_embed
+        emb = self.ctx.default_embed()
         self.embed_footer = emb.footer.text
         emb.set_footer(text=self.embed_footer)  # Prevent footer from changing
 

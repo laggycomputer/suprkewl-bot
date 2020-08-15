@@ -431,7 +431,7 @@ class Utilities(commands.Cog):
         message_id = fetched[desc.index("message_id")]
         msg_content = fetched[desc.index("message")]
 
-        e = ctx.default_embed
+        e = ctx.default_embed()
         if fetched[desc.index("msg_type")] == 1:
             e.description = "The image may not be visible"
             e.set_author(name=f"{user.name} sent in {chnl.name}")
@@ -558,7 +558,7 @@ class Utilities(commands.Cog):
         msg = await ctx.send("Fetching...")
 
         date_format = "%a %b %d, %Y at %H:%M:%S"
-        emb = ctx.default_embed
+        emb = ctx.default_embed()
         emb.set_thumbnail(url=f"https://crafatar.com/renders/body/{uuid}?overlay")
 
         found_rank = None

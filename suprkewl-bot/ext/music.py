@@ -181,7 +181,7 @@ class Music(commands.Cog):
         if not results or not results["tracks"]:
             return await ctx.send(":grey_question: No track found.")
 
-        e = discord.Embed(color=ctx.bot.embed_color)
+        e = ctx.colored_embed
 
         if results["loadType"] == "PLAYLIST_LOADED":
             tracks = results["tracks"]
@@ -223,7 +223,7 @@ class Music(commands.Cog):
 
         await player.stop()
 
-        e = discord.Embed(color=ctx.bot.embed_color)
+        e = ctx.colored_embed
 
         if results["loadType"] == "PLAYLIST_LOADED":
             tracks = results["tracks"]
@@ -411,7 +411,7 @@ class Music(commands.Cog):
             duration = lavalink.utils.format_time(player.current.duration)
 
         is_paused = "Yes" if player.paused else "No"
-        e = discord.Embed(color=ctx.bot.embed_color)
+        e = ctx.colored_embed
         e.set_author(name=f"Player info for {ctx.guild}")
         e.add_field(name="Volume", value=f"{player.volume}%/1000%", inline=False)
         e.add_field(

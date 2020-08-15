@@ -255,7 +255,7 @@ class Moderation(commands.Cog):
     async def banlist(self, ctx):
         """Gives a list of banned users."""
 
-        emb = ctx.default_embed
+        emb = ctx.default_embed()
 
         banlist = await ctx.guild.bans()
         if not any(banlist):
