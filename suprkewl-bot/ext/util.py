@@ -549,6 +549,96 @@ class Utilities(commands.Cog):
         await emb.send()
         await emb.handle()
 
+    @commands.group(aliases=["craftatar", "skinrender", "sr", "rs"], invoke_without_command=True)
+    @commands.cooldown(3, 5, commands.BucketType.user)
+    async def renderskin(self, ctx):
+        """Render a Minecraft skin."""
+
+        await ctx.send(":x: Please provide a valid render mode!")
+        await ctx.send_help(ctx.command)
+
+    @renderskin.command(name="flat", aliases=["raw", "default", "r", "d", "s"])
+    async def renderskin_flat(self, ctx, *, ign):
+        """Render as the .png used to set your skin."""
+
+        resolve_resp = await name_resolve(ctx, ign)
+        if resolve_resp is None:
+            return
+        uuid, ign = resolve_resp
+
+        emb = ctx.default_embed()
+        emb.description = "Renders provided by [Crafatar](https://crafatar.com/). If this user's skin was updated " \
+                          "recently, it may take some time for caches to flush and for the render to update."
+        emb.set_image(url=f"https://crafatar.com/skins/{uuid}")
+
+        await ctx.send(embed=emb)
+
+    @renderskin.command(name="cape", aliases=["c"])
+    async def renderskin_cape(self, ctx, *, ign):
+        """Render the user's cape."""
+
+        resolve_resp = await name_resolve(ctx, ign)
+        if resolve_resp is None:
+            return
+        uuid, ign = resolve_resp
+
+        emb = ctx.default_embed()
+        emb.description = "Renders provided by [Crafatar](https://crafatar.com/). If this user's skin was updated " \
+                          "recently, it may take some time for caches to flush and for the render to update."
+        emb.set_image(url=f"https://crafatar.com/capes/{uuid}")
+
+        await ctx.send(embed=emb)
+
+    @renderskin.command(name="avatar", aliases=["avy", "a", "flathead", "fh", "headflat", "hf"])
+    async def renderskin_avatar(self, ctx, *, ign):
+        """Render the front of the user's head."""
+
+        resolve_resp = await name_resolve(ctx, ign)
+        if resolve_resp is None:
+            return
+        uuid, ign = resolve_resp
+
+        emb = ctx.default_embed()
+        emb.description = "Renders provided by [Crafatar](https://crafatar.com/). If this user's skin was updated " \
+                          "recently, it may take some time for caches to flush and for the render to update."
+        emb.set_image(url=f"https://crafatar.com/avatars/{uuid}?overlay")
+
+        await ctx.send(embed=emb)
+
+    @renderskin.command(name="head",
+                        aliases=["h", "headiso", "headisometric", "hi", "isometrichead", "ih"])
+    async def renderskin_head(self, ctx, *, ign):
+        """Render the user's head isometrically."""
+
+        resolve_resp = await name_resolve(ctx, ign)
+        if resolve_resp is None:
+            return
+        uuid, ign = resolve_resp
+
+        emb = ctx.default_embed()
+        emb.description = "Renders provided by [Crafatar](https://crafatar.com/). If this user's skin was updated " \
+                          "recently, it may take some time for caches to flush and for the render to update."
+        emb.set_image(url=f"https://crafatar.com/renders/head/{uuid}?overlay")
+
+        await ctx.send(embed=emb)
+
+    @renderskin.command(name="body",
+                        aliases=["b", "bodyiso", "bodyisometric", "bi", "isometricbody", "ib"])
+    async def renderskin_body(self, ctx, *, ign):
+        """Render the user's body isometrically."""
+
+        resolve_resp = await name_resolve(ctx, ign)
+        if resolve_resp is None:
+            return
+        uuid, ign = resolve_resp
+
+        emb = ctx.default_embed()
+        emb.description = "Renders provided by [Crafatar](https://crafatar.com/). If this user's skin was updated " \
+                          "recently, it may take some time for caches to flush and for the render to update."
+        emb.set_image(url=f"https://crafatar.com/renders/body/{uuid}?overlay")
+
+        await ctx.send(embed=emb)
+
     @commands.command(aliases=["hyp"])
     @commands.cooldown(3, 5, commands.BucketType.user)
     async def hypixel(self, ctx, *, ign):
