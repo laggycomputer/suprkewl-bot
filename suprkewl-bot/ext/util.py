@@ -110,6 +110,39 @@ async def process_qr(ctx, argument):
     return fp
 
 
+async def name_resolve(ctx, ign):
+    ign = ign.replace("-", "")  # This has no affect on names, but works on UUIDs
+
+    async with ctx.bot.session.get(f"https://api.mojang.com/users/profiles/minecraft/{ign}") as resp:
+        if resp.status not in [204, 400, 404]:
+            get_by_name = await resp.json()
+        else:
+            get_by_name = None
+
+    if get_by_name is not None:
+        proposed_uuid = get_by_name["id"]
+    else:
+        proposed_uuid = ign
+    async with ctx.bot.session.get(f"https://api.mojang.com/user/profiles/{proposed_uuid}/names") as resp:
+        if resp.status not in [204, 404]:
+            get_by_uuid = await resp.json()
+        else:
+            await ctx.send(":x: Your input could not be interpreted as a UUID or currently valid name.")
+            return
+
+    if get_by_name is not None:
+        uuid = get_by_name["id"]
+    else:
+        try:
+            get_by_uuid[-1]["name"]
+        except KeyError:
+            await ctx.send(":x: Your input could not be interpreted as a UUID or currently valid name.")
+            return
+        uuid = ign
+
+    return uuid, ign
+
+
 class Utilities(commands.Cog):
 
     @commands.command(
@@ -521,32 +554,10 @@ class Utilities(commands.Cog):
     async def hypixel(self, ctx, *, ign):
         """Look up Hypixel stats for a user."""
 
-        ign = ign.replace("-", "")  # This has no affect on names, but works on UUIDs
-
-        async with ctx.bot.session.get(f"https://api.mojang.com/users/profiles/minecraft/{ign}") as resp:
-            if resp.status not in [204, 400, 404]:
-                get_by_name = await resp.json()
-            else:
-                get_by_name = None
-
-        if get_by_name is not None:
-            proposed_uuid = get_by_name["id"]
-        else:
-            proposed_uuid = ign
-        async with ctx.bot.session.get(f"https://api.mojang.com/user/profiles/{proposed_uuid}/names") as resp:
-            if resp.status not in [204, 404]:
-                get_by_uuid = await resp.json()
-            else:
-                return await ctx.send(":x: Your input could not be interpreted as a UUID or currently valid name.")
-
-        if get_by_name is not None:
-            uuid = get_by_name["id"]
-        else:
-            try:
-                get_by_uuid[-1]["name"]
-            except KeyError:
-                return await ctx.send(":x: Your input could not be interpreted as a UUID or currently valid name.")
-            uuid = ign
+        resolve_resp = await name_resolve(ctx, ign)
+        if resolve_resp is None:
+            return
+        uuid, ign = resolve_resp
 
         params = dict(key=config.hypixel_key, uuid=uuid)
         async with ctx.bot.session.get("http://api.hypixel.net/player", params=params) as resp:
@@ -582,7 +593,7 @@ class Utilities(commands.Cog):
                         found_rank = "[%s]" % data["player"]["packageRank"]
                     else:
                         pass
-        emb.description = f"{found_rank or '[NON]'} {get_by_uuid[-1]['name']}"
+        emb.description = f"{found_rank or '[NON]'} {ign}"
 
         if "networkExp" in data["player"]:
             exp = data["player"]["networkExp"]
