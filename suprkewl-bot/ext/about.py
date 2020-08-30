@@ -169,7 +169,7 @@ async def get_recent_builds_on(cs, branch):
     return ret
 
 
-class About(commands.Cog):
+class BotMeta(commands.Cog, name="Bot Meta"):
 
     @commands.command(aliases=["github", "branches"])
     async def git(self, ctx):
@@ -333,4 +333,4 @@ class About(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(About())
+    bot.add_cog(BotMeta())
