@@ -222,15 +222,15 @@ def do_hash(alg, msg):
 class Cryptography(commands.Cog):
 
     @commands.group(
+        invoke_without_command=True,
         aliases=["ceasar"],  # For you people that can't spell
         description="Operates with the Caesar cipher. Non-alphabetical characters are left untouched."
     )
     async def caesar(self, ctx):
         """Perform operations with the Caesar cipher."""
 
-        if ctx.invoked_subcommand is None:
-            await ctx.send(":x: Please provide a valid subcommand!")
-            await ctx.send_help(ctx.command)
+        await ctx.send(":x: Please provide a valid subcommand!")
+        await ctx.send_help(ctx.command)
 
     @caesar.command(name="encode", aliases=["e", "encipher", "encrypt"])
     async def caesar_encode(self, ctx, shift: int, *, message):
@@ -288,6 +288,7 @@ class Cryptography(commands.Cog):
 
     @commands.group(
         aliases=["sub"],
+        invoke_without_command=True,
         description="Performs operations with a substitution cipher "
                     "(https://en.wikipedia.org/wiki/Substitution_cipher#Simple_substitution)."
                     " If a key is provided that has a length of less than 26, it will be interpreted as a keyword."
@@ -295,9 +296,8 @@ class Cryptography(commands.Cog):
     async def substitution(self, ctx):
         """Perform operations with a substitution cipher."""
 
-        if ctx.invoked_subcommand is None:
-            await ctx.send(":x: Please provide a valid subcommand!")
-            await ctx.send_help(ctx.command)
+        await ctx.send(":x: Please provide a valid subcommand!")
+        await ctx.send_help(ctx.command)
 
     @substitution.command(name="keyword", aliases=["k", "key", "keywords", "kw"])
     async def substitution_keyword(self, ctx, *, kw):
@@ -377,6 +377,7 @@ class Cryptography(commands.Cog):
             )
 
     @commands.group(
+        invoke_without_command=True,
         description="Perform operations with A1Z26, a substitution cipher. Replaces A with 1, B with 2, and so on. This"
                     " cipher uses dashes to seperate letters.",
         aliases=["a1"]  # Haha!
@@ -384,9 +385,8 @@ class Cryptography(commands.Cog):
     async def a1z26(self, ctx):
         """Operate with the A1Z26 cipher."""
 
-        if ctx.invoked_subcommand is None:
-            await ctx.send(":x: Please provide a valid subcommand!")
-            await ctx.send_help(ctx.command)
+        await ctx.send(":x: Please provide a valid subcommand!")
+        await ctx.send_help(ctx.command)
 
     @a1z26.command(name="encode", aliases=["e"])
     async def a1z26_encode(self, ctx, *, message):

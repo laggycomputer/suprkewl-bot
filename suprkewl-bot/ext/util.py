@@ -363,14 +363,14 @@ class Utilities(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.group(
         description="Gives the data under a message, channel, or member in a JSON format, as received from the"
-                    " Discord API."
+                    " Discord API.",
+        invoke_without_command=True
     )
     async def raw(self, ctx):
         """Returns a dict version of some objects."""
 
-        if ctx.invoked_subcommand is None:
-            await ctx.send(":x: Please provide a valid subcommand!")
-            await ctx.send_help(ctx.command)
+        await ctx.send(":x: Please provide a valid subcommand!")
+        await ctx.send_help(ctx.command)
 
     @raw.command(name="message", aliases=["msg"])
     async def raw_message(self, ctx, *, message: discord.Message):
@@ -651,14 +651,13 @@ class Utilities(commands.Cog):
                       inline=False)
         await msg.edit(content=None, embed=emb)
 
-    @commands.group()
+    @commands.group(invoke_without_command=True)
     @commands.cooldown(10, 10, commands.BucketType.user)
     async def qr(self, ctx):
         """Create or read QR codes."""
 
-        if ctx.invoked_subcommand is None:
-            await ctx.send(":x: Please provide a valid subcommand!")
-            await ctx.send_help(ctx.command)
+        await ctx.send(":x: Please provide a valid subcommand!")
+        await ctx.send_help(ctx.command)
 
     @qr.command(name="create", aliases=["make", "e", "encode"])
     async def qr_create(self, ctx, *, text):

@@ -40,14 +40,14 @@ class Stats(commands.Cog):
         else:
             return True
 
-    @commands.group(aliases=["chart", "stat"], description="Generate a pie chart for guild attributes.")
+    @commands.group(aliases=["chart", "stat"], description="Generate a pie chart for guild attributes.",
+                    invoke_without_command=True)
     @commands.cooldown(1, 2, commands.BucketType.channel)
     async def pie(self, ctx):
         """Generate pie charts."""
 
-        if ctx.invoked_subcommand is None:
-            await ctx.send(":x: Please provide a valid subcommand!")
-            await ctx.send_help(ctx.command)
+        await ctx.send(":x: Please provide a valid subcommand!")
+        await ctx.send_help(ctx.command)
 
     @pie.command(
         name="role",
