@@ -570,6 +570,10 @@ class suprkewl_bot(commands.Bot):
             "Regex by trial and error: Combining dots slashes and dots until a thing happens.",
             "The center of a donut is 100% fat free.",
             "Since all the public libraries are closed, I'm checking you out instead.",
+            "The first law is that a robot shall not harm a human, or by inaction allow a human to come to harm.",
+            "The second law is that a robot shall obey any instruction given to it by a human.",
+            "the third law is that a robot shall avoid actions or situations that could cause it to come to harm "
+            "itself.",
             "The word utopia is derived from the Latin 'Utopia', meaning 'nothing, impossible'.",
             "This sentence hass tree errors.",
             "There are two kinds of people at a party; the ones that want to stay and those who want to leave. The"
