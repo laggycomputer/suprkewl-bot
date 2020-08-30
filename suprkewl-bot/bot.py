@@ -284,6 +284,10 @@ class suprkewl_bot(commands.Bot):
             await self.clear_messages(payload.message_id)
             await self.redis.delete(payload.message_id)
 
+    async def on_guild_remove(self, guild):
+        await self.db.execute("DELETE FROM guilds WHERE id == ?;", (guild.id,))
+        await self.db.commit()
+
     async def on_command_error(self, ctx, error):
 
         if hasattr(ctx.command, "on_error"):
