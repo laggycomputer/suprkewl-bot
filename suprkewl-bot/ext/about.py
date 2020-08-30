@@ -325,6 +325,12 @@ class About(commands.Cog):
 
         await ctx.send(final_url)
 
+    @commands.command()
+    async def invite(self, ctx):
+        """Get a link to invite this bot."""
+
+        await ctx.send(discord.utils.oauth_url(ctx.bot.user.id))
+
 
 def setup(bot):
     bot.add_cog(About())
