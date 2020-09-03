@@ -16,3 +16,9 @@ CREATE TABLE IF NOT EXISTS snipes (
     message VARCHAR(2000) NOT NULL,
     msg_type INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS past_igns (
+    past_ign VARCHAR(32) Not NULL,
+    uuid1 INTEGER NOT NULL,
+    uuid2 INTEGER NOT NULL
+);

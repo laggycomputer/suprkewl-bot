@@ -28,6 +28,7 @@ import re
 import typing
 import unicodedata
 from urllib.parse import quote as urlquote
+import uuid
 
 import aiohttp
 import discord
@@ -36,7 +37,7 @@ import gtts
 from PIL import Image
 import pyqrcode
 
-from .utils import async_executor, Embedinator, escape_codeblocks, format_json, human_timedelta
+from .utils import async_executor, Embedinator, escape_codeblocks, format_json, human_join, human_timedelta
 import config
 
 
@@ -110,7 +111,7 @@ async def process_qr(ctx, argument):
     return fp
 
 
-async def name_resolve(ctx, ign):
+async def name_resolve(ctx, ign, *, silent=False):
     ign = ign.replace("-", "")  # This has no affect on names, but works on UUIDs
 
     async with ctx.bot.session.get(f"https://api.mojang.com/users/profiles/minecraft/{ign}") as resp:
@@ -127,18 +128,20 @@ async def name_resolve(ctx, ign):
         if resp.status not in [204, 404]:
             get_by_uuid = await resp.json()
         else:
-            await ctx.send(":x: Your input could not be interpreted as a UUID or currently valid name.")
+            if not silent:
+                await ctx.send(":x: Your input could not be interpreted as a UUID or currently valid name.")
             return
 
     if get_by_name is not None:
         uuid = get_by_name["id"]
     else:
         try:
-            get_by_uuid[-1]["name"]
+            uuid = ign
+            ign = get_by_uuid[-1]["name"]
         except KeyError:
-            await ctx.send(":x: Your input could not be interpreted as a UUID or currently valid name.")
+            if not silent:
+                await ctx.send(":x: Your input could not be interpreted as a UUID or currently valid name.")
             return
-        uuid = ign
 
     return uuid, ign
 
@@ -499,6 +502,18 @@ class Utilities(commands.Cog):
 
         ign = ign.replace("-", "")  # This has no affect on names, but works on UUIDs
 
+        potential_past_uuids = await (await ctx.bot.db.execute(
+            "SELECT uuid1, uuid2 from past_igns WHERE past_ign == ?;", (ign.lower(),))).fetchall()
+        if potential_past_uuids is not None:
+            potential_past_uuids = [uuid.UUID(bytes=b"".join(x)).hex for x in potential_past_uuids]
+            names_to_use = []
+            for potential_past_uuid in potential_past_uuids:
+                might_append = (await name_resolve(ctx, potential_past_uuid, silent=True))[1].lower()
+                if might_append != ign.lower():
+                    names_to_use.append(might_append)
+        else:
+            names_to_use = []
+
         async with ctx.bot.session.get(f"https://api.mojang.com/users/profiles/minecraft/{ign}") as resp:
             if resp.status not in [204, 400, 404]:
                 get_by_name = await resp.json()
@@ -510,42 +525,68 @@ class Utilities(commands.Cog):
         else:
             proposed_uuid = ign
         async with ctx.bot.session.get(f"https://api.mojang.com/user/profiles/{proposed_uuid}/names") as resp:
-            if resp.status not in [204, 404]:
+            if resp.status not in [204, 400, 404]:
                 get_by_uuid = await resp.json()
             else:
-                return await ctx.send(":x: Your input could not be interpreted as a UUID or currently valid name.")
+                error_content = ":x: Your input could not be interpreted as a UUID or currently valid name."
+                if names_to_use:
+                    error_content += f" However, `{ign}` is a former username of " \
+                                     f"{human_join(names_to_use, final='and')}. Try " \
+                                     f"`{ctx.prefix}{ctx.invoked_with} <name>` again."
+                return await ctx.send(error_content)
 
         emb = Embedinator(ctx.bot, ctx, color=ctx.bot.embed_color, member=ctx.author)
+        past_warning = ""
         if get_by_name is not None:
             name = ign
-            uuid = get_by_name["id"]
-            human_uuid = '-'.join(uuid[i:i + 4] for i in range(0, len(uuid), 4))
+            player_uuid = get_by_name["id"]
+            human_uuid = "-".join(player_uuid[i:i + 4] for i in range(0, len(player_uuid), 4))
             emb_name = f"The name {name} has UUID `{human_uuid}`."
+            if names_to_use:
+                past_warning = f"\n(Note: `{ign}` is also a former name of {human_join(names_to_use, final='and')}.)"
         else:
             try:
                 name = get_by_uuid[-1]["name"]
             except KeyError:
                 return await ctx.send(":x: Your input could not be interpreted as a UUID or currently valid name.")
-            uuid = ign
-            human_uuid = '-'.join(uuid[i:i + 4] for i in range(0, len(uuid), 4))
+            player_uuid = ign
+            human_uuid = '-'.join(player_uuid[i:i + 4] for i in range(0, len(player_uuid), 4))
             emb_name = f"UUID `{human_uuid}` resolves to the name {name}."
         emb.add_field(
             name=emb_name,
-            value=f"[Plancke](https://plancke.io/hypixel/player/stats/{uuid}) "
-                  f"[NameMC](https://namemc.com/name/{name})\n\nUsername history:",
+            value=f"[Plancke](https://plancke.io/hypixel/player/stats/{player_uuid}) "
+                  f"[NameMC](https://namemc.com/name/{name}){past_warning}\n\nUsername history:",
             inline=False
         )
+
+        past_names = []
+
         for name_time_pair in reversed(get_by_uuid):
+            iter_name = name_time_pair["name"]
+            if iter_name.lower() != name.lower():
+                past_names.append(iter_name.lower())
             timestamp = name_time_pair.get("changedToAt", None)
             if timestamp is None:
-                emb.add_field(name=f"Created as `{name_time_pair['name']}`", value="\u200b", inline=False)
+                emb.add_field(name=f"Created as `{iter_name}`", value="\u200b", inline=False)
                 break
             else:
                 timestamp = datetime.datetime.utcfromtimestamp(timestamp / 1000).strftime("%c")
-                emb.add_field(name=f"Changed to `{name_time_pair['name']}`", value=f"On {timestamp}", inline=False)
+                emb.add_field(name=f"Changed to `{iter_name}`", value=f"On {timestamp}", inline=False)
+
+        uuid_bytes = uuid.UUID(player_uuid).bytes
+        must_commit = False
+        for past_name in past_names:
+            if not await (await ctx.bot.db.execute(
+                    "SELECT uuid1, uuid2 from past_igns WHERE past_ign == ?;", (past_name.lower(),))).fetchall():
+                must_commit = True
+                await ctx.bot.db.execute(
+                    "INSERT INTO past_igns (past_ign, uuid1, uuid2) VALUES (?, ?, ?) ON CONFLICT DO NOTHING;",
+                    (past_name, uuid_bytes[:8], uuid_bytes[8:]))
+        if must_commit:
+            await ctx.bot.db.commit()
 
         emb.set_footer(text="All timestamps are in UTC.", icon_url=ctx.me.avatar_url)
-        emb.set_thumbnail(url=f"https://crafatar.com/renders/body/{uuid}?overlay")
+        emb.set_thumbnail(url=f"https://crafatar.com/renders/body/{player_uuid}?overlay")
         await emb.send()
         await emb.handle()
 
