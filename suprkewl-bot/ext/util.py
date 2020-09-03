@@ -447,7 +447,7 @@ class Utilities(commands.Cog):
     async def snipe(self, ctx, *, channel: discord.TextChannel = None):
         channel = channel or ctx.channel
         sniped = await ctx.bot.db.execute(
-            "SELECT * FROM snipes WHERE channel_id=? AND guild_id=?;",
+            "SELECT * FROM snipes WHERE channel_id == ? AND guild_id == ?;",
             (channel.id,
              ctx.guild.id)
         )
