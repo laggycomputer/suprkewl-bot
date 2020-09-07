@@ -146,6 +146,20 @@ async def name_resolve(ctx, ign, *, silent=False):
     return uuid, ign
 
 
+async def insert_past_names(db, names, player_uuid):
+    uuid_bytes = uuid.UUID(player_uuid).bytes
+    must_commit = False
+    for past_name in names:
+        if not await (await db.execute(
+                "SELECT uuid1, uuid2 from past_igns WHERE past_ign == ?;", (past_name.lower(),))).fetchall():
+            must_commit = True
+            await db.execute(
+                "INSERT INTO past_igns (past_ign, uuid1, uuid2) VALUES (?, ?, ?) ON CONFLICT DO NOTHING;",
+                (past_name, uuid_bytes[:8], uuid_bytes[8:]))
+    if must_commit:
+        await db.commit()
+
+
 class Utilities(commands.Cog):
 
     @commands.command(
@@ -495,7 +509,7 @@ class Utilities(commands.Cog):
             return await ctx.send(":x: Output too long to display, try using less characters.")
         await ctx.send(msg)
 
-    @commands.command(aliases=["namemc", "mcname", "mcign", "ign"])
+    @commands.group(invoke_without_command=True, aliases=["namemc", "mcname", "mcign", "ign"])
     @commands.cooldown(5, 1, commands.BucketType.user)
     async def minecraftign(self, ctx, *, ign):
         """Get history on a Minecraft name."""
@@ -573,22 +587,42 @@ class Utilities(commands.Cog):
                 timestamp = datetime.datetime.utcfromtimestamp(timestamp / 1000).strftime("%c")
                 emb.add_field(name=f"Changed to `{iter_name}`", value=f"On {timestamp}", inline=False)
 
-        uuid_bytes = uuid.UUID(player_uuid).bytes
-        must_commit = False
-        for past_name in past_names:
-            if not await (await ctx.bot.db.execute(
-                    "SELECT uuid1, uuid2 from past_igns WHERE past_ign == ?;", (past_name.lower(),))).fetchall():
-                must_commit = True
-                await ctx.bot.db.execute(
-                    "INSERT INTO past_igns (past_ign, uuid1, uuid2) VALUES (?, ?, ?) ON CONFLICT DO NOTHING;",
-                    (past_name, uuid_bytes[:8], uuid_bytes[8:]))
-        if must_commit:
-            await ctx.bot.db.commit()
+        await insert_past_names(ctx.bot.db, past_names, player_uuid)
 
         emb.set_footer(text="All timestamps are in UTC.", icon_url=ctx.me.avatar_url)
         emb.set_thumbnail(url=f"https://crafatar.com/renders/body/{player_uuid}?overlay")
         await emb.send()
         await emb.handle()
+
+    @minecraftign.command(name="at", description="Time format is mm/dd/yy.")
+    async def minecraftign_at(self, ctx, ign, *, time=None):
+        """See the UUID for an IGN at a different point in time, default the *nix epoch."""
+
+        try:
+            time = datetime.datetime.strptime(time, "%m/%d/%y") or datetime.datetime.fromtimestamp(0)
+        except ValueError:
+            return await ctx.send(":x: Is that timestamp valid?")
+
+        if time > datetime.datetime.now():
+            return await ctx.send(":x: That timestamp appears to be in the future. Is it valid?")
+
+        timestamp = int(time.timestamp())
+
+        async with ctx.bot.session.get(f"https://api.mojang.com/users/profiles/minecraft/{ign}?at={timestamp}") as resp:
+            if resp.status not in [204, 400]:
+                resp = await resp.json()
+            else:
+                resp = None
+        if resp is None:
+            return await ctx.send(f":x: It doesn't appear that IGN was ever valid.\n"
+                                  f"(Alternately, the only person who has used this name is also still using it, in "
+                                  f"which case see `{ctx.prefix}ign {ign}`.")
+
+        if resp["name"].lower() != ign.lower():
+            await ctx.send(f"IGN {ign} was held by the player now known as {resp['name']} at the given time.")
+            await insert_past_names(ctx.bot.db, [resp["name"].lower()], resp["id"])
+        else:
+            await ctx.send(f"IGN {ign} was held by its current owner at this timestamp.")
 
     @commands.group(aliases=["craftatar", "skinrender", "sr", "rs"], invoke_without_command=True)
     @commands.cooldown(3, 5, commands.BucketType.user)
