@@ -616,7 +616,7 @@ class Utilities(commands.Cog):
         if resp is None:
             return await ctx.send(f":x: It doesn't appear that IGN was ever valid.\n"
                                   f"(Alternately, the only person who has used this name is also still using it, in "
-                                  f"which case see `{ctx.prefix}ign {ign}`.")
+                                  f"which case see `{ctx.prefix}ign {ign}`.)")
 
         if resp["name"].lower() != ign.lower():
             await ctx.send(f"IGN {ign} was held by the player now known as {resp['name']} at the given time.")
