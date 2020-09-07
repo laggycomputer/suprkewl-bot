@@ -22,6 +22,7 @@ import binascii
 import datetime
 import io
 import json
+import math
 import os
 import random
 import re
@@ -776,11 +777,14 @@ class Utilities(commands.Cog):
 
         if "networkExp" in data["player"]:
             exp = data["player"]["networkExp"]
-            lev = 0
-            while exp > 0:
-                exp -= 10000 + 2500 * lev
-                lev += 1
-            emb.add_field(name="Network Level:", value=lev)
+
+            def calc_lev(xp):
+                level_and_decimal = (math.sqrt(xp + 15312.5) - 125 / math.sqrt(2))/(25 * math.sqrt(2))
+                return level_and_decimal // 1, level_and_decimal - math.floor(level_and_decimal)
+            lev, dec_to_next_lev = calc_lev(exp)
+            dec_to_next_lev = round(dec_to_next_lev * 100)
+            lev, dec_to_next_lev = map(int, [lev, dec_to_next_lev])
+            emb.add_field(name="Network Level:", value=f"{lev}, {dec_to_next_lev}% to level {lev + 1}")
         if "karma" in data["player"]:
             emb.add_field(name="Karma", value=data["player"]["karma"])
         first_login = datetime.datetime.utcfromtimestamp(data["player"]["firstLogin"] // 1000)
