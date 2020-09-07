@@ -738,6 +738,15 @@ class Utilities(commands.Cog):
         emb.set_thumbnail(url=f"https://crafatar.com/renders/body/{uuid}?overlay")
 
         found_rank = None
+        rank_lookup = {
+            "SUPERSTAR": "MVP++",
+            "MVP_PLUS": "MVP+",
+            "VIP_PLUS": "VIP+",
+            "VIP": "VIP",
+            "NONE": "NON",
+            "NORMAL": "NON"
+        }
+
         if "prefix" in data["player"]:
             found_rank = data["player"]["prefix"]
             while "§" in found_rank:
@@ -745,19 +754,24 @@ class Utilities(commands.Cog):
                 if index != len(found_rank) - 1:
                     found_rank = found_rank[:index] + found_rank[index + 2:]
         else:
-            if "monthlyPackageRank" in data["player"]:
-                if data["player"]["monthlyPackageRank"] == "SUPERSTAR":
-                    found_rank = "[MVP++]"
-                else:
-                    found_rank = "[%s]" % data["player"]["monthlyPackageRank"]
+            if "rank" in data["player"]:
+                found_rank = "[%s]" % data["player"]["rank"]
             else:
-                if "rank" in data["player"]:
-                    found_rank = "[%s]" % data["player"]["rank"]
+                if "monthlyPackageRank" in data["player"]:
+                    found_rank = "[%s]" % rank_lookup.get(
+                        data["player"]["monthlyPackageRank"], None
+                    ) or data["player"]["monthlyPackageRank"]
                 else:
-                    if "packageRank" in data["player"]:
-                        found_rank = "[%s]" % data["player"]["packageRank"]
+                    if "newPackageRank" in data["player"]:
+                        found_rank = "[%s]" % rank_lookup.get(
+                            data["player"]["newPackageRank"], None) or data["player"]["newPackageRank"]
                     else:
-                        pass
+                        if "packageRank" in data["player"]:
+                            found_rank = "[%s]" % rank_lookup.get(
+                                data["player"]["packageRank"], None
+                            ) or data["player"]["packageRank"]
+                        else:
+                            pass
         emb.description = f"{found_rank or '[NON]'} {ign}"
 
         if "networkExp" in data["player"]:
