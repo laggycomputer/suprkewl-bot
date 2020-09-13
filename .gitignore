@@ -8,3 +8,4 @@
 !/suprkewl-bot/config.py.example
 skbot.db
 skbot.db-journal
+venv/*
