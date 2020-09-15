@@ -726,7 +726,7 @@ class Utilities(commands.Cog):
         uuid, ign = resolve_resp
 
         params = dict(key=config.hypixel_key, uuid=uuid)
-        async with ctx.bot.session.get("http://api.hypixel.net/player", params=params) as resp:
+        async with ctx.bot.session.get("https://api.hypixel.net/player", params=params) as resp:
             data = await resp.json()
 
         if not data["success"]:
@@ -872,7 +872,7 @@ class Utilities(commands.Cog):
             return
 
         async with ctx.bot.session.post(
-                "http://api.qrserver.com/v1/read-qr-code/", data={"file": converted_img}) as resp:
+                "https://api.qrserver.com/v1/read-qr-code/", data={"file": converted_img}) as resp:
             out = await resp.json()
 
         try:
