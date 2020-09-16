@@ -27,6 +27,8 @@ def linecount():
     total = 0
     file_amount = 0
     for path, subdirs, files in os.walk(path_to_search):
+        if "venv" in subdirs:
+            subdirs.remove("venv")  # venv is not my code
         for name in files:
             if name.endswith(".py"):
                 file_amount += 1
