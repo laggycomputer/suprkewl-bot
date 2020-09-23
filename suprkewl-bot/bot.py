@@ -178,7 +178,7 @@ class suprkewl_bot(commands.Bot):
                         ]
 
                         resp = await(
-                            await self.db.execute("SELECT prefix FROM guilds WHERE id == ?;", (message.guild.id,))
+                            await self.db.execute("SELECT prefix FROM guilds WHERE guild_id == ?;", (message.guild.id,))
                         ).fetchone()
 
                         if resp:
@@ -285,7 +285,7 @@ class suprkewl_bot(commands.Bot):
             await self.redis.delete(payload.message_id)
 
     async def on_guild_remove(self, guild):
-        await self.db.execute("DELETE FROM guilds WHERE id == ?;", (guild.id,))
+        await self.db.execute("DELETE FROM guilds WHERE guild_id == ?;", (guild.id,))
         await self.db.commit()
 
     async def on_command_error(self, ctx, error):
@@ -605,7 +605,7 @@ async def get_pre(bot, message):
     pre = ["sk!"]
     if message.guild:
         resp = await(
-            await bot.db.execute("SELECT prefix FROM guilds WHERE id == ?;", (message.guild.id,))
+            await bot.db.execute("SELECT prefix FROM guilds WHERE guild_id == ?;", (message.guild.id,))
         ).fetchone()
 
         if resp:
