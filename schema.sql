@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS guilds (
 );
 
 CREATE TABLE IF NOT EXISTS snipes (
-    channel_id UNIQUE PRIMARY KEY NOT NULL,
+    channel_id BIGINT UNIQUE PRIMARY KEY NOT NULL,
     guild_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
     message_id BIGINT NOT NULL,
