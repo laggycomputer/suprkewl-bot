@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS blacklist (
 
 CREATE TABLE IF NOT EXISTS guilds (
     guild_id BIGINT UNIQUE PRIMARY KEY NOT NULL,
-    prefix VARCHAR(10)
+    prefix VARCHAR(10),
+    custom_dollar_sign VARCHAR(30)
 );
 
 CREATE TABLE IF NOT EXISTS snipes (
@@ -21,4 +22,11 @@ CREATE TABLE IF NOT EXISTS past_igns (
     past_ign VARCHAR(32) Not NULL,
     uuid1 INTEGER NOT NULL,
     uuid2 INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS economy (
+    user_Id BIGINT PRIMARY KEY UNIQUE NOT NULL,
+    money BIGINT NOT NULL DEFAULT (0),
+    last_daily INTEGER,
+    daily_streak INTEGER DEFAULT (0)
 );

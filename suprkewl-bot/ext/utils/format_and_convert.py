@@ -20,6 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import json
 
+import discord
+
 
 permissions_converter = {
     "add_reactions": "Add Reactions", "administrator": "Administrator", "attach_files": "Attach Files",
@@ -61,6 +63,15 @@ def escape_codeblocks(line):
 
 def format_json(string):
     return json.dumps(string, indent=2, ensure_ascii=False, sort_keys=True)
+
+
+def use_potential_nickname(member):
+    if isinstance(member, discord.Member) and member.nick:
+        name = f"{member.nick} ({member})"
+    else:
+        name = str(member)
+
+    return name
 
 
 class Plural:  # From R. Danny.
