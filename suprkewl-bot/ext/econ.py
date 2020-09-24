@@ -119,7 +119,7 @@ class Economy(commands.Cog):
 
         dollar_sign = await self.get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
         records = await (await ctx.bot.db.execute(
-            "SELECT user_id, money FROM economy ORDER BY money DESC LIMIT 10;"
+            "SELECT user_id, money FROM economy WHERE money > 0 ORDER BY money DESC LIMIT 10;"
         )).fetchall()
         if not records:
             return await ctx.send("Nobody seems to have economy records...")
@@ -150,7 +150,8 @@ class Economy(commands.Cog):
         user = user or ctx.author
         uid = user.id if not isinstance(user, int) else user
         money = await self.get_user_money(ctx, uid)
-        record_count = (await (await ctx.bot.db.execute("SELECT COUNT(user_id) FROM economy;")).fetchone())[0]
+        record_count = (await (await ctx.bot.db.execute("SELECT COUNT(user_id) FROM economy WHERE money > 1;")
+                               ).fetchone())[0]
         if money == 0:
             await ctx.send("This user does not have any money.")
         else:
@@ -279,7 +280,7 @@ class Economy(commands.Cog):
             "UPDATE SET custom_dollar_sign = ?;", (ctx.guild.id, prefix, prefix)
         )
         await ctx.bot.db.commit()
-        
+
         await ctx.send(f":white_check_mark: Economy commands used in this server will now use the prefix {prefix}.")
 
     @currencyprefix.command(name="reset")
