@@ -19,10 +19,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import asyncio
 import datetime
+import io
+import random
 import typing
 
 import discord
 from discord.ext import commands
+from PIL import Image
 
 from .utils import human_timedelta, Plural, use_potential_nickname
 
@@ -300,6 +303,51 @@ class Economy(commands.Cog):
                 await ctx.send("\U0001f44d")
             except (discord.Forbidden, discord.NotFound):
                 return
+
+    @commands.command(aliases=["ne"])
+    @commands.cooldown(1, 45, commands.BucketType.user)
+    @commands.guild_only()
+    async def nameemote(self, ctx):
+        """Name the emote for 4d10 coins."""
+
+        eligible_emotes = [e for e in ctx.guild.emojis if not e.animated]
+        if len(eligible_emotes) < 9:
+            return await ctx.send(":x: The guild needs to have 8 or more static emojis to run this command.")
+        emote = random.choice(eligible_emotes)
+        buff = io.BytesIO(await emote.url.read())
+        resized = Image.open(buff).resize((300, 300))
+        new_buff = io.BytesIO()
+        resized.save(new_buff, "png")
+        new_buff.seek(0)
+        fp = discord.File(new_buff, "some_emoji.png")
+        await ctx.send(
+            f"{ctx.author.mention} Name the emote! (Send the name, not the emote, in chat.) If someone else does it "
+            f"first, they get the money. You get one try and 10 seconds.",
+            file=fp)
+
+        ids_who_have_guessed = []
+
+        def check(m):
+            if m.channel != ctx.channel or m.author.bot or m.author.id in ids_who_have_guessed:
+                return
+            return m.content.strip().lower() == emote.name.lower()
+        try:
+            correct_response = await ctx.bot.wait_for("message", check=check, timeout=10.0)
+        except asyncio.TimeoutError:
+            return await ctx.send("Out of time. Nobody gets money.")
+
+        payout = 0
+        for _ in range(4):
+            payout += random.randint(1, 11)
+
+        current_money = await self.get_user_money(ctx, correct_response.author.id)
+        await ctx.bot.db.execute("INSERT INTO economy (user_id, money) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE "
+                                 "SET money = ?;",
+                                 (correct_response.author.id, current_money + payout, current_money + payout))
+        await ctx.bot.db.commit()
+        dollar_sign = await self.get_money_prefix(ctx, ctx.guild.id)
+        await ctx.send(f"Correct, {correct_response.author.mention}. You win {dollar_sign}{payout}. The emote is "
+                       f"{emote}.")
 
 
 def setup(bot):
