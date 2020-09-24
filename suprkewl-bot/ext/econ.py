@@ -225,9 +225,10 @@ class Economy(commands.Cog):
 
         await ctx.bot.db.execute("UPDATE economy SET money = ? WHERE user_id == ?;",
                                  (payer_money - amount, ctx.author.id))
-        await ctx.bot.db.execute("UPDATE economy SET money = ? WHERE user_id == ?;",
-                                 (target_money + (amount - tax), user.id))
-
+        await ctx.bot.db.execute("INSERT INTO economy (user_id, money) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE "
+                                 "SET money = ?;",
+                                 (user.id, target_money + (amount - tax), target_money + (amount - tax)))
+        await ctx.bot.db.commit()
         await ctx.send(
             f"Transferring {dollar_sign}{amount:,} to {use_potential_nickname(user)} with a "
             f"{'20' if high_tax else '5'}% tax, or {dollar_sign}{tax:,}. This user will receive "
@@ -253,9 +254,10 @@ class Economy(commands.Cog):
 
         await ctx.bot.db.execute("UPDATE economy SET money = ? WHERE user_id == ?;",
                                  (payer_money - amount, a.id))
-        await ctx.bot.db.execute("UPDATE economy SET money = ? WHERE user_id == ?;",
-                                 (target_money + (amount - taxes), b.id))
-
+        await ctx.bot.db.execute("INSERT INTO economy (user_id, money) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE "
+                                 "SET money = ?;",
+                                 (b.id, target_money + (amount - taxes), target_money + (amount - taxes)))
+        await ctx.bot.db.commit()
         payer_name, target_name = use_potential_nickname(a), use_potential_nickname(b)
         if tax:
             await ctx.send(f"Forced {payer_name} to pay {dollar_sign}{amount:,} to {target_name}, who receives "
