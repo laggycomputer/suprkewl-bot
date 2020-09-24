@@ -322,13 +322,11 @@ class Economy(commands.Cog):
         fp = discord.File(new_buff, "some_emoji.png")
         await ctx.send(
             f"{ctx.author.mention} Name the emote! (Send the name, not the emote, in chat.) If someone else does it "
-            f"first, they get the money. You get one try and 10 seconds.",
+            f"first, they get the money. You get 10 seconds.",
             file=fp)
 
-        ids_who_have_guessed = []
-
         def check(m):
-            if m.channel != ctx.channel or m.author.bot or m.author.id in ids_who_have_guessed:
+            if m.channel != ctx.channel or m.author.bot:
                 return
             return m.content.strip().lower() == emote.name.lower()
         try:
