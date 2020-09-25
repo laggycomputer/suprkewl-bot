@@ -444,3 +444,20 @@ class Mastermind:
             self.round += 1
 
         await self.ctx.send(f"Game over! The code was {''.join([c.value for c in self.code])}.")
+
+
+def roll_XdY(x, y, *, return_rolls=False):
+    if not isinstance(x, int) or not isinstance(y, int):
+        raise TypeError
+    ret = 0
+    if return_rolls:
+        rolls = []
+        for _ in range(x):
+            roll = random.randint(1, y + 1)
+            rolls.append(roll)
+            ret += roll
+        return ret, rolls
+    else:
+        for _ in range(x):
+            ret += random.randint(1, y + 1)
+        return ret

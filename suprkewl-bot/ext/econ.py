@@ -27,7 +27,7 @@ import discord
 from discord.ext import commands
 from PIL import Image
 
-from .utils import human_timedelta, Plural, use_potential_nickname
+from .utils import human_timedelta, Plural, roll_XdY, use_potential_nickname
 
 
 class Economy(commands.Cog):
@@ -334,9 +334,7 @@ class Economy(commands.Cog):
         except asyncio.TimeoutError:
             return await ctx.send("Out of time. Nobody gets money.")
 
-        payout = 0
-        for _ in range(4):
-            payout += random.randint(1, 11)
+        payout = roll_XdY(4, 10)
 
         current_money = await self.get_user_money(ctx, correct_response.author.id)
         await ctx.bot.db.execute("INSERT INTO economy (user_id, money) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE "

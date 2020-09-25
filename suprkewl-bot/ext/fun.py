@@ -29,7 +29,7 @@ import aiohttp
 import discord
 from discord.ext import commands
 
-from .utils import C4, Fighter, Mastermind
+from .utils import C4, Fighter, Mastermind, roll_XdY
 
 
 class Fun(commands.Cog):
@@ -274,10 +274,9 @@ L
             await msg.edit(content="*A sonic :boom: echoes in the background*")
             await asyncio.sleep(1)
 
-            for i in range(0, count):
-                result = random.randint(1, limit)
-                rolls.append(str(result))
-                total += result
+            total, rolls = roll_XdY(count, limit, return_rolls=True)
+            count = len(rolls)
+            rolls = map(str, rolls)
 
             avg = total / count
             avg = round(avg, 8)
