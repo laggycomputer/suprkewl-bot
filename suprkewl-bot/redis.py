@@ -66,6 +66,9 @@ class Redis:
     async def get(self, key):
         return await self.execute("GET", key)
 
+    async def set(self, key, value):
+        return await self.execute("SET", key, value)
+
     async def incr(self, key):
         return await self.execute("INCR", key)
 

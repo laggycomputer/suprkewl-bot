@@ -360,8 +360,8 @@ L
 
             return await ctx.send(embed=emb, file=fp)
 
-        await ctx.bot.redis.execute("SET", f"{ctx.author.id}:fighting", "fighting")
-        await ctx.bot.redis.execute("SET", f"{target.id}:fighting", "fighting")
+        await ctx.bot.redis.set(f"{ctx.author.id}:fighting", "fighting")
+        await ctx.bot.redis.set(f"{target.id}:fighting", "fighting")
 
         await ctx.send(":white_check_mark: Starting fight...")
 
@@ -601,7 +601,7 @@ L
         """React to messages with a sheep emoji."""
 
         if not (await ctx.bot.redis.exists(f"{ctx.channel.id}:sheep")):
-            await ctx.bot.redis.execute("SET", f"{ctx.channel.id}:sheep", "baa")
+            await ctx.bot.redis.set(f"{ctx.channel.id}:sheep", "baa")
             m = ctx.message
 
             with contextlib.suppress(discord.HTTPException):
@@ -630,7 +630,7 @@ L
         """React to messages with a duck emoji."""
 
         if not (await ctx.bot.redis.exists(f"{ctx.channel.id}:duck")):
-            await ctx.bot.redis.execute("SET", f"{ctx.channel.id}:duck", "kwack")
+            await ctx.bot.redis.set(f"{ctx.channel.id}:duck", "kwack")
             m = ctx.message
 
             await m.add_reaction("\U0001F986")
@@ -660,7 +660,7 @@ L
         """React to messages with a dog emoji."""
 
         if not (await ctx.bot.redis.exists(f"{ctx.channel.id}:dog")):
-            await ctx.bot.redis.execute("SET", f"{ctx.channel.id}:dog", "bork")
+            await ctx.bot.redis.set(f"{ctx.channel.id}:dog", "bork")
             m = ctx.message
 
             with contextlib.suppress(discord.HTTPException):
@@ -788,8 +788,8 @@ L
 
             return await ctx.send(embed=emb)
 
-        await ctx.bot.redis.execute("SET", f"{ctx.author.id}:c4", "c4")
-        await ctx.bot.redis.execute("SET", f"{member.id}:c4", "c4")
+        await ctx.bot.redis.set(f"{ctx.author.id}:c4", "c4")
+        await ctx.bot.redis.set(f"{member.id}:c4", "c4")
 
         board = C4(ctx.author, member, ctx)
         await board.do_game()
@@ -817,8 +817,8 @@ L
         if (await ctx.bot.redis.exists(f"user{ctx.author.id}:mm")):
             return await ctx.send(":x: You cannot play two Mastermind games at once.")
 
-        await ctx.bot.redis.execute("SET", f"user{ctx.author.id}:mm", "mm")
-        await ctx.bot.redis.execute("SET", f"channel{ctx.channel.id}:mm", "mm")
+        await ctx.bot.redis.set(f"user{ctx.author.id}:mm", "mm")
+        await ctx.bot.redis.set(f"channel{ctx.channel.id}:mm", "mm")
 
         game = Mastermind(ctx)
         await game.run()
