@@ -22,6 +22,7 @@ import datetime
 import io
 import random
 import typing
+from urllib.parse import unquote as url_unquote
 
 import discord
 from discord.ext import commands
@@ -344,6 +345,85 @@ class Economy(commands.Cog):
         dollar_sign = await self.get_money_prefix(ctx, ctx.guild.id)
         await ctx.send(f"Correct, {correct_response.author.mention}. You win {dollar_sign}{payout}. The emote is "
                        f"{emote}.")
+
+    @commands.command(aliases=["triv"],
+                      description="Easy questions get 6d4 coins, normal questions get 6d5 coins, and hard questions "
+                                  "get 10d5 coins."
+                      )
+    # @commands.cooldown(1, 20, commands.BucketType.user)
+    async def trivia(self, ctx, *, difficulty=None):
+        """Answer some trivia questions for money."""
+
+        if difficulty is None:
+            await ctx.send("Using normal difficulty by default.")
+            formatted_difficulty = "medium"
+            reward_roll = (6, 5)
+        else:
+            formatted_difficulty = difficulty.strip().lower()
+            if formatted_difficulty[0] not in ["e", "m", "h"]:
+                return await ctx.send("Invalid difficulty.")
+            else:
+                if formatted_difficulty[0] == "e":
+                    formatted_difficulty = "easy"
+                    reward_roll = (6, 4)
+                elif formatted_difficulty[0] == "m":
+                    formatted_difficulty = "medium"
+                    reward_roll = (6, 5)
+                else:
+                    formatted_difficulty = "hard"
+                    reward_roll = (10, 5)
+
+        dollar_sign = await self.get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
+
+        async with ctx.bot.session.get(
+                f"https://opentdb.com/api.php?amount=1&difficulty={formatted_difficulty}&type=multiple&encode=url3986"
+        ) as resp:
+            out = await resp.json()
+
+        if out["response_code"]:
+            return await ctx.send("Something went wrong fetching a trivia question.")
+
+        question = out["results"][0]
+        decoded_incorrect_answers = [url_unquote(x) for x in question["incorrect_answers"]]
+        scrambled_choices = decoded_incorrect_answers + [url_unquote(question["correct_answer"])]
+        random.shuffle(scrambled_choices)
+        correct_letter = chr(scrambled_choices.index(url_unquote(question["correct_answer"])) + 65)
+        choices_section = "\n".join(
+            f"{chr(x + 65)}) {url_unquote(scrambled_choices[x])}" for x in range(len(scrambled_choices))
+        )
+        emb = ctx.default_embed()
+        emb.description = f"**{url_unquote(question['question'])}**\n" \
+                          f"(Everyone gets one try and 10 seconds. First person to answer correctly with a choice " \
+                          f"letter or number gets coins.)\n\n{choices_section}"
+        emb.add_field(name="Category:", value=url_unquote(question["category"]))
+        emb.add_field(name="Difficulty:", value=formatted_difficulty.title())
+        await ctx.send(embed=emb)
+
+        people_who_have_screwed_up = []
+
+        def check(m):
+            if m.channel != ctx.channel or m.author.bot:
+                return
+            if m.author.id in people_who_have_screwed_up:
+                return
+            content = m.content.strip().upper()[0]
+            if content != correct_letter and content != str(ord(correct_letter) - 65):
+                people_who_have_screwed_up.append(m.author.id)
+            else:
+                return True
+
+        try:
+            correct_guess = await ctx.bot.wait_for("message", check=check, timeout=10.0)
+        except asyncio.TimeoutError:
+            return await ctx.send("None of you bozos got it. The correct answer was **%s**." % correct_letter)
+
+        payout = roll_XdY(*reward_roll)
+        current_money = await self.get_user_money(ctx, correct_guess.author.id)
+        await ctx.bot.db.execute("INSERT INTO economy (user_id, money) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE "
+                                 "SET money = ?;",
+                                 (correct_guess.author.id, current_money + payout, current_money + payout))
+        await ctx.bot.db.commit()
+        await ctx.send(f"Correct, {correct_guess.author.mention}! You get {dollar_sign}{payout}.")
 
 
 def setup(bot):
