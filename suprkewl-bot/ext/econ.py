@@ -57,7 +57,11 @@ class Economy(commands.Cog):
         resp = (await (
             await ctx.bot.db.execute("SELECT custom_dollar_sign FROM guilds WHERE guild_id == ?;", (guild_id,))
         ).fetchone())
-        return resp[0] if resp else 0
+        if not resp:
+            return "$"
+        if not resp[0]:
+            return "$"
+        return resp[0]
 
     @commands.command(aliases=["bal"])
     @commands.cooldown(2, 1, commands.BucketType.user)
