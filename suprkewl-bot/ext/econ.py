@@ -32,18 +32,18 @@ from .utils import human_timedelta, Plural, roll_XdY, use_potential_nickname
 
 
 class Economy(commands.Cog):
-    async def get_guild_trivia_key(self, ctx, guild_or_dm_id):
-        if not await ctx.bot.redis.exists(f"{guild_or_dm_id}:trivia_key"):
+    async def get_guild_trivia_key(self, ctx, guildid):
+        if not await ctx.bot.redis.exists(f"{guildid}:trivia_key"):
             async with ctx.bot.session.get("https://opentdb.com/api_token.php?command=request") as resp:
                 key_resp = await resp.json()
 
             if key_resp["response_code"]:
                 return None  # Uh oh!
-            await ctx.bot.redis.set(f"{guild_or_dm_id}:trivia_key", key_resp["token"])
-            await ctx.bot.redis.expire(f"{guild_or_dm_id}:trivia_key", 60 * 60 * 30)  # 30 minutes
+            await ctx.bot.redis.set(f"{guildid}:trivia_key", key_resp["token"])
+            await ctx.bot.redis.expire(f"{guildid}:trivia_key", 60 * 60 * 30)  # 30 minutes
             return key_resp["token"]
         else:
-            return await ctx.bot.redis.get(f"{guild_or_dm_id}:trivia_key")
+            return await ctx.bot.redis.get(f"{guildid}:trivia_key")
 
     async def get_user_money(self, ctx, user_id):
         resp = (await (
@@ -369,6 +369,7 @@ class Economy(commands.Cog):
                       description="Easy questions get 6d4 coins, normal questions get 6d5 coins, and hard questions "
                                   "get 10d5 coins."
                       )
+    @commands.guild_only()
     @commands.cooldown(1, 20, commands.BucketType.user)
     @commands.cooldown(1, 20, commands.BucketType.channel)
     @commands.cooldown(120, 60, commands.BucketType.guild)
@@ -394,13 +395,13 @@ class Economy(commands.Cog):
                     formatted_difficulty = "hard"
                     reward_roll = (10, 5)
 
-        dollar_sign = await self.get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
+        dollar_sign = await self.get_money_prefix(ctx, ctx.guild.id)
 
-        key = await self.get_guild_trivia_key(ctx, ctx.channel.id)
-        async with ctx.bot.session.get(
-                f"https://opentdb.com/api.php?amount=1&difficulty={formatted_difficulty}&type=multiple&encode=url3986"
-                f"&token={key}"
-        ) as resp:
+        key = await self.get_guild_trivia_key(ctx, ctx.guild.id)
+        query = f"https://opentdb.com/api.php?amount=1&difficulty={formatted_difficulty}&type=multiple&encode=url3986"
+        if key:
+            query += f"&token={key}"
+        async with ctx.bot.session.get(query) as resp:
             out = await resp.json()
 
         if out["response_code"]:
