@@ -306,7 +306,9 @@ class Economy(commands.Cog):
                 return
 
     @commands.command(aliases=["ne"])
-    @commands.cooldown(1, 45, commands.BucketType.user)
+    @commands.cooldown(1, 20, commands.BucketType.user)
+    @commands.cooldown(1, 20, commands.BucketType.channel)
+    @commands.cooldown(120, 60, commands.BucketType.guild)
     @commands.guild_only()
     async def nameemote(self, ctx):
         """Name the emote for 4d10 coins."""
@@ -350,7 +352,9 @@ class Economy(commands.Cog):
                       description="Easy questions get 6d4 coins, normal questions get 6d5 coins, and hard questions "
                                   "get 10d5 coins."
                       )
-    # @commands.cooldown(1, 20, commands.BucketType.user)
+    @commands.cooldown(1, 20, commands.BucketType.user)
+    @commands.cooldown(1, 20, commands.BucketType.channel)
+    @commands.cooldown(120, 60, commands.BucketType.guild)
     async def trivia(self, ctx, *, difficulty=None):
         """Answer some trivia questions for money."""
 
