@@ -108,6 +108,7 @@ class Economy(commands.Cog):
             daily_streak = 0
         else:
             old_daily_streak = 0
+            daily_streak += 1
         if can_claim:
             streak_bonus = (lambda x: (x // 3 * 2.5) // 1)(daily_streak)  # Streak bonus is floor(floor(streak/3) * 2.5)
             money_post_claim = current_money + 200 + streak_bonus
@@ -118,12 +119,16 @@ class Economy(commands.Cog):
                 (ctx.author.id, money_post_claim, claimed_timestamp, daily_streak,
                  money_post_claim, claimed_timestamp, daily_streak + 1))
             await ctx.bot.db.commit()
-            if streak_bonus:
-                await ctx.send(f"Claimed {dollar_sign}{(200 + streak_bonus):,} (including "
-                               f"{dollar_sign}{streak_bonus:,} from {format(Plural(daily_streak), 'day')} of streak "
-                               f"bonus.)")
+            if daily_streak:
+                if streak_bonus:
+                    to_send = f"Claimed {dollar_sign}{(200 + streak_bonus):,} (including " \
+                              f"{dollar_sign}{streak_bonus:,} from {format(Plural(daily_streak), 'day')} of streak "\
+                              f"bonus.)"
+                else:
+                    to_send = f"Claimed {dollar_sign}200 with a streak of {format(Plural(daily_streak), 'day')}."
+                await ctx.send(to_send)
             else:
-                if old_daily_streak and not daily_streak:
+                if old_daily_streak:
                     await ctx.send(f"Claimed {dollar_sign}200 (An old streak of "
                                    f"{format(Plural(old_daily_streak), 'day')} was broken.)")
                 else:
