@@ -40,7 +40,7 @@ class Economy(commands.Cog):
             if key_resp["response_code"]:
                 return None  # Uh oh!
             await ctx.bot.redis.set(f"{guildid}:trivia_key", key_resp["token"])
-            await ctx.bot.redis.expire(f"{guildid}:trivia_key", 60 * 60 * 30)  # 30 minutes
+            await ctx.bot.redis.expire(f"{guildid}:trivia_key", 60 * 30)  # 30 minutes
             return key_resp["token"]
         else:
             return await ctx.bot.redis.get(f"{guildid}:trivia_key")
