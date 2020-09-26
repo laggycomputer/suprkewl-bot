@@ -734,13 +734,23 @@ L
 
     @commands.command(aliases=["mca"])
     async def minecraftachievement(self, ctx, *, text):
-        """Generate a Minecraft achievement notification with your text."""
+        """Generate a Minecraft achievement toast with your text."""
 
         async with ctx.typing():
             async with ctx.bot.session.get(f"https://api.alexflipnote.dev/achievement?text={text}") as resp:
                 raw = await resp.content.read()
 
         await ctx.send(file=discord.File(io.BytesIO(raw), "achieved.png"))
+
+    @commands.command(aliases=["mcc"])
+    async def minecraftchallenge(self, ctx, *, text):
+        """Generate a Minecraft challenge toast with your text."""
+
+        async with ctx.typing():
+            async with ctx.bot.session.get(f"https://api.alexflipnote.dev/challenge?text={text}") as resp:
+                raw = await resp.content.read()
+
+        await ctx.send(file=discord.File(io.BytesIO(raw), "challengecompleted.png"))
 
     @commands.command()
     async def supreme(self, ctx, *, text="Supreme"):
