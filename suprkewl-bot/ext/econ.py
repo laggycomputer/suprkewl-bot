@@ -122,8 +122,8 @@ class Economy(commands.Cog):
             if daily_streak:
                 if streak_bonus:
                     to_send = f"Claimed {dollar_sign}{int(200 + streak_bonus):,} (including " \
-                              f"{dollar_sign}{int(streak_bonus):,} from {format(Plural(daily_streak), 'day')} of streak "\
-                              f"bonus.)"
+                              f"{dollar_sign}{int(streak_bonus):,} from {format(Plural(daily_streak), 'day')} of " \
+                              f"streak bonus.)"
                 else:
                     to_send = f"Claimed {dollar_sign}200 with a streak of {format(Plural(daily_streak), 'day')}."
                 await ctx.send(to_send)
