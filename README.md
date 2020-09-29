@@ -10,10 +10,11 @@
 <a href="https://top.gg/bot/408869071946514452"><img src="https://top.gg/api/widget/408869071946514452.png"></a>
 </p>
 
-An open-sourced Discord bot, written with `discord.py==1.5.0a`. 
+An open-sourced Discord bot, written with `discord.py==1.5.0`. 
 
 If you want to host this bot:
 
+* Ensure your bot application has both intents enabled.
 * Copy `suprkewl-bot/config.py.example` to `suprkewl-bot/config.py`. Fill out the config parameters.
 * You need to set up both a Redis and a Lavalink instance and fill out the credentials in config.
 * Finally, you can use `pip3 install -r requirements.txt` at the root of this repo to install the requirements.

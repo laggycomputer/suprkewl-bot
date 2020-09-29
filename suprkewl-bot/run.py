@@ -36,8 +36,14 @@ handler = logging.FileHandler(filename=config.logpath, encoding="utf-8", mode=mo
 handler.setFormatter(logging.Formatter("%(asctime)s: %(levelname)s: %(name)s: %(message)s"))
 logger.addHandler(handler)
 
+intents = discord.Intents.all()
+for attr in ("bans", "integrations", "webhooks", "invites", "typing"):
+    setattr(intents, attr, False)
+
+
 client = bot.suprkewl_bot(
     config.extra_owners,
+    intents=intents,
     status=discord.Status.idle,
     command_prefix=bot.get_pre
 )
