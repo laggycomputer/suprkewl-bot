@@ -742,6 +742,7 @@ class Utilities(commands.Cog):
         rank_lookup = {
             "SUPERSTAR": "MVP++",
             "MVP_PLUS": "MVP+",
+            "MVP": "MVP",
             "VIP_PLUS": "VIP+",
             "VIP": "VIP",
             "NONE": "NON",
@@ -756,7 +757,7 @@ class Utilities(commands.Cog):
                     found_rank = found_rank[:index] + found_rank[index + 2:]
         else:
             if "rank" in data["player"]:
-                found_rank = "[%s]" % data["player"]["rank"]
+                found_rank = "[%s]" % rank_lookup.get(data["player"]["rank"], None) or data["player"]["rank"]
             else:
                 if "monthlyPackageRank" in data["player"]:
                     found_rank = "[%s]" % rank_lookup.get(
