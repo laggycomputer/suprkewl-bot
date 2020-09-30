@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import io
+import os
 import random
 
 import aiohttp
@@ -94,7 +95,7 @@ class Markov(commands.Cog):
         def load_file(filename):
             def load_chain(name, c_len):
                 chain = MarkovChain(c_len)
-                data = open("assets/markov/" + name, "r").read()
+                data = open(os.path.join("assets", "markov", name)).read()
                 for sentence in data.split("\n"):
                     chain.add_sentence(sentence)
                     chain.add_word("\n")

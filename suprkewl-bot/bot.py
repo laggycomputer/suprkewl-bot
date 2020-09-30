@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import asyncio
+import os
 import platform
 import random
 import textwrap
@@ -173,10 +174,7 @@ class suprkewl_bot(commands.Bot):
                                     await message.channel.send(message.content + "lfa")
 
                     if message.guild.me in message.mentions:
-                        ping_images = [
-                            "assets/angery,gif",
-                            "assets/eyes.png",
-                        ]
+                        ping_images = ("angery,gif", "eyes.png")
 
                         resp = await(
                             await self.db.execute("SELECT prefix FROM guilds WHERE guild_id == ?;", (message.guild.id,))
@@ -195,7 +193,7 @@ class suprkewl_bot(commands.Bot):
                                 description=":eyes: Who pinged? My prefix is `sk!`. If you are in a DM with me, or you "
                                             "are my owner, I do not require a prefix."
                             )
-                        fname = random.choice(ping_images)
+                        fname = os.path.join("assets", random.choice(ping_images))
                         ext = fname.split(".")[-1]
                         fname_finished = f"image.{ext}"
                         fp = discord.File(fname, fname_finished)

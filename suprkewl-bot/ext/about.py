@@ -276,7 +276,7 @@ class BotMeta(commands.Cog, name="Bot Meta"):
         latency = round(latency, 4)
         emb = ctx.colored_embed
         emb.description = f":ping_pong: My current latency is {latency} milliseconds."
-        fp = discord.File("assets/catping.gif", "image.gif")
+        fp = discord.File(os.path.join("assets", "catping.gif"), "image.gif")
         emb.set_image(
             url="attachment://image.gif"
         )

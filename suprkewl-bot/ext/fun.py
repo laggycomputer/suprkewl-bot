@@ -21,6 +21,7 @@ import asyncio
 import contextlib
 import io
 import math
+import os
 import random
 import re
 import typing
@@ -344,7 +345,7 @@ L
             emb = ctx.default_embed()
             emb.description = f"{ctx.author.mention} :x: You can't fight multiple people at once! You're not Bruce" \
                 f" Lee."
-            fp = discord.File("assets/brucelee.gif", "image.gif")
+            fp = discord.File(os.path.join("assets", "brucelee.gif"), "image.gif")
 
             await ctx.send(embed=emb, file=fp)
 
@@ -353,7 +354,7 @@ L
             emb = ctx.default_embed()
             emb.description = f"{ctx.author.mention} :x: Don't make {target.mention} fight multiple people at once!" \
                 f" They're not Bruce Lee."
-            fp = discord.File("assets/brucelee.gif", "image.gif")
+            fp = discord.File(os.path.join("assets", "brucelee.gif"), "image.gif")
             emb.set_image(
                 url="attachment://image.gif"
             )

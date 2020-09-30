@@ -170,11 +170,11 @@ class Utilities(commands.Cog):
         """Render LaTeX code."""
 
         async with ctx.typing():
-            with open("assets/latex/template.tex", "r") as fp:
+            with open(os.path.join("assets", "latex", "template.tex")) as fp:
                 template = fp.read()
             template = re.sub(r"%.*\n", "", template)
 
-            with open("assets/latex/replacements.json", "r") as fp:
+            with open(os.path.join("assets", "latex", "replacements.json")) as fp:
                 replacements = json.loads(fp.read())
 
             for key, value in replacements.items():
@@ -453,7 +453,7 @@ class Utilities(commands.Cog):
             text=f"Latest: {data['info']['version']} |"
                  f" Keywords: {data['info']['keywords'] or 'No keywords.'}"
         )
-        fp = discord.File("assets/pypi.png", "image.png")
+        fp = discord.File(os.path.join("assets", "pypi.png"), "image.png")
         embed.set_thumbnail(
             url="attachment://image.png"
         )
