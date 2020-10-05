@@ -322,6 +322,18 @@ def _blurple(img):
     return fp
 
 
+@async_executor()
+def _spookify(img):
+    ret = img.convert("L")
+    ret = PIL.ImageOps.colorize(ret, (45, 44, 52), (255, 255, 255), (249, 125, 1))
+
+    fp = io.BytesIO()
+    ret.save(fp, "png")
+    fp.seek(0)
+
+    return fp
+
+
 def link(arr, arr2):
     rgb1 = arr.reshape((arr.shape[0] * arr.shape[1], 3))
     rgb2 = list(map(tuple, arr2.reshape((arr2.shape[0] * arr2.shape[1], 3))))
@@ -663,6 +675,19 @@ class Image_(commands.Cog, name="Image",
 
         fp = await _blurple(url)
         fp = discord.File(fp, "blurpled.png")
+
+        await ctx.send(":white_check_mark:", file=fp)
+
+    @commands.command(aliases=["spook"])
+    async def spookify(self, ctx, *, url=None):
+        """Apply an orange and black theme on an image."""
+
+        url = await process_single_arg(ctx, url)
+        if url is None:  # An error message was sent
+            return
+
+        fp = await _spookify(url)
+        fp = discord.File(fp, "spooky.png")
 
         await ctx.send(":white_check_mark:", file=fp)
 
