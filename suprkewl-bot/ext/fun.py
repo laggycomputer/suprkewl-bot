@@ -884,6 +884,16 @@ L
         await asyncio.sleep(2)
         await msg.edit(content=None, embed=emb)
 
+    @commands.command(aliases=["inspiro"])
+    @commands.cooldown(3, 5, commands.BucketType.user)
+    async def inspire(self, ctx):
+        """Fetch an AI generated quote for inspiration. (can include expletives occasionally)"""
+
+        async with ctx.bot.session.get("https://inspirobot.me/api?generate=true") as resp:
+            out = await resp.content.read()
+
+        await ctx.send(out.decode("utf-8"))
+
 
 def setup(bot):
     bot.add_cog(Fun())
