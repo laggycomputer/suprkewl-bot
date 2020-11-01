@@ -448,7 +448,6 @@ def _blur(img):
     return fp
 
 
-
 async def process_single_arg(ctx, argument):
     if argument is None:
         is_found = False
