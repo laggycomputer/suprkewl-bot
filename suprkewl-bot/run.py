@@ -26,8 +26,6 @@ import bot
 import config
 
 
-locale.setlocale(locale.LC_ALL, "C")  # Solves bot-crashing segfault caused by tesserocr
-
 logger = logging.getLogger("discord")
 logger.setLevel(config.loglevel)
 mode = "w" if config.clearLog else "a"
