@@ -9,6 +9,7 @@ gtts
 jishaku
 lavalink
 matplotlib
+numpy
 opencv-python
 Pillow
 pycryptodomex
