@@ -30,10 +30,12 @@ import aiohttp
 import discord
 from discord.ext import commands
 
-from .utils import C4, Fighter, Mastermind, roll_XdY
+from .utils import C4, Fighter, ImageEmbedinator, Mastermind, roll_XdY
 
 
 class Fun(commands.Cog):
+    def __init__(self):
+        self.latest_inspires = dict()
 
     @commands.command(
         description="A bunch of lenny faces."
@@ -884,15 +886,167 @@ L
         await asyncio.sleep(2)
         await msg.edit(content=None, embed=emb)
 
-    @commands.command(aliases=["inspiro"])
+    @commands.group(aliases=["inspiro"], invoke_without_command=True)
     @commands.cooldown(3, 5, commands.BucketType.user)
     async def inspire(self, ctx):
         """Fetch an AI generated quote for inspiration. (can include expletives occasionally)"""
 
         async with ctx.bot.session.get("https://inspirobot.me/api?generate=true") as resp:
             out = await resp.content.read()
+        out = out.decode("utf-8")
 
-        await ctx.send(out.decode("utf-8"))
+        emb = ctx.colored_embed
+        emb.set_image(url=out)
+        await ctx.send(embed=emb)
+
+        self.latest_inspires[ctx.author.id] = out
+
+    @staticmethod
+    def _inspire_msg_check(ctx, msg):
+        if msg.content:
+            reg = re.match(r"https://generated\.inspirobot\.me/a/[a-zA-Z0-9]{10}.jpg", msg.content)
+            if reg is not None and reg.group(0) == msg.content:
+                return True, msg.content
+            return
+
+        if len(msg.embeds) < 1:
+            return
+        emb = msg.embeds[0]
+        if emb.image == discord.Embed.Empty:
+            return
+
+        reg = re.match(r"https://generated\.inspirobot\.me/a/[a-zA-Z0-9]{10}.jpg", emb.image.url)
+        if reg is None or reg.group(0) != emb.image.url:
+            return
+
+        return True, emb.image.url
+
+    @inspire.command(name="favorite", aliases=["f", "fave"],
+                     description="To favorite an image, link a message containing an Inspirobot image or include a "
+                                 "link to an Insprobot image. If you do neither, the most recent image you requested "
+                                 "will be favorited.")
+    async def inspire_favorite(self, ctx, *, msg: typing.Union[discord.Message, str] = None):
+        """Add an Inspirobot image to your personal library."""
+
+        if msg is None:
+            url = self.latest_inspires.get(ctx.author.id, None)
+            if url is None:
+                return await ctx.send("You do not have a latest image on record. Please pass a message link or ID to "
+                                      "favorite it.")
+        else:
+            if isinstance(msg, str):
+                reg = re.match(r"https://generated\.inspirobot\.me/a/[a-zA-Z0-9]{10}.jpg", msg)
+                if reg is None or reg.group(0) != msg:
+                    return await ctx.send("This string is not an inspiring message.")
+                url = msg
+            else:
+                check = self._inspire_msg_check(ctx, msg)
+                if not check:
+                    return await ctx.send("This message does not contain an inspiring quote.")
+                url = check[1]
+
+        query = await (await ctx.bot.db.execute(
+            "SELECT * FROM inspire_favorites WHERE user_id == ? AND image == ?;",
+            (ctx.author.id, url.lstrip("https://generated.inspirobot.me/a/").rstrip(".jpg"))
+        )).fetchone()
+
+        if query:
+            await ctx.send("This image is already in your personal library.")
+        else:
+            await ctx.bot.db.execute(
+                "INSERT INTO inspire_favorites (user_id, image) VALUES (?, ?);",
+                (ctx.author.id, url.lstrip("https://generated.inspirobot.me/a/").rstrip(".jpg"))
+            )
+            await ctx.send(":white_check_mark: Added.")
+
+    @inspire.command(name="unfavorite", aliases=["uf", "unfave"],
+                     description="To unfavorite an image, link a message containing an Inspirobot image or include a "
+                                 "link to an Insprobot image. If you do neither, the most recent image you requested "
+                                 "will be unfavorited.")
+    async def inspire_unfavorite(self, ctx, *, msg: typing.Union[discord.Message, str] = None):
+        """Remove an Inspirobot image from your personal library."""
+
+        if msg is None:
+            url = self.latest_inspires.get(ctx.author.id, None)
+            if url is None:
+                return await ctx.send("You do not have a latest image on record. Please pass a message link or ID to "
+                                      "unfavorite it.")
+        else:
+            if isinstance(msg, str):
+                reg = re.match(r"https://generated\.inspirobot\.me/a/[a-zA-Z0-9]{10}.jpg", msg)
+                if reg is None or reg.group(0) != msg:
+                    return await ctx.send("This string is not an inspiring message.")
+                url = msg
+            else:
+                check = self._inspire_msg_check(ctx, msg)
+                if not check:
+                    return await ctx.send("This message does not contain an inspiring quote.")
+                url = check[1]
+
+        query = await (await ctx.bot.db.execute(
+            "SELECT * FROM inspire_favorites WHERE user_id == ? AND image == ?;",
+            (ctx.author.id, url.lstrip("https://generated.inspirobot.me/a/").rstrip(".jpg"))
+        )).fetchone()
+
+        if not query:
+            await ctx.send("This image is not in your personal library.")
+        else:
+            await ctx.bot.db.execute(
+                "DELETE FROM inspire_favorites WHERE user_id == ? AND image == ?;",
+                (ctx.author.id, url.lstrip("https://generated.inspirobot.me/a/").rstrip(".jpg"))
+            )
+            await ctx.send(":white_check_mark: Deleted requested image from your library.")
+
+    @inspire.command(name="view", aliases=["list", "show"])
+    async def inspire_view(self, ctx):
+        """View your favorited Inspirobot content."""
+
+        query = await (
+            await ctx.bot.db.execute("SELECT image FROM inspire_favorites WHERE user_id == ?;", (ctx.author.id,))
+        ).fetchall()
+        if not query:
+            return await ctx.send(f"No favorites found. Add some with `{ctx.prefix}inspire favorite`.")
+
+        emb = ImageEmbedinator(ctx.bot, ctx, color=ctx.bot.embed_color, member=ctx.author)
+        emb.base_embed.set_footer(
+            text=f"{ctx.bot.embed_footer} Requested by {ctx.author}",
+            icon_url=ctx.author.avatar_url
+        )
+
+        for row in query:
+            emb.add_image(f"https://generated.inspirobot.me/a/{row[0]}.jpg")
+
+        await emb.send()
+        await emb.handle()
+
+    @inspire.command(name="clear", aliases=["cls"])
+    async def inspire_clear(self, ctx):
+        """Clear your favorite images list."""
+
+        query = await (
+            await ctx.bot.db.execute("SELECT * FROM inspire_favorites WHERE user_id == ?;", (ctx.author.id,))
+        ).fetchall()
+        if not query:
+            return await ctx.send("Can't wipe an empty favorites list.")
+
+        msg = await ctx.send(
+            f"{ctx.author.mention}, please react below to confirm you are wiping your Inspiro favorites list "
+            f"**permanently**."
+        )
+        try:
+            await msg.add_reaction("\U00002705")
+        except discord.Forbidden:
+            pass
+
+        def check(payload):
+            return payload.user_id == ctx.author.id and payload.message_id == msg.id \
+                and payload.channel_id == ctx.channel.id and str(payload.emoji) == "\U00002705"
+
+        try:
+            await ctx.bot.wait_for("raw_reaction_add", check=check, timeout=30.0)
+            await ctx.send(f":ok_hand: Wiped {len(query)} entries from your favorites list.")
+        except asyncio.TimeoutError:
+            return
 
 
 def setup(bot):

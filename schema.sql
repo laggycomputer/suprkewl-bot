@@ -30,3 +30,8 @@ CREATE TABLE IF NOT EXISTS economy (
     last_daily INTEGER,
     daily_streak INTEGER DEFAULT (0)
 );
+
+CREATE TABLE IF NOT EXISTS inspire_favorites (
+    user_id BIGINT NOT NULL,
+    image VARCHAR(10) NOT NULL
+);
