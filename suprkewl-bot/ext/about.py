@@ -21,6 +21,7 @@ import datetime
 import inspect
 import itertools
 import os
+import typing
 import pkg_resources
 import platform
 import sys
@@ -326,10 +327,18 @@ class BotMeta(commands.Cog, name="Bot Meta"):
         await ctx.send(final_url)
 
     @commands.command()
-    async def invite(self, ctx):
-        """Get a link to invite this bot."""
+    async def invite(self, ctx, *, id: typing.Union[discord.Member, discord.User, int]):
+        """Get a link to invite this bot or another."""
 
-        await ctx.send(discord.utils.oauth_url(ctx.bot.user.id))
+        if id:
+            if isinstance(id, (discord.Member, discord.User)):
+                if not id.bot:
+                    return await ctx.send(":x: That's not a bot.")
+                id = id.id  # :exploding_head:
+
+        id = id or ctx.bot.user.id
+
+        await ctx.send(discord.utils.oauth_url(id))
 
 
 def setup(bot):
