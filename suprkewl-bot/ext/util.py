@@ -894,6 +894,36 @@ class Utilities(commands.Cog):
         except (KeyError, AssertionError):
             await ctx.send(":x: Unable to read QR code.")
 
+    @commands.command()
+    async def color(self, ctx, *, code):
+        """Get some information on a hex color."""
+
+        code = code.lstrip("#").replace("0x", "")
+        async with ctx.bot.session.get(f"https://api.alexflipnote.dev/color/{code}") as resp:
+            if resp.status in [400, 404]:
+                return await ctx.send("Hex code appears invalid.")
+            out = await resp.json()
+
+        emb = ctx.default_embed()
+        emb.color = int(code, 16)
+
+        async with ctx.bot.session.get(out["image_gradient"]) as resp:
+            img = await resp.content.read()
+
+        fp = discord.File(io.BytesIO(img), "gradient.png")
+        emb.set_image(url="attachment://gradient.png")
+
+        emb.add_field(name="Hex code", value=out["hex"])
+        emb.add_field(name="Int code", value=out["int"])
+        rgb_list = out["rgb"][3:]
+        emb.add_field(name="RGB values", value=rgb_list)
+        emb.add_field(name="Name", value=out["name"])
+        emb.add_field(name="Brightness", value=out["brightness"])
+        best_color = "Lighter" if out["blackorwhite_text"] == "#ffffff" else "Darker"
+        emb.add_field(name="Text color", value=f"{best_color} text works best over this color.")
+
+        await ctx.send(embed=emb, file=fp)
+
 
 def setup(bot):
     bot.add_cog(Utilities())
