@@ -340,6 +340,13 @@ class BotMeta(commands.Cog, name="Bot Meta"):
 
         await ctx.send(discord.utils.oauth_url(id))
 
+    @commands.command()
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def privacy(self, ctx):
+        """Links privacy information for the bot."""
+
+        await ctx.send("https://github.com/laggycomputer/suprkewl-bot/blob/untested/privacy.md")
+
 
 def setup(bot):
     bot.add_cog(BotMeta())
