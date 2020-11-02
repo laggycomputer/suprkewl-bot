@@ -26,7 +26,6 @@ import time
 import typing
 
 import aiohttp
-import cv2
 import discord
 from discord.ext import commands
 import numpy as np
