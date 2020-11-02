@@ -43,8 +43,6 @@ PWD = os.getcwd()
 
 @async_executor()
 def fry(img):
-    coords = find_chars(img)
-    img = add_b_emojis(img, coords)
     img = add_laughing_emojis(img, 5)
 
     # bulge at random coordinates
@@ -62,26 +60,6 @@ def fry(img):
     fp.seek(0)
 
     return fp
-
-
-def find_chars(img):
-    gray = np.array(img.convert("L"))
-    ret, mask = cv2.threshold(gray, 180, 255, cv2.THRESH_BINARY)
-    image_final = cv2.bitwise_and(gray, gray, mask=mask)
-    ret, new_img = cv2.threshold(image_final, 180, 255, cv2.THRESH_BINARY_INV)
-    kernel = cv2.getStructuringElement(cv2.MORPH_CROSS, (3, 3))
-    dilated = cv2.dilate(new_img, kernel, iterations=1)
-    contours, hierarchy = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-
-    coords = []
-    for contour in contours:
-        # get rectangle bounding contour
-        [x, y, w, h] = cv2.boundingRect(contour)
-        # ignore large chars (probably not chars)
-        if w > 70 and h > 70:
-            continue
-        coords.append((x, y, w, h))
-    return coords
 
 
 def change_contrast(img, level):
@@ -107,19 +85,6 @@ def add_flares(img, coords):
         ret.paste(flare, (int(coord[0] - flare.size[0] / 2), int(coord[1] - flare.size[1] / 2)), flare)
 
     return ret
-
-
-def add_b_emojis(img, coords):
-    tmp = img.copy()
-
-    b = Image.open("assets/frying/B.png")
-    for coord in coords:
-        if np.random.random(1)[0] < 0.1:
-            resized = b.copy()
-            resized.thumbnail((coord[2], coord[3]), Image.ANTIALIAS)
-            tmp.paste(resized, (int(coord[0]), int(coord[1])), resized)
-
-    return tmp
 
 
 def add_laughing_emojis(img, max_emojis):

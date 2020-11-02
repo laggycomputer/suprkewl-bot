@@ -10,7 +10,6 @@ jishaku
 lavalink
 matplotlib
 numpy
-opencv-python
 Pillow
 pycryptodomex
 pygit2
