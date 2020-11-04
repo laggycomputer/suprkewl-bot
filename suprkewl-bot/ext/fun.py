@@ -726,9 +726,7 @@ L
         if percent < 0 or percent > 100:
             return await ctx.send(":x: Your argument must be an integer between 0 and 100.")
 
-        data = {"percent": percent}
-
-        async with ctx.bot.session.get("https://cdn.welcomer.fun/minecraftxp", data=data) as resp:
+        async with ctx.bot.session.get(f"https://cdn.welcomer.fun/minecraftxp?percent={percent}") as resp:
             raw = await resp.content.read()
 
         fp = discord.File(io.BytesIO(raw), "xp.png")
