@@ -35,8 +35,9 @@ permissions_converter = {
     "mute_members": "Mute Members", "priority_speaker": "Use Priority PTT",
     "read_message_history": "Read Past Messages in Text Channels",
     "read_messages": "Read Messages and See Voice Channels", "send_messages": "Send Messages",
-    "send_tts_messages": "Send TTS Messages", "speak": "Speak", "use_voice_activation": "No Voice Activity",
-    "view_audit_log": "View the Server Audit Log"
+    "send_tts_messages": "Send TTS Messages", "speak": "Speak", "stream": "Stream",
+    "use_voice_activation": "No Voice Activity", "view_audit_log": "View the Server Audit Log",
+    "view_guild_insights": "View Guild Insights"
 }
 
 
