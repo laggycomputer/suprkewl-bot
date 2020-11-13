@@ -732,6 +732,12 @@ class Utilities(commands.Cog):
         if not data["success"]:
             return await ctx.send(":x: Something went wrong fetching your data.")
 
+        if data["player"] is None:  # Either this account is not in the Hypixel DB or Mojang is returning garbage.
+            return await ctx.send(
+                "Interesting, a new error. Either the account you requested has never logged into Hypixel, or "
+                "something else went very wrong on Mojang's end."
+            )
+
         msg = await ctx.send("Fetching...")
 
         date_format = "%a %b %d, %Y at %H:%M:%S"
