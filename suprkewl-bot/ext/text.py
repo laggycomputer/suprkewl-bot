@@ -118,6 +118,39 @@ class Text(commands.Cog):
 
         await ctx.send("<o/\n\\o>")
 
+    @commands.command(description="Messages direct from the Hypixel Zoo.")
+    @commands.cooldown(3, 1, commands.BucketType.channel)
+    async def ez(self, ctx):
+        """Send a random Hypixel "ez" response."""
+
+        await ctx.send(random.choice(
+            ["Anyone else really like Rick Astley?",
+             "Behold, the great and powerful, my magnificent and almighty nemesis!",
+             "Blue is greener than purple for sure", "Can you paint with all the colors of the wind",
+             "Doin a bamboozle fren.", "Hello everyone! I am an innocent player who loves everything Hypixel.",
+             "Hey helper, how play game?", "I had something to say, then I forgot it.",
+             "I have really enjoyed playing with you! <3",
+             "I heard you like Minecraft, so I built a computer in Minecraft in your Minecraft so you can Minecraft "
+             "while you Minecraft",
+             "I like Minecraft pvp but you are truly better than me!",
+             "I like long walks on the beach and playing Hypixel", "I like pasta, do you prefer nachos?",
+             "I like pineapple on my pizza", "I need help, teach me how to play!",
+             "I sometimes try to say bad things then this happens :(", "ILY <3",
+             "If the Minecraft world is infinite, how is the sun spinning around it?",
+             "In my free time I like to watch cat videos on Youtube", "Lets be friends instead of fighting okay?",
+             "Maybe we can have a rematch?", "Pineapple doesn't go on pizza!",
+             "Please go easy on me, this is my first game!", "Plz give me doggo memes!",
+             "Sometimes I sing soppy, love songs in the car.", "Wait... This isn't what I typed!",
+             "What happens if I add chocolate milk to macaroni and cheese?",
+             "When I saw the witch with the potion, I knew there was trouble brewing.",
+             "When nothing is right, go left.",
+             "Why can't the Ender Dragon read a book? Because he always starts at the End.",
+             "You are very good at the game friend.",
+             "You're a great person! Do you want to play some Hypixel games with me?",
+             "Your clicks per second are godly. :o", "Your personality shines brighter than the sun.",
+             "do u also like flip or flop!"]
+        ))
+
 
 def setup(bot):
     bot.add_cog(Text())
