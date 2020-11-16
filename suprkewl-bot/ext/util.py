@@ -502,7 +502,7 @@ class Utilities(commands.Cog):
         e.set_footer(text=f"Message ID {message_id} | User ID {user.id} | Channel ID {chnl.id} | Guild ID {guild.id}")
         await ctx.send(embed=e)
 
-    @commands.command(aliases=["esnipe"])
+    @commands.command(aliases=["esnipe", "es"])
     @commands.cooldown(3, 2, commands.BucketType.channel)
     async def editsnipe(self, ctx, *, channel: discord.TextChannel = None):
         """Snipe the former content of an edited message"""
