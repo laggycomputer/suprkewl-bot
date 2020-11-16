@@ -200,6 +200,9 @@ class SuprKewlBot(commands.Bot):
                 await self.process_commands(message)
 
     async def on_member_join(self, member):
+        if not self.is_ready():
+            return
+
         if member.guild.id == MOYAI_GUILD_ID:
             try:
                 await member.edit(nick="moyai")
@@ -211,6 +214,9 @@ class SuprKewlBot(commands.Bot):
         self.commands_used += 1
 
     async def on_message_delete(self, message):
+        if not self.is_ready():
+            return
+
         if message.guild:
             content = message.content
             message_type = 0
