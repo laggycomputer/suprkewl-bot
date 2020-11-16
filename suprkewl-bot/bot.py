@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import asyncio
+import logging
 import os
 import platform
 import random
@@ -120,6 +121,36 @@ class SuprKewlBot(commands.Bot):
         print("Use this link to invite this bot:")
         print(discord.utils.oauth_url(self.user.id))
         print("-" * 8)
+
+        query = await (await self.db.execute("SELECT guild_id FROM guilds;")).fetchall()
+        guilds_in_db = [row[0] for row in query]
+        guilds_to_remove = []
+
+        for guild_id in guilds_in_db:
+            if not self.get_guild(guild_id):
+                guilds_to_remove.append(guild_id)
+
+        if guilds_to_remove:
+            removal_count = len(guilds_to_remove)
+            guilds_to_remove = ", ".join(guilds_to_remove)
+            await self.db.execute("DELETE FROM guilds WHERE guild_id IN (?);", (guilds_to_remove,))
+            await self.db.commit()
+            logging.info(f"Removed {removal_count} guilds from guild settings database.")
+
+        query = await (await self.db.execute("SELECT DISTINCT guild_id FROM snipes;")).fetchall()
+        guilds_in_db = [row[0] for row in query]
+        guilds_to_remove = []
+
+        for guild_id in guilds_in_db:
+            if not self.get_guild(guild_id):
+                guilds_to_remove.append(guild_id)
+
+        if guilds_to_remove:
+            removal_count = len(guilds_to_remove)
+            guilds_to_remove = ", ".join(guilds_to_remove)
+            await self.db.execute("DELETE FROM snipes WHERE guild_id IN (?);", (guilds_to_remove,))
+            await self.db.commit()
+            logging.info(f"Removed messages in {removal_count} guilds from snipes database.")
 
     async def on_message(self, message):
         if not self.is_ready():
@@ -269,6 +300,7 @@ class SuprKewlBot(commands.Bot):
 
     async def on_guild_remove(self, guild):
         await self.db.execute("DELETE FROM guilds WHERE guild_id == ?;", (guild.id,))
+        await self.db.execute("DELETE FROM snipes WHERE guild_id == ?;", (guild.id,))
         await self.db.commit()
 
     async def on_command_error(self, ctx, error):
