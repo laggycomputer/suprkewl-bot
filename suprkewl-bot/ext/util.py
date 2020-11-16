@@ -498,6 +498,41 @@ class Utilities(commands.Cog):
         e.set_footer(text=f"Message ID {message_id} | User ID {user.id} | Channel ID {chnl.id} | Guild ID {guild.id}")
         await ctx.send(embed=e)
 
+    @commands.command(aliases=["esnipe"])
+    @commands.cooldown(3, 2, commands.BucketType.channel)
+    async def editsnipe(self, ctx, *, channel: discord.TextChannel = None):
+        """Snipe the former content of an edited message"""
+
+        channel = channel or ctx.channel
+        sniped = await ctx.bot.db.execute(
+            "SELECT * FROM edit_snipes WHERE channel_id == ? AND guild_id == ?;",
+            (channel.id,
+             ctx.guild.id)
+        )
+        fetched = await sniped.fetchone()
+        if not fetched:
+            return await ctx.send("Nothing to snipe... yet.")
+        if channel.is_nsfw() is True and ctx.channel.is_nsfw() is False:
+            return await ctx.send("You cannot snipe from a normal channel into an NSFW one.")
+
+        e = ctx.default_embed()
+        desc = [c_name[0] for c_name in sniped.description]
+        guild = ctx.bot.get_guild(fetched[desc.index("guild_id")])
+        user = ctx.bot.get_user(fetched[desc.index("user_id")])
+        if not user:
+            user = await ctx.bot.fetch_user(fetched[desc.index("user_id")])
+        chnl = discord.utils.get(guild.text_channels, id=fetched[desc.index("channel_id")])
+        message_id = fetched[desc.index("message_id")]
+        before = fetched[desc.index("before")]
+        after = fetched[desc.index("after")]
+
+        e.add_field(name="Before", value=before, inline=False)
+        e.add_field(name="After", value=after, inline=False)
+
+        e.set_author(name=f"{user.name} said in #{chnl.name}")
+        e.set_footer(text=f"Message ID {message_id} | User ID {user.id} | Channel ID {chnl.id} | Guild ID {guild.id}")
+        await ctx.send(embed=e)
+
     @commands.command(aliases=["ci", "char", "ch", "c"])
     async def charinfo(self, ctx, *, characters):
         """Shows you Unicode information about the given characters."""

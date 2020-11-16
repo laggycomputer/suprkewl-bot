@@ -42,7 +42,8 @@ client = bot.SuprKewlBot(
     config.extra_owners,
     intents=intents,
     status=discord.Status.idle,
-    command_prefix=bot.get_pre
+    command_prefix=bot.get_pre,
+    max_messages=2000
 )
 
 if __name__ == "__main__":

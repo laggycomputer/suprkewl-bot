@@ -18,6 +18,15 @@ CREATE TABLE IF NOT EXISTS snipes (
     msg_type INTEGER NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS edit_snipes (
+    channel_id BIGINT UNIQUE PRIMARY KEY NOT NULL,
+    guild_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    message_id BIGINT NOT NULL,
+    before VARCHAR(2000) NOT NULL,
+    after VARCHAR(2000) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS past_igns (
     past_ign VARCHAR(32) Not NULL,
     uuid1 INTEGER NOT NULL,

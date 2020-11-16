@@ -244,6 +244,22 @@ class SuprKewlBot(commands.Bot):
     async def on_command_completion(self, ctx):
         self.commands_used += 1
 
+    async def on_message_edit(self, before, after):
+        if not self.is_ready():
+            return
+
+        if not after.guild or before.content == after.content or after.type != discord.MessageType.default:
+            return
+
+        await self.db.execute(
+            "INSERT INTO edit_snipes (guild_id, user_id, channel_id, message_id, before, after) VALUES "
+            "(?, ?, ?, ?, ?, ?) ON CONFLICT (channel_id) DO UPDATE SET guild_id = ?, user_id = ?, message_id = ?, "
+            "before = ?, after = ?;",
+            (after.guild.id, after.author.id, after.channel.id, after.id, before.content, after.content,
+             after.guild.id, after.author.id, after.id, before.content, after.content)
+        )
+        await self.db.commit()
+
     async def on_message_delete(self, message):
         if not self.is_ready():
             return
