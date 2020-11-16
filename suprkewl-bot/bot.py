@@ -38,7 +38,7 @@ import redis
 MOYAI_GUILD_ID = 679073831629094922
 
 
-class suprkewl_bot(commands.Bot):
+class SuprKewlBot(commands.Bot):
 
     def __init__(self, extra_owners=[], *args, **kwargs):
         super().__init__(*args, **kwargs)

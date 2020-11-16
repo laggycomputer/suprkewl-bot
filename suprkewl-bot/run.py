@@ -38,7 +38,7 @@ for attr in ("bans", "integrations", "webhooks", "invites", "typing"):
     setattr(intents, attr, False)
 
 
-client = bot.suprkewl_bot(
+client = bot.SuprKewlBot(
     config.extra_owners,
     intents=intents,
     status=discord.Status.idle,
