@@ -460,10 +460,12 @@ class Utilities(commands.Cog):
 
         await ctx.send(embed=embed, file=fp)
 
-    @commands.command(description="Snipe a deleted message", aliases=["sniperino"])
+    @commands.command(aliases=["sniperino"])
     @commands.cooldown(3, 2, commands.BucketType.channel)
     @commands.guild_only()
     async def snipe(self, ctx, *, channel: discord.TextChannel = None):
+        """Snipe a deleted message"""
+
         channel = channel or ctx.channel
         sniped = await ctx.bot.db.execute(
             "SELECT * FROM snipes WHERE channel_id == ? AND guild_id == ?;",
