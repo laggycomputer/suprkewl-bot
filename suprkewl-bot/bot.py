@@ -259,12 +259,12 @@ class suprkewl_bot(commands.Bot):
         if "content" not in payload.data:
             return
 
-        channel = self.get_channel(int(payload.data["channel_id"]))
+        channel = self.get_channel(payload.data["channel_id"])
 
         if channel is None:
             return
 
-        message = channel._state._get_message(payload.message_id)
+        message = payload.cached_message
         if message is None:
             try:
                 message = await channel.fetch_message(payload.message_id)
