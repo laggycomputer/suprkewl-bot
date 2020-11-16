@@ -327,7 +327,7 @@ class BotMeta(commands.Cog, name="Bot Meta"):
         await ctx.send(final_url)
 
     @commands.command()
-    async def invite(self, ctx, *, id: typing.Union[discord.Member, discord.User, int]):
+    async def invite(self, ctx, *, id: typing.Union[discord.Member, discord.User, int] = None):
         """Get a link to invite this bot or another."""
 
         if id:
