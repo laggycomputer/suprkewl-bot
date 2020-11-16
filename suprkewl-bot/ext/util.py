@@ -481,6 +481,8 @@ class Utilities(commands.Cog):
         desc = [c_name[0] for c_name in sniped.description]
         guild = ctx.bot.get_guild(fetched[desc.index("guild_id")])
         user = ctx.bot.get_user(fetched[desc.index("user_id")])
+        if not user:
+            user = await ctx.bot.fetch_user(fetched[desc.index("user_id")])
         chnl = discord.utils.get(guild.text_channels, id=fetched[desc.index("channel_id")])
         message_id = fetched[desc.index("message_id")]
         msg_content = fetched[desc.index("message")]
