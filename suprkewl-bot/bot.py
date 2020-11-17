@@ -692,3 +692,11 @@ async def get_pre(bot, message):
         pre.append("")
 
     return pre
+
+# My ouija board told me to add "h" to get to 6k SLOC, so here you are.
+
+"h"
+"h"
+"h"
+"h"
+"h"
