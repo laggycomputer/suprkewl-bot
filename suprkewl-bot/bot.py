@@ -356,9 +356,54 @@ class SuprKewlBot(commands.Bot):
                 "Your argument(s) had too many or too few quotes. Remember to match all opening quotes with closing"
                 " quotes.")
 
+        elif isinstance(error, (commands.MemberNotFound, commands.UserNotFound)):
+            emb = ctx.default_embed()
+            emb.add_field(
+                name="Invalid/unknown user",
+                value=":x: I could not find the user you are looking for. Check your spelling, or use an ID instead. "
+                      "(Alternatively, I do not share any servers with that user.)"
+            )
+
+            return await ctx.send(embed=emb)
+
+        elif isinstance(error, commands.MessageNotFound):
+            emb = ctx.default_embed()
+            emb.add_field(
+                name="Invalid message",
+                value=":x: I could not find that message. Do I have permission to read it?"
+            )
+
+            return await ctx.send(embed=emb)
+
+        elif isinstance(error, commands.EmojiNotFound):
+            emb = ctx.default_embed()
+            emb.add_field(
+                name="Unknown emoji",
+                value=":x: I cannot use that emoji - am I in that emoji's server?"
+            )
+
+            return await ctx.send(embed=emb)
+
+        elif isinstance(error, commands.ChannelNotFound):
+            emb = ctx.default_embed()
+            emb.add_field(
+                name="Unknown channel",
+                value=":x: I don't know what that channel is. Am I in its server?"
+            )
+
+            return await ctx.send(embed=emb)
+
+        elif isinstance(error, commands.RoleNotFound):
+            emb = ctx.default_embed()
+            emb.add_field(
+                name="Unknown role",
+                value=":x: I don't know what that role is. Am I in its server?"
+            )
+
+            return await ctx.send(embed=emb)
+
         elif isinstance(error, bad_arg_errors):
-            await ctx.send(":x: Your argument(s) could not be converted. If you are looking for a channel or message, "
-                           "please ensure that I have permission to see that channel or message.")
+            await ctx.send(":x: Your argument(s) could not be converted.")
 
         elif isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(f"`{error.param.name}` is a missing required argument.")
