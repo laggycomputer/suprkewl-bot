@@ -41,9 +41,10 @@ MOYAI_GUILD_ID = 679073831629094922
 
 class SuprKewlBot(commands.Bot):
 
-    def __init__(self, extra_owners=[], *args, **kwargs):
+    def __init__(self, extra_owners=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        extra_owners = extra_owners or []
         self.extra_owners = extra_owners
 
         self.embed_color = 0xf92f2f

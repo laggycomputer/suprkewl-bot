@@ -478,6 +478,10 @@ class Utilities(commands.Cog):
         if channel.is_nsfw() is True and ctx.channel.is_nsfw() is False:
             return await ctx.send("You cannot snipe from a normal channel into an NSFW one.")
 
+        user_perms = ctx.author.permissions_in(channel)
+        if not user_perms.read_messages or not user_perms.read_message_history:
+            return await ctx.send(":x: You cannot see that channel.")
+
         desc = [c_name[0] for c_name in sniped.description]
         guild = ctx.bot.get_guild(fetched[desc.index("guild_id")])
         user = ctx.bot.get_user(fetched[desc.index("user_id")])
@@ -518,6 +522,10 @@ class Utilities(commands.Cog):
             return await ctx.send("Nothing to snipe... yet.")
         if channel.is_nsfw() is True and ctx.channel.is_nsfw() is False:
             return await ctx.send("You cannot snipe from a normal channel into an NSFW one.")
+
+        user_perms = ctx.author.permissions_in(channel)
+        if not user_perms.read_messages or not user_perms.read_message_history:
+            return await ctx.send(":x: You cannot see that channel.")
 
         e = ctx.default_embed()
         desc = [c_name[0] for c_name in sniped.description]
