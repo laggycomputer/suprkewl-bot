@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from .context import *
+from .economy import *
 from .embedinator import *
 from .errors import *
 from .format_and_convert import *

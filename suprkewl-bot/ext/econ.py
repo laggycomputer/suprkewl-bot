@@ -28,7 +28,8 @@ import discord
 from discord.ext import commands
 from PIL import Image
 
-from .utils import human_timedelta, Plural, roll_XdY, use_potential_nickname
+from .utils import do_economy_give, get_money_prefix, get_balance_of, human_timedelta, Plural, roll_XdY
+from .utils import use_potential_nickname
 
 
 class Economy(commands.Cog):
@@ -45,24 +46,6 @@ class Economy(commands.Cog):
         else:
             return await ctx.bot.redis.get(f"{guildid}:trivia_key")
 
-    async def get_user_money(self, ctx, user_id):
-        resp = (await (
-            await ctx.bot.db.execute("SELECT money FROM economy WHERE user_id == ?;", (user_id,))
-        ).fetchone())
-        return resp[0] if resp else 0
-
-    async def get_money_prefix(self, ctx, guild_id=None):
-        if not guild_id:
-            return "$"
-        resp = (await (
-            await ctx.bot.db.execute("SELECT custom_dollar_sign FROM guilds WHERE guild_id == ?;", (guild_id,))
-        ).fetchone())
-        if not resp:
-            return "$"
-        if not resp[0]:
-            return "$"
-        return resp[0]
-
     @commands.command(aliases=["bal"])
     @commands.cooldown(2, 1, commands.BucketType.user)
     async def balance(self, ctx, *, user: typing.Union[discord.Member, discord.User] = None):
@@ -73,8 +56,8 @@ class Economy(commands.Cog):
         if user.bot:
             return await ctx.send(":x: Bots do not have money. Sorry to any robots out there.")
 
-        dollar_sign = await self.get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
-        money = await self.get_user_money(ctx, user.id)
+        dollar_sign = await get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
+        money = await get_balance_of(ctx, user.id)
         await ctx.send(use_potential_nickname(user) + f" has a balance of {dollar_sign}{money:,}.")
 
     @commands.command()
@@ -86,7 +69,7 @@ class Economy(commands.Cog):
             await ctx.bot.db.execute("SELECT money, last_daily, daily_streak FROM economy WHERE user_id == ?;",
                                      (ctx.author.id,))
         ).fetchone()
-        dollar_sign = await self.get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
+        dollar_sign = await get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
 
         can_claim = False
 
@@ -143,7 +126,7 @@ class Economy(commands.Cog):
     async def leaderboard(self, ctx):
         """Show the richest players on the bot economy."""
 
-        dollar_sign = await self.get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
+        dollar_sign = await get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
         records = await (await ctx.bot.db.execute(
             "SELECT user_id, money FROM economy WHERE money > 0 ORDER BY money DESC LIMIT 10;"
         )).fetchall()
@@ -175,7 +158,7 @@ class Economy(commands.Cog):
 
         user = user or ctx.author
         uid = user.id if not isinstance(user, int) else user
-        money = await self.get_user_money(ctx, uid)
+        money = await get_balance_of(ctx, uid)
         record_count = (await (await ctx.bot.db.execute("SELECT COUNT(user_id) FROM economy WHERE money > 1;")
                                ).fetchone())[0]
         if money == 0:
@@ -227,7 +210,7 @@ class Economy(commands.Cog):
     async def pay(self, ctx, amount: int, *, user: typing.Union[discord.Member, discord.User]):
         """Pay someone else some of your money. Subject to taxes:tm:."""
 
-        dollar_sign = await self.get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
+        dollar_sign = await get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
 
         if user.bot:
             return await ctx.send("Bots can't have money.")
@@ -236,8 +219,7 @@ class Economy(commands.Cog):
         if amount <= 0:
             return await ctx.send("That's not how it works!")
 
-        payer_money = await self.get_user_money(ctx, ctx.author.id)
-        target_money = await self.get_user_money(ctx, user.id)
+        payer_money = await get_balance_of(ctx, ctx.author.id)
 
         if amount > payer_money:
             return await ctx.send("One does not simply pay with money he does not have.")
@@ -249,12 +231,9 @@ class Economy(commands.Cog):
             tax = amount // 20
             high_tax = False
 
-        await ctx.bot.db.execute("UPDATE economy SET money = ? WHERE user_id == ?;",
-                                 (payer_money - amount, ctx.author.id))
-        await ctx.bot.db.execute("INSERT INTO economy (user_id, money) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE "
-                                 "SET money = ?;",
-                                 (user.id, target_money + (amount - tax), target_money + (amount - tax)))
-        await ctx.bot.db.commit()
+        await do_economy_give(ctx, ctx.author, -amount)
+        await do_economy_give(ctx, user, amount - tax)
+
         await ctx.send(
             f"Transferring {dollar_sign}{amount:,} to {use_potential_nickname(user)} with a "
             f"{'20' if high_tax else '5'}% tax, or {dollar_sign}{tax:,}. This user will receive "
@@ -267,23 +246,18 @@ class Economy(commands.Cog):
             a: typing.Union[discord.Member, discord.User], b: typing.Union[discord.Member, discord.User], tax: int = 0):
         """Forcibly move money from one account to another."""
 
-        dollar_sign = await self.get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
+        dollar_sign = await get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
         if tax < 0 or tax > 100:
             return await ctx.send("Invalid tax rate.")
 
         taxes = (amount * (tax / 100)) // 1
 
-        payer_money = await self.get_user_money(ctx, a.id)
-        target_money = await self.get_user_money(ctx, b.id)
+        payer_money = await get_balance_of(ctx, a.id)
         if amount > payer_money:
             return await ctx.send(f"Payer has insufficient funds ({dollar_sign}{(amount - payer_money):,} short).")
 
-        await ctx.bot.db.execute("UPDATE economy SET money = ? WHERE user_id == ?;",
-                                 (payer_money - amount, a.id))
-        await ctx.bot.db.execute("INSERT INTO economy (user_id, money) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE "
-                                 "SET money = ?;",
-                                 (b.id, target_money + (amount - taxes), target_money + (amount - taxes)))
-        await ctx.bot.db.commit()
+        await do_economy_give(ctx, a, -amount)
+        await do_economy_give(ctx, b, amount - taxes)
         payer_name, target_name = use_potential_nickname(a), use_potential_nickname(b)
         if tax:
             await ctx.send(f"Forced {payer_name} to pay {dollar_sign}{amount:,} to {target_name}, who receives "
@@ -360,13 +334,9 @@ class Economy(commands.Cog):
             return await ctx.send("Out of time. Nobody gets money.")
 
         payout = roll_XdY(4, 10)
+        await do_economy_give(ctx, correct_response.author, payout)
 
-        current_money = await self.get_user_money(ctx, correct_response.author.id)
-        await ctx.bot.db.execute("INSERT INTO economy (user_id, money) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE "
-                                 "SET money = ?;",
-                                 (correct_response.author.id, current_money + payout, current_money + payout))
-        await ctx.bot.db.commit()
-        dollar_sign = await self.get_money_prefix(ctx, ctx.guild.id)
+        dollar_sign = await get_money_prefix(ctx, ctx.guild.id)
         await ctx.send(f"Correct, {correct_response.author.mention}. You win {dollar_sign}{payout}. The emote is "
                        f"{emote}.")
 
@@ -400,7 +370,7 @@ class Economy(commands.Cog):
                     formatted_difficulty = "hard"
                     reward_roll = (10, 5)
 
-        dollar_sign = await self.get_money_prefix(ctx, ctx.guild.id)
+        dollar_sign = await get_money_prefix(ctx, ctx.guild.id)
 
         key = await self.get_guild_trivia_key(ctx, ctx.guild.id)
         query = f"https://opentdb.com/api.php?amount=1&difficulty={formatted_difficulty}&type=multiple&encode=url3986"
@@ -447,11 +417,8 @@ class Economy(commands.Cog):
             return await ctx.send("None of you bozos got it. The correct answer was **%s**." % correct_letter)
 
         payout = roll_XdY(*reward_roll)
-        current_money = await self.get_user_money(ctx, correct_guess.author.id)
-        await ctx.bot.db.execute("INSERT INTO economy (user_id, money) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE "
-                                 "SET money = ?;",
-                                 (correct_guess.author.id, current_money + payout, current_money + payout))
-        await ctx.bot.db.commit()
+        await do_economy_give(ctx, correct_guess.author, payout)
+
         await ctx.send(f"Correct, {correct_guess.author.mention}! You get {dollar_sign}{payout}.")
 
 
