@@ -248,7 +248,10 @@ class SuprKewlBot(commands.Bot):
         if not self.is_ready():
             return
 
-        if not after.guild or before.content == after.content or after.type != discord.MessageType.default:
+        if after.author.bot or not before.content or not after.content or not after.guild:
+            return
+
+        if before.content == after.content or after.type != discord.MessageType.default:
             return
 
         await self.db.execute(
