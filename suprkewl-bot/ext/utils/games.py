@@ -24,6 +24,8 @@ import random
 
 import discord
 
+from .economy import do_economy_give, get_money_prefix
+
 
 # C4 stuff from StarrFox/DiscordChan
 
@@ -443,7 +445,17 @@ class Mastermind:
 
             self.round += 1
 
-        await self.ctx.send(f"Game over! The code was {''.join([c.value for c in self.code])}.")
+        beaten_at = self.round - 1
+        guesses_count_bonus = max(-1 / 40 * (beaten_at ** 2) + 10, 0)
+        payout = 15 + guesses_count_bonus
+        await do_economy_give(self.ctx, self.ctx.author, payout)
+
+        currency_prefix = get_money_prefix(self.ctx)
+        await self.ctx.send(
+            f"Game over! The code was {''.join([c.value for c in self.code])}.\nYou also earned "
+            f"{currency_prefix}{payout} ({currency_prefix}15 for beating the game and "
+            f"{currency_prefix}{guesses_count_bonus} for winning in {beaten_at} rounds."
+        )
 
 
 def roll_XdY(x, y, *, return_rolls=False):
