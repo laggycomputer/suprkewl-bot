@@ -19,6 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 async def get_money_prefix(ctx, guild_id=None):
+    if guild_id is None and ctx.guild:
+        guild_id = ctx.guild.id
+
     if not guild_id:
         return "$"
     resp = (await (

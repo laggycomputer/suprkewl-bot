@@ -56,7 +56,7 @@ class Economy(commands.Cog):
         if user.bot:
             return await ctx.send(":x: Bots do not have money. Sorry to any robots out there.")
 
-        dollar_sign = await get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
+        dollar_sign = await get_money_prefix(ctx)
         money = await get_balance_of(ctx, user.id)
         await ctx.send(use_potential_nickname(user) + f" has a balance of {dollar_sign}{money:,}.")
 
@@ -69,7 +69,7 @@ class Economy(commands.Cog):
             await ctx.bot.db.execute("SELECT money, last_daily, daily_streak FROM economy WHERE user_id == ?;",
                                      (ctx.author.id,))
         ).fetchone()
-        dollar_sign = await get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
+        dollar_sign = await get_money_prefix(ctx)
 
         can_claim = False
 
@@ -126,7 +126,7 @@ class Economy(commands.Cog):
     async def leaderboard(self, ctx):
         """Show the richest players on the bot economy."""
 
-        dollar_sign = await get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
+        dollar_sign = await get_money_prefix(ctx)
         records = await (await ctx.bot.db.execute(
             "SELECT user_id, money FROM economy WHERE money > 0 ORDER BY money DESC LIMIT 10;"
         )).fetchall()
@@ -210,7 +210,7 @@ class Economy(commands.Cog):
     async def pay(self, ctx, amount: int, *, user: typing.Union[discord.Member, discord.User]):
         """Pay someone else some of your money. Subject to taxes:tm:."""
 
-        dollar_sign = await get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
+        dollar_sign = await get_money_prefix(ctx)
 
         if user.bot:
             return await ctx.send("Bots can't have money.")
@@ -246,7 +246,7 @@ class Economy(commands.Cog):
             a: typing.Union[discord.Member, discord.User], b: typing.Union[discord.Member, discord.User], tax: int = 0):
         """Forcibly move money from one account to another."""
 
-        dollar_sign = await get_money_prefix(ctx, ctx.guild.id if ctx.guild else None)
+        dollar_sign = await get_money_prefix(ctx)
         if tax < 0 or tax > 100:
             return await ctx.send("Invalid tax rate.")
 
