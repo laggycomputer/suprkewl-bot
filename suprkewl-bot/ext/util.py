@@ -395,25 +395,39 @@ class Utilities(commands.Cog):
         """Return a message as a dict."""
 
         raw = await ctx.bot.http.get_message(message.channel.id, message.id)
+        ret = format_json(raw)
+        to_send = f"```json\n{escape_codeblocks(ret)}```"
 
-        try:
-            await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```")
-        except discord.HTTPException:
-            fp = io.BytesIO(format_json(raw))
-            fp = discord.File(fp, "raw.txt")
-
-            await ctx.send("Your output was placed in the attached file:", file=fp)
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(ret)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(ret.encode("utf-8")), "out.txt")
+                await ctx.send(file=fp)
+        else:
+            await ctx.send(to_send)
 
     @raw.command(name="member", aliases=["user"])
     async def raw_member(self, ctx, *, user: discord.User = None):
         """Return a member as a dict."""
-        if user is None:
-            user = ctx.author
+
+        user = user or ctx.author
 
         route = discord.http.Route("GET", f"/users/{user.id}")
         raw = await ctx.bot.http.request(route)
+        ret = format_json(raw)
+        to_send = f"```json\n{escape_codeblocks(ret)}```"
 
-        await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```")
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(ret)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(ret.encode("utf-8")), "out.txt")
+                await ctx.send(file=fp)
+        else:
+            await ctx.send(to_send)
 
     @raw.command(name="channel")
     async def raw_channel(
@@ -432,7 +446,18 @@ class Utilities(commands.Cog):
         except discord.Forbidden:
             return await ctx.send(":x: I can't see info on that channel!")
 
-        await ctx.send(f"```json\n{escape_codeblocks(format_json(raw))}```")
+        ret = format_json(raw)
+        to_send = f"```json\n{escape_codeblocks(ret)}```"
+
+        if len(to_send) > 2000:
+            try:
+                hastebin_url = await ctx.bot.post_to_hastebin(ret)
+                await ctx.send(hastebin_url)
+            except (aiohttp.ContentTypeError, AssertionError):
+                fp = discord.File(io.BytesIO(ret.encode("utf-8")), "out.txt")
+                await ctx.send(file=fp)
+        else:
+            await ctx.send(to_send)
 
     # Thanks to Takaru, PendragonLore/TakaruBot
     @commands.command()
