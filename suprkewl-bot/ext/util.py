@@ -459,6 +459,44 @@ class Utilities(commands.Cog):
         else:
             await ctx.send(to_send)
 
+    @commands.command(aliases=["pfp"])
+    @commands.cooldown(3, 1, commands.BucketType.user)
+    async def profile(self, ctx, *, user: typing.Union[discord.Member, discord.User] = None):
+        """Get a user's profile picture in various formats."""
+
+        user = user or ctx.author
+
+        emb = ctx.default_embed()
+
+        formats = ["webp", "jpg", "png"]
+        if user.is_avatar_animated():
+            formats += ["gif"]
+            preview_url = user.avatar_url_as(format="gif", size=4096)
+            fp = discord.File(io.BytesIO(await preview_url.read()), "avatar.gif")
+            emb.set_image(url="attachment://avatar.gif")
+        else:
+            preview_url = user.avatar_url_as(format="png", size=4096)
+            fp = discord.File(io.BytesIO(await preview_url.read()), "avatar.png")
+            emb.set_image(url="attachment://avatar.png")
+
+        def make_link(format, size):
+            if size:
+                url = str(user.avatar_url_as(format=format, size=size))
+            else:
+                url = str(user.avatar_url_as(format=format)).rstrip("?size=1024")
+            link_name = f"{size}x" if size else "Direct"
+            return f"[{link_name}]({url})"
+
+        emb.add_field(name="Member", value=f"{user.mention} ({user})", inline=False)
+        for fmt in formats:
+            links = []
+            for size in [None] + [2 ** x for x in range(7, 13)]:
+                links.append(make_link(fmt, size))
+
+            emb.add_field(name=fmt.upper(), value=" | ".join(links), inline=False)
+
+        await ctx.send(embed=emb, file=fp)
+
     # Thanks to Takaru, PendragonLore/TakaruBot
     @commands.command()
     async def pypi(self, ctx, *, name):
