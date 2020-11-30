@@ -30,6 +30,7 @@ import aiohttp
 import discord
 from discord.ext import commands
 
+import config
 from .utils import C4, Fighter, ImageEmbedinator, Mastermind, roll_XdY
 
 
@@ -55,13 +56,13 @@ Confused: ( ͠° ͟ʖ ͡°)
 Strong: ᕦ( ͡° ͜ʖ ͡°)ᕤ
 The Mino Lenny: ˙͜>˙
 Cat Lenny: ( ͡° ᴥ ͡°)
-Praise the sun!: [T]/﻿
+Praise the sun!: [T]/
 Dorito Lenny: ( ͡V ͜ʖ ͡V )
 Wink: ( ͡~ ͜ʖ ͡°)
 swiggity swootey: ( ͡o ͜ʖ ͡o)
-ynneL: ( ͜。 ͡ʖ ͜。)﻿
+ynneL: ( ͜。 ͡ʖ ͜。)
 Wink 2: ͡° ͜ʖ ͡ -
-I see u: ( ͡͡ ° ͜ ʖ ͡ °)﻿
+I see u: ( ͡͡ ° ͜ ʖ ͡ °)
 Alien: ( ͡ ͡° ͡° ʖ ͡° ͡°)
 U WOT M8:( ง ͠° ͟ل͜ ͡°)ง
 Lenny Gang: ( ͡°( ͡° ͜ʖ( ͡° ͜ʖ ͡°)ʖ ͡°) ͡°)
@@ -738,7 +739,9 @@ L
         """Generate a Minecraft achievement toast with your text."""
 
         async with ctx.typing():
-            async with ctx.bot.session.get(f"https://api.alexflipnote.dev/achievement?text={text}") as resp:
+            headers = dict(Authorization=config.flipnote_key)
+            async with ctx.bot.session.get(f"https://api.alexflipnote.dev/achievement?text={text}", headers=headers
+                                           ) as resp:
                 raw = await resp.content.read()
 
         await ctx.send(file=discord.File(io.BytesIO(raw), "achieved.png"))
@@ -748,7 +751,9 @@ L
         """Generate a Minecraft challenge toast with your text."""
 
         async with ctx.typing():
-            async with ctx.bot.session.get(f"https://api.alexflipnote.dev/challenge?text={text}") as resp:
+            headers = dict(Authorization=config.flipnote_key)
+            async with ctx.bot.session.get(f"https://api.alexflipnote.dev/challenge?text={text}", headers=headers
+                                           ) as resp:
                 raw = await resp.content.read()
 
         await ctx.send(file=discord.File(io.BytesIO(raw), "challengecompleted.png"))
@@ -758,7 +763,9 @@ L
         """Draw a Supreme sticker with your text."""
 
         async with ctx.typing():
-            async with ctx.bot.session.get(f"https://api.alexflipnote.dev/supreme?text={text}") as resp:
+            headers = dict(Authorization=config.flipnote_key)
+            async with ctx.bot.session.get(f"https://api.alexflipnote.dev/supreme?text={text}", headers=headers
+                                           ) as resp:
                 raw = await resp.content.read()
 
         await ctx.send(file=discord.File(io.BytesIO(raw), "supreme.png"))

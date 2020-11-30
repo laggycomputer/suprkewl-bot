@@ -1014,7 +1014,9 @@ class Utilities(commands.Cog):
         """Get some information on a hex color."""
 
         code = code.lstrip("#").replace("0x", "")
-        async with ctx.bot.session.get(f"https://api.alexflipnote.dev/color/{code}") as resp:
+        async with ctx.bot.session.get(f"https://api.alexflipnote.dev/color/{code}",
+                                       headers=dict(Authorization=config.flipnote_key)
+                                       ) as resp:
             if resp.status in [400, 404]:
                 return await ctx.send("Hex code appears invalid.")
             out = await resp.json()
