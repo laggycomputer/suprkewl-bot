@@ -531,9 +531,7 @@ class Utilities(commands.Cog):
 
         channel = channel or ctx.channel
         sniped = await ctx.bot.db.execute(
-            "SELECT * FROM snipes WHERE channel_id == ? AND guild_id == ?;",
-            (channel.id,
-             ctx.guild.id)
+            "SELECT * FROM snipes WHERE channel_id == ? AND guild_id == ?;", (channel.id, ctx.guild.id)
         )
         fetched = await sniped.fetchone()
         if not fetched:
