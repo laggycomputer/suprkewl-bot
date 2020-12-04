@@ -166,7 +166,7 @@ class Music(commands.Cog):
         return True
 
     @commands.command(aliases=["p", "pl", "ply"])
-    async def play(self, ctx, *, query: str):
+    async def play(self, ctx, *, query):
         """Play or enqueue a track."""
 
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
@@ -198,8 +198,8 @@ class Music(commands.Cog):
             e.set_author(name=f"Track queued by {ctx.author}")
             e.description = f"[{track['info']['title']}]({track['info']['uri']})"
             e.set_footer(text=f"{ctx.bot.embed_footer} Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
-            await ctx.send(embed=e)
             player.add(requester=ctx.author.id, track=track)
+            await ctx.send(embed=e)
 
         if not player.is_playing:
             await player.play()
