@@ -129,7 +129,7 @@ class SuprKewlBot(commands.Bot):
 
         for guild_id in guilds_in_db:
             if not self.get_guild(guild_id):
-                guilds_to_remove.append(guild_id)
+                guilds_to_remove.append(str(guild_id))
 
         if guilds_to_remove:
             removal_count = len(guilds_to_remove)
@@ -144,7 +144,7 @@ class SuprKewlBot(commands.Bot):
 
         for guild_id in guilds_in_db:
             if not self.get_guild(guild_id):
-                guilds_to_remove.append(guild_id)
+                guilds_to_remove.append(str(guild_id))
 
         if guilds_to_remove:
             removal_count = len(guilds_to_remove)
