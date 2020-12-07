@@ -136,7 +136,7 @@ class Music(commands.Cog):
             "musicplayer",
         ]
 
-        does_not_require_user_connect = ctx.command in [
+        does_not_require_user_connect = ctx.command.name in [
             "nowplaying",
             "queue",
             "musicplayer"
