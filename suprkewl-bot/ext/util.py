@@ -601,6 +601,8 @@ class Utilities(commands.Cog):
 
         e.add_field(name="Before", value=before, inline=False)
         e.add_field(name="After", value=after, inline=False)
+        e.add_field(name="Message link",
+                    value=f"[Here](https://discord.com/channels/{guild.id}/{chnl.id}/{message_id})")
 
         e.set_author(name=f"{user.name} said in #{chnl.name}")
         e.set_footer(text=f"Message ID {message_id} | User ID {user.id} | Channel ID {chnl.id} | Guild ID {guild.id}")
