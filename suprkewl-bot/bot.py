@@ -36,9 +36,6 @@ from ext.utils import BotNotInVC, Context, DJRequired, linecount, permissions_co
 import redis
 
 
-MOYAI_GUILD_ID = 679073831629094922
-
-
 class SuprKewlBot(commands.Bot):
 
     def __init__(self, extra_owners=None, *args, **kwargs):
@@ -230,17 +227,6 @@ class SuprKewlBot(commands.Bot):
                             pass
             else:
                 await self.process_commands(message)
-
-    async def on_member_join(self, member):
-        if not self.is_ready():
-            return
-
-        if member.guild.id == MOYAI_GUILD_ID:
-            try:
-                await member.edit(nick="moyai")
-            except discord.Forbidden:
-                # :(
-                pass
 
     async def on_command_completion(self, ctx):
         self.commands_used += 1
