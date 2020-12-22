@@ -667,7 +667,7 @@ class Utilities(commands.Cog):
             name = ign
             player_uuid = get_by_name["id"]
             human_uuid = "-".join(player_uuid[i:i + 4] for i in range(0, len(player_uuid), 4))
-            emb_name = f"The name {name} has UUID `{human_uuid}`."
+            emb_name = f"The name {discord.utils.escape_markdown(name)} has UUID `{human_uuid}`."
             if names_to_use:
                 past_warning = f"\n(Note: `{ign}` is also a former name of {human_join(names_to_use, final='and')}.)"
         else:
@@ -677,7 +677,7 @@ class Utilities(commands.Cog):
                 return await ctx.send(":x: Your input could not be interpreted as a UUID or currently valid name.")
             player_uuid = ign
             human_uuid = '-'.join(player_uuid[i:i + 4] for i in range(0, len(player_uuid), 4))
-            emb_name = f"UUID `{human_uuid}` resolves to the name {name}."
+            emb_name = f"UUID `{human_uuid}` resolves to the name {discord.utils.escape_markdown(name)}."
         emb.add_field(
             name=emb_name,
             value=f"[Plancke](https://plancke.io/hypixel/player/stats/{player_uuid}) "
@@ -891,7 +891,7 @@ class Utilities(commands.Cog):
                             ) or data["player"]["packageRank"]
                         else:
                             pass
-        emb.description = f"{found_rank or '[NON]'} {ign}"
+        emb.description = discord.utils.strip_markdown(f"{found_rank or '[NON]'} {ign}")
 
         if "networkExp" in data["player"]:
             exp = data["player"]["networkExp"]

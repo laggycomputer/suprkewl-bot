@@ -39,6 +39,7 @@ import config
 # Largely from R. Danny.
 def format_commit(commit):
     short, _, _ = commit.message.partition("\n")
+    short = discord.utils.escape_markdown(short)
     short_sha2 = commit.hex[:6]
     commit_tz = datetime.timezone(
         datetime.timedelta(minutes=commit.commit_time_offset))
