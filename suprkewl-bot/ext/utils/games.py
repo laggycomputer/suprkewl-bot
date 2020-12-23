@@ -274,6 +274,9 @@ class Mastermind:
         emb.title = "Mastermind"
         desc = []
         for index, guesses_and_responses in enumerate((zip(self.guesses, self.responses))):
+            if self.is_empty_at(index) and self.is_empty_at(index - 1) and index != 0:
+                continue
+
             guesses, responses = guesses_and_responses
             desc.append(
                 f"`{(index + 1):02}`. {''.join(guesses)} \U000027a1 {''.join(responses)}"
@@ -283,33 +286,58 @@ class Mastermind:
         # The following code is just the paginate_with_embeds function, but I want extra fields...
         by_line = description.split("\n")
 
-        part1 = "\n".join(by_line[:len(by_line) // 2])
-        part2 = "\n".join(by_line[len(by_line) // 2:])
+        if len(by_line) > 12:
+            part1 = "\n".join(by_line[:len(by_line) // 2])
+            part2 = "\n".join(by_line[len(by_line) // 2:])
 
-        emb1 = discord.Embed(description=part1, color=self.ctx.bot.embed_color)
-        emb2 = discord.Embed(description=part2, color=self.ctx.bot.embed_color)
-        emb3 = discord.Embed(color=self.ctx.bot.embed_color)
+            emb1 = discord.Embed(description=part1, color=self.ctx.bot.embed_color)
+            emb2 = discord.Embed(description=part2, color=self.ctx.bot.embed_color)
+            emb3 = discord.Embed(color=self.ctx.bot.embed_color)
 
-        emb1.set_author(name=self.ctx.me.name, icon_url=self.ctx.me.avatar_url)
-        emb3.set_footer(
-            text=f"{self.ctx.bot.embed_footer} Requested by {self.ctx.author}", icon_url=self.ctx.author.avatar_url)
+            emb1.set_author(name=self.ctx.me.name, icon_url=self.ctx.me.avatar_url)
+            emb3.set_footer(
+                text=f"{self.ctx.bot.embed_footer} Requested by {self.ctx.author}", icon_url=self.ctx.author.avatar_url)
 
-        emb3.add_field(
-            name="Formatting instructions",
-            value="See the introduction message for formatting information.",
-            inline=False
-        )
-        emb3.add_field(
-            name="Had enough?",
-            value="React with :stop_button: below to stop the game.",
-            inline=False
-        )
+            emb3.add_field(
+                name="Formatting instructions",
+                value="See the introduction message for formatting information.",
+                inline=False
+            )
+            emb3.add_field(
+                name="Had enough?",
+                value="React with :stop_button: below to stop the game.",
+                inline=False
+            )
 
-        m1 = await self.ctx.send(embed=emb1)
-        m2 = await self.ctx.send(embed=emb2)
-        m3 = await self.ctx.send(embed=emb3)
-        await m3.add_reaction("\U000023F9")
-        return m1, m2, m3
+            m1 = await self.ctx.send(embed=emb1)
+            m2 = await self.ctx.send(embed=emb2)
+            m3 = await self.ctx.send(embed=emb3)
+            await m3.add_reaction("\U000023F9")
+            return m1, m2, m3
+        else:
+            part1 = "\n".join(by_line)
+            emb1 = discord.Embed(description=part1, color=self.ctx.bot.embed_color)
+            emb2 = discord.Embed(color=self.ctx.bot.embed_color)
+            emb1.set_author(name=self.ctx.me.name, icon_url=self.ctx.me.avatar_url)
+            emb2.set_footer(
+                text=f"{self.ctx.bot.embed_footer} Requested by {self.ctx.author}", icon_url=self.ctx.author.avatar_url)
+
+            emb2.add_field(
+                name="Formatting instructions",
+                value="See the introduction message for formatting information.",
+                inline=False
+            )
+            emb2.add_field(
+                name="Had enough?",
+                value="React with :stop_button: below to stop the game.",
+                inline=False
+            )
+
+            m1 = await self.ctx.send(embed=emb1)
+            m2 = await self.ctx.send(embed=emb2)
+            await m2.add_reaction("\U000023F9")
+
+            return m1, m2
 
     def parse_message(self, content):
         content = content.strip()
@@ -464,6 +492,12 @@ class Mastermind:
                 to_send += f"\nYou also earned {currency_prefix}{payout}."
 
         await self.ctx.send(to_send)
+
+    def is_empty_at(self, index):
+        try:
+            return self.guesses[index] == [MASTERMIND_NONE] * 4 and self.responses[index] == [MASTERMIND_NONE] * 4
+        except IndexError:
+            return False
 
 
 def roll_XdY(x, y, *, return_rolls=False):
