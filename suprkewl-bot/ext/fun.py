@@ -828,7 +828,7 @@ L
                 )
             except discord.Forbidden:
                 return await ctx.send(
-                    ":x: There is already another game in that channel. You can also play Mastermind in this DM, if "
+                    ":x: There is already another game in this channel. You can also play Mastermind in a DM, if "
                     "you'd like..."
                 )
 
