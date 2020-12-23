@@ -254,8 +254,7 @@ class MastermindFeedback(enum.Enum):
 class Mastermind:
     def __init__(self, ctx):
         self.ctx = ctx
-        # self.code = [random.choice(list(MastermindColors)) for _ in range(4)]
-        self.code = [MastermindColors.YELLOW, MastermindColors.GREEN] * 2
+        self.code = [random.choice(list(MastermindColors)) for _ in range(4)]
         self.embed_footer = ""
         self.latest_messages = (None, None)
         self.guesses = [[MASTERMIND_NONE] * 4] * 24  # 24x4 of soon-to-be user guesses
