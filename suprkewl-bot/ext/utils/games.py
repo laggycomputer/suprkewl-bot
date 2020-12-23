@@ -254,7 +254,8 @@ class MastermindFeedback(enum.Enum):
 class Mastermind:
     def __init__(self, ctx):
         self.ctx = ctx
-        self.code = [random.choice(list(MastermindColors)) for _ in range(4)]
+        # self.code = [random.choice(list(MastermindColors)) for _ in range(4)]
+        self.code = [MastermindColors.YELLOW, MastermindColors.GREEN] * 2
         self.embed_footer = ""
         self.latest_messages = (None, None)
         self.guesses = [[MASTERMIND_NONE] * 4] * 24  # 24x4 of soon-to-be user guesses
@@ -418,43 +419,51 @@ class Mastermind:
                 u_input = self.parse_message(finished_task.content.strip())
 
                 guesses = [list(MastermindColors)[self.possible_emotes.index(e)] for e in u_input]
-                responses = [MASTERMIND_NONE] * 4
-                for index, color in enumerate(guesses):
-                    if self.code[index] == color:
-                        responses[index] = MastermindFeedback.BLACK.value
-                    elif self.code.count(color) == guesses.count(color):
-                        responses[index] = MastermindFeedback.WHITE.value
-                    else:
-                        responses[index] = MastermindFeedback.BLANK.value
 
-                def sort(response):
-                    if response == MastermindFeedback.BLACK.value:
-                        return 0
-                    elif response == MastermindFeedback.WHITE.value:
-                        return 1
-                    elif response == MastermindFeedback.BLANK.value:
-                        return 2
-                    else:
-                        return 3
+                black_count = 0
+                white_count = 0
+                blank_count = 0
+
+                for color in MastermindColors:
+                    color_count_in_code = self.code.count(color)
+                    color_count_in_guess = guesses.count(color)
+
+                    while color_count_in_code and color_count_in_guess:
+                        white_count += 1
+                        color_count_in_code -= 1
+                        color_count_in_guess -= 1
+
+                for index in range(0, 4):
+                    if guesses[index] == self.code[index]:
+                        white_count -= 1
+                        black_count += 1
+
+                blank_count += 4 - (white_count + black_count)
 
                 self.guesses[self.round - 1] = [g.value for g in guesses]
                 self.latest_guess = [g.value for g in guesses]
-                responses = sorted(responses, key=sort)
-
-                self.responses[self.round - 1] = responses
+                self.responses[self.round - 1] = (
+                        [MastermindFeedback.BLACK.value] * black_count
+                        + [MastermindFeedback.WHITE.value] * white_count
+                        + [MastermindFeedback.BLANK.value] * blank_count
+                )
 
             self.round += 1
 
         to_send = f"Game over! The code was {''.join([c.value for c in self.code])}."
-        if self.latest_guess == self.code:
+        if self.latest_guess == [c.value for c in self.code]:
             beaten_at = self.round - 1
             guesses_count_bonus = int((max(-1 / 40 * (beaten_at ** 2) + 10, 0)) // 1)
             payout = 15 + guesses_count_bonus
             await do_economy_give(self.ctx, self.ctx.author, payout)
 
             currency_prefix = await get_money_prefix(self.ctx)
-            to_send += f"\nYou also earned {currency_prefix}{payout} - {currency_prefix}15 for beating the game and " \
-                       f"{currency_prefix}{guesses_count_bonus} for winning in {beaten_at} rounds."
+            if guesses_count_bonus:
+                to_send += f"\nYou also earned {currency_prefix}{payout} - {currency_prefix}15 for beating the game " \
+                           f"and {currency_prefix}{guesses_count_bonus} for winning in {beaten_at} rounds."
+            else:
+                to_send += f"\nYou also earned {currency_prefix}{payout}."
+
         await self.ctx.send(to_send)
 
 
