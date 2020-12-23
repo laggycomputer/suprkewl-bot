@@ -642,7 +642,7 @@ class SuprKewlBot(commands.Bot):
             "Since all the public libraries are closed, I'm checking you out instead.",
             "The first law is that a robot shall not harm a human, or by inaction allow a human to come to harm.",
             "The second law is that a robot shall obey any instruction given to it by a human.",
-            "the third law is that a robot shall avoid actions or situations that could cause it to come to harm "
+            "The third law is that a robot shall avoid actions or situations that could cause it to come to harm "
             "itself.",
             "The word utopia is derived from the Latin 'Utopia', meaning 'nothing, impossible'.",
             "This sentence hass tree errors.",
