@@ -153,6 +153,7 @@ class C4:
                 return True
             else:
                 return False
+
         for row in self.board:
             for i in range(4):
                 if check_slice(row[i:i + 4]):
