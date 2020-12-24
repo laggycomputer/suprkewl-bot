@@ -159,7 +159,7 @@ class Economy(commands.Cog):
         user = user or ctx.author
         uid = user.id if not isinstance(user, int) else user
         money = await get_balance_of(ctx, uid)
-        record_count = (await (await ctx.bot.db.execute("SELECT COUNT(user_id) FROM economy WHERE money > 1;")
+        record_count = (await (await ctx.bot.db.execute("SELECT COUNT(user_id) FROM economy WHERE money > 0;")
                                ).fetchone())[0]
         if money == 0:
             await ctx.send("This user does not have any money.")
