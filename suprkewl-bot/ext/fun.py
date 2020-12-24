@@ -31,7 +31,7 @@ import discord
 from discord.ext import commands
 
 import config
-from .utils import C4, Fighter, ImageEmbedinator, Mastermind, roll_XdY
+from .utils import C4, Fighter, ImageEmbedinator, Mastermind, Plural, roll_XdY, use_potential_nickname
 
 
 class Fun(commands.Cog):
@@ -864,6 +864,100 @@ L
                 "beating the Mastermind!"
 
         await ctx.send(rules)
+
+    @mastermind.command(name="toggleintro", aliases=["ti"])
+    async def mastermind_toggleintro(self, ctx, *, setting: bool = None):
+        """Toggle the introductory message. You must have 5 games won to access this function."""
+
+        async with ctx.bot.db.execute(
+                "SELECT wins, intro_opt_out FROM mastermind WHERE user_id == ?;", (ctx.author.id,)
+        ) as query:
+            resp = await query.fetchone()
+
+        if resp:
+            wins, is_opted_out = resp
+        else:
+            wins = 0
+            is_opted_out = 0
+
+        if wins < 5:
+            return await ctx.send("You cannot access this feature, you must have won at least 5 games.")
+        else:
+            if setting is None:
+                await ctx.send(f"You have the introductory message {'enabled' if not is_opted_out else 'disabled'}.")
+            else:
+                await ctx.bot.db.execute(
+                    "UPDATE mastermind SET intro_opt_out = ? WHERE user_id == ?;", (int(setting), ctx.author.id)
+                )
+                await ctx.bot.db.commit()
+                await ctx.send(":white_check_mark: Done.")
+
+    @mastermind.command(name="wins")
+    async def mastermind_wins(self, ctx, *, user: typing.Union[discord.Member, discord.User] = None):
+        """Check how many times someone has won Mastermind."""
+
+        user = user or ctx.author
+
+        if user.bot:
+            return await ctx.send("Bots don't play Mastermind...")
+
+        async with ctx.bot.db.execute("SELECT wins FROM mastermind WHERE user_id == ?;", (user.id,)) as query:
+            resp = await query.fetchone()
+
+        wins = resp[0] if resp else 0
+
+        await ctx.send(f"{use_potential_nickname(user)} has {format(Plural(wins), 'win')}.")
+
+    @mastermind.command(name="leaderboard", aliases=["top", "leaderboards", "lb"])
+    async def mastermind_leaderboard(self, ctx):
+        """Show the lifetime Mastermind wins leaderboard"""
+
+        records = await (await ctx.bot.db.execute(
+            "SELECT user_id, wins FROM mastermind ORDER BY wins DESC LIMIT 10;"
+        )).fetchall()
+        if not records:
+            return await ctx.send("Nobody seems to have Mastermind records...")
+        else:
+            emb = ctx.default_embed()
+            emb.description = f"Showing (up to) top 10 players. Find you or another user's ranking with " \
+                              f"`{ctx.prefix}mastermind ranking <user>`."
+            for index, record in enumerate(records):
+                fetch = None
+                if ctx.guild:
+                    try:
+                        fetch = await ctx.guild.fetch_member(record[0])
+                    except discord.NotFound:
+                        pass
+                if not ctx.guild or fetch is None:
+                    fetch = await ctx.bot.fetch_user(record[0])
+                emb.add_field(
+                    name=f"`{index + 1}:` {use_potential_nickname(fetch)}", value=f"{record[1]:,} wins",
+                    inline=False
+                )
+            await ctx.send(embed=emb)
+
+    @mastermind.command(name="ranking")
+    async def mastermind_ranking(self, ctx, *, user: typing.Union[discord.User, discord.Member, int]):
+        """Check the ranking of a user on the wins leaderboard."""
+
+        user = user or ctx.author
+        uid = user.id if not isinstance(user, int) else user
+        async with ctx.bot.db.execute("SELECT wins FROM mastermind WHERE user_id == ?;", (uid,)) as query:
+            resp = await query.fetchone()
+
+        wins = resp[0] if resp else 0
+        record_count = (await (await ctx.bot.db.execute("SELECT COUNT(user_id) FROM mastermind WHERE wins > 0;")
+                               ).fetchone())[0]
+        if wins == 0:
+            await ctx.send("This user does not have any wins.")
+        else:
+            ranking = await (await ctx.bot.db.execute(
+                "SELECT wins, RANK() OVER (ORDER BY wins DESC) r FROM mastermind;")).fetchall()
+            for db_wins, rank in ranking:
+                if db_wins == wins:
+                    ranking = rank
+            await ctx.send(f"{use_potential_nickname(user)} is #{ranking:,} out of {record_count:,} total users on "
+                           f"record.")
 
     @commands.command(aliases=["scan"])
     @commands.guild_only()

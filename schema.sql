@@ -44,3 +44,9 @@ CREATE TABLE IF NOT EXISTS inspire_favorites (
     user_id BIGINT NOT NULL,
     image VARCHAR(10) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS mastermind (
+    user_id BIGINT PRIMARY KEY UNIQUE NOT NULL,
+    wins INTEGER NOT NULL DEFAULT (0),
+    intro_opt_out INTEGER NOT NULL DEFAULT (0)
+);

@@ -26,7 +26,6 @@ import discord
 
 from .economy import do_economy_give, get_money_prefix
 
-
 # C4 stuff from StarrFox/DiscordChan
 
 C4_DIAGONALS = [
@@ -369,44 +368,62 @@ class Mastermind:
         return reaction.emoji == "\U000023F9"
 
     async def run(self):
-        rules = "**Mastermind rules:**\n\nI have a code of four colors that you need to guess. The possible colors " \
-                "are black, white, red, blue, yellow, and green. *Repeat colors are possible in the code.*" \
-                "You get 24 attempts to guess the code before I reveal it.\nEvery time you guess the four-digit " \
-                "code, I will reply with another four-digit code:\nA :white_check_mark: means your digit is of the " \
-                "correct color, and is in the right place.\nA :thinking: means your digit is of the correct color, " \
-                "but it needs to be in a different spot.\nFinally, :x: means your digit is the wrong color, and you " \
-                "need to try a different color.\n\nThe four-digit code I give you after a guess is in no particular " \
-                "order. This means that if the first digit in my response is :white_check_mark:, that does not " \
-                "*necessarily* mean that the first digit of your guess was correct.\n\nOn every round, type a guess " \
-                "using the following emojis:\n"
+        async with self.ctx.bot.db.execute(
+                "SELECT wins, intro_opt_out FROM mastermind WHERE user_id == ?;", (self.ctx.author.id,)
+        ) as query:
+            resp = await query.fetchone()
 
-        rules += "\n".join([f"{c.value}: {e.value}" for c, e in zip(list(MastermindColors), list(MastermindEscapes))])
-        rules += "\nYou can also use the first letter of a color instead of the emoji.\n**WRITE YOUR ENTIRE CODE " \
-                 "IN ONE MESSAGE. BE CAREFUL - THERE IS NO WAY TO CHANGE YOUR GUESS!**\nRepeat guesses are useless, " \
-                 "so I will ignore you if you try to guess something you've already tried.\n\nBefore you play, a few " \
-                 "hints:\nRemember to use your feedback to your advantage. If you get, for example, " \
-                 ":white_check_mark::white_check_mark::thinking::thinking:, you know that the colors in your latest " \
-                 "guess should not be changed, and that you should keep reordering them until you win.\nA good " \
-                 "starting strategy is to guess as many different colors as possible, then use the feedback to " \
-                 "figure out which colors belong and which don't.\nYou have 24 tries at cracking the code.\n**Please " \
-                 "react with a :white_check_mark: below to start the game.**\nGood luck beating the Mastermind!"
+        if resp:
+            wins, is_opted_out = resp
+        else:
+            wins = 0
+            is_opted_out = 0
 
-        try:
-            msg = await self.ctx.author.send(rules)
-        except discord.Forbidden:
-            msg = await self.ctx.send(rules)
-        except discord.NotFound:  # lol why did you delete your account in the middle of a mastermind game
-            return
+        if not is_opted_out:
+            rules = "**Mastermind rules:**\n\nI have a code of four colors that you need to guess. The possible " \
+                    "colors are black, white, red, blue, yellow, and green. *Repeat colors are possible in the code.*" \
+                    "You get 24 attempts to guess the code before I reveal it.\nEvery time you guess the four-digit " \
+                    "code, I will reply with another four-digit code:\nA :white_check_mark: means your digit is of " \
+                    "the correct color, and is in the right place.\nA :thinking: means your digit is of the correct " \
+                    "color, but it needs to be in a different spot.\nFinally, :x: means your digit is the wrong " \
+                    "color, and you need to try a different color.\n\nThe four-digit code I give you after a guess " \
+                    "is in no particular order. This means that if the first digit in my response is " \
+                    ":white_check_mark:, that does not *necessarily* mean that the first digit of your guess was " \
+                    "correct.\n\nOn every round, type a guess using the following emojis:\n"
 
-        await msg.add_reaction("\U00002705")
-        try:
-            react, user = await self.ctx.bot.wait_for(
-                "reaction_add",
-                check=lambda r, u: u == self.ctx.author and r.emoji == "\U00002705" and r.message.id == msg.id,
-                timeout=60.0
-            )
-        except asyncio.TimeoutError:
-            return
+            rules += "\n".join(
+                [f"{c.value}: {e.value}" for c, e in zip(list(MastermindColors), list(MastermindEscapes))])
+            rules += "\nYou can also use the first letter of a color instead of the emoji.\n**WRITE YOUR ENTIRE CODE " \
+                     "IN ONE MESSAGE. BE CAREFUL - THERE IS NO WAY TO CHANGE YOUR GUESS!**\nRepeat guesses are " \
+                     "useless, so I will ignore you if you try to guess something you've already tried.\n\nBefore " \
+                     "you play, a few hints:\nRemember to use your feedback to your advantage. If you get, for " \
+                     "example, :white_check_mark::white_check_mark::thinking::thinking:, you know that the colors in " \
+                     "your latest guess should not be changed, and that you should keep reordering them until you " \
+                     "win.\nA good starting strategy is to guess as many different colors as possible, then use the " \
+                     "feedback to figure out which colors belong and which don't.\nYou have 24 tries at cracking the " \
+                     "code.""\n**Please react with a :white_check_mark: below to start the game.**\nGood luck " \
+                     "beating the Mastermind!"
+
+            if wins >= 5:
+                rules += f"\n\nP.S.: Since you have won more than 5 games, you can opt out of the introduction " \
+                         f"message (or back in) using `{self.ctx.prefix}{self.ctx.invoked_with} toggleintro`."
+
+            try:
+                msg = await self.ctx.author.send(rules)
+            except discord.Forbidden:
+                msg = await self.ctx.send(rules)
+            except discord.NotFound:  # lol why did you delete your account in the middle of a mastermind game
+                return
+
+            await msg.add_reaction("\U00002705")
+            try:
+                await self.ctx.bot.wait_for(
+                    "reaction_add",
+                    check=lambda r, u: u == self.ctx.author and r.emoji == "\U00002705" and r.message.id == msg.id,
+                    timeout=60.0
+                )
+            except asyncio.TimeoutError:
+                return
 
         while True:
             if self.round >= 25:
@@ -491,6 +508,13 @@ class Mastermind:
                            f"and {currency_prefix}{guesses_count_bonus} for winning in {beaten_at} rounds."
             else:
                 to_send += f"\nYou also earned {currency_prefix}{payout}."
+
+            await self.ctx.bot.db.execute(
+                "INSERT INTO mastermind (user_id, wins, intro_opt_out) VALUES (?, 1, 0) ON CONFLICT (user_id) DO "
+                "UPDATE SET wins = wins + 1;",
+                (self.ctx.author.id,)
+            )
+            await self.ctx.bot.db.commit()
 
         await self.ctx.send(to_send)
 
