@@ -931,7 +931,8 @@ L
                 if not ctx.guild or fetch is None:
                     fetch = await ctx.bot.fetch_user(record[0])
                 emb.add_field(
-                    name=f"`{index + 1}:` {use_potential_nickname(fetch)}", value=f"{record[1]:,} wins",
+                    name=f"`{index + 1}:` {use_potential_nickname(fetch)}",
+                    value=f"{format(Plural(record[1]), 'win')}",
                     inline=False
                 )
             await ctx.send(embed=emb)
@@ -956,8 +957,8 @@ L
             for db_wins, rank in ranking:
                 if db_wins == wins:
                     ranking = rank
-            await ctx.send(f"{use_potential_nickname(user)} is #{ranking:,} out of {record_count:,} total users on "
-                           f"record.")
+            await ctx.send(f"{use_potential_nickname(user)} is #{ranking:,} out of "
+                           f"{format(Plural(record_count), 'total user')} on record.")
 
     @commands.command(aliases=["scan"])
     @commands.guild_only()

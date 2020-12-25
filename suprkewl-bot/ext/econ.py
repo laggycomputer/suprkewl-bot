@@ -169,8 +169,8 @@ class Economy(commands.Cog):
             for db_money, rank in ranking:
                 if db_money == money:
                     ranking = rank
-            await ctx.send(f"{use_potential_nickname(user)} is #{ranking:,} out of {record_count:,} total users on "
-                           f"record.")
+            await ctx.send(f"{use_potential_nickname(user)} is #{ranking:,} out of "
+                           f"{format(Plural(record_count), 'total user')} on record.")
 
     @commands.command(aliases=["wipeeconomy"])
     @commands.is_owner()
