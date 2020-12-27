@@ -545,10 +545,16 @@ class Utilities(commands.Cog):
 
         desc = [c_name[0] for c_name in sniped.description]
         guild = ctx.bot.get_guild(fetched[desc.index("guild_id")])
+        if guild is None:
+            return await ctx.send(":x: Unable to fetch some data.")
         user = ctx.bot.get_user(fetched[desc.index("user_id")])
         if not user:
             user = await ctx.bot.fetch_user(fetched[desc.index("user_id")])
+            if user is None:
+                return await ctx.send(":x: Unable to fetch some data.")
         chnl = discord.utils.get(guild.text_channels, id=fetched[desc.index("channel_id")])
+        if chnl is None:
+            return await ctx.send(":x: Unable to fetch some data.")
         message_id = fetched[desc.index("message_id")]
         msg_content = fetched[desc.index("message")]
 
@@ -591,10 +597,16 @@ class Utilities(commands.Cog):
         e = ctx.default_embed()
         desc = [c_name[0] for c_name in sniped.description]
         guild = ctx.bot.get_guild(fetched[desc.index("guild_id")])
+        if guild is None:
+            return await ctx.send(":x: Unable to fetch some data.")
         user = ctx.bot.get_user(fetched[desc.index("user_id")])
         if not user:
             user = await ctx.bot.fetch_user(fetched[desc.index("user_id")])
+            if user is None:
+                return await ctx.send(":x: Unable to fetch some data.")
         chnl = discord.utils.get(guild.text_channels, id=fetched[desc.index("channel_id")])
+        if chnl is None:
+            return await ctx.send(":x: Unable to fetch some data.")
         message_id = fetched[desc.index("message_id")]
         before = fetched[desc.index("before")]
         after = fetched[desc.index("after")]
