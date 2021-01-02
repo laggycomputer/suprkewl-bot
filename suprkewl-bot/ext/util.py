@@ -37,6 +37,8 @@ from discord.ext import commands
 import gtts
 from PIL import Image
 import pyqrcode
+import importthingamabob
+importthingamabob.import_module_by_path("../bot.py")
 
 from .utils import async_executor, Embedinator, escape_codeblocks, format_json, human_join, human_timedelta
 import config
@@ -278,7 +280,9 @@ class Utilities(commands.Cog):
             await ctx.send("This guild has no banner!")
         else:
             await ctx.send(ctx.guild.banner_url_as(format="png"))
-
+    @commands.command()
+    async def hastebin(self, ctx, text):
+        await ctx.send(bot.post_to_hastebin(text))
     @commands.command()
     @commands.guild_only()
     async def servericon(self, ctx):
