@@ -181,7 +181,7 @@ class SuprKewlBot(commands.Bot):
             if message.guild:
                 if message.channel.permissions_for(message.guild.me).send_messages:
                     if message.guild.me in message.mentions:
-                        ping_images = ("angery,gif", "eyes.png")
+                        ping_images = ("angery.gif", "eyes.png")
 
                         resp = await(
                             await self.db.execute("SELECT prefix FROM guilds WHERE guild_id == ?;", (message.guild.id,))
