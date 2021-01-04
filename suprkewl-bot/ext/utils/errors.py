@@ -34,3 +34,7 @@ class UserInWrongVC(commands.CheckFailure):
 
 class DJRequired(commands.CheckFailure):
     pass
+
+
+class IsCustomBlacklisted(commands.CheckFailure):
+    pass

@@ -32,7 +32,8 @@ from discord.ext import commands
 import lavalink
 
 import config
-from ext.utils import BotNotInVC, Context, DJRequired, linecount, permissions_converter, UserInWrongVC, UserNotInVC
+from ext.utils import BotNotInVC, Context, DJRequired, IsCustomBlacklisted, linecount, permissions_converter, 
+from ext.utils import UserInWrongVC, UserNotInVC
 import redis
 
 
@@ -501,6 +502,16 @@ class SuprKewlBot(commands.Bot):
                 name="DJ role required",
                 value=f":x: There are multiple people listening to music, so you need a role called 'DJ' to run "
                       f"`{ctx.prefix}{ctx.command}`."
+            )
+
+            return await ctx.send(embed=emb)
+
+        elif isinstance(error, IsCustomBlacklisted):
+            emb = ctx.default_embed()
+            emb.add_field(
+                name="Blacklisted command",
+                value=f":x: `{ctx.prefix}{ctx.command}` has bee disabled in this context. Have another user try again, "
+                      f"or try again in another channel, server, or DM."
             )
 
             return await ctx.send(embed=emb)

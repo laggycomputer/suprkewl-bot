@@ -31,7 +31,13 @@ import discord
 from discord.ext import commands
 
 import config
-from .utils import C4, Fighter, ImageEmbedinator, Mastermind, Plural, roll_XdY, use_potential_nickname
+from .utils import C4, Fighter, ImageEmbedinator, IsCustomBlacklisted, Mastermind, Plural, roll_XdY
+from .utils import use_potential_nickname
+
+
+def custom_inspire_blacklist(ctx):
+    if ctx.guild and ctx.guild.id == 707226419993772112:
+        raise IsCustomBlacklisted
 
 
 class Fun(commands.Cog):
@@ -986,20 +992,22 @@ L
         await asyncio.sleep(2)
         await msg.edit(content=None, embed=emb)
 
-    @commands.group(aliases=["inspiro"], invoke_without_command=True)
+    @commands.group(aliases=["inspiro"])
     @commands.cooldown(3, 5, commands.BucketType.user)
+    @commands.check(custom_inspire_blacklist)
     async def inspire(self, ctx):
         """Fetch an AI generated quote for inspiration. (can include expletives occasionally)"""
 
-        async with ctx.bot.session.get("https://inspirobot.me/api?generate=true") as resp:
-            out = await resp.content.read()
-        out = out.decode("utf-8")
+        if ctx.invoked_subcommand is None:
+            async with ctx.bot.session.get("https://inspirobot.me/api?generate=true") as resp:
+                out = await resp.content.read()
+            out = out.decode("utf-8")
 
-        emb = ctx.colored_embed
-        emb.set_image(url=out)
-        await ctx.send(embed=emb)
+            emb = ctx.colored_embed
+            emb.set_image(url=out)
+            await ctx.send(embed=emb)
 
-        self.latest_inspires[ctx.author.id] = out
+            self.latest_inspires[ctx.author.id] = out
 
     @staticmethod
     def _inspire_msg_check(ctx, msg):
