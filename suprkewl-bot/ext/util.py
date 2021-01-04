@@ -904,7 +904,7 @@ class Utilities(commands.Cog):
                             ) or data["player"]["packageRank"]
                         else:
                             pass
-        emb.description = discord.utils.strip_markdown(f"{found_rank or '[NON]'} {ign}")
+        emb.description = discord.utils.escape_markdown(f"{found_rank or '[NON]'} {ign}")
 
         if "networkExp" in data["player"]:
             exp = data["player"]["networkExp"]
