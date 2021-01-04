@@ -32,7 +32,7 @@ from discord.ext import commands
 import lavalink
 
 import config
-from ext.utils import BotNotInVC, Context, DJRequired, IsCustomBlacklisted, linecount, permissions_converter, 
+from ext.utils import BotNotInVC, Context, DJRequired, IsCustomBlacklisted, linecount, permissions_converter
 from ext.utils import UserInWrongVC, UserNotInVC
 import redis
 
