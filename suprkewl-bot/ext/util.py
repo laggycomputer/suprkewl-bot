@@ -870,6 +870,7 @@ class Utilities(commands.Cog):
 
         found_rank = None
         rank_lookup = {
+            "YOUTUBER": "YOUTUBE",
             "SUPERSTAR": "MVP++",
             "MVP_PLUS": "MVP+",
             "MVP": "MVP",
@@ -887,7 +888,7 @@ class Utilities(commands.Cog):
                     found_rank = found_rank[:index] + found_rank[index + 2:]
         else:
             if "rank" in data["player"]:
-                found_rank = "[%s]" % rank_lookup.get(data["player"]["rank"], None) or data["player"]["rank"]
+                found_rank = "[%s]" % (rank_lookup.get(data["player"]["rank"], None) or data["player"]["rank"])
             else:
                 if "monthlyPackageRank" in data["player"]:
                     found_rank = "[%s]" % rank_lookup.get(
