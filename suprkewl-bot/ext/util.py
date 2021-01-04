@@ -890,7 +890,7 @@ class Utilities(commands.Cog):
             if "rank" in data["player"]:
                 found_rank = "[%s]" % (rank_lookup.get(data["player"]["rank"], None) or data["player"]["rank"])
             else:
-                if "monthlyPackageRank" in data["player"]:
+                if "monthlyPackageRank" in data["player"] and data["player"]["monthlyPackageRank"] != "NONE":
                     found_rank = "[%s]" % rank_lookup.get(
                         data["player"]["monthlyPackageRank"], None
                     ) or data["player"]["monthlyPackageRank"]
