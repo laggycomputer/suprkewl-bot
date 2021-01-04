@@ -135,6 +135,7 @@ async def name_resolve(ctx, ign, *, silent=False):
 
     if get_by_name is not None:
         uuid = get_by_name["id"]
+        ign = get_by_name["name"]
     else:
         try:
             uuid = ign
