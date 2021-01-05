@@ -924,7 +924,7 @@ class Utilities(commands.Cog):
                       value=f"{first_login.strftime(date_format)} ({human_timedelta(first_login, brief=True)})")
         is_online = False
 
-        if "lastLogin" in data["player"]:
+        if "lastLogin" in data["player"] and "lastLogout" in data["player"]:
             last_login = datetime.datetime.utcfromtimestamp(data["player"]["lastLogin"] // 1000)
             emb.add_field(name="Last login",
                           value=f"{last_login.strftime(date_format)} ({human_timedelta(last_login, brief=True)})")
