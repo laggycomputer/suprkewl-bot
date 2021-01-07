@@ -260,15 +260,13 @@ class Utilities(commands.Cog):
 
             @async_executor()
             def save():
-                fname = f"{ctx.message.id}.mp3"
-                tts.save(fname)
-                fp = discord.File(fname, "out.mp3")
-                return [fname, fp]
+                fp = io.BytesIO()
+                tts.write_to_fp(fp)
+                fp.seek(0)
+                fp = discord.File(fp, "out.mp3")
+                return fp
 
-            fname, fp = await save()
-
-        await ctx.send(":white_check_mark:", file=fp)
-        os.remove(fname)
+        await ctx.send(":white_check_mark:", file=await save())
 
     @commands.command()
     @commands.guild_only()
