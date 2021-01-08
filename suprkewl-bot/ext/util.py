@@ -940,8 +940,12 @@ class Utilities(commands.Cog):
                     should_brk = True
             if not should_brk:
                 game = status_data["session"]["gameType"].lower()
-                version = data["player"]["mcVersionRp"]
-                emb.add_field(name="Online?", value=f"Yes, in game `{game}` on game version `{version}`.")
+                version = data["player"].get("mcVersionRp", None)
+                online_field = f"Yes, in game `{game}`"
+                if version is not None:
+                    online_field += f" on game version `{version}`"
+                online_field += "."
+                emb.add_field(name="Online?", value=online_field)
         else:
             if "lastLogout" in data["player"]:
                 logged_out_at = datetime.datetime.utcfromtimestamp(data["player"]["lastLogout"] // 1000)
