@@ -634,6 +634,7 @@ class SuprKewlBot(commands.Bot):
             "I ate a clock just now - it was rather time-consuming.",
             "I dream of a better world where chickens can cross the road without having their motives called into"
             " serious question by members of another species.",
+            "I think you're hot... but you're a dumpster fire.",
             "If coronavirus doesn't take you out... can I?",
             "If plan A fails, don't worry; there are still 25 more letters in the alphabet.",
             "I saw you from across the bar. Stay there.",
