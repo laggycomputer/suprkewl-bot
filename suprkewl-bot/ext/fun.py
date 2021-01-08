@@ -38,6 +38,7 @@ from .utils import use_potential_nickname
 def custom_inspire_blacklist(ctx):
     if ctx.guild and ctx.guild.id == 707226419993772112:
         raise IsCustomBlacklisted
+    return True
 
 
 class Fun(commands.Cog):
