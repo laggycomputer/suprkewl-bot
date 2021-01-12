@@ -1081,7 +1081,8 @@ class Utilities(commands.Cog):
         coins = bw_data.get("coins", 0)
         emb.add_field(name="Coins", value=f"{coins:,}")
 
-        emb.add_field(name="Full stats here:", value=f"[Plancke](https://plancke.io/hypixel/player/stats/{uuid})",
+        emb.add_field(name="Full stats here:",
+                      value=f"[Plancke](https://plancke.io/hypixel/player/stats/{uuid}#BedWars)",
                       inline=False)
         await msg.edit(content=None, embed=emb)
 
