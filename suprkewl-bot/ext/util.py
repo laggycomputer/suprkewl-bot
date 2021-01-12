@@ -42,6 +42,37 @@ from .utils import async_executor, Embedinator, escape_codeblocks, format_json, 
 import config
 
 
+TO_READABLE_GAME = {
+    "QUAKECRAFT": "Quake",
+    "WALLS": "Walls",
+    "PAINTBALL": "Paintball",
+    "SURVIVAL_GAMES": "Blitz Survival Games",
+    "TNTGAMES": "TNT Games",
+    "VAMPIREZ": "VampireZ",
+    "WALLS3": "Mega Walls",
+    "ARCADE": "Arcade",
+    "ARENA": "Arena",
+    "UHC": "UHC Champions",
+    "MCGO": "Cops and Crims",
+    "BATTLEGROUND": "Warlords",
+    "SUPER_SMASH": "Smash Heroes",
+    "GINGERBREAD": "Turbo Kart Racers",
+    "HOUSING": "Housing",
+    "SKYWARS": "SkyWars",
+    "TRUE_COMBAT": "Crazy Walls",
+    "SPEED_UHC": "Speed UHC",
+    "SKYCLASH": "SkyClash",
+    "LEGACY": "Classic Games",
+    "PROTOTYPE": "Prototype",
+    "BEDWARS": "Bed Wars",
+    "MURDER_MYSTERY": "Murder Mystery",
+    "BUILD_BATTLE": "Build Battle",
+    "DUELS": "Duels",
+    "SKYBLOCK": "SkyBlock",
+    "PIT": "Pit"
+}
+
+
 token_re = re.compile(r"[a-zA-Z0-9]{24}\.[a-zA-Z0-9]{6}\.[a-zA-Z0-9_\-]{27}|mfa\.[a-zA-Z0-9_\-]{84}")
 EPOCH = 1420070400000
 
@@ -951,9 +982,10 @@ class Utilities(commands.Cog):
                     # What?!
                     should_brk = True
             if not should_brk:
-                game = status_data["session"]["gameType"].lower()
+                game = status_data["session"]["gameType"]
                 version = data["player"].get("mcVersionRp", None)
-                online_field = f"Yes, in game `{game}`"
+                converted = TO_READABLE_GAME.get(game, f"`{game.lower()}`")
+                online_field = f"Yes, playing {converted}"
                 if version is not None:
                     online_field += f" on game version `{version}`"
                 online_field += "."
