@@ -144,7 +144,7 @@ L
             " water.",
             "They say people look like their pets. I'm assuming you have an elephant?",
             "{}, I'll never forget the first time we met, although I'll keep trying.",
-            "{}, I don't I can think of an insult bad enough for you.",
+            "{}, I don't think I can think of an insult bad enough for you.",
             "{}, There are more calories in your stomach than in the local supermarket!",
             "{}, You shouldn't play hide and seek, no one would look for you.",
             "{}, If I gave you a penny for your thoughts, I'd get change.",
