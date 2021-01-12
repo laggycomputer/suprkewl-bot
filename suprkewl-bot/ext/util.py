@@ -1012,6 +1012,79 @@ class Utilities(commands.Cog):
                       inline=False)
         await msg.edit(content=None, embed=emb)
 
+    @commands.command(name="bedwars", aliases=["bw", "bedwar", "bewdar"])
+    @commands.is_owner()
+    async def bedwars(self, ctx, *, ign):
+        """Get BedWars statistics on an IGN."""
+
+        resolve_resp = await name_resolve(ctx, ign)
+        if resolve_resp is None:
+            return
+        uuid, ign = resolve_resp
+
+        params = dict(key=config.hypixel_key, uuid=uuid)
+        async with ctx.bot.session.get("https://api.hypixel.net/player", params=params) as resp:
+            data = await resp.json()
+
+        if not data["success"]:
+            return await ctx.send(":x: Something went wrong fetching your data.")
+
+        if data["player"] is None:  # Either this account is not in the Hypixel DB or Mojang is returning garbage.
+            return await ctx.send(
+                "Interesting, a new error. Either the account you requested has never logged into Hypixel, or "
+                "something else went very wrong on Mojang's end."
+            )
+
+        msg = await ctx.send("Fetching...")
+
+        emb = ctx.default_embed()
+        emb.set_thumbnail(url=f"https://crafatar.com/renders/body/{uuid}?overlay")
+
+        emb.description = discord.utils.escape_markdown(f"{determine_rank(data)} {ign}")
+
+        bw_data = data["player"]["stats"]["Bedwars"]
+        winstreak = bw_data.get("winstreak", 0)
+        emb.add_field(name="Winstreak", value=f"{winstreak:,}")
+        winrate = rate(bw_data.get("wins_bedwars", 0), bw_data.get("losses_bedwars", 0))
+        emb.add_field(name="Winrate", value=winrate)
+
+        def bw_stars(exp):
+            level = int(100 * int(exp / 487000))
+            exp %= 487000
+            if exp < 500:
+                return level + exp / 500
+            level += 1
+            if exp < 1500:
+                return level + (exp - 500) / 1000
+            level += 1
+            if exp < 3500:
+                return level + (exp - 1500) / 2000
+            level += 1
+            if exp < 7000:
+                return level + (exp - 3500) / 3500
+            level += 1
+            exp -= 7000
+            return level + exp / 5000
+
+        stars = bw_stars(bw_data.get("Experience", 0))
+        stars, decimal = divmod(stars, 1)
+        stars = int(stars)
+        emb.add_field(name="Stars", value=f"{stars:,}, {round(decimal * 100)}% to next")
+
+        kdr = rate(bw_data.get("kills_bedwars", 0), bw_data.get("deaths_bedwars", 0))
+        fkdr = rate(bw_data.get("final_kills_bedwars", 0), bw_data.get("final_deaths_bedwars", 0))
+        emb.add_field(name="KDR (FKDR)", value=f"{kdr} ({fkdr})")
+
+        bedrate = rate(bw_data.get("beds_broken_bedwars", 0), bw_data.get("beds_lost_bedwars", 0))
+        emb.add_field(name="Bed rate (beds broken/beds lost)", value=bedrate)
+
+        coins = bw_data.get("coins", 0)
+        emb.add_field(name="Coins", value=f"{coins:,}")
+
+        emb.add_field(name="Full stats here:", value=f"[Plancke](https://plancke.io/hypixel/player/stats/{uuid})",
+                      inline=False)
+        await msg.edit(content=None, embed=emb)
+
     @commands.group(invoke_without_command=True)
     @commands.cooldown(10, 10, commands.BucketType.user)
     async def qr(self, ctx):
