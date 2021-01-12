@@ -154,7 +154,10 @@ L
             "I don't forget a single face, but in your case, {}, I'll make an exception.",
             "Yo {}, looks like you traded in your neck for an extra chin...",
             "Oh no, look at you, {}! Was anybody else hurt in that accident?",
-            "I would roast {}, but I'm told burning trash is bad for the environment."
+            "I would roast {}, but I'm told burning trash is bad for the environment.",
+            "Hey {}, I thought of you today. It reminded me to take out the trash.",
+            "{}, you're like a cloud. When you disappear, it's a beautiful day.",
+            "{}, I would make a joke about your life, but I see life has beaten me to it."
         ]
 
         await ctx.send(random.choice(roasts).replace("{}", target.display_name))
