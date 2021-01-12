@@ -1013,7 +1013,6 @@ class Utilities(commands.Cog):
         await msg.edit(content=None, embed=emb)
 
     @commands.command(name="bedwars", aliases=["bw", "bedwar", "bewdar"])
-    @commands.is_owner()
     async def bedwars(self, ctx, *, ign):
         """Get BedWars statistics on an IGN."""
 
