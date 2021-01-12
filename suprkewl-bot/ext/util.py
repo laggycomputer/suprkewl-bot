@@ -162,6 +162,55 @@ async def insert_past_names(db, names, player_uuid):
         await db.commit()
 
 
+def determine_rank(player_data):
+    found_rank = None
+    rank_lookup = {
+        "YOUTUBER": "YOUTUBE",
+        "SUPERSTAR": "MVP++",
+        "MVP_PLUS": "MVP+",
+        "MVP": "MVP",
+        "VIP_PLUS": "VIP+",
+        "VIP": "VIP",
+        "NONE": "NON",
+        "NORMAL": "NON"
+    }
+
+    if "prefix" in player_data["player"]:
+        found_rank = player_data["player"]["prefix"]
+        while "§" in found_rank:
+            index = found_rank.index("§")
+            if index != len(found_rank) - 1:
+                found_rank = found_rank[:index] + found_rank[index + 2:]
+    else:
+        if "rank" in player_data["player"]:
+            found_rank = "[%s]" % (
+                    rank_lookup.get(player_data["player"]["rank"], None) or player_data["player"]["rank"])
+        else:
+            if "monthlyPackageRank" in player_data["player"] and player_data["player"]["monthlyPackageRank"] != "NONE":
+                found_rank = "[%s]" % rank_lookup.get(
+                    player_data["player"]["monthlyPackageRank"], None
+                ) or player_data["player"]["monthlyPackageRank"]
+            else:
+                if "newPackageRank" in player_data["player"]:
+                    found_rank = "[%s]" % rank_lookup.get(
+                        player_data["player"]["newPackageRank"], None) or player_data["player"]["newPackageRank"]
+                else:
+                    if "packageRank" in player_data["player"]:
+                        found_rank = "[%s]" % rank_lookup.get(
+                            player_data["player"]["packageRank"], None
+                        ) or player_data["player"]["packageRank"]
+                    else:
+                        pass
+    return found_rank or "[NON]"
+
+
+def rate(good_count, bad_count):
+    if bad_count == 0:
+        bad_count = 1
+
+    return f"{round(good_count / bad_count, 3)} ({good_count:,}/{bad_count:,})"
+
+
 class Utilities(commands.Cog):
 
     @commands.command(
@@ -866,44 +915,7 @@ class Utilities(commands.Cog):
         emb = ctx.default_embed()
         emb.set_thumbnail(url=f"https://crafatar.com/renders/body/{uuid}?overlay")
 
-        found_rank = None
-        rank_lookup = {
-            "YOUTUBER": "YOUTUBE",
-            "SUPERSTAR": "MVP++",
-            "MVP_PLUS": "MVP+",
-            "MVP": "MVP",
-            "VIP_PLUS": "VIP+",
-            "VIP": "VIP",
-            "NONE": "NON",
-            "NORMAL": "NON"
-        }
-
-        if "prefix" in data["player"]:
-            found_rank = data["player"]["prefix"]
-            while "§" in found_rank:
-                index = found_rank.index("§")
-                if index != len(found_rank) - 1:
-                    found_rank = found_rank[:index] + found_rank[index + 2:]
-        else:
-            if "rank" in data["player"]:
-                found_rank = "[%s]" % (rank_lookup.get(data["player"]["rank"], None) or data["player"]["rank"])
-            else:
-                if "monthlyPackageRank" in data["player"] and data["player"]["monthlyPackageRank"] != "NONE":
-                    found_rank = "[%s]" % rank_lookup.get(
-                        data["player"]["monthlyPackageRank"], None
-                    ) or data["player"]["monthlyPackageRank"]
-                else:
-                    if "newPackageRank" in data["player"]:
-                        found_rank = "[%s]" % rank_lookup.get(
-                            data["player"]["newPackageRank"], None) or data["player"]["newPackageRank"]
-                    else:
-                        if "packageRank" in data["player"]:
-                            found_rank = "[%s]" % rank_lookup.get(
-                                data["player"]["packageRank"], None
-                            ) or data["player"]["packageRank"]
-                        else:
-                            pass
-        emb.description = discord.utils.escape_markdown(f"{found_rank or '[NON]'} {ign}")
+        emb.description = discord.utils.escape_markdown(f"{determine_rank(data)} {ign}")
 
         if "networkExp" in data["player"]:
             exp = data["player"]["networkExp"]
