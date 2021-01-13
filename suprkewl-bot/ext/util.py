@@ -1047,8 +1047,8 @@ class Utilities(commands.Cog):
         bw_data = data["player"]["stats"]["Bedwars"]
         winstreak = bw_data.get("winstreak", 0)
         emb.add_field(name="Winstreak", value=f"{winstreak:,}")
-        winrate = rate(bw_data.get("wins_bedwars", 0), bw_data.get("losses_bedwars", 0))
-        emb.add_field(name="Winrate", value=winrate)
+        winloss = rate(bw_data.get("wins_bedwars", 0), bw_data.get("losses_bedwars", 0))
+        emb.add_field(name="Win/Loss", value=winloss)
 
         def bw_stars(exp):
             level = int(100 * int(exp / 487000))
