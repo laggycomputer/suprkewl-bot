@@ -134,10 +134,8 @@ L
             " way,"
             " can you even read this?",
             "{}, I fart to make you smell better.",
-            "{}, Your parents hated you so much your bath toys were an iron and a toaster."
-            " ~~go commit toaster bath~~",
-            "{}, Why don't you check eBay and see if they have a life for sale?",
-            "{}, You bring everyone a lot of joy, when you leave the room.",
+            "{}, why don't you check eBay and see if they have a life for sale?",
+            "{}, you bring everyone a lot of joy, when you leave the room.",
             "{}, you're as bright as a black hole, and twice as dense.",
             "{}, what'll you do to get a face after that baboon wants his face back?",
             "{}, I don't exactly hate you, but if you were on fire and I had water, I'd drink the"
