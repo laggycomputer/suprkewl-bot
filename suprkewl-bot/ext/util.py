@@ -235,11 +235,14 @@ def determine_rank(player_data):
     return found_rank or "[NON]"
 
 
-def rate(good_count, bad_count):
+def rate(good_count, bad_count, verbose=True):
     if bad_count == 0:
         bad_count = 1
 
-    return f"{round(good_count / bad_count, 3)} ({good_count:,}/{bad_count:,})"
+    if verbose:
+        return f"{round(good_count / bad_count, 3)} ({good_count:,}/{bad_count:,})"
+    else:
+        return f"{round(good_count / bad_count, 3)}"
 
 
 class Utilities(commands.Cog):
@@ -1077,8 +1080,19 @@ class Utilities(commands.Cog):
         bedrate = rate(bw_data.get("beds_broken_bedwars", 0), bw_data.get("beds_lost_bedwars", 0))
         emb.add_field(name="Bed rate (beds broken/beds lost)", value=bedrate)
 
+        games_played = bw_data.get("wins_bedwars", 0) + bw_data.get("losses_bedwars", 0)
+
         coins = bw_data.get("coins", 0)
         emb.add_field(name="Coins", value=f"{coins:,}")
+
+        kpg = rate(bw_data.get("kills_bedwars", 0), games_played, verbose=False)
+        emb.add_field(name="Average kills/game", value=kpg)
+
+        fkpg = rate(bw_data.get("final_kills_bedwars", 0), games_played, verbose=False)
+        emb.add_field(name="Average final kills/game", value=fkpg)
+
+        bpg = rate(bw_data.get("beds_broken_bedwars", 0), games_played, verbose=False)
+        emb.add_field(name="Average beds/game", value=bpg)
 
         emb.add_field(name="Full stats here:",
                       value=f"[Plancke](https://plancke.io/hypixel/player/stats/{uuid}#BedWars)",
