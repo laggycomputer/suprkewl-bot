@@ -629,6 +629,7 @@ class SuprKewlBot(commands.Bot):
             "Did you know? If you are in a DM with me, you don't need to use a prefix.",
             "Don't run the code and no errors will appear.",
             "Don't watch the clock. Do what it does - keep moving.",
+            "Everything in this universe is either a potato or not a potato.",
             "Hey babe! Can I buy- sorry- ship you a drink?",
             "I am Nobody, nobody is perfect, therefore I am perfect. - Dandi Daley Mackall",
             "I ate a clock just now - it was rather time-consuming.",
