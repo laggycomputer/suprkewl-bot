@@ -558,7 +558,7 @@ class SuprKewlBot(commands.Bot):
         playing_statuses = [
             "",
             "and plotting pranks",
-            "at a robot party, brb in a bit",
+            "at a robot party, brb",
             "being improved!",
             "being open source",
             "being SuprKewl!",
