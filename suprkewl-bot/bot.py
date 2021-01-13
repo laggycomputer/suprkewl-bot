@@ -556,7 +556,7 @@ class SuprKewlBot(commands.Bot):
         await self.wait_until_ready()
         await asyncio.sleep(3)  # Sleep such that all users are loaded
         playing_statuses = [
-            " ",
+            "",
             "and plotting pranks",
             "at a robot party, brb in a bit",
             "being improved!",
