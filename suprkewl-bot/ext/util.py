@@ -267,7 +267,9 @@ class Utilities(commands.Cog):
                 return [fname, fp]
 
             fname, fp = await save()
-
+        channel = ctx.author.voice.channel
+        context = await channel.connect()
+        context.play(discord.FFmpegPCMAudio(fname))
         await ctx.send(":white_check_mark:", file=fp)
         os.remove(fname)
 
