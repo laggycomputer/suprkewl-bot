@@ -312,7 +312,11 @@ class BotMeta(commands.Cog, name="Bot Meta"):
             module = obj.callback.__module__
             filename = src.co_filename
 
-        lines, firstlineno = inspect.getsourcelines(src)
+        try:
+            lines, firstlineno = inspect.getsourcelines(src)
+        except OSError:
+            return await ctx.send(":x: This command was declared inline, so source code is not available.")
+
         if not module.startswith("discord"):
             if module.startswith("jishaku"):
                 source_url = "https://github.com/Gorialis/jishaku/blob/master"
