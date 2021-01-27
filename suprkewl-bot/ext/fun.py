@@ -31,7 +31,7 @@ import discord
 from discord.ext import commands
 
 import config
-from .utils import C4, Fighter, ImageEmbedinator, IsCustomBlacklisted, Mastermind, Plural, roll_XdY
+from .utils import C4, Fighter, ImageEmbedinator, IsCustomBlacklisted, Mastermind, purge_from_list, Plural, roll_XdY
 from .utils import use_potential_nickname
 
 
@@ -507,9 +507,7 @@ L
                 usrinput = await ctx.bot.wait_for("message", check=check, timeout=30.0)
             except asyncio.TimeoutError:
                 await ctx.send("it timed out noobs")
-                del self.uids_fighting[self.uids_fighting.index(ctx.author.id)]
-                del self.uids_fighting[self.uids_fighting.index(target.id)]
-                return
+                return purge_from_list(self.uids_fighting, ctx.author.id, target.id)
 
             if usrinput.content.lower().startswith("block"):
                 currentaction = f"{find_turn().user.mention} is bloccing"
@@ -563,9 +561,7 @@ L
                     f"{find_turn().user.mention} and {find_not_turn().user.mention} get friendly and the fight's"
                     f" over."
                 )
-                del self.uids_fighting[self.uids_fighting.index(ctx.author.id)]
-                del self.uids_fighting[self.uids_fighting.index(target.id)]
-                return
+                return purge_from_list(self.uids_fighting, ctx.author.id, target.id)
 
             find_not_turn().health -= damage
             if find_not_turn().health < 0:
@@ -615,8 +611,7 @@ L
             f"Looks like {win_mention} defeated {lose_mention} with {findwin().health} health left!"
         )
 
-        del self.uids_fighting[self.uids_fighting.index(ctx.author.id)]
-        del self.uids_fighting[self.uids_fighting.index(target.id)]
+        purge_from_list(self.uids_fighting, ctx.author.id, target.id)
 
     @commands.command(
         description="Reacts with a sheep emoji to sheep-related messages. Send `sk!stop` to end the sheepiness."
@@ -832,8 +827,7 @@ L
         board = C4(ctx.author, member, ctx)
         await board.do_game()
 
-        del self.uids_c4ing[self.uids_c4ing.index(ctx.author.id)]
-        del self.uids_c4ing[self.uids_c4ing.index(member.id)]
+        purge_from_list(self.uids_c4ing, ctx.author.id, member.id)
 
     @commands.group(aliases=["mm"], invoke_without_command=True)
     @commands.bot_has_permissions(add_reactions=True)
@@ -862,8 +856,8 @@ L
         game = Mastermind(ctx)
         await game.run()
 
-        del self.channelids_masterminding[self.channelids_masterminding.index(ctx.channel.id)]
-        del self.uids_masterminding[self.uids_masterminding.index(ctx.author.id)]
+        purge_from_list(self.channelids_masterminding, ctx.channel.id)
+        purge_from_list(self.uids_masterminding, ctx.author.id)
 
     @mastermind.command(name="rules", aliases=["r"])
     async def mastermind_rules(self, ctx):
