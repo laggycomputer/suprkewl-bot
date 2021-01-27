@@ -44,6 +44,13 @@ def custom_inspire_blacklist(ctx):
 class Fun(commands.Cog):
     def __init__(self):
         self.latest_inspires = dict()
+        self.uids_fighting = []
+        self.channelids_sheeping = []
+        self.channelids_ducking = []
+        self.channelids_dogging = []
+        self.uids_c4ing = []
+        self.channelids_masterminding = []
+        self.uids_masterminding = []
 
     @commands.command(
         description="A bunch of lenny faces."
@@ -352,7 +359,7 @@ L
         if target == ctx.author:
             return await ctx.send(":x: You can't fight yourself!")
 
-        if (await ctx.bot.redis.exists(f"{ctx.author.id}:fighting")):
+        if ctx.author.id in self.uids_fighting:
             emb = ctx.default_embed()
             emb.description = f"{ctx.author.mention} :x: You can't fight multiple people at once! You're not Bruce" \
                 f" Lee."
@@ -361,7 +368,7 @@ L
             await ctx.send(embed=emb, file=fp)
 
             return
-        if (await ctx.bot.redis.exists(f"{target.id}:fighting")):
+        if target.id in self.uids_fighting:
             emb = ctx.default_embed()
             emb.description = f"{ctx.author.mention} :x: Don't make {target.mention} fight multiple people at once!" \
                 f" They're not Bruce Lee."
@@ -372,8 +379,8 @@ L
 
             return await ctx.send(embed=emb, file=fp)
 
-        await ctx.bot.redis.set(f"{ctx.author.id}:fighting", "fighting")
-        await ctx.bot.redis.set(f"{target.id}:fighting", "fighting")
+        self.uids_fighting.append(ctx.author.id)
+        self.uids_fighting.append(target.id)
 
         await ctx.send(":white_check_mark: Starting fight...")
 
@@ -500,7 +507,9 @@ L
                 usrinput = await ctx.bot.wait_for("message", check=check, timeout=30.0)
             except asyncio.TimeoutError:
                 await ctx.send("it timed out noobs")
-                return await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
+                del self.uids_fighting[self.uids_fighting.index(ctx.author.id)]
+                del self.uids_fighting[self.uids_fighting.index(target.id)]
+                return
 
             if usrinput.content.lower().startswith("block"):
                 currentaction = f"{find_turn().user.mention} is bloccing"
@@ -554,7 +563,9 @@ L
                     f"{find_turn().user.mention} and {find_not_turn().user.mention} get friendly and the fight's"
                     f" over."
                 )
-                return await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
+                del self.uids_fighting[self.uids_fighting.index(ctx.author.id)]
+                del self.uids_fighting[self.uids_fighting.index(target.id)]
+                return
 
             find_not_turn().health -= damage
             if find_not_turn().health < 0:
@@ -604,7 +615,8 @@ L
             f"Looks like {win_mention} defeated {lose_mention} with {findwin().health} health left!"
         )
 
-        await ctx.bot.redis.delete(f"{ctx.author.id}:fighting", f"{target.id}:fighting")
+        del self.uids_fighting[self.uids_fighting.index(ctx.author.id)]
+        del self.uids_fighting[self.uids_fighting.index(target.id)]
 
     @commands.command(
         description="Reacts with a sheep emoji to sheep-related messages. Send `sk!stop` to end the sheepiness."
@@ -612,8 +624,8 @@ L
     async def sheep(self, ctx):
         """React to messages with a sheep emoji."""
 
-        if not (await ctx.bot.redis.exists(f"{ctx.channel.id}:sheep")):
-            await ctx.bot.redis.set(f"{ctx.channel.id}:sheep", "baa")
+        if ctx.channel.id not in self.channelids_sheeping:
+            self.channelids_sheeping.append(ctx.channel.id)
             m = ctx.message
 
             with contextlib.suppress(discord.HTTPException):
@@ -629,7 +641,7 @@ L
                     with contextlib.suppress(discord.HTTPException):
                         await m.add_reaction("\U0001F411")
 
-            await ctx.bot.redis.delete(f"{ctx.channel.id}:sheep")
+            del self.channelids_sheeping[self.channelids_sheeping.index(ctx.channel.id)]
 
             await ctx.send(":white_check_mark: Done.")
         else:
@@ -641,8 +653,8 @@ L
     async def duck(self, ctx):
         """React to messages with a duck emoji."""
 
-        if not (await ctx.bot.redis.exists(f"{ctx.channel.id}:duck")):
-            await ctx.bot.redis.set(f"{ctx.channel.id}:duck", "kwack")
+        if ctx.channel.id not in self.channelids_ducking:
+            self.channelids_ducking.append(ctx.channel.id)
             m = ctx.message
 
             await m.add_reaction("\U0001F986")
@@ -659,7 +671,7 @@ L
                 if any(i in m.content.lower() for i in ["duck", "duk", "🦆", "ducc"]) or r:
                     await m.add_reaction("\U0001F986")
 
-            await ctx.bot.redis.delete(f"{ctx.channel.id}:duck")
+            del self.channelids_ducking[self.channelids_ducking.index(ctx.channel.id)]
 
             await ctx.send(":white_check_mark: Done.")
         else:
@@ -671,8 +683,8 @@ L
     async def dog(self, ctx):
         """React to messages with a dog emoji."""
 
-        if not (await ctx.bot.redis.exists(f"{ctx.channel.id}:dog")):
-            await ctx.bot.redis.set(f"{ctx.channel.id}:dog", "bork")
+        if ctx.channel.id not in self.channelids_dogging:
+            self.channelids_dogging.append(ctx.channel.id)
             m = ctx.message
 
             with contextlib.suppress(discord.HTTPException):
@@ -692,7 +704,7 @@ L
                     with contextlib.suppress(discord.HTTPException):
                         await m.add_reaction("\U0001f436")
 
-            await ctx.bot.redis.delete(f"{ctx.channel.id}:dog")
+            del self.channelids_dogging[self.channelids_dogging.index(ctx.channel.id)]
 
             await ctx.send(":white_check_mark: Done.")
         else:
@@ -802,32 +814,33 @@ L
         if member.bot:
             return await ctx.send("You can't play bots!")
 
-        if (await ctx.bot.redis.exists(f"{ctx.author.id}:c4")):
+        if ctx.author.id in self.uids_c4ing:
             emb = ctx.default_embed()
             emb.description = f"{ctx.author.mention} :x: You can't play multiple Connect4 games at once!"
 
             return await ctx.send(embed=emb)
 
-        if (await ctx.bot.redis.exists(f"{member.id}:c4")):
+        if member.id in self.uids_c4ing:
             emb = ctx.default_embed()
             emb.description = f"{ctx.author.mention} :x: {member.mention} is already in a Connect4 game."
 
             return await ctx.send(embed=emb)
 
-        await ctx.bot.redis.set(f"{ctx.author.id}:c4", "c4")
-        await ctx.bot.redis.set(f"{member.id}:c4", "c4")
+        self.uids_c4ing.append(ctx.author.id)
+        self.uids_c4ing.append(member.id)
 
         board = C4(ctx.author, member, ctx)
         await board.do_game()
 
-        await ctx.bot.redis.delete(f"{ctx.author.id}:c4", f"{member.id}:c4")
+        del self.uids_c4ing[self.uids_c4ing.index(ctx.author.id)]
+        del self.uids_c4ing[self.uids_c4ing.index(member.id)]
 
     @commands.group(aliases=["mm"], invoke_without_command=True)
     @commands.bot_has_permissions(add_reactions=True)
     async def mastermind(self, ctx):
         """[VERY SPAMMY] Play Mastermind, with the bot making the code. See the rules subcommand for info."""
 
-        if (await ctx.bot.redis.exists(f"channel{ctx.channel.id}:mm")):
+        if ctx.channel.id in self.channelids_masterminding:
             await ctx.message.add_reaction("\U0000203c")
             try:
                 return await ctx.author.send(
@@ -840,16 +853,17 @@ L
                     "you'd like..."
                 )
 
-        if (await ctx.bot.redis.exists(f"user{ctx.author.id}:mm")):
+        if ctx.author.id in self.uids_masterminding:
             return await ctx.send(":x: You cannot play two Mastermind games at once.")
 
-        await ctx.bot.redis.set(f"user{ctx.author.id}:mm", "mm")
-        await ctx.bot.redis.set(f"channel{ctx.channel.id}:mm", "mm")
+        self.channelids_masterminding.append(ctx.channel.id)
+        self.uids_masterminding.append(ctx.author.id)
 
         game = Mastermind(ctx)
         await game.run()
 
-        await ctx.bot.redis.delete(f"user{ctx.author.id}:mm", f"channel{ctx.channel.id}:mm")
+        del self.channelids_masterminding[self.channelids_masterminding.index(ctx.channel.id)]
+        del self.uids_masterminding[self.uids_masterminding.index(ctx.author.id)]
 
     @mastermind.command(name="rules", aliases=["r"])
     async def mastermind_rules(self, ctx):
