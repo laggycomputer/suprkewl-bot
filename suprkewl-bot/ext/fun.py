@@ -630,17 +630,14 @@ L
                 m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
                 if m is None:
                     break
-                if m.content.lower().startswith("sk!stop") and m.author == ctx.author:
-                    break
                 if any(i in m.content.lower() for i in ["sheep", "shep", "🐑", "ba", "wool"]):
                     with contextlib.suppress(discord.HTTPException):
                         await m.add_reaction("\U0001F411")
 
-            del self.channelids_sheeping[self.channelids_sheeping.index(ctx.channel.id)]
-
-            await ctx.send(":white_check_mark: Done.")
+            purge_from_list(self.channelids_sheeping, ctx.channel.id)
         else:
-            await ctx.send(":x: Don't run this command twice in the same channel! Use `sk!stop` to stop this command.")
+            await ctx.send(":white_check_mark: Done.")
+            purge_from_list(self.channelids_sheeping, ctx.channel.id)
 
     @commands.command(
         description="Reacts with a duck emoji to duck-related messages. Send `sk!stop` to end the quackery."
@@ -660,17 +657,14 @@ L
                 m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
                 if m is None:
                     break
-                if m.content.lower().startswith("sk!stop") and m.author == ctx.author:
-                    break
                 r = re.search(pattern, m.content.lower())
                 if any(i in m.content.lower() for i in ["duck", "duk", "🦆", "ducc"]) or r:
                     await m.add_reaction("\U0001F986")
 
-            del self.channelids_ducking[self.channelids_ducking.index(ctx.channel.id)]
-
-            await ctx.send(":white_check_mark: Done.")
+            purge_from_list(self.channelids_ducking, ctx.channel.id)
         else:
-            await ctx.send(":x: Don't run this command twice in the same channel! Use `sk!stop` to stop this command.")
+            await ctx.send(":white_check_mark: Done.")
+            purge_from_list(self.channelids_ducking, ctx.channel.id)
 
     @commands.command(
         description="Reacts with a dog emoji to dog-related messages. Send `sk!stop` to end the borkiness."
@@ -692,18 +686,15 @@ L
                 m = await ctx.bot.wait_for("message", check=lambda m: m.channel == ctx.channel, timeout=300)
                 if m is None:
                     break
-                if m.content.lower().startswith("sk!stop") and m.author == ctx.author:
-                    break
                 r = any(re.search(p, m.content.lower()) is not None for p in patterns)
                 if r:
                     with contextlib.suppress(discord.HTTPException):
                         await m.add_reaction("\U0001f436")
 
-            del self.channelids_dogging[self.channelids_dogging.index(ctx.channel.id)]
-
-            await ctx.send(":white_check_mark: Done.")
+            purge_from_list(self.channelids_dogging, ctx.channel.id)
         else:
-            await ctx.send(":x: Don't run this command twice in the same channel! Use `sk!stop` to stop this command.")
+            await ctx.send(":white_check_mark: Done.")
+            purge_from_list(self.channelids_dogging, ctx.channel.id)
 
     # From spoo.py
     @commands.command()
