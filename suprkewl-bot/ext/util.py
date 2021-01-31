@@ -1129,7 +1129,7 @@ class Utilities(commands.Cog):
         )
 
     @qr.command(name="read", aliases=["parse", "d", "decode"])
-    async def qr_read(self, ctx, *, img):
+    async def qr_read(self, ctx, *, img=None):
         """Decode a QR code given an URL or attached image."""
 
         converted_img = await process_qr(ctx, img)
