@@ -673,21 +673,24 @@ class Image_(commands.Cog, name="Image",
             await ctx.send(
                 f":white_check_mark: That took about {t} seconds.", file=discord.File(buff, "transform.gif"))
 
-    @commands.command(
-        aliases=["tsi", "tfi"])
+    @commands.command(aliases=["tsi", "tfi"])
     async def transforminteractive(self, ctx):
         """The transform command, except in interactive mode so that you can use other images."""
 
         async def attempt_conversion(message):
+            if message is None:
+                return
             content = message.content
+            if not content:
+                return
             try:
                 u = await commands.MemberConverter().convert(ctx, content)
                 return Image.open(io.BytesIO(await u.avatar_url_as(format="png", size=256).read()))
-            except commands.CommandError:
+            except commands.MemberNotFound:
                 try:
                     u = await commands.UserConverter().convert(ctx, content)
                     return Image.open(io.BytesIO(await u.avatar_url_as(format="png", size=256).read()))
-                except commands.CommandError:
+                except commands.UserNotFound:
                     for a in message.attachments:
                         if a.height:
                             async with ctx.bot.session.get(a.proxy_url) as resp:
@@ -696,14 +699,10 @@ class Image_(commands.Cog, name="Image",
                         async with ctx.bot.session.get(content) as resp:
                             return Image.open(io.BytesIO(await resp.content.read()))
                     except (OSError, aiohttp.InvalidURL, PIL.UnidentifiedImageError):
-                        return None
+                        return
 
         async def verify_message(msg):
-            if msg.author != ctx.author:
-                return
-            if msg.content.startswith("sk!abort"):
-                return True
-            return await attempt_conversion(msg) is not None
+            return ctx.author == msg.author and ctx.channel == msg.channel
 
         await ctx.send(
             f"You are selecting the **start** image. Please do one of the following:\n\nSay `{ctx.prefix}abort` to "
@@ -712,7 +711,10 @@ class Image_(commands.Cog, name="Image",
             f"'Copy Link'. Then paste that into this command.__"
         )
         try:
-            im1 = await attempt_conversion(await ctx.bot.wait_for("message", check=verify_message, timeout=30.0))
+            im1 = await ctx.bot.wait_for("message", check=verify_message, timeout=300.0)
+            im1 = await attempt_conversion(im1)
+            if im1 is None:
+                return await ctx.send("That image is invalid.")
         except asyncio.TimeoutError:
             return await ctx.send(":bangbang: Timed out.")
 
@@ -723,7 +725,10 @@ class Image_(commands.Cog, name="Image",
             f"'Copy Link'. Then paste that into this command.__"
         )
         try:
-            im2 = await attempt_conversion(await ctx.bot.wait_for("message", check=verify_message, timeout=30.0))
+            im2 = await ctx.bot.wait_for("message", check=verify_message, timeout=300.0)
+            im2 = await attempt_conversion(im2)
+            if im2 is None:
+                return await ctx.send("That image is invalid.")
             await ctx.send(":ok_hand: On it.")
         except asyncio.TimeoutError:
             return await ctx.send(":bangbang: Timed out.")
