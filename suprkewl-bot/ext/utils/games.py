@@ -504,7 +504,7 @@ class Mastermind:
 
             currency_prefix = await get_money_prefix(self.ctx)
             if guesses_count_bonus:
-                to_send += f"\nYou also earned {currency_prefix}{payout} - {currency_prefix}15 for beating the game " \
+                to_send += f"\nYou also earned {currency_prefix}{payout}:\n{currency_prefix}15 for beating the game " \
                            f"and {currency_prefix}{guesses_count_bonus} for winning in {beaten_at} rounds."
             else:
                 to_send += f"\nYou also earned {currency_prefix}{payout}."
