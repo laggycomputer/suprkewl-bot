@@ -568,6 +568,7 @@ class SuprKewlBot(commands.Bot):
             "chess with Carlsen",
             "chess with Fischer",
             "chess with Kasparov",
+            "creeper? aw man",
             "creeping through the shadows",
             "doom",
             "eating robot food, brb",
@@ -632,7 +633,6 @@ class SuprKewlBot(commands.Bot):
     @property
     def embed_footer(self):
         return random.choice((
-            "Baby, do you need toilet paper? 'Cause I can be your Prince Charmin.",
             "Baby it's COOOOVID-19 outside...",
             "Did you know? If you are in a DM with me, you don't need to use a prefix.",
             "Don't run the code and no errors will appear.",
@@ -652,7 +652,6 @@ class SuprKewlBot(commands.Bot):
             " day.",
             "Instant gratification takes too long - Carrie Fisher",
             "Interestingly enough, Moses owned the first cloud-synced tablet.",
-            "Is that hand sanitizer in your pocket, or are you happy to stay 6 feet away from me?",
             "It's called a miracle because it doesn't happen.",
             "Just read that 4,153,237 people got married last year, not to cause any trouble but shouldn't that be an"
             " even number?",
@@ -660,7 +659,6 @@ class SuprKewlBot(commands.Bot):
             "May all your bacon burn.",
             "Regex by trial and error: Combining dots slashes and dots until a thing happens.",
             "The center of a donut is 100% fat free.",
-            "Since all the public libraries are closed, I'm checking you out instead.",
             "The first law is that a robot shall not harm a human, or by inaction allow a human to come to harm.",
             "The second law is that a robot shall obey any instruction given to it by a human.",
             "The third law is that a robot shall avoid actions or situations that could cause it to come to harm "
