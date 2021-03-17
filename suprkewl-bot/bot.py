@@ -38,7 +38,6 @@ import redis
 
 
 class SuprKewlBot(commands.Bot):
-
     def __init__(self, extra_owners=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -311,7 +310,6 @@ class SuprKewlBot(commands.Bot):
         await self.db.commit()
 
     async def on_command_error(self, ctx, error):
-
         if hasattr(ctx.command, "on_error"):
             return
 
