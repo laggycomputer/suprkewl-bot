@@ -29,8 +29,7 @@ CREATE TABLE IF NOT EXISTS edit_snipes (
 
 CREATE TABLE IF NOT EXISTS past_igns (
     past_ign VARCHAR(32) Not NULL,
-    uuid1 INTEGER NOT NULL,
-    uuid2 INTEGER NOT NULL
+    uuid BLOB NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS economy (

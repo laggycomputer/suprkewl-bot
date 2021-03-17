@@ -184,11 +184,11 @@ async def insert_past_names(db, names, player_uuid):
     must_commit = False
     for past_name in names:
         if not await (await db.execute(
-                "SELECT uuid1, uuid2 from past_igns WHERE past_ign == ?;", (past_name.lower(),))).fetchall():
+                "SELECT uuid from past_igns WHERE past_ign == ?;", (past_name.lower(),))).fetchall():
             must_commit = True
             await db.execute(
-                "INSERT INTO past_igns (past_ign, uuid1, uuid2) VALUES (?, ?, ?) ON CONFLICT DO NOTHING;",
-                (past_name, uuid_bytes[:8], uuid_bytes[8:]))
+                "INSERT INTO past_igns (past_ign, uuid) VALUES (?, ?) ON CONFLICT DO NOTHING;",
+                (past_name, uuid_bytes))
     if must_commit:
         await db.commit()
 
@@ -723,9 +723,9 @@ class Utilities(commands.Cog):
         ign = ign.replace("-", "")  # This has no affect on names, but works on UUIDs
 
         potential_past_uuids = await (await ctx.bot.db.execute(
-            "SELECT uuid1, uuid2 from past_igns WHERE past_ign == ?;", (ign.lower(),))).fetchall()
+            "SELECT uuid from past_igns WHERE past_ign == ?;", (ign.lower(),))).fetchall()
         if potential_past_uuids is not None:
-            potential_past_uuids = [uuid.UUID(bytes=b"".join(x)).hex for x in potential_past_uuids]
+            potential_past_uuids = [uuid.UUID(bytes=x[0]).hex for x in potential_past_uuids]
             names_to_use = []
             for potential_past_uuid in potential_past_uuids:
                 might_append = (await name_resolve(ctx, potential_past_uuid, silent=True))[1].lower()
