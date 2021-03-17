@@ -120,35 +120,7 @@ class SuprKewlBot(commands.Bot):
         print(discord.utils.oauth_url(self.user.id))
         print("-" * 8)
 
-        query = await (await self.db.execute("SELECT guild_id FROM guilds;")).fetchall()
-        guilds_in_db = [row[0] for row in query]
-        guilds_to_remove = []
-
-        for guild_id in guilds_in_db:
-            if not self.get_guild(guild_id):
-                guilds_to_remove.append(str(guild_id))
-
-        if guilds_to_remove:
-            removal_count = len(guilds_to_remove)
-            guilds_to_remove = ", ".join(guilds_to_remove)
-            await self.db.execute("DELETE FROM guilds WHERE guild_id IN (?);", (guilds_to_remove,))
-            await self.db.commit()
-            logging.info(f"Removed {removal_count} guilds from guild settings database.")
-
-        query = await (await self.db.execute("SELECT DISTINCT guild_id FROM snipes;")).fetchall()
-        guilds_in_db = [row[0] for row in query]
-        guilds_to_remove = []
-
-        for guild_id in guilds_in_db:
-            if not self.get_guild(guild_id):
-                guilds_to_remove.append(str(guild_id))
-
-        if guilds_to_remove:
-            removal_count = len(guilds_to_remove)
-            guilds_to_remove = ", ".join(guilds_to_remove)
-            await self.db.execute("DELETE FROM snipes WHERE guild_id IN (?);", (guilds_to_remove,))
-            await self.db.commit()
-            logging.info(f"Removed messages in {removal_count} guilds from snipes database.")
+        await self.prune_tables()
 
     async def on_message(self, message):
         if not self.is_ready():
@@ -305,9 +277,7 @@ class SuprKewlBot(commands.Bot):
             await self.redis.delete(payload.message_id)
 
     async def on_guild_remove(self, guild):
-        await self.db.execute("DELETE FROM guilds WHERE guild_id == ?;", (guild.id,))
-        await self.db.execute("DELETE FROM snipes WHERE guild_id == ?;", (guild.id,))
-        await self.db.commit()
+        await self.prune_tables(guild.id)
 
     async def on_command_error(self, ctx, error):
         if hasattr(ctx.command, "on_error"):
@@ -669,6 +639,30 @@ class SuprKewlBot(commands.Bot):
             if not await self.is_owner(await self.fetch_user(user_id)):
                 return True, row[0][0]
             return False, 0
+
+    async def prune_tables(self, guild_id=None):
+        TO_PRUNE = ("guilds", "snipes", "edit_snipes")
+
+        if guild_id is None:
+            for table in TO_PRUNE:
+                query = await (await self.db.execute("SELECT guild_id FROM ?;", (table,))).fetchall()
+                guilds_in_db = [row[0] for row in query]
+                guilds_to_remove = []
+
+                for guild_id in guilds_in_db:
+                    if not self.get_guild(guild_id):
+                        guilds_to_remove.append(str(guild_id))
+
+                if guilds_to_remove:
+                    removal_count = len(guilds_to_remove)
+                    guilds_to_remove = ", ".join(guilds_to_remove)
+                    await self.db.execute("DELETE FROM ? WHERE guild_id IN (?);", (table, guilds_to_remove))
+                    await self.db.commit()
+                    logging.info(f"Removed {removal_count} guilds from table '{table}'.")
+        else:
+            for table in TO_PRUNE:
+                await self.db.execute("DELETE FROM ? WHERE guild_id == ?;", (table, guild_id))
+                await self.db.commit()
 
 
 async def get_pre(bot, message):
