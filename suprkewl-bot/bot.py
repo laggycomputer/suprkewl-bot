@@ -97,6 +97,7 @@ class SuprKewlBot(commands.Bot):
             self.session = aiohttp.ClientSession()
         if not self.db:
             self.db = await aiosqlite.connect(config.db_path)
+            self.db.row_factory = aiosqlite.Row
 
         if not self.lavalink:
             self.lavalink = lavalink.Client(self.user.id)
