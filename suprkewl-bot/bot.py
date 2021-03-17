@@ -32,7 +32,7 @@ from discord.ext import commands
 import lavalink
 
 import config
-from ext.utils import BotNotInVC, Context, DJRequired, IsCustomBlacklisted, linecount, permissions_converter
+from ext.utils import BotNotInVC, Context, DJRequired, human_join, IsCustomBlacklisted, linecount, permissions_converter
 from ext.utils import UserInWrongVC, UserNotInVC
 import redis
 
@@ -322,20 +322,7 @@ class SuprKewlBot(commands.Bot):
         error = getattr(error, "original", error)
 
         def perms_list(perms):
-
-            if len(perms) == 0:
-                return None
-            else:
-                if len(perms) == 1:
-                    return permissions_converter[perms[0]]
-                else:
-                    fmt = ""
-                    for i in range(0, len(perms)):
-                        fmt += permissions_converter[i]
-                        fmt += ", "
-                        fmt += f"and {perms[-1]}"
-
-                    return fmt
+            return human_join([permissions_converter[i] for i in perms], final="or")
 
         if isinstance(error, ignored):
             return
