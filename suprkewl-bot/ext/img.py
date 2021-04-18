@@ -701,7 +701,7 @@ class Image_(commands.Cog, name="Image",
                     except (OSError, aiohttp.InvalidURL, PIL.UnidentifiedImageError):
                         return
 
-        async def verify_message(msg):
+        def verify_message(msg):
             return ctx.author == msg.author and ctx.channel == msg.channel
 
         await ctx.send(
