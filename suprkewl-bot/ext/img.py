@@ -711,7 +711,7 @@ class Image_(commands.Cog, name="Image",
             f"'Copy Link'. Then paste that into this command.__"
         )
         try:
-            im1 = await ctx.bot.wait_for("message", check=verify_message, timeout=300.0)
+            im1 = await ctx.bot.wait_for("message", check=verify_message, timeout=30.0)
             im1 = await attempt_conversion(im1)
             if im1 is None:
                 return await ctx.send("That image is invalid.")
@@ -725,7 +725,7 @@ class Image_(commands.Cog, name="Image",
             f"'Copy Link'. Then paste that into this command.__"
         )
         try:
-            im2 = await ctx.bot.wait_for("message", check=verify_message, timeout=300.0)
+            im2 = await ctx.bot.wait_for("message", check=verify_message, timeout=30.0)
             im2 = await attempt_conversion(im2)
             if im2 is None:
                 return await ctx.send("That image is invalid.")
