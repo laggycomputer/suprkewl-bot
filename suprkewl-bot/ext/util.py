@@ -1124,7 +1124,7 @@ class Utilities(commands.Cog):
         fp = discord.File(file, "qr.png")
 
         await ctx.send(
-            "**Warning**: Not all QRs on DIscord are safe! Be careful what you scan, it could compromise your account.",
+            "**Warning**: Not all QRs on Discord are safe! Be careful what you scan, it could compromise your account.",
             file=fp
         )
 
