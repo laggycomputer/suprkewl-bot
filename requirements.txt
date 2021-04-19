@@ -17,4 +17,5 @@ PyLyrics
 pypng
 python-dateutil
 pyqrcode
+sympy
 wheel

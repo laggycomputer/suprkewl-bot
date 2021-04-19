@@ -34,7 +34,7 @@ from PIL import Image
 import PIL.ImageFilter
 import PIL.ImageOps
 
-from .utils import async_executor
+from .utils import async_executor, ways_to_mul_to
 
 
 PWD = os.getcwd()
@@ -317,11 +317,7 @@ def process_sorting(img, img2):
 
     shape = arr.shape
     npixs = shape[0] * shape[1]
-    valid = []
-    for i in range(1, npixs + 1):
-        num = npixs / i
-        if num.is_integer():
-            valid.append((int(num), i))
+    valid = ways_to_mul_to(npixs, 2)
 
     frames = []
     way_back = []

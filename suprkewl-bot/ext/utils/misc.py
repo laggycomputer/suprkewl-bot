@@ -17,8 +17,23 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+from sympy.ntheory import divisors
+
 
 def purge_from_list(sequence, *items):
     for item in items:
         while item in sequence:
             del sequence[sequence.index(item)]
+
+
+def ways_to_mul_to(n, limit):
+    ret = []
+    if limit > 2:
+        for d in divisors(n):
+            for way in ways_to_mul_to(int(n / d), limit - 1):
+                ret.append(list(way) + [d])
+    else:
+        for d in divisors(n):
+            ret.append([d, int(n / d)])
+
+    return list(map(tuple, reversed(ret)))
