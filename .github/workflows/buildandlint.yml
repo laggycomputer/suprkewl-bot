@@ -22,15 +22,17 @@ jobs:
         run: |
           pip3 install -r requirements.txt
           pip3 install flake8
-      - name: Lint
+      - name: Lint (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
         run: python3 -m flake8
-      - name: Lint
+      - name: Lint (Windows)
         if: matrix.os == 'windows-latest'
         run: python -m flake8
-      - name: Compile
+      - name: Compile (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
-        run: find . | grep -E "\.py$" | xargs python3 -m compileall
-      - name: Compile
+        run: python3 -m compileall .
+        working-directory: ./suprkewl-bot
+      - name: Compile (Windows)
         if: matrix.os == 'windows-latest'
-        run: dir /B *.py | python -m compileall
+        run: python -m compileall .
+        working-directory: ./suprkewl-bot
