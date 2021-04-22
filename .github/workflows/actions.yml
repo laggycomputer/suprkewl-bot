@@ -1,4 +1,4 @@
-name: build-and-lint
+name: Lint and compile
 on: [push]
 jobs:
   build:
