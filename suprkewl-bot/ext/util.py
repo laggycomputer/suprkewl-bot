@@ -124,7 +124,7 @@ async def process_qr(ctx, argument):
     try:
         async with ctx.bot.session.get(url) as resp:
             try:
-                img = Image.open(io.BytesIO(await resp.content.read())).convert("RGB")
+                Image.open(io.BytesIO(await resp.content.read())).convert("RGB")
                 is_found = True
             except OSError:
                 await ctx.send(":x: That URL is not an image.")
@@ -136,11 +136,7 @@ async def process_qr(ctx, argument):
     if not is_found:
         return None
 
-    fp = io.BytesIO()
-    img.save(fp, "png")
-    fp.seek(0)
-
-    return fp
+    return url
 
 
 async def name_resolve(ctx, ign, *, silent=False):
@@ -1132,12 +1128,12 @@ class Utilities(commands.Cog):
     async def qr_read(self, ctx, *, img=None):
         """Decode a QR code given an URL or attached image."""
 
-        converted_img = await process_qr(ctx, img)
-        if converted_img is None:
+        converted_url = await process_qr(ctx, img)
+        if converted_url is None:
             return
 
         async with ctx.bot.session.post(
-                "https://api.qrserver.com/v1/read-qr-code/", data={"file": converted_img}) as resp:
+                "https://api.qrserver.com/v1/read-qr-code/", data={"fileurl": converted_url}) as resp:
             out = await resp.json()
 
         try:
