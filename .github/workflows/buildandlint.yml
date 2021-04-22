@@ -7,7 +7,7 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest]
         python-version: ['3.6', '3.7', '3.8']
-    name: Python ${{ matrix.python-version }}
+    name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -23,6 +23,14 @@ jobs:
           pip3 install -r requirements.txt
           pip3 install flake8
       - name: Lint
-        run: python3 -m flake8 || python -m flake8
+        if: matrix.os == 'ubuntu-latest'
+        run: python3 -m flake8
+      - name: Lint
+        if: matrix.os == 'windows-latest'
+        run: python -m flake8
       - name: Compile
-        run: find . | grep -E "\.py$" | xargs python -m compileall || dir /B *.py | python -m compileall
+        if: matrix.os == 'ubuntu-latest'
+        run: find . | grep -E "\.py$" | xargs python3 -m compileall
+      - name: Compile
+        if: matrix.os == 'windows-latest'
+        run: dir /B *.py | python -m compileall
