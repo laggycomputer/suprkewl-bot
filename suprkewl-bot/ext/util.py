@@ -98,11 +98,11 @@ async def download_rtex_file(ctx, data):
 @async_executor()
 def create_qr(data):
     fp = io.BytesIO()
-    qr = pyqrcode.create(data, error="H")
+    qr = pyqrcode.create(data, error="L")
     qr.png(fp)
     fp.seek(0)
     img = Image.open(fp)
-    img = img.resize((550, 550))
+    img = img.resize((img.width * 4, img.height * 4))
     fp = io.BytesIO()
     img.save(fp, "png")
     fp.seek(0)
