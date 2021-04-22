@@ -1,0 +1,28 @@
+name: build-and-lint
+on: [push]
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        python-version: ['3.6', '3.7', '3.8']
+    name: Python ${{ matrix.python-version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+      - name: Update pip
+        run: python -m pip install --upgrade pip
+      - name: Install build and lint dependencies
+        run: |
+          pip3 install -r requirements.txt
+          pip3 install flake8
+      - name: Lint
+        run: python3 -m flake8 || python -m flake8
+      - name: Compile
+        run: find . | grep -E "\.py$" | xargs python -m compileall || dir /B *.py | python -m compileall
