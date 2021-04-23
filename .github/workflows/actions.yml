@@ -1,5 +1,5 @@
 name: Lint and compile
-on: [push]
+on: [push, pull_request]
 jobs:
   build:
     runs-on: ${{ matrix.os }}
