@@ -27,13 +27,13 @@ import platform
 import sys
 import time
 
+import dateutil.parser
 import discord
 from discord.ext import commands
 import pygit2
 
 from .utils import linecount
 from .utils import time as t_utils
-import config
 
 
 # Largely from R. Danny.
@@ -77,10 +77,6 @@ def current_time():
 
 
 async def get_latest_build_status(cs):
-    repo_id = config.travis_repo_id
-    token = config.travis_token
-    time_format = "%Y-%m-%dT%H:%M:%SZ"
-
     def seconds_to_string(seconds):
         if seconds >= 60:
             minutes, seconds = divmod(seconds, 60)
@@ -93,53 +89,66 @@ async def get_latest_build_status(cs):
 
         return ret
 
-    headers = {"Travis-API-Version": "3", "Authorization": f"token {token}"}
-    async with cs.get(
-            f"https://api.travis-ci.com/repo/{repo_id}/branches?include=build.jobs", headers=headers) as resp:
-        text = await resp.json()
-        branches = text["branches"]
+    headers = {"Accept": "application/vnd.github.v3+json"}
+    async with cs.get("https://api.github.com/repos/laggycomputer/suprkewl-bot/branches", headers=headers) as resp:
+        branches = await resp.json()
     ret = {}
 
     for branch in branches:
         key = branch["name"]
         ret[key] = {}
 
-        started_at, finished_at = branch["last_build"]["started_at"], branch["last_build"]["finished_at"]
+        headers = {"Accept": "application/vnd.github.v3+json"}
+        params = dict(branch=key, event="push", per_page="1", page="1")
+        async with cs.get("https://api.github.com/repos/laggycomputer/suprkewl-bot/actions/runs",
+                          headers=headers, params=params) as resp:
+            out = await resp.json()
+            run_id = out["workflow_runs"][0]["id"]
 
-        ret[key]["link"] = f"https://travis-ci.com/" \
-                           f"{branch['repository']['slug']}/builds/{branch['last_build']['id']}"
+        async with cs.get(
+                f"https://api.github.com/repos/laggycomputer/suprkewl-bot/actions/runs/{run_id}/jobs",
+                headers=headers, params=params) as resp:
+            out = await resp.json()
+            workflow_run_info = out["jobs"][0]
 
-        if finished_at is not None:
-            if branch["last_build"]["state"] == "canceled":
+        started_at, completed_at = workflow_run_info["started_at"], workflow_run_info["completed_at"]
+
+        ret[key]["link"] = workflow_run_info["html_url"]
+
+        if completed_at is not None:
+            if workflow_run_info["conclusion"] == "cancelled":
                 val = "Canceled"
             else:
-                duration = seconds_to_string(branch["last_build"]["duration"])
-                job_times = []
-                for job in branch["last_build"]["jobs"]:
-                    job_times.append(round(
-                        (datetime.datetime.strptime(job["finished_at"], time_format)
-                         - datetime.datetime.strptime(job["started_at"], time_format))
+                duration = seconds_to_string(round(
+                    (dateutil.parser.parse(completed_at, ignoretz=True)
+                     - dateutil.parser.parse(started_at, ignoretz=True)).total_seconds()))
+                step_times = []
+                for step in workflow_run_info["steps"]:
+                    if step["conclusion"] == "skipped":  # This job did not need to be run and should be ignored
+                        continue
+                    step_times.append(round(
+                        (dateutil.parser.parse(step["completed_at"], ignoretz=True)
+                         - dateutil.parser.parse(step["started_at"], ignoretz=True))
                         .total_seconds())
                     )  # Round because greatest precision is seconds anyway. This seems to return a float.
-                longest_job_time = seconds_to_string(max(job_times))
+                longest_job_time = seconds_to_string(max(step_times))
 
-                build_status = branch["last_build"]["state"].title()
-                dt = datetime.datetime.strptime(finished_at, time_format)
+                build_status = workflow_run_info["conclusion"].title()
+                dt = dateutil.parser.parse(completed_at, ignoretz=True)
                 offset = t_utils.human_timedelta(dt, accuracy=1)
 
-                val = f"{build_status} {offset}. Ran for a total of {duration}. The longest job took" \
+                val = f"{build_status} {offset}. Ran for a total of {duration}. The longest step took" \
                     f" {longest_job_time}."
             ret[key]["status"] = val
         else:
             val = "Build in progress"
             if started_at is not None:
-
-                dt = datetime.datetime.strptime(started_at, "%Y-%m-%dT%H:%M:%SZ")
+                dt = dateutil.parser.parse(started_at, ignoretz=True)
                 offset = t_utils.human_timedelta(dt, accuracy=1)
 
                 val += " from " + offset
             else:
-                val += " (booting VM)"
+                val += " (queued/booting VM)"
 
             ret[key]["status"] = val
 
@@ -147,26 +156,30 @@ async def get_latest_build_status(cs):
 
 
 async def get_recent_builds_on(cs, branch):
-    repo_id = 9109252
-    token = config.travis_token
-    headers = {"Travis-API-Version": "3", "Authorization": f"token {token}"}
-    async with cs.get(
-            f"https://api.travis-ci.com/repo/{repo_id}/branch/{branch}?include=branch.recent_builds", headers=headers
-    ) as resp:
+    headers = {"Accept": "application/vnd.github.v3+json"}
+    params = dict(branch=branch, event="push", per_page="10", page="1")
+    async with cs.get("https://api.github.com/repos/laggycomputer/suprkewl-bot/actions/runs",
+                      headers=headers, params=params) as resp:
         branch_info = await resp.json()
 
     ret = []
 
-    for build in branch_info["recent_builds"]:
-        if build["finished_at"] is None:
+    for build in branch_info["workflow_runs"]:
+        if build["status"] != "completed":
             ret.append(":clock:")
         else:
-            state_to_emoji = {"passed": ":white_check_mark:", "canceled": ":grey_question:", "errored": ":bangbang:"}
+            state_to_emoji = {
+                "success": ":white_check_mark:", "cancelled": ":stop_button:", "failure": ":bangbang:",
+                "skipped": ":fast_forward:", "action_required": ":thinking:", "timed_out": ":bangbang:"
+            }
 
-            if build["state"] in state_to_emoji:
-                ret.append(state_to_emoji[build["state"]])
+            if build["conclusion"] in state_to_emoji:
+                ret.append(state_to_emoji[build["conclusion"]])
             else:
                 ret.append(":x:")
+
+    if len(ret) < 10:  # There may be less than 10 builds total on this branch, in this case add more emojis
+        ret += [":grey_question:"] * (10 - len(ret))
 
     return ret
 
