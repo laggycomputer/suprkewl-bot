@@ -199,7 +199,7 @@ class BotMeta(commands.Cog, name="Bot Meta"):
 
     @commands.command(aliases=["bi", "buildhistory", "bh", "builds"])
     async def buildinfo(self, ctx):
-        """Gets Travis CI info for the bot."""
+        """Gets GitHub Actions info for the bot."""
 
         status = await get_latest_build_status(ctx.bot.session)
         emb = ctx.default_embed()
