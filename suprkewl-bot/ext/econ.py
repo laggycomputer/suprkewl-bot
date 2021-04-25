@@ -25,8 +25,8 @@ import typing
 from urllib.parse import unquote as url_unquote
 
 import discord
-from discord.ext import commands
 from PIL import Image
+from discord.ext import commands
 
 from .utils import do_economy_give, get_money_prefix, get_balance_of, human_timedelta, Plural, roll_XdY
 from .utils import use_potential_nickname
@@ -65,23 +65,23 @@ class Economy(commands.Cog):
     async def daily(self, ctx):
         """Claim your daily currency stipend. Increases when claimed on consecutive days."""
 
-        db_entry = await (
-            await ctx.bot.db.execute("SELECT money, last_daily, daily_streak FROM economy WHERE user_id == ?;",
-                                     (ctx.author.id,))
-        ).fetchone()
         dollar_sign = await get_money_prefix(ctx)
 
         can_claim = False
 
-        if not db_entry:
+        if not await ctx.bot.db_pool.fetchval(
+                "SELECT EXISTS(SELECT 1 FROM economy WHERE user_id = $1);", ctx.author.id):
             can_claim = True
             last_claimed_at = datetime.datetime.utcfromtimestamp(0)
             daily_streak = 0
             current_money = 0
         else:
-            last_claimed_at = datetime.datetime.utcfromtimestamp(db_entry[1] or 0)
-            daily_streak = db_entry[2] or 0
-            current_money = db_entry[0]
+            db_entry = await ctx.bot.db_pool.fetchrow(
+                "SELECT money, last_daily, daily_streak FROM economy WHERE user_id = $1;", ctx.author.id)
+            last_claimed_at = datetime.datetime.utcfromtimestamp(db_entry["last_daily"] or 0)
+            daily_streak = db_entry["daily_streak"] or 0
+            current_money = db_entry["money"]
+
         utcnow = datetime.datetime.utcnow()
         days_since_last_claim = (utcnow - last_claimed_at).days
         if days_since_last_claim >= 1:
@@ -96,12 +96,10 @@ class Economy(commands.Cog):
             streak_bonus = (lambda x: (x // 3 * 2.5) // 1)(daily_streak)  # Streak bonus is floor(floor(streak/3) * 2.5)
             money_post_claim = current_money + 200 + streak_bonus
             claimed_timestamp = utcnow.replace(tzinfo=datetime.timezone.utc).timestamp() // 1
-            await ctx.bot.db.execute(
-                "INSERT INTO economy (user_id, money, last_daily, daily_streak) VALUES (?, ?, ?, ?) ON CONFLICT "
-                "(user_id) DO UPDATE SET money = ?, last_daily = ?, daily_streak = ?;",
-                (ctx.author.id, money_post_claim, claimed_timestamp, daily_streak,
-                 money_post_claim, claimed_timestamp, daily_streak + 1))
-            await ctx.bot.db.commit()
+            await ctx.bot.db_pool.execute(
+                "INSERT INTO economy (user_id, money, last_daily, daily_streak) VALUES ($1, $2, $3, $4) ON CONFLICT "
+                "(user_id) DO UPDATE SET money = $2, last_daily = $3, daily_streak = $4;",
+                ctx.author.id, money_post_claim, claimed_timestamp, daily_streak)
             if daily_streak:
                 if streak_bonus:
                     to_send = f"Claimed {dollar_sign}{int(200 + streak_bonus):,} (including " \
@@ -127,9 +125,8 @@ class Economy(commands.Cog):
         """Show the richest players on the bot economy."""
 
         dollar_sign = await get_money_prefix(ctx)
-        records = await (await ctx.bot.db.execute(
-            "SELECT user_id, money FROM economy WHERE money > 0 ORDER BY money DESC LIMIT 10;"
-        )).fetchall()
+        records = await ctx.bot.db_pool.fetch(
+            "SELECT user_id, money FROM economy WHERE money > 0 ORDER BY money DESC LIMIT 10;")
         if not records:
             return await ctx.send("Nobody seems to have economy records...")
         else:
@@ -159,16 +156,18 @@ class Economy(commands.Cog):
         user = user or ctx.author
         uid = user.id if not isinstance(user, int) else user
         money = await get_balance_of(ctx, uid)
-        record_count = (await (await ctx.bot.db.execute("SELECT COUNT(user_id) FROM economy WHERE money > 0;")
-                               ).fetchone())[0]
+        record_count = await ctx.bot.db_pool.fetchval("SELECT COUNT(user_id) FROM economy WHERE money > 0;")
         if money == 0:
             await ctx.send("This user does not have any money.")
         else:
-            ranking = await (await ctx.bot.db.execute(
-                "SELECT money, RANK() OVER (ORDER BY money DESC) r FROM economy;")).fetchall()
-            for db_money, rank in ranking:
-                if db_money == money:
-                    ranking = rank
+            async with ctx.bot.db_pool.acquire() as conn:
+                async with conn.transaction():
+                    async for record in conn.cursor(
+                            "SELECT money, RANK() OVER (ORDER BY wins DESC) r FROM economy;"):
+                        db_money, rank = record[0], record[1]
+                        if db_money == money:
+                            ranking = rank
+                            break
             await ctx.send(f"{use_potential_nickname(user)} is #{ranking:,} out of "
                            f"{format(Plural(record_count), 'total user')} on record.")
 
@@ -179,8 +178,8 @@ class Economy(commands.Cog):
 
         user = user or ctx.author
         uid = user.id if not isinstance(user, int) else user
-        records = await (await ctx.bot.db.execute("SELECT * FROM economy WHERE user_id == ?;", (uid,))).fetchone()
-        if not records:
+        econ_records = await ctx.bot.db_pool.fetchrow("SELECT * FROM economy WHERE user_id = $1;", uid)
+        if not econ_records:
             return await ctx.send(":x: That user does not have economy data.")
         else:
             await ctx.send("Please type \"confirm\" within 10 seconds to confirm that you are DELETING this user's "
@@ -193,8 +192,7 @@ class Economy(commands.Cog):
                 msg = await ctx.bot.wait_for("message", check=check, timeout=10)
             except asyncio.TimeoutError:
                 return
-            await ctx.bot.db.execute("DELETE FROM economy WHERE user_id == ?;", (uid,))
-            await ctx.bot.db.commit()
+            await ctx.bot.db_pool.execute("DELETE FROM economy WHERE user_id = $1;", uid)
             try:
                 await msg.add_reaction("\U0001f44d")
             except (discord.Forbidden, discord.NotFound):
@@ -277,11 +275,9 @@ class Economy(commands.Cog):
             return await ctx.send("Prefix too long.")
         if isinstance(prefix, discord.Emoji):
             prefix = str(prefix)
-        await ctx.bot.db.execute(
-            "INSERT INTO guilds (guild_id, custom_dollar_sign) VALUES (?, ?) ON CONFLICT (guild_id) DO "
-            "UPDATE SET custom_dollar_sign = ?;", (ctx.guild.id, prefix, prefix)
-        )
-        await ctx.bot.db.commit()
+        await ctx.bot.db_pool.execute(
+            "INSERT INTO guilds (guild_id, custom_dollar_sign) VALUES ($1, $2) ON CONFLICT (guild_id) DO UPDATE SET "
+            "custom_dollar_sign = $2;", ctx.guild.id, prefix)
 
         await ctx.send(f":white_check_mark: Economy commands used in this server will now use the prefix {prefix}.")
 
@@ -291,8 +287,7 @@ class Economy(commands.Cog):
     async def currencyprefix_reset(self, ctx):
         """Reset the currency prefix for this guild."""
 
-        await ctx.bot.db.execute("UPDATE guilds SET custom_dollar_sign = NULL where guild_id == ?;", (ctx.guild.id,))
-        await ctx.bot.db.commit()
+        await ctx.bot.db_pool.execute("UPDATE guilds SET custom_dollar_sign = NULL where guild_id = $1;", ctx.guild.id)
         try:
             await ctx.msg.add_reaction("\U0001f44d")
         except (discord.Forbidden, discord.NotFound):
@@ -328,6 +323,7 @@ class Economy(commands.Cog):
             if m.channel != ctx.channel or m.author.bot:
                 return
             return m.content.strip().lower() == emote.name.lower()
+
         try:
             correct_response = await ctx.bot.wait_for("message", check=check, timeout=10.0)
         except asyncio.TimeoutError:

@@ -368,13 +368,11 @@ class Mastermind:
         return reaction.emoji == "\U000023F9"
 
     async def run(self):
-        async with self.ctx.bot.db.execute(
-                "SELECT wins, intro_opt_out FROM mastermind WHERE user_id == ?;", (self.ctx.author.id,)
-        ) as query:
-            resp = await query.fetchone()
+        resp = await self.ctx.bot.db_pool.fetchrow(
+            "SELECT wins, intro_opt_out FROM mastermind WHERE user_id = $1;", self.ctx.author.id)
 
         if resp:
-            wins, is_opted_out = resp
+            wins, is_opted_out = resp[0], resp[1]
         else:
             wins = 0
             is_opted_out = 0
@@ -509,12 +507,9 @@ class Mastermind:
             else:
                 to_send += f"\nYou also earned {currency_prefix}{payout}."
 
-            await self.ctx.bot.db.execute(
-                "INSERT INTO mastermind (user_id, wins, intro_opt_out) VALUES (?, 1, 0) ON CONFLICT (user_id) DO "
-                "UPDATE SET wins = wins + 1;",
-                (self.ctx.author.id,)
-            )
-            await self.ctx.bot.db.commit()
+            await self.ctx.bot.db_pool.execute(
+                "INSERT INTO mastermind (user_id, wins, intro_opt_out) VALUES ($1, 1, 0) ON CONFLICT (user_id) DO "
+                "UPDATE SET wins = wins + 1;", self.ctx.author.id)
 
         await self.ctx.send(to_send)
 

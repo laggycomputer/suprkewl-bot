@@ -24,26 +24,20 @@ async def get_money_prefix(ctx, guild_id=None):
 
     if not guild_id:
         return "$"
-    resp = (await (
-        await ctx.bot.db.execute("SELECT custom_dollar_sign FROM guilds WHERE guild_id == ?;", (guild_id,))
-    ).fetchone())
-    if not resp:
-        return "$"
-    if not resp[0]:
-        return "$"
-    return resp[0]
+    set_money_prefix = await ctx.bot.db_pool.fetchval(
+        "SELECT custom_dollar_sign FROM guilds WHERE guild_id = $1;", guild_id)
+    return set_money_prefix if set_money_prefix is not None else "$"
 
 
 async def get_balance_of(ctx, user_id):
-    resp = (await (
-        await ctx.bot.db.execute("SELECT money FROM economy WHERE user_id == ?;", (user_id,))
-    ).fetchone())
-    return resp[0] if resp else 0
+    resp = await ctx.bot.db_pool.fetchval("SELECT money FROM economy WHERE user_id = $1;", user_id)
+    return resp if resp is not None else 0
 
 
 async def do_economy_give(ctx, to, amount):
-    current_money = await get_balance_of(ctx, to.id)
-    await ctx.bot.db.execute(
-        "INSERT INTO economy (user_id, money) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET money = money + ?;",
-        (to.id, current_money + amount, amount))
-    await ctx.bot.db.commit()
+    async with ctx.bot.db_pool.acquire() as conn:
+        async with conn.transaction():
+            current_money = await get_balance_of(ctx, to.id)
+            await ctx.bot.db_pool.execute(
+                "INSERT INTO economy (user_id, money) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET "
+                "money = $2;", to.id, current_money + amount)

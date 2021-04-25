@@ -17,6 +17,10 @@ If you want to host this bot:
 * Ensure your bot application has both intents enabled.
 * Copy `suprkewl-bot/config.py.example` to `suprkewl-bot/config.py`. Fill out the config parameters.
 * You need to set up both a Redis and a Lavalink instance and fill out the credentials in config.
+* You also need Postgres (if you don't already have it); install it and type the following lines into `psql`:
+  * `CREATE ROLE skbot WITH LOGIN PASSWORD '123';`
+  * `CREATE DATABASE skbot OWNER skbot;`
+  * `CREATE EXTENSION pg_trgm;`
 * Finally, you can use `pip3 install -r requirements.txt` at the root of this repo to install the requirements.
 
 **Please ensure that you run the bot with the repo root as your current directory.**

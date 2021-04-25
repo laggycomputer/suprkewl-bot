@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import io
-import sqlite3
+import time
 import traceback
 import typing
 
@@ -28,7 +28,7 @@ import discord
 from discord.ext import commands
 from jishaku.codeblocks import codeblock_converter
 
-from .utils import TabularData
+from .utils import Plural, TabularData
 
 
 class Owner(commands.Cog):
@@ -189,28 +189,39 @@ class Owner(commands.Cog):
             await ctx.send(":bangbang: Permission denied or guild/channel/group/message was deleted.")
 
     @commands.command()
-    async def sql(self, ctx, *, query):
+    async def sql(self, ctx, *, query):  # From R. Danny.
+        """Run one or more SQL queries."""
+
         if query.startswith("```") and query.endswith("```"):
             query = "\n".join(query.split("\n")[1:])
         else:
             query.strip("` \n")
 
+        is_multistatement = query.count(";") > 1
+        if is_multistatement:
+            strategy = ctx.bot.db_pool.execute
+        else:
+            strategy = ctx.bot.db_pool.fetch
+
         try:
-            cur = await ctx.bot.db.execute(query)
-        except sqlite3.DatabaseError:
-            return await ctx.send(f'```py\n{traceback.format_exc()}\n```')
+            start = time.perf_counter()
+            results = await strategy(query)
+            dt = (time.perf_counter() - start) * 1000.0
+        except Exception:
+            return await ctx.send(f"```py\n{traceback.format_exc()}\n```")
 
-        await ctx.bot.db.commit()
-        results = await cur.fetchall()
+        rows = len(results)
+        if is_multistatement or rows == 0:
+            return await ctx.send(f"`{dt:.2f}ms: {results}`")
 
-        if not len(results):
-            return await ctx.send(":white_check_mark:")
-
+        headers = list(results[0].keys())
         table = TabularData()
-        table.set_columns([c[0] for c in cur.description])
-        table.add_rows(results)
-        ret = table.render()
-        to_send = f"```{ret}```"
+        table.set_columns(headers)
+        table.add_rows(list(r.values()) for r in results)
+        render = table.render()
+
+        ret = render
+        to_send = f"```\n{render}\n```\n*Returned {Plural(rows):row} in {dt:.2f}ms*"
 
         if len(to_send) > 2000:
             try:
@@ -229,20 +240,16 @@ class Owner(commands.Cog):
         if await ctx.bot.is_owner(target):
             return await ctx.send("You cannot blacklist an owner.")
 
-        await ctx.bot.db.execute(
-            "INSERT INTO blacklist (user_id, mod_id) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET "
-            "mod_id = ? WHERE user_id == ?;",
-            (target.id, ctx.author.id, ctx.author.id, target.id)
-        )
-        await ctx.bot.db.commit()
+        await ctx.bot.db_pool.execute(
+            "INSERT INTO blacklist (user_id, mod_id) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET mod_id = $2;",
+            target.id, ctx.author.id)
         await ctx.send(f"{target} was successfully blacklisted.")
 
     @commands.command(aliases=["ublist"])
     async def unblacklist(self, ctx, *, target: typing.Union[discord.Member, discord.User]):
         """Unblacklist a user from using this bot."""
 
-        await ctx.bot.db.execute("DELETE FROM blacklist WHERE user_id == ?;", (target.id,))
-        await ctx.bot.db.commit()
+        await ctx.bot.db_pool.execute("DELETE FROM blacklist WHERE user_id = $1;", target.id)
         await ctx.send(f"{target} was successfully removed from the blacklist.")
 
 

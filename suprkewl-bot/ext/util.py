@@ -175,18 +175,13 @@ async def name_resolve(ctx, ign, *, silent=False):
     return uuid, ign
 
 
-async def insert_past_names(db, names, player_uuid):
+async def insert_past_names(db_pool, names, player_uuid):
     uuid_bytes = uuid.UUID(player_uuid).bytes
-    must_commit = False
     for past_name in names:
-        if not await (await db.execute(
-                "SELECT uuid from past_igns WHERE past_ign == ?;", (past_name.lower(),))).fetchall():
-            must_commit = True
-            await db.execute(
-                "INSERT INTO past_igns (past_ign, uuid) VALUES (?, ?) ON CONFLICT DO NOTHING;",
-                (past_name, uuid_bytes))
-    if must_commit:
-        await db.commit()
+        if not await db_pool.fetchval("SELECT EXISTS(SELECT 1 from past_igns WHERE past_ign = $1);", past_name.lower()):
+            await db_pool.execute(
+                "INSERT INTO past_igns (past_ign, uuid) VALUES ($1, $2) ON CONFLICT DO NOTHING;", past_name.lower(),
+                uuid_bytes)
 
 
 def determine_rank(player_data):
@@ -608,11 +603,10 @@ class Utilities(commands.Cog):
         """Snipe a deleted message"""
 
         channel = channel or ctx.channel
-        sniped = await ctx.bot.db.execute(
-            "SELECT * FROM snipes WHERE channel_id == ? AND guild_id == ?;", (channel.id, ctx.guild.id)
-        )
-        fetched = await sniped.fetchone()
-        if not fetched:
+        sniped = await ctx.bot.db_pool.fetch(
+            "SELECT * FROM snipes WHERE channel_id = $1 AND guild_id = $2;", channel.id, ctx.guild.id)
+
+        if not sniped:
             return await ctx.send("Nothing to snipe... yet.")
         if channel.is_nsfw() is True and ctx.channel.is_nsfw() is False:
             return await ctx.send("You cannot snipe from a normal channel into an NSFW one.")
@@ -621,27 +615,28 @@ class Utilities(commands.Cog):
         if not user_perms.read_messages or not user_perms.read_message_history:
             return await ctx.send(":x: You cannot see that channel.")
 
-        desc = [c_name[0] for c_name in sniped.description]
-        guild = ctx.bot.get_guild(fetched[desc.index("guild_id")])
+        fetched = sniped[0]
+
+        guild = ctx.bot.get_guild(fetched["guild_id"])
         if guild is None:
             return await ctx.send(":x: Unable to fetch some data.")
-        user = ctx.bot.get_user(fetched[desc.index("user_id")])
+        user = ctx.bot.get_user(fetched["user_id"])
         if not user:
-            user = await ctx.bot.fetch_user(fetched[desc.index("user_id")])
+            user = await ctx.bot.fetch_user(fetched["user_id"])
             if user is None:
                 return await ctx.send(":x: Unable to fetch some data.")
-        chnl = discord.utils.get(guild.text_channels, id=fetched[desc.index("channel_id")])
+        chnl = discord.utils.get(guild.text_channels, id=fetched["channel_id"])
         if chnl is None:
             return await ctx.send(":x: Unable to fetch some data.")
-        message_id = fetched[desc.index("message_id")]
-        msg_content = fetched[desc.index("message")]
+        message_id = fetched["message_id"]
+        msg_content = fetched["message"]
 
         e = ctx.default_embed()
-        if fetched[desc.index("msg_type")] == 1:
+        if fetched["msg_type"] == 1:
             e.description = "The image may not be visible"
             e.set_author(name=f"{user.name} sent in {chnl.name}")
             e.set_image(url=msg_content)
-        elif fetched[desc.index("msg_type")] == 2:
+        elif fetched["msg_type"] == 2:
             e.set_author(name=f"{user.name} said in an embed in #{chnl.name}:")
             e.description = msg_content
         else:
@@ -657,13 +652,10 @@ class Utilities(commands.Cog):
         """Snipe the former content of an edited message"""
 
         channel = channel or ctx.channel
-        sniped = await ctx.bot.db.execute(
-            "SELECT * FROM edit_snipes WHERE channel_id == ? AND guild_id == ?;",
-            (channel.id,
-             ctx.guild.id)
-        )
-        fetched = await sniped.fetchone()
-        if not fetched:
+        sniped_from_db = await ctx.bot.db_pool.fetchrow(
+            "SELECT * FROM edit_snipes WHERE channel_id = $1 AND guild_id = $2;", channel.id, ctx.guild.id)
+
+        if not sniped_from_db:
             return await ctx.send("Nothing to snipe... yet.")
         if channel.is_nsfw() is True and ctx.channel.is_nsfw() is False:
             return await ctx.send("You cannot snipe from a normal channel into an NSFW one.")
@@ -673,21 +665,20 @@ class Utilities(commands.Cog):
             return await ctx.send(":x: You cannot see that channel.")
 
         e = ctx.default_embed()
-        desc = [c_name[0] for c_name in sniped.description]
-        guild = ctx.bot.get_guild(fetched[desc.index("guild_id")])
+        guild = ctx.bot.get_guild(sniped_from_db["guild_id"])
         if guild is None:
             return await ctx.send(":x: Unable to fetch some data.")
-        user = ctx.bot.get_user(fetched[desc.index("user_id")])
+        user = ctx.bot.get_user(sniped_from_db["user_id"])
         if not user:
-            user = await ctx.bot.fetch_user(fetched[desc.index("user_id")])
+            user = await ctx.bot.fetch_user(sniped_from_db["user_id"])
             if user is None:
                 return await ctx.send(":x: Unable to fetch some data.")
-        chnl = discord.utils.get(guild.text_channels, id=fetched[desc.index("channel_id")])
+        chnl = discord.utils.get(guild.text_channels, id=sniped_from_db["channel_id"])
         if chnl is None:
             return await ctx.send(":x: Unable to fetch some data.")
-        message_id = fetched[desc.index("message_id")]
-        before = fetched[desc.index("before")]
-        after = fetched[desc.index("after")]
+        message_id = sniped_from_db["message_id"]
+        before = sniped_from_db["before"]
+        after = sniped_from_db["after"]
 
         e.add_field(name="Before", value=before, inline=False)
         e.add_field(name="After", value=after, inline=False)
@@ -718,17 +709,18 @@ class Utilities(commands.Cog):
 
         ign = ign.replace("-", "")  # This has no affect on names, but works on UUIDs
 
-        potential_past_uuids = await (await ctx.bot.db.execute(
-            "SELECT uuid from past_igns WHERE past_ign == ?;", (ign.lower(),))).fetchall()
-        if potential_past_uuids is not None:
-            potential_past_uuids = [uuid.UUID(bytes=x[0]).hex for x in potential_past_uuids]
-            names_to_use = []
-            for potential_past_uuid in potential_past_uuids:
-                might_append = (await name_resolve(ctx, potential_past_uuid, silent=True))[1].lower()
-                if might_append != ign.lower():
-                    names_to_use.append(might_append)
-        else:
-            names_to_use = []
+        potential_past_uuids = []
+
+        async with ctx.bot.db_pool.acquire() as conn:
+            async with conn.transaction():
+                async for record in conn.cursor("SELECT uuid from past_igns WHERE past_ign = $1;", ign.lower()):
+                    potential_past_uuids.append(str(record[0]))
+
+        names_to_use = []
+        for potential_past_uuid in potential_past_uuids:
+            might_append = (await name_resolve(ctx, potential_past_uuid, silent=True))[1].lower()
+            if might_append != ign.lower():
+                names_to_use.append(might_append)
 
         async with ctx.bot.session.get(f"https://api.mojang.com/users/profiles/minecraft/{ign}") as resp:
             if resp.status not in [204, 400, 404]:
@@ -789,7 +781,7 @@ class Utilities(commands.Cog):
                 timestamp = datetime.datetime.utcfromtimestamp(timestamp / 1000).strftime("%c")
                 emb.add_field(name=f"Changed to `{iter_name}`", value=f"On {timestamp}", inline=False)
 
-        await insert_past_names(ctx.bot.db, past_names, player_uuid)
+        await insert_past_names(ctx.bot.db_pool, past_names, player_uuid)
 
         emb.set_footer(text="All timestamps are in UTC.", icon_url=ctx.me.avatar_url)
         emb.set_thumbnail(url=f"https://crafatar.com/renders/body/{player_uuid}?overlay")
@@ -822,7 +814,7 @@ class Utilities(commands.Cog):
 
         if resp["name"].lower() != ign.lower():
             await ctx.send(f"IGN {ign} was held by the player now known as {resp['name']} at the given time.")
-            await insert_past_names(ctx.bot.db, [resp["name"].lower()], resp["id"])
+            await insert_past_names(ctx.bot.db_pool, [resp["name"].lower()], resp["id"])
         else:
             await ctx.send(f"IGN {ign} was held by its current owner at this timestamp.")
 

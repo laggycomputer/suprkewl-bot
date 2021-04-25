@@ -30,15 +30,14 @@ class Settings(commands.Cog):
 
         if prefix is None:
             if ctx.invoked_subcommand is None:
-                results = await (
-                    await ctx.bot.db.execute("SELECT prefix FROM guilds WHERE guild_id == ?;", (ctx.guild.id,))
-                ).fetchone()
-                if not results:
+                set_prefix = await ctx.bot.db_pool.fetchval(
+                    "SELECT prefix FROM guilds WHERE guild_id = $1;", ctx.guild.id)
+                if not set_prefix:
                     await ctx.send("This server has no custom prefix set. You can set one with"
                                    f" `{ctx.prefix}prefix <prefix>`.")
                 else:
                     await ctx.send(
-                        f"The guild prefix is currently `{results[0]}`. You can change it with"
+                        f"The guild prefix is currently `{set_prefix}`. You can change it with"
                         f" `{ctx.prefix}prefix <prefix>`."
                     )
         else:
@@ -46,11 +45,9 @@ class Settings(commands.Cog):
                 if len(prefix) > 10:
                     return await ctx.send(":x: The prefix cannot be longer than 10 characters!")
 
-                await ctx.bot.db.execute(
-                    "INSERT INTO GUILDS (guild_id, prefix) VALUES (?, ?) ON CONFLICT (guild_id) DO UPDATE SET "
-                    "prefix = ? WHERE guild_id == ?;", (ctx.guild.id, prefix, prefix, ctx.guild.id)
-                )
-                await ctx.bot.db.commit()
+                await ctx.bot.db_pool.execute(
+                    "INSERT INTO GUILDS (guild_id, prefix) VALUES ($1, $2) ON CONFLICT (guild_id) DO UPDATE SET "
+                    "prefix = $2;", ctx.guild.id, prefix)
 
                 await ctx.send(f":ok_hand: The prefix is now `{prefix}`.")
             else:  # Emulate the error handling.
@@ -69,8 +66,7 @@ class Settings(commands.Cog):
     async def clearprefix(self, ctx):
         """Reset the guild prefix."""
 
-        await ctx.bot.db.execute("DELETE FROM guilds WHERE guild_id == ?;", (ctx.guild.id,))
-        await ctx.bot.db.commit()
+        await ctx.bot.db_pool.execute("DELETE FROM guilds WHERE guild_id = $1;", ctx.guild.id)
         await ctx.send(
             f":ok_hand: The guild prefix has been reset! You can set it again with `{ctx.prefix}prefix <prefix>`."
         )

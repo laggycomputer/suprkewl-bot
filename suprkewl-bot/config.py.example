@@ -25,8 +25,9 @@ redis_port = "6379"
 # CHANGE IT
 redis_password = "testing"
 
-# Path to the SQLite 3 DB you wish to use.
-db_path = "skbot.db"
+# PostgreSQL login details. Under the setup guide in the README, just use the default here. You should change it if you
+# have/desire a different setup.
+db_uri = "postgresql://skbot:123@localhost/skbot"
 
 # rTeX config: use http://rtex.probablyaweb.site, or set up your own instance, see DXSmiley/rtex
 rtex_server = "rtex.probablyaweb.site"

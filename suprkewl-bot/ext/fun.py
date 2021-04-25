@@ -281,7 +281,7 @@ L
         except ValueError:
             return await msg.edit(
                 content=f":x: Your input must be of the form `AdB`! Please check `{ctx.prefix}{ctx.invoked_with}"
-                f" info` for more info."
+                        f" info` for more info."
             )
 
         if 1000 >= count > 0 and 1000 >= limit > 0:
@@ -321,7 +321,7 @@ L
         else:
             await msg.edit(
                 content=f"Your syntax was correct, however one of your arguments were invalid. See"
-                f" `{ctx.prefix}{ctx.invoked_with} info.`"
+                        f" `{ctx.prefix}{ctx.invoked_with} info.`"
             )
 
     @dice.command(description="Show info for dice command.", name="info")
@@ -362,7 +362,7 @@ L
         if ctx.author.id in self.uids_fighting:
             emb = ctx.default_embed()
             emb.description = f"{ctx.author.mention} :x: You can't fight multiple people at once! You're not Bruce" \
-                f" Lee."
+                              f" Lee."
             fp = discord.File(os.path.join("assets", "brucelee.gif"), "image.gif")
 
             await ctx.send(embed=emb, file=fp)
@@ -371,7 +371,7 @@ L
         if target.id in self.uids_fighting:
             emb = ctx.default_embed()
             emb.description = f"{ctx.author.mention} :x: Don't make {target.mention} fight multiple people at once!" \
-                f" They're not Bruce Lee."
+                              f" They're not Bruce Lee."
             fp = discord.File(os.path.join("assets", "brucelee.gif"), "image.gif")
             emb.set_image(
                 url="attachment://image.gif"
@@ -498,8 +498,8 @@ L
 
             def check(m):
                 if m.channel == ctx.channel and m.author == find_turn().user:
-                    return m.content.lower().startswith("hit") or m.content.lower().startswith("run")\
-                        or m.content.lower().startswith("block") or m.content.lower().startswith("end")
+                    return m.content.lower().startswith("hit") or m.content.lower().startswith("run") \
+                           or m.content.lower().startswith("block") or m.content.lower().startswith("end")
                 else:
                     return False
 
@@ -551,8 +551,8 @@ L
                 newsetting = random.choice(connectedrooms[setting])
 
                 currentaction = f"{find_turn().user.mention} kicks {find_not_turn().user.mention} in the" \
-                    f" shins and runs as fast as he/she can out of the {setting} and into the" \
-                    f" {newsetting}. {find_turn().user.mention} gives chase."
+                                f" shins and runs as fast as he/she can out of the {setting} and into the" \
+                                f" {newsetting}. {find_turn().user.mention} gives chase."
 
                 setting = newsetting
 
@@ -876,13 +876,10 @@ L
     async def mastermind_toggleintro(self, ctx, *, setting: bool = None):
         """Toggle the introductory message. You must have 5 games won to access this function."""
 
-        async with ctx.bot.db.execute(
-                "SELECT wins, intro_opt_out FROM mastermind WHERE user_id == ?;", (ctx.author.id,)
-        ) as query:
-            resp = await query.fetchone()
-
-        if resp:
-            wins, is_opted_out = resp
+        record = await ctx.bot.db_pool.fetchrow("SELECT wins, intro_opt_out FROM mastermind WHERE user_id = $1;",
+                                                ctx.author.id)
+        if record:
+            wins, is_opted_out = record["wins"], record["intro_opt_out"]
         else:
             wins = 0
             is_opted_out = 0
@@ -893,10 +890,8 @@ L
             if setting is None:
                 await ctx.send(f"You have the introductory message {'enabled' if not is_opted_out else 'disabled'}.")
             else:
-                await ctx.bot.db.execute(
-                    "UPDATE mastermind SET intro_opt_out = ? WHERE user_id == ?;", (int(setting), ctx.author.id)
-                )
-                await ctx.bot.db.commit()
+                await ctx.bot.db_pool.execute("UPDATE mastermind SET intro_opt_out = $1 WHERE user_id = $2;",
+                                              int(setting), ctx.author.id)
                 await ctx.send(":white_check_mark: Done.")
 
     @mastermind.command(name="wins")
@@ -908,10 +903,8 @@ L
         if user.bot:
             return await ctx.send("Bots don't play Mastermind...")
 
-        async with ctx.bot.db.execute("SELECT wins FROM mastermind WHERE user_id == ?;", (user.id,)) as query:
-            resp = await query.fetchone()
-
-        wins = resp[0] if resp else 0
+        stored_wins = await ctx.bot.db_pool.fetchval("SELECT wins FROM mastermind WHERE user_id = $1;", user.id)
+        wins = stored_wins if stored_wins is not None else 0
 
         await ctx.send(f"{use_potential_nickname(user)} has {format(Plural(wins), 'win')}.")
 
@@ -919,30 +912,28 @@ L
     async def mastermind_leaderboard(self, ctx):
         """Show the lifetime Mastermind wins leaderboard"""
 
-        records = await (await ctx.bot.db.execute(
-            "SELECT user_id, wins FROM mastermind ORDER BY wins DESC LIMIT 10;"
-        )).fetchall()
-        if not records:
+        if not await ctx.bot.db_pool.fetchval("SELECT EXISTS(SELECT 1 FROM mastermind) AS exists;"):
             return await ctx.send("Nobody seems to have Mastermind records...")
-        else:
-            emb = ctx.default_embed()
-            emb.description = f"Showing (up to) top 10 players. Find you or another user's ranking with " \
-                              f"`{ctx.prefix}mastermind ranking <user>`."
-            for index, record in enumerate(records):
-                fetch = None
-                if ctx.guild:
-                    try:
-                        fetch = await ctx.guild.fetch_member(record[0])
-                    except discord.NotFound:
-                        pass
-                if not ctx.guild or fetch is None:
-                    fetch = await ctx.bot.fetch_user(record[0])
-                emb.add_field(
-                    name=f"`{index + 1}:` {use_potential_nickname(fetch)}",
-                    value=f"{format(Plural(record[1]), 'win')}",
-                    inline=False
-                )
-            await ctx.send(embed=emb)
+
+        records = await ctx.bot.db_pool.fetch("SELECT user_id, wins FROM mastermind ORDER BY wins DESC LIMIT 10;")
+        emb = ctx.default_embed()
+        emb.description = f"Showing (up to) top 10 players. Find you or another user's ranking with " \
+                          f"`{ctx.prefix}mastermind ranking <user>`."
+        for index, record in enumerate(records):
+            fetch = None
+            if ctx.guild:
+                try:
+                    fetch = await ctx.guild.fetch_member(record["user_id"])
+                except discord.NotFound:
+                    pass
+            if not ctx.guild or fetch is None:
+                fetch = await ctx.bot.fetch_user(record["wins"])
+            emb.add_field(
+                name=f"`{index + 1}:` {use_potential_nickname(fetch)}",
+                value=f"{format(Plural(record[1]), 'win')}",
+                inline=False
+            )
+        await ctx.send(embed=emb)
 
     @mastermind.command(name="ranking")
     async def mastermind_ranking(self, ctx, *, user: typing.Union[discord.User, discord.Member, int]):
@@ -950,20 +941,22 @@ L
 
         user = user or ctx.author
         uid = user.id if not isinstance(user, int) else user
-        async with ctx.bot.db.execute("SELECT wins FROM mastermind WHERE user_id == ?;", (uid,)) as query:
-            resp = await query.fetchone()
 
-        wins = resp[0] if resp else 0
-        record_count = (await (await ctx.bot.db.execute("SELECT COUNT(user_id) FROM mastermind WHERE wins > 0;")
-                               ).fetchone())[0]
+        stored_wins = await ctx.bot.db_pool.fetchval("SELECT wins FROM mastermind WHERE user_id = $1;", uid)
+        wins = stored_wins if stored_wins is not None else 0
+
         if wins == 0:
             await ctx.send("This user does not have any wins.")
         else:
-            ranking = await (await ctx.bot.db.execute(
-                "SELECT wins, RANK() OVER (ORDER BY wins DESC) r FROM mastermind;")).fetchall()
-            for db_wins, rank in ranking:
-                if db_wins == wins:
-                    ranking = rank
+            record_count = await ctx.bot.db_pool.fetchval("SELECT COUNT(user_id) FROM mastermind WHERE wins > 0;")
+            async with ctx.bot.db_pool.acquire() as conn:
+                async with conn.transaction():
+                    async for record in conn.cursor("SELECT wins, RANK() OVER (ORDER BY wins DESC) r FROM mastermind;"):
+                        db_wins, rank = record[0], record[1]
+                        if db_wins == wins:
+                            ranking = rank
+                            break
+
             await ctx.send(f"{use_potential_nickname(user)} is #{ranking:,} out of "
                            f"{format(Plural(record_count), 'total user')} on record.")
 
@@ -1054,18 +1047,16 @@ L
                     return await ctx.send("This message does not contain an inspiring quote.")
                 url = check[1]
 
-        query = await (await ctx.bot.db.execute(
-            "SELECT * FROM inspire_favorites WHERE user_id == ? AND image == ?;",
-            (ctx.author.id, url.lstrip("https://generated.inspirobot.me/a/").rstrip(".jpg"))
-        )).fetchone()
+        query = await ctx.bot.db_pool.fetchrow("SELECT * FROM inspire_favorites WHERE user_id = $1 AND image = $2;",
+                                               ctx.author.id,
+                                               url.lstrip("https://generated.inspirobot.me/a/").rstrip(".jpg"))
 
         if query:
             await ctx.send("This image is already in your personal library.")
         else:
-            await ctx.bot.db.execute(
-                "INSERT INTO inspire_favorites (user_id, image) VALUES (?, ?);",
-                (ctx.author.id, url.lstrip("https://generated.inspirobot.me/a/").rstrip(".jpg"))
-            )
+            await ctx.bot.db_pool.execute("INSERT INTO inspire_favorites (user_id, image) VALUES ($1, $2);",
+                                          ctx.author.id,
+                                          url.lstrip("https://generated.inspirobot.me/a/").rstrip(".jpg"))
             await ctx.send(":white_check_mark: Added.")
 
     @inspire.command(name="unfavorite", aliases=["uf", "unfave"],
@@ -1092,28 +1083,25 @@ L
                     return await ctx.send("This message does not contain an inspiring quote.")
                 url = check[1]
 
-        query = await (await ctx.bot.db.execute(
-            "SELECT * FROM inspire_favorites WHERE user_id == ? AND image == ?;",
-            (ctx.author.id, url.lstrip("https://generated.inspirobot.me/a/").rstrip(".jpg"))
-        )).fetchone()
+        query = await ctx.bot.db_pool.fetchrow("SELECT * FROM inspire_favorites WHERE user_id = $1 AND image = $2;",
+                                               ctx.author.id,
+                                               url.lstrip("https://generated.inspirobot.me/a/").rstrip(".jpg"))
 
         if not query:
             await ctx.send("This image is not in your personal library.")
         else:
-            await ctx.bot.db.execute(
-                "DELETE FROM inspire_favorites WHERE user_id == ? AND image == ?;",
-                (ctx.author.id, url.lstrip("https://generated.inspirobot.me/a/").rstrip(".jpg"))
-            )
+            await ctx.bot.db_pool.execute("DELETE FROM inspire_favorites WHERE user_id = $1 AND image = $2;",
+                                          ctx.author.id,
+                                          url.lstrip("https://generated.inspirobot.me/a/").rstrip(".jpg"))
             await ctx.send(":white_check_mark: Deleted requested image from your library.")
 
     @inspire.command(name="view", aliases=["list", "show"])
     async def inspire_view(self, ctx):
         """View your favorited Inspirobot content."""
 
-        query = await (
-            await ctx.bot.db.execute("SELECT image FROM inspire_favorites WHERE user_id == ?;", (ctx.author.id,))
-        ).fetchall()
-        if not query:
+        exists = await ctx.bot.db_pool.fetchval("SELECT EXISTS(SELECT 1 FROM inspire_favorites WHERE user_id = $1);",
+                                                ctx.author.id)
+        if not exists:
             return await ctx.send(f"No favorites found. Add some with `{ctx.prefix}inspire favorite`.")
 
         emb = ImageEmbedinator(ctx.bot, ctx, color=ctx.bot.embed_color, member=ctx.author)
@@ -1122,7 +1110,13 @@ L
             icon_url=ctx.author.avatar_url
         )
 
-        for row in query:
+        async with ctx.bot.db_poll.acquire() as conn:
+            async with conn.transaction():
+                async for record in conn.cursor("SELECT image FROM inspire_favorites WHERE user_id = $1;",
+                                                ctx.author.id):
+                    emb.add_image(record[0])
+
+        for row in exists:
             emb.add_image(f"https://generated.inspirobot.me/a/{row[0]}.jpg")
 
         await emb.send()
@@ -1132,9 +1126,7 @@ L
     async def inspire_clear(self, ctx):
         """Clear your favorite images list."""
 
-        query = await (
-            await ctx.bot.db.execute("SELECT * FROM inspire_favorites WHERE user_id == ?;", (ctx.author.id,))
-        ).fetchall()
+        query = await ctx.bot.db_pool.fetchrow("SELECT * FROM inspire_favorites WHERE user_id = $1;", ctx.author.id)
         if not query:
             return await ctx.send("Can't wipe an empty favorites list.")
 
@@ -1149,7 +1141,7 @@ L
 
         def check(payload):
             return payload.user_id == ctx.author.id and payload.message_id == msg.id \
-                and payload.channel_id == ctx.channel.id and str(payload.emoji) == "\U00002705"
+                   and payload.channel_id == ctx.channel.id and str(payload.emoji) == "\U00002705"
 
         try:
             await ctx.bot.wait_for("raw_reaction_add", check=check, timeout=30.0)

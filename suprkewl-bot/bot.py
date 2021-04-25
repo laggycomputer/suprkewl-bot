@@ -26,7 +26,7 @@ import textwrap
 import traceback
 
 import aiohttp
-import aiosqlite
+import asyncpg
 import discord
 from discord.ext import commands
 import lavalink
@@ -51,7 +51,7 @@ class SuprKewlBot(commands.Bot):
 
         self.redis = None
         self.session = None
-        self.db = None
+        self.db_pool = None
         self.lavalink = None
 
         self.ps_task = self.loop.create_task(self.playingstatus())
@@ -95,10 +95,8 @@ class SuprKewlBot(commands.Bot):
             await self.redis.execute("FLUSHDB")
         if not self.session:
             self.session = aiohttp.ClientSession()
-        if not self.db:
-            self.db = await aiosqlite.connect(config.db_path)
-            self.db.row_factory = aiosqlite.Row
-
+        if not self.db_pool:
+            self.db_pool = await asyncpg.create_pool(config.db_uri)
         if not self.lavalink:
             self.lavalink = lavalink.Client(self.user.id)
             self.lavalink.add_node(
@@ -156,15 +154,14 @@ class SuprKewlBot(commands.Bot):
                     if message.guild.me in message.mentions:
                         ping_images = ("angery,gif", "eyes.png")
 
-                        resp = await(
-                            await self.db.execute("SELECT prefix FROM guilds WHERE guild_id == ?;", (message.guild.id,))
-                        ).fetchone()
+                        resp = await self.db_pool.fetchval(
+                            "SELECT prefix FROM guilds WHERE guild_id = $1;", message.guild.id)
 
                         if resp:
                             emb = discord.Embed(
                                 color=self.embed_color,
                                 description=f":eyes: Who pinged? My prefix is `sk!` and the custom server prefix is "
-                                            f"`{resp[0]}`. If you are in a DM with me, or you are my owner, I do "
+                                            f"`{resp}`. If you are in a DM with me, or you are my owner, I do "
                                             f"not require a prefix."
                             )
                         else:
@@ -214,14 +211,11 @@ class SuprKewlBot(commands.Bot):
         if before.content == after.content or after.type != discord.MessageType.default:
             return
 
-        await self.db.execute(
+        await self.db_pool.execute(
             "INSERT INTO edit_snipes (guild_id, user_id, channel_id, message_id, before, after) VALUES "
-            "(?, ?, ?, ?, ?, ?) ON CONFLICT (channel_id) DO UPDATE SET guild_id = ?, user_id = ?, message_id = ?, "
-            "before = ?, after = ?;",
-            (after.guild.id, after.author.id, after.channel.id, after.id, before.content, after.content,
-             after.guild.id, after.author.id, after.id, before.content, after.content)
-        )
-        await self.db.commit()
+            "($1, $2, $3, $4, $5, $6) ON CONFLICT (channel_id) DO UPDATE SET guild_id = $1, user_id = $2, "
+            "message_id = $4, before = $5, after = $6;", after.guild.id, after.author.id, after.channel.id,
+            after.id, before.content, after.content)
 
     async def on_message_delete(self, message):
         if not self.is_ready():
@@ -237,14 +231,11 @@ class SuprKewlBot(commands.Bot):
                 content = message.embeds[0].description
                 message_type = 2
 
-            await self.db.execute(
-                "INSERT INTO snipes (guild_id, user_id, channel_id, message_id, message, msg_type) "
-                "VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT (channel_id) DO UPDATE SET user_id = ?, message_id = ?, "
-                "message = ?, msg_type = ?;",
-                (message.guild.id, message.author.id, message.channel.id, message.id, content, message_type,
-                 message.author.id, message.id, content, message_type)
-            )
-            await self.db.commit()
+            await self.db_pool.execute(
+                "INSERT INTO snipes (guild_id, user_id, channel_id, message_id, message, msg_type) VALUES "
+                "($1, $2, $3, $4, $5, $6) ON CONFLICT (channel_id) DO UPDATE SET user_id = $2, message_id = $4,"
+                " message = $5, msg_type = $6;", message.guild.id, message.author.id, message.channel.id, message.id,
+                content, message_type)
 
     async def on_raw_message_edit(self, payload):
         if not self.is_ready():
@@ -574,7 +565,7 @@ class SuprKewlBot(commands.Bot):
             await self.session.close()
             await asyncio.sleep(0)
         self.redis.disconnect()  # yes this not a coro
-        await self.db.close()
+        await asyncio.wait_for(self.db_pool.close(), timeout=10.0)
         await super().logout()
 
     async def post_to_hastebin(self, data):
@@ -632,13 +623,13 @@ class SuprKewlBot(commands.Bot):
         ))
 
     async def is_blacklisted(self, user_id):
-        row = await (await self.db.execute("SELECT mod_id FROM blacklist WHERE user_id == ?;", (user_id,))).fetchall()
+        blacklisted_by = await self.db_pool.fetchval("SELECT mod_id FROM blacklist WHERE user_id = $1;", user_id)
 
-        if not row:
+        if not blacklisted_by:
             return False, 0
         else:
             if not await self.is_owner(await self.fetch_user(user_id)):
-                return True, row[0][0]
+                return True, blacklisted_by
             return False, 0
 
     async def prune_tables(self, guild_id=None):
@@ -646,8 +637,11 @@ class SuprKewlBot(commands.Bot):
 
         if guild_id is None:
             for table in TO_PRUNE:
-                query = await (await self.db.execute("SELECT guild_id FROM ?;", (table,))).fetchall()
-                guilds_in_db = [row[0] for row in query]
+                guilds_in_db = []
+                async with self.db_pool.acquire() as conn:
+                    async with conn.transaction():
+                        async for record in conn.cursor("SELCT guild_id FROM $1", table):
+                            guilds_in_db.append(record[0])
                 guilds_to_remove = []
 
                 for guild_id in guilds_in_db:
@@ -657,24 +651,20 @@ class SuprKewlBot(commands.Bot):
                 if guilds_to_remove:
                     removal_count = len(guilds_to_remove)
                     guilds_to_remove = ", ".join(guilds_to_remove)
-                    await self.db.execute("DELETE FROM ? WHERE guild_id IN (?);", (table, guilds_to_remove))
-                    await self.db.commit()
+                    await self.db_pool.execute("DELETE FROM $1 WHERE guild_id IN ($2);", table, guilds_to_remove)
                     logging.info(f"Removed {removal_count} guilds from table '{table}'.")
         else:
             for table in TO_PRUNE:
-                await self.db.execute("DELETE FROM ? WHERE guild_id == ?;", (table, guild_id))
-                await self.db.commit()
+                await self.db_pool.execute("DELETE FROM $1 WHERE guild_id = $2;", table, guild_id)
 
 
 async def get_pre(bot, message):
     pre = ["sk!"]
     if message.guild:
-        resp = await(
-            await bot.db.execute("SELECT prefix FROM guilds WHERE guild_id == ?;", (message.guild.id,))
-        ).fetchone()
+        set_prefix = await bot.db_pool.fetchval("SELECT prefix FROM guilds WHERE guild_id = $1;", message.guild.id)
 
-        if resp:
-            pre.append(resp[0])
+        if set_prefix:
+            pre.append(set_prefix)
 
     is_owner = await bot.is_owner(message.author)
     if isinstance(message.channel, discord.DMChannel) or (is_owner and not bot.owner_no_prefix):

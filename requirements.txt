@@ -1,7 +1,7 @@
 aiodns
 aioredis
-aiosqlite
 argon2-cffi
+asyncpg
 cchardet
 cython
 discord.py[voice]
