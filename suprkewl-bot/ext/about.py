@@ -21,16 +21,16 @@ import datetime
 import inspect
 import itertools
 import os
-import typing
-import pkg_resources
 import platform
 import sys
 import time
+import typing
 
 import dateutil.parser
 import discord
-from discord.ext import commands
+import pkg_resources
 import pygit2
+from discord.ext import commands
 
 from .utils import linecount
 from .utils import time as t_utils
@@ -49,7 +49,7 @@ def format_commit(commit):
     offset = t_utils.human_timedelta(commit_time.astimezone(
         datetime.timezone.utc).replace(tzinfo=None), accuracy=1)
     return f"[`{short_sha2}`](https://github.com/laggycomputer/suprkewl-bot/commit/{commit.hex} \"Boo!\")" \
-        f" {short} ({offset})"
+           f" {short} ({offset})"
 
 
 def get_last_commits(count=5):
@@ -128,8 +128,7 @@ async def get_latest_build_status(cs):
                         continue
                     step_times.append(round(
                         (dateutil.parser.parse(step["completed_at"], ignoretz=True)
-                         - dateutil.parser.parse(step["started_at"], ignoretz=True))
-                        .total_seconds())
+                         - dateutil.parser.parse(step["started_at"], ignoretz=True)).total_seconds())
                     )  # Round because greatest precision is seconds anyway. This seems to return a float.
                 longest_job_time = seconds_to_string(max(step_times))
 
@@ -138,7 +137,7 @@ async def get_latest_build_status(cs):
                 offset = t_utils.human_timedelta(dt, accuracy=1)
 
                 val = f"{build_status} {offset}. Ran for a total of {duration}. The longest step took" \
-                    f" {longest_job_time}."
+                      f" {longest_job_time}."
             ret[key]["status"] = val
         else:
             val = "Build in progress"
@@ -257,7 +256,7 @@ class BotMeta(commands.Cog, name="Bot Meta"):
             )
             emb.add_field(
                 name="Python Version", value=f"Python {'.'.join(map(str, sys.version_info[:3]))}-{sys.version_info[3]},"
-                f" build date {platform.python_build()[1]}"
+                                             f" build date {platform.python_build()[1]}"
             )
             emb.add_field(
                 name="discord.py version",

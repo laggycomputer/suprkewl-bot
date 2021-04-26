@@ -25,17 +25,16 @@ import os
 import time
 import typing
 
-import aiohttp
-import discord
-from discord.ext import commands
-import numpy as np
 import PIL
-from PIL import Image
 import PIL.ImageFilter
 import PIL.ImageOps
+import aiohttp
+import discord
+import numpy as np
+from PIL import Image
+from discord.ext import commands
 
 from .utils import async_executor, ways_to_mul_to
-
 
 PWD = os.getcwd()
 
@@ -66,12 +65,14 @@ def change_contrast(img, level):
 
     def contrast(c):
         return 128 + factor * (c - 128)
+
     return img.point(contrast)
 
 
 def add_noise(img, factor):
     def noise(c):
-        return c*(1+np.random.random(1)[0]*factor-factor/2)
+        return c * (1 + np.random.random(1)[0] * factor - factor / 2)
+
     return img.point(noise)
 
 
@@ -362,13 +363,13 @@ def process_transform(img1, img2):
 
     buff = io.BytesIO()
     frames[0].save(
-            buff,
-            "gif",
-            save_all=True,
-            append_images=frames[1:] + frames[-1:] * 5,
-            duration=125,
-            loop=0
-        )
+        buff,
+        "gif",
+        save_all=True,
+        append_images=frames[1:] + frames[-1:] * 5,
+        duration=125,
+        loop=0
+    )
     buff.seek(0)
     return buff
 

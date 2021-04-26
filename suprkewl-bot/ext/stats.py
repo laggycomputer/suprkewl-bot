@@ -21,8 +21,8 @@ import io
 
 import aiohttp
 import discord
-from discord.ext import commands
 import matplotlib.figure
+from discord.ext import commands
 
 from .utils import async_executor
 

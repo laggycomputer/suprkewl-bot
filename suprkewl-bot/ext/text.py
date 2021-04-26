@@ -23,8 +23,8 @@ import random
 
 import aiohttp
 import discord
-from discord.ext import commands
 from PyLyrics import PyLyrics
+from discord.ext import commands
 
 from .utils import async_executor
 

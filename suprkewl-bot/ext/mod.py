@@ -17,7 +17,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-
 import discord
 from discord.ext import commands
 
@@ -240,7 +239,7 @@ class Moderation(commands.Cog):
             except discord.HTTPException:
                 await sent.edit(
                     content=f"{ctx.author.mention} The unbanned user's priviacy settings prevent me from notofying them"
-                    f" of their unbanning."
+                            f" of their unbanning."
                 )
         else:
             await ctx.send(

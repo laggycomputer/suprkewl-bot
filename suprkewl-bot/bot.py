@@ -28,13 +28,13 @@ import traceback
 import aiohttp
 import asyncpg
 import discord
-from discord.ext import commands
 import lavalink
+from discord.ext import commands
 
 import config
+import redis
 from ext.utils import BotNotInVC, Context, DJRequired, human_join, IsCustomBlacklisted, linecount, permissions_converter
 from ext.utils import UserInWrongVC, UserNotInVC
-import redis
 
 
 class SuprKewlBot(commands.Bot):
@@ -378,7 +378,7 @@ class SuprKewlBot(commands.Bot):
             emb.add_field(
                 name="Command on Cooldown",
                 value=f"Woah there! You just triggered a {cooldown_type} cooldown trying to run "
-                f"`{ctx.prefix}{ctx.command}`. Wait {retry} seconds."
+                      f"`{ctx.prefix}{ctx.command}`. Wait {retry} seconds."
             )
 
             return await ctx.send(embed=emb)
@@ -389,7 +389,7 @@ class SuprKewlBot(commands.Bot):
             emb.add_field(
                 name="User Missing Permissions",
                 value=f":x: Permission denied to run `{ctx.prefix}{ctx.command}`."
-                f" You need to be able to {missing_perms}."
+                      f" You need to be able to {missing_perms}."
             )
 
             return await ctx.send(embed=emb)
@@ -400,7 +400,7 @@ class SuprKewlBot(commands.Bot):
             emb.add_field(
                 name="Bot Missing Permissions",
                 value=f":x: I don't have the proper permissions to run `{ctx.prefix}{ctx.command}`."
-                f" I need to be allowed to {missing_perms}."
+                      f" I need to be allowed to {missing_perms}."
             )
 
             return await ctx.send(embed=emb)

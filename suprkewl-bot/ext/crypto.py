@@ -17,19 +17,17 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-
 import base64
 import binascii
 import hashlib
 import io
 
 import aiohttp
-from argon2 import PasswordHasher
+import discord
 # This import is used via globals, so ignore your IDE/linter here.
 from Cryptodome.Hash import *  # noqa F403, F401
-import discord
+from argon2 import PasswordHasher
 from discord.ext import commands
-
 
 abc_list = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 abc_list_backward = list(reversed(abc_list))
@@ -60,7 +58,6 @@ def caesar_translate(message, shift):
 
 
 def crack_caesar(string):
-
     maximum = 0
 
     weight = [
@@ -96,7 +93,6 @@ def crack_caesar(string):
 
 
 def keyword_expand(keyword):
-
     kw_stripped = ""
     for letter in keyword.upper():
         if letter in abc_list:
@@ -189,7 +185,7 @@ def encode_a1z26(message):
         for i in range(len(current_word)):
             to_append += str(current_word[i])
             if i == len(current_word) - 1 or not (
-                isinstance(current_word[i], int) and isinstance(current_word[i + 1], int)
+                    isinstance(current_word[i], int) and isinstance(current_word[i + 1], int)
             ):
                 continue
             else:

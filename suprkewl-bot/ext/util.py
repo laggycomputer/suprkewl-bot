@@ -28,19 +28,18 @@ import random
 import re
 import typing
 import unicodedata
-from urllib.parse import quote as urlquote
 import uuid
+from urllib.parse import quote as urlquote
 
 import aiohttp
 import discord
-from discord.ext import commands
 import gtts
-from PIL import Image
 import pyqrcode
+from PIL import Image
+from discord.ext import commands
 
-from .utils import async_executor, Embedinator, escape_codeblocks, format_json, human_join, human_timedelta
 import config
-
+from .utils import async_executor, Embedinator, escape_codeblocks, format_json, human_join, human_timedelta
 
 TO_READABLE_GAME = {
     "QUAKECRAFT": "Quake",
@@ -71,7 +70,6 @@ TO_READABLE_GAME = {
     "SKYBLOCK": "SkyBlock",
     "PIT": "Pit"
 }
-
 
 token_re = re.compile(r"[a-zA-Z0-9]{24}\.[a-zA-Z0-9]{6}\.[a-zA-Z0-9_\-]{27}|mfa\.[a-zA-Z0-9_\-]{84}")
 EPOCH = 1420070400000
@@ -389,7 +387,7 @@ class Utilities(commands.Cog):
         emb = discord.Embed(
             color=ctx.bot.embed_color,
             description=f"Here you are! xkcd comic #{number}, published {date} ({delta})."
-            f" Credits to [xkcd](https://xkcd.com/{number})."
+                        f" Credits to [xkcd](https://xkcd.com/{number})."
         )
 
         emb.set_image(url=text["img"])
@@ -697,6 +695,7 @@ class Utilities(commands.Cog):
             digit = f"{ord(c):x}"
             name = unicodedata.name(c, "Name not found.")
             return f"`\\U{digit:>08}`: {name} - {c} \N{EM DASH} <http://www.fileformat.info/info/unicode/char/{digit}>"
+
         msg = ctx.author.mention + "\n" + "\n".join(map(to_string, characters))
         if len(msg) > 2000:
             return await ctx.send(":x: Output too long to display, try using less characters.")
@@ -945,8 +944,9 @@ class Utilities(commands.Cog):
             exp = data["player"]["networkExp"]
 
             def calc_lev(xp):
-                level_and_decimal = (math.sqrt(xp + 15312.5) - 125 / math.sqrt(2))/(25 * math.sqrt(2))
+                level_and_decimal = (math.sqrt(xp + 15312.5) - 125 / math.sqrt(2)) / (25 * math.sqrt(2))
                 return level_and_decimal // 1, level_and_decimal - math.floor(level_and_decimal)
+
             lev, dec_to_next_lev = calc_lev(exp)
             dec_to_next_lev = round(dec_to_next_lev * 100)
             lev, dec_to_next_lev = map(int, [lev, dec_to_next_lev])

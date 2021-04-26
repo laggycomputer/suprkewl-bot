@@ -17,15 +17,14 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import re
 import math
+import re
 
 import discord
-from discord.ext import commands
 import lavalink
+from discord.ext import commands
 
 from .utils.errors import BotNotInVC, DJRequired, UserInWrongVC, UserNotInVC
-
 
 TIME_RE = re.compile("-?[0-9]+")
 URL_RE = re.compile("https?://(?:www.)?.+")

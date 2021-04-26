@@ -17,11 +17,9 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-
 import json
 
 import discord
-
 
 permissions_converter = {
     "add_reactions": "Add Reactions", "administrator": "Administrator", "attach_files": "Attach Files",

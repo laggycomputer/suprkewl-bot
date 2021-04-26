@@ -157,7 +157,7 @@ class HelpCommand(commands.HelpCommand):
 
     def get_opening_note(self):
         command_name = self.context.invoked_with
-        return f"Use `{self.context.prefix}{command_name} <command>` or `{self.context.prefix}{command_name}"\
+        return f"Use `{self.context.prefix}{command_name} <command>` or `{self.context.prefix}{command_name}" \
                " <category>` for more info  on a command or category."
 
 

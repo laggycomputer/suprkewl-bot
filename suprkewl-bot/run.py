@@ -24,7 +24,6 @@ import discord
 import bot
 import config
 
-
 logger = logging.getLogger("discord")
 logger.setLevel(config.loglevel)
 mode = "w" if config.clearLog else "a"
@@ -36,7 +35,6 @@ logger.addHandler(handler)
 intents = discord.Intents.all()
 for attr in ("bans", "integrations", "webhooks", "invites", "typing"):
     setattr(intents, attr, False)
-
 
 client = bot.SuprKewlBot(
     config.extra_owners,
