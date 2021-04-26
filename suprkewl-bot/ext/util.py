@@ -718,9 +718,11 @@ class Utilities(commands.Cog):
 
         names_to_use = []
         for potential_past_uuid in potential_past_uuids:
-            might_append = (await name_resolve(ctx, potential_past_uuid, silent=True))[1].lower()
-            if might_append != ign.lower():
-                names_to_use.append(might_append)
+            resolved = await name_resolve(ctx, potential_past_uuid, silent=True)
+            if resolved is not None:
+                might_append = resolved[1].lower()
+                if might_append != ign.lower():
+                    names_to_use.append(might_append)
 
         async with ctx.bot.session.get(f"https://api.mojang.com/users/profiles/minecraft/{ign}") as resp:
             if resp.status not in [204, 400, 404]:
