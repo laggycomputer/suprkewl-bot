@@ -477,7 +477,7 @@ class Cryptography(commands.Cog):
             decode_func = getattr(base64, alg + "decode")
             try:
                 out = decode_func(data.encode("utf-8")).decode("utf-8")
-            except binascii.Error:
+            except (binascii.Error, UnicodeEncodeError, UnicodeDecodeError):
                 return await ctx.send(":x: Your input is invalid for the specified algorithm.")
         elif alg in ("rot13", "r13"):
             out = caesar_translate(data, 13)
