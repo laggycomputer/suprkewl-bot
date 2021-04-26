@@ -119,8 +119,6 @@ class SuprKewlBot(commands.Bot):
         print(discord.utils.oauth_url(self.user.id))
         print("-" * 8)
 
-        await self.prune_tables()
-
     async def on_message(self, message):
         if not self.is_ready():
             return
@@ -565,6 +563,9 @@ class SuprKewlBot(commands.Bot):
             await self.session.close()
             await asyncio.sleep(0)
         self.redis.disconnect()  # yes this not a coro
+
+        await self.prune_tables()
+
         await asyncio.wait_for(self.db_pool.close(), timeout=10.0)
         await super().logout()
 
