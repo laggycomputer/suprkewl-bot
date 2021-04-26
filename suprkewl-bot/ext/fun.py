@@ -1145,6 +1145,7 @@ L
 
         try:
             await ctx.bot.wait_for("raw_reaction_add", check=check, timeout=30.0)
+            await ctx.bot.db_pool.execute("DELETE FROM inspire_favorites WHERE user_id = $1;", ctx.author.id)
             await ctx.send(f":ok_hand: Wiped {len(query)} entries from your favorites list.")
         except asyncio.TimeoutError:
             return
