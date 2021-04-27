@@ -927,9 +927,12 @@ L
                 except discord.NotFound:
                     pass
             if not ctx.guild or fetch is None:
-                fetch = await ctx.bot.fetch_user(record["wins"])
+                try:
+                    fetch = use_potential_nickname(await ctx.bot.fetch_user(record["wins"]))
+                except discord.NotFound:
+                    fetch = "<invalid user>"
             emb.add_field(
-                name=f"`{index + 1}:` {use_potential_nickname(fetch)}",
+                name=f"`{index + 1}:` {fetch}",
                 value=f"{format(Plural(record[1]), 'win')}",
                 inline=False
             )

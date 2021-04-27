@@ -141,7 +141,10 @@ class Economy(commands.Cog):
                     except discord.NotFound:
                         pass
                 if not ctx.guild or fetch is None:
-                    fetch = await ctx.bot.fetch_user(record[0])
+                    try:
+                        fetch = use_potential_nickname(await ctx.bot.fetch_user(record[0]))
+                    except discord.NotFound:
+                        fetch = "<invalid user>"
                 emb.add_field(
                     name=f"`{index + 1}:` {use_potential_nickname(fetch)}", value=f"{dollar_sign}{record[1]:,}",
                     inline=False
