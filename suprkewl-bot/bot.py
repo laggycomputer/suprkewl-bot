@@ -641,7 +641,7 @@ class SuprKewlBot(commands.Bot):
                 guilds_in_db = []
                 async with self.db_pool.acquire() as conn:
                     async with conn.transaction():
-                        async for record in conn.cursor("SELCT guild_id FROM $1", table):
+                        async for record in conn.cursor(f"SELECT guild_id FROM {table}"):
                             guilds_in_db.append(record[0])
                 guilds_to_remove = []
 
@@ -652,11 +652,11 @@ class SuprKewlBot(commands.Bot):
                 if guilds_to_remove:
                     removal_count = len(guilds_to_remove)
                     guilds_to_remove = ", ".join(guilds_to_remove)
-                    await self.db_pool.execute("DELETE FROM $1 WHERE guild_id IN ($2);", table, guilds_to_remove)
+                    await self.db_pool.execute(f"DELETE FROM {table} WHERE guild_id IN ($1);", guilds_to_remove)
                     logging.info(f"Removed {removal_count} guilds from table '{table}'.")
         else:
             for table in TO_PRUNE:
-                await self.db_pool.execute("DELETE FROM $1 WHERE guild_id = $2;", table, guild_id)
+                await self.db_pool.execute(f"DELETE FROM {table} WHERE guild_id IN ($1);", guild_id)
 
 
 async def get_pre(bot, message):
