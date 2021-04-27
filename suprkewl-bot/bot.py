@@ -150,7 +150,7 @@ class SuprKewlBot(commands.Bot):
             if message.guild:
                 if message.channel.permissions_for(message.guild.me).send_messages:
                     if message.guild.me in message.mentions:
-                        ping_images = ("angery,gif", "eyes.png")
+                        ping_images = ("angery.gif", "eyes.png")
 
                         resp = await self.db_pool.fetchval(
                             "SELECT prefix FROM guilds WHERE guild_id = $1;", message.guild.id)
