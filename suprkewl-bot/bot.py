@@ -558,7 +558,7 @@ class SuprKewlBot(commands.Bot):
             )
             await asyncio.sleep(1800)
 
-    async def logout(self):
+    async def close(self):
         if not self.session.closed:
             await self.session.close()
             await asyncio.sleep(0)
@@ -567,7 +567,7 @@ class SuprKewlBot(commands.Bot):
         await self.prune_tables()
 
         await asyncio.wait_for(self.db_pool.close(), timeout=10.0)
-        await super().logout()
+        await super().close()
 
     async def post_to_hastebin(self, data):
         data = data.encode("utf-8")
