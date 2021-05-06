@@ -841,14 +841,16 @@ L
         if ctx.author.id in self.uids_masterminding:
             return await ctx.send(":x: You cannot play two Mastermind games at once.")
 
-        self.channelids_masterminding.append(ctx.channel.id)
-        self.uids_masterminding.append(ctx.author.id)
-
         game = Mastermind(ctx)
-        await game.run()
+        started = await game.start()
+        if started:
+            self.channelids_masterminding.append(ctx.channel.id)
+            self.uids_masterminding.append(ctx.author.id)
 
-        purge_from_list(self.channelids_masterminding, ctx.channel.id)
-        purge_from_list(self.uids_masterminding, ctx.author.id)
+            await game.run()
+
+            purge_from_list(self.channelids_masterminding, ctx.channel.id)
+            purge_from_list(self.uids_masterminding, ctx.author.id)
 
     @mastermind.command(name="rules", aliases=["r"])
     async def mastermind_rules(self, ctx):

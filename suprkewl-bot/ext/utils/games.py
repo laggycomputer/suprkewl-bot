@@ -367,7 +367,7 @@ class Mastermind:
 
         return reaction.emoji == "\U000023F9"
 
-    async def run(self):
+    async def start(self):
         resp = await self.ctx.bot.db_pool.fetchrow(
             "SELECT wins, intro_opt_out FROM mastermind WHERE user_id = $1;", self.ctx.author.id)
 
@@ -423,6 +423,9 @@ class Mastermind:
             except asyncio.TimeoutError:
                 return
 
+            return True
+
+    async def run(self):
         while True:
             if self.round >= 25:
                 break
