@@ -1113,14 +1113,11 @@ L
             icon_url=ctx.author.avatar_url
         )
 
-        async with ctx.bot.db_poll.acquire() as conn:
+        async with ctx.bot.db_pool.acquire() as conn:
             async with conn.transaction():
                 async for record in conn.cursor("SELECT image FROM inspire_favorites WHERE user_id = $1;",
                                                 ctx.author.id):
-                    emb.add_image(record[0])
-
-        for row in exists:
-            emb.add_image(f"https://generated.inspirobot.me/a/{row[0]}.jpg")
+                    emb.add_image(f"https://generated.inspirobot.me/a/{record[0]}.jpg")
 
         await emb.send()
         await emb.handle()
