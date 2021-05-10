@@ -45,3 +45,6 @@ hypixel_key = ""
 
 # AlexFlipNote API token. You have to be cool to get one (just join his server).
 flipnote_key = ""
+
+# Steam API key. Get one at https://steamcommunity.com/dev/apikey
+steam_key = ""

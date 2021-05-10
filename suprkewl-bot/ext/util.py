@@ -35,11 +35,14 @@ import aiohttp
 import discord
 import gtts
 import pyqrcode
+import requests
 from PIL import Image
+import steam
 from discord.ext import commands
 
 import config
 from .utils import async_executor, Embedinator, escape_codeblocks, format_json, human_join, human_timedelta
+from .utils import purge_from_list
 
 TO_READABLE_GAME = {
     "QUAKECRAFT": "Quake",
@@ -234,7 +237,144 @@ def rate(good_count, bad_count, verbose=True):
         return f"{round(good_count / bad_count, 3)}"
 
 
+async def get_econ_data_for_item(ctx, records):
+    economy_ids = [ctx.cog.tf2_schema_id_to_economy_id.get(r["id"], None) for r in records]
+
+    economy_ids_to_send = economy_ids.copy()
+    purge_from_list(economy_ids_to_send, None)
+
+    params = {"key": config.steam_key, "format": "json", "language": "en", "appid": "440",
+              "class_count": len(economy_ids_to_send)}
+
+    for i, id in enumerate(economy_ids_to_send):
+        params["classid" + str(i)] = id
+
+    ret = [(None, None) for _ in range(len(records))]
+
+    if economy_ids_to_send:
+        async with ctx.bot.session.get("https://api.steampowered.com/ISteamEconomy/GetAssetClassInfo/v0001",
+                                       params=params) as resp:
+            class_info = await resp.json()
+
+        for economy_id, data in class_info["result"].items():
+            if economy_id == "success":  # Wait, that's not an ID!
+                continue
+
+            icon_url = "https://steamcommunity-a.akamaihd.net/economy/image/" + data["icon_url"]
+            wiki_link = data["actions"]["0"]["link"]
+            ret[economy_ids.index(int(economy_id))] = icon_url, wiki_link
+
+    return ret
+
+
+async def create_embed_for_item(ctx, record, schema_overview, econ_info):
+    class_key = {}
+
+    # Sort classes by the order they appear in the class menu:
+    for i, v in enumerate(("scout", "soldier", "pyro", "demoman", "heavy", "engineer", "medic", "sniper", "spy")):
+        class_key[v] = i
+
+    classes_allowed = await ctx.bot.db_pool.fetch("SELECT class FROM tf2idb_class WHERE id = $1;", record["id"])
+    classes_allowed = [rec[0] for rec in classes_allowed]
+    classes_allowed.sort(key=lambda c: class_key[c])
+    classes_allowed = ", ".join([c.title() for c in classes_allowed])
+
+    attrs = schema_overview["result"]["attributes"]
+
+    attrs_to_render = []
+    item_attrs = await ctx.bot.db_pool.fetch(
+        "SELECT attribute, value FROM tf2idb_item_attributes WHERE id = $1;", record["id"])
+    for attr_record in item_attrs:
+        attr_id, values = attr_record["attribute"], attr_record["value"].split(" ")
+        for attribute in attrs:
+            if attribute["defindex"] == attr_id:
+                attr_desc = attribute.get("description_string", None)
+                if attr_desc is not None and not attribute["hidden"]:
+                    if attribute["effect_type"] == "positive":
+                        prefix = "+ "
+                    elif attribute["effect_type"] == "negative":
+                        prefix = "- "
+                    else:
+                        prefix = "  "
+
+                    for i, v in enumerate(values):
+                        if "percentage" in attribute.get("description_format", ""):
+                            if "additive" not in attribute.get("description_format", ""):
+                                attr_desc = attr_desc.replace(f"%s{i + 1}", str(round((float(v) - 1) * 100)))
+                            else:
+                                attr_desc = attr_desc.replace(f"%s{i + 1}", str(round(float(v) * 100)))
+                        else:
+                            attr_desc = attr_desc.replace(f"%s{i + 1}", str(v))
+
+                    attrs_to_render.append(prefix + attr_desc)
+    emb = ctx.default_embed()
+
+    emb.add_field(name="Name", value=record["name"])
+    emb.add_field(name="Item ID", value=record["id"])
+    emb.add_field(name="Allowed classes", value=classes_allowed or "N/A")
+    minlevel = record["min_ilevel"]
+    maxlevel = record["max_ilevel"]
+    if minlevel is None and maxlevel is None:
+        fmt_level = "N/A"
+    else:
+        if minlevel is None:
+            minlevel = maxlevel
+        if maxlevel is None:
+            maxlevel = minlevel
+        if minlevel != maxlevel:
+            fmt_level = f"{minlevel}-{maxlevel}"
+        else:
+            fmt_level = minlevel
+    emb.add_field(name="Level", value=fmt_level)
+    emb.add_field(name="Equip slot", value=(record["slot"] or "None").title())
+    if attrs_to_render:
+        joined = "\n".join(attrs_to_render)
+        emb.add_field(name="Attributes", value=f"```diff\n{joined}\n```", inline=False)
+
+    found_price_data = None
+    for item in ctx.cog.steamodd_prices:
+        if int(item.name) == record["id"]:
+            found_price_data = (item.base_price[u"USD"], item.price[u"USD"])
+
+    if found_price_data:
+        base_price, current_price = found_price_data
+        if base_price == current_price:
+            emb.add_field(name="Price (on Steam)", value="$%.2f USD" % current_price)
+        else:
+            emb.add_field(name="Price (on Steam)", value="~~$%.2f~~ $%.2f USD" % (base_price, current_price))
+
+    icon_url, wiki_link = econ_info
+    if icon_url is not None:
+        emb.set_image(url=icon_url)
+    if wiki_link is not None:
+        emb.add_field(name="Wiki page", value=f"[Click]({wiki_link})")
+
+    return emb
+
+
 class Utilities(commands.Cog):
+    def __init__(self):
+        self.tf2i_initialized = False
+        try:
+            params = dict(language="en_US", format="json", key=config.steam_key)
+            resp = requests.get("https://api.steampowered.com/IEconItems_440/GetSchemaOverview/v0001/", params=params)
+            self.tf2_schema_overview = resp.json()
+
+            steam.api.key.set(config.steam_key)
+            self.steamodd_prices = steam.items.assets(440, aggressive=True, currency="USD")
+
+            resp = requests.get("https://api.steampowered.com/ISteamEconomy/GetAssetPrices/v0001/?appid=440",
+                                params=params)
+            econ_items = resp.json()["result"]["assets"]
+            self.tf2_schema_id_to_economy_id = {}
+
+            for item in econ_items:
+                self.tf2_schema_id_to_economy_id[int(item["name"])] = int(item["classid"])
+
+            self.tf2i_initialized = True
+
+        except Exception:
+            pass
 
     @commands.command(
         description="Renders LaTeX code."
@@ -1179,6 +1319,47 @@ class Utilities(commands.Cog):
         emb.add_field(name="Text color", value=f"{best_color} text works best over this color.")
 
         await ctx.send(embed=emb, file=fp)
+
+    @commands.command(aliases=["tf2i"])
+    async def tf2item(self, ctx, limit: typing.Optional[int] = 10, *, query):
+        """Search for TF2 items."""
+
+        if not 0 < limit <= 25:
+            return await ctx.send("Invalid limit, use something between 1 and 25 inclusive.")
+
+        if not ctx.cog.tf2i_initialized:
+            return await ctx.send("This command is not available at this time. Blame Valve's API.")
+
+        sent = await ctx.send("Fetching...")
+
+        items = await ctx.bot.db_pool.fetch(
+            "SELECT * FROM tf2idb_item WHERE similarity(name, $1) > 0.1 ORDER BY similarity(name, $1) DESC LIMIT $2;",
+            query, limit)
+
+        try:
+            int(query)
+            by_exact_id = await ctx.bot.db_pool.fetchrow("SELECT * FROM tf2idb_item WHERE id = $1;", int(query))
+            if by_exact_id and int(query) not in [r["id"] for r in items]:
+                items = [by_exact_id] + items
+        except ValueError:
+            pass
+
+        if not items:
+            return await ctx.send(f"{ctx.author.mention} No items found. Try something else?")
+
+        econ_data = await get_econ_data_for_item(ctx, items)
+
+        embeds = []
+        for record, econ_info in zip(items, econ_data):
+            embeds.append(await create_embed_for_item(ctx, record, self.tf2_schema_overview, econ_info))
+
+        emb = Embedinator(ctx.bot, ctx, ctx.author, color=ctx.bot.embed_color)
+        emb.embed_list = embeds
+
+        emb.set_footer(text="When's the heavy update?", icon_url=ctx.me.avatar_url)
+        await sent.delete()
+        await emb.send()
+        await emb.handle()
 
 
 def setup(bot):
