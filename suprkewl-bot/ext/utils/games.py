@@ -499,8 +499,8 @@ class Mastermind:
         to_send = f"Game over! The code was {''.join([c.value for c in self.code])}."
         if self.latest_guess == [c.value for c in self.code]:
             beaten_at = self.round - 1
-            guesses_count_bonus = int((max(-1 / 40 * (beaten_at ** 2) + 10, 0)) // 1)
-            payout = 15 + guesses_count_bonus
+            guesses_count_bonus = int((max(-1 / 8 * (beaten_at ** 2) + 30, 0)) // 1)
+            payout = 100 + guesses_count_bonus
             await do_economy_give(self.ctx, self.ctx.author, payout)
 
             currency_prefix = await get_money_prefix(self.ctx)
