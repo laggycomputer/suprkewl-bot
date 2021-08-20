@@ -500,13 +500,14 @@ class Mastermind:
         if self.latest_guess == [c.value for c in self.code]:
             beaten_at = self.round - 1
             guesses_count_bonus = int((max(-1 / 8 * (beaten_at ** 2) + 30, 0)) // 1)
-            payout = 100 + guesses_count_bonus
+            base_payout = 100
+            payout = base_payout + guesses_count_bonus
             await do_economy_give(self.ctx, self.ctx.author, payout)
 
             currency_prefix = await get_money_prefix(self.ctx)
             if guesses_count_bonus:
-                to_send += f"\nYou also earned {currency_prefix}{payout}:\n{currency_prefix}15 for beating the game " \
-                           f"and {currency_prefix}{guesses_count_bonus} for winning in {beaten_at} rounds."
+                to_send += f"\nYou also earned {currency_prefix}{payout}:\n{currency_prefix}{base_payout} for beating " \
+                           f"the game and {currency_prefix}{guesses_count_bonus} for winning in {beaten_at} rounds."
             else:
                 to_send += f"\nYou also earned {currency_prefix}{payout}."
 
