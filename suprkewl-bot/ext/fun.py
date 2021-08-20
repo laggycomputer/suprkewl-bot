@@ -930,7 +930,7 @@ L
                     pass
             if not ctx.guild or fetch is None:
                 try:
-                    fetch = use_potential_nickname(await ctx.bot.fetch_user(record["wins"]))
+                    fetch = use_potential_nickname(await ctx.bot.fetch_user(record["user_id"]))
                 except discord.NotFound:
                     fetch = "<invalid user>"
             emb.add_field(
