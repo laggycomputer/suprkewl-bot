@@ -647,12 +647,12 @@ class SuprKewlBot(commands.Bot):
 
                 for guild_id in guilds_in_db:
                     if not self.get_guild(guild_id):
-                        guilds_to_remove.append(str(guild_id))
+                        guilds_to_remove.append(guild_id)
 
                 if guilds_to_remove:
                     removal_count = len(guilds_to_remove)
-                    guilds_to_remove = ", ".join(guilds_to_remove)
-                    await self.db_pool.execute(f"DELETE FROM {table} WHERE guild_id IN ($1);", guilds_to_remove)
+                    await self.db_pool.execute(f"DELETE FROM {table} WHERE guild_id = any($1::bigint[])",
+                                               guilds_to_remove)
                     logging.info(f"Removed {removal_count} guilds from table '{table}'.")
         else:
             for table in TO_PRUNE:
