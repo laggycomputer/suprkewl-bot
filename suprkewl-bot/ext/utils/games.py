@@ -383,13 +383,13 @@ class Mastermind:
 
         else:
             rules = "**Mastermind rules:**\n\nI have a code of four colors that you need to guess. The possible " \
-                    "colors are black, white, red, blue, yellow, and green. *Repeat colors are possible in the code.*" \
-                    "You get 24 attempts to guess the code before I reveal it.\nEvery time you guess the four-digit " \
-                    "code, I will reply with another four-digit code:\nA :white_check_mark: means your digit is of " \
-                    "the correct color, and is in the right place.\nA :thinking: means your digit is of the correct " \
-                    "color, but it needs to be in a different spot.\nFinally, :x: means your digit is the wrong " \
-                    "color, and you need to try a different color.\n\nThe four-digit code I give you after a guess " \
-                    "is in no particular order. This means that if the first digit in my response is " \
+                    "colors are black, white, red, blue, yellow, and green. *Repeat colors are possible in the " \
+                    "code.* You get 24 attempts to guess the code before I reveal it.\nEvery time you guess the " \
+                    "four-digit code, I will reply with another four-digit code:\nA :white_check_mark: means your " \
+                    "digit is of the correct color, and is in the right place.\nA :thinking: means your digit is of " \
+                    "the correct color, but it needs to be in a different spot.\nFinally, :x: means your digit is " \
+                    "the wrong color, and you need to try a different color.\n\nThe four-digit code I give you after " \
+                    "a guess is in no particular order. This means that if the first digit in my response is " \
                     ":white_check_mark:, that does not *necessarily* mean that the first digit of your guess was " \
                     "correct.\n\nOn every round, type a guess using the following emojis:\n"
 
