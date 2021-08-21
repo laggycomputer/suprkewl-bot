@@ -507,7 +507,7 @@ class Mastermind:
         if self.latest_guess == [c.value for c in self.code]:
             beaten_at = self.round - 1
             guesses_count_bonus = int((max(-1 / 8 * (beaten_at ** 2) + 30, 0)) // 1)
-            base_payout = 100
+            base_payout = 75
             payout = base_payout + guesses_count_bonus
             await do_economy_give(self.ctx, self.ctx.author, payout)
 
