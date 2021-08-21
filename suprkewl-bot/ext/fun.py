@@ -856,23 +856,7 @@ L
     async def mastermind_rules(self, ctx):
         """Displays the rules for Mastermind. Useful when kept in your back pocket."""
 
-        rules = "**Mastermind rules:**\n\nI have a code of four colors that you need to guess. The possible colors " \
-                "are black, white, red, blue, yellow, and green. *Repeat colors are possible in the code.*" \
-                "You get 24 attempts to guess the code before I reveal it.\nEvery time you guess the four-digit " \
-                "code, I will reply with another four-digit code:\nA :white_check_mark: means your digit is of the " \
-                "correct color, and is in the right place.\nA :thinking: means your digit is of the correct color, " \
-                "but it needs to be in a different spot.\nFinally, :x: means your digit is the wrong color, and you " \
-                "need to try a different color.\n\nThe four-digit code I give you after a guess is in no particular " \
-                "order. This means that if the first digit in my response is :white_check_mark:, that does not " \
-                "*necessarily* mean that the first digit of your guess was correct.\n\nBefore you play, a few " \
-                "hints:\nRemember to use your feedback to your advantage. If you get, for example, " \
-                ":white_check_mark::white_check_mark::thinking::thinking:, you know that the colors in your latest " \
-                "guess should not be changed, and that you should keep reordering them until you win.\nA good " \
-                "starting strategy is to guess as many different colors as possible, then use the feedback to figure " \
-                "out which colors belong and which don't.\n\nYou have 24 tries at cracking the code. Good luck " \
-                "beating the Mastermind!"
-
-        await ctx.send(rules)
+        await Mastermind(ctx).sendrules(ctx, ignore_optedout=True)
 
     @mastermind.command(name="toggleintro", aliases=["ti"])
     async def mastermind_toggleintro(self, ctx, *, setting: bool = None):

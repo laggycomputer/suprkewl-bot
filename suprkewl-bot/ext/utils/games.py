@@ -367,7 +367,7 @@ class Mastermind:
 
         return reaction.emoji == "\U000023F9"
 
-    async def start(self):
+    async def sendrules(self, to, ignore_optedout=False):
         resp = await self.ctx.bot.db_pool.fetchrow(
             "SELECT wins, intro_opt_out FROM mastermind WHERE user_id = $1;", self.ctx.author.id)
 
@@ -377,7 +377,11 @@ class Mastermind:
             wins = 0
             is_opted_out = 0
 
-        if not is_opted_out:
+        if is_opted_out and not ignore_optedout:
+            # The user is opted out and we are allowed to ignore it. Leave.
+            return
+
+        else:
             rules = "**Mastermind rules:**\n\nI have a code of four colors that you need to guess. The possible " \
                     "colors are black, white, red, blue, yellow, and green. *Repeat colors are possible in the code.*" \
                     "You get 24 attempts to guess the code before I reveal it.\nEvery time you guess the four-digit " \
@@ -406,24 +410,27 @@ class Mastermind:
                 rules += f"\n\nP.S.: Since you have won more than 5 games, you can opt out of the introduction " \
                          f"message (or back in) using `{self.ctx.prefix}{self.ctx.invoked_with} toggleintro`."
 
-            try:
-                msg = await self.ctx.author.send(rules)
-            except discord.Forbidden:
-                msg = await self.ctx.send(rules)
-            except discord.NotFound:  # lol why did you delete your account in the middle of a mastermind game
-                return
+            return await to.send(rules)
 
-            await msg.add_reaction("\U00002705")
-            try:
-                await self.ctx.bot.wait_for(
-                    "reaction_add",
-                    check=lambda r, u: u == self.ctx.author and r.emoji == "\U00002705" and r.message.id == msg.id,
-                    timeout=60.0
-                )
-            except asyncio.TimeoutError:
-                return
+    async def start(self):
+        try:
+            msg = await self.sendrules(self.ctx.author)
+        except discord.Forbidden:
+            msg = await self.sendrules(self.ctx)
+        except discord.NotFound:  # lol why did you delete your account in the middle of a mastermind game
+            return
 
-            return True
+        await msg.add_reaction("\U00002705")
+        try:
+            await self.ctx.bot.wait_for(
+                "reaction_add",
+                check=lambda r, u: u == self.ctx.author and r.emoji == "\U00002705" and r.message.id == msg.id,
+                timeout=60.0
+            )
+        except asyncio.TimeoutError:
+            return
+
+        return True
 
     async def run(self):
         while True:
