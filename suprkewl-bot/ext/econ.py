@@ -124,11 +124,13 @@ class Economy(commands.Cog):
     async def leaderboard(self, ctx):
         """Show the richest players on the bot economy."""
 
+        msg_promise = await ctx.send("Fetching economy records...")
+
         dollar_sign = await get_money_prefix(ctx)
         records = await ctx.bot.db_pool.fetch(
             "SELECT user_id, money FROM economy WHERE money > 0 ORDER BY money DESC LIMIT 10;")
         if not records:
-            return await ctx.send("Nobody seems to have economy records...")
+            return await msg_promise.edit("Nobody seems to have economy records...")
         else:
             emb = ctx.default_embed()
             emb.description = f"Showing (up to) top 10 richest players. Find you or another user's ranking with " \
@@ -149,7 +151,7 @@ class Economy(commands.Cog):
                     name=f"`{index + 1}:` {use_potential_nickname(fetch)}", value=f"{dollar_sign}{record[1]:,}",
                     inline=False
                 )
-            await ctx.send(embed=emb)
+            await msg_promise.edit(content=None, embed=emb)
 
     @commands.command()
     @commands.cooldown(5, 10, commands.BucketType.user)
