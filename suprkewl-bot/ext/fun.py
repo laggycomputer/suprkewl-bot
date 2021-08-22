@@ -865,7 +865,7 @@ L
         record = await ctx.bot.db_pool.fetchrow("SELECT wins, intro_opt_out FROM mastermind WHERE user_id = $1;",
                                                 ctx.author.id)
         if record:
-            wins, is_opted_out = record["wins"], record["intro_opt_out"]
+            wins, is_opted_out = record[0], record[1]
         else:
             wins = 0
             is_opted_out = 0
@@ -874,10 +874,10 @@ L
             return await ctx.send("You cannot access this feature, you must have won at least 5 games.")
         else:
             if setting is None:
-                await ctx.send(f"You have the introductory message {'enabled' if not is_opted_out else 'disabled'}.")
+                await ctx.send(f"You have the introductory message {'disabled' if is_opted_out else 'enabled'}.")
             else:
                 await ctx.bot.db_pool.execute("UPDATE mastermind SET intro_opt_out = $1 WHERE user_id = $2;",
-                                              int(setting), ctx.author.id)
+                                              int(not setting), ctx.author.id)
                 await ctx.send(":white_check_mark: Done.")
 
     @mastermind.command(name="wins")

@@ -413,6 +413,8 @@ class Mastermind:
             return await to.send(rules)
 
     async def start(self):
+        msg = None
+
         try:
             msg = await self.sendrules(self.ctx.author)
         except discord.Forbidden:
@@ -420,15 +422,16 @@ class Mastermind:
         except discord.NotFound:  # lol why did you delete your account in the middle of a mastermind game
             return
 
-        await msg.add_reaction("\U00002705")
-        try:
-            await self.ctx.bot.wait_for(
-                "reaction_add",
-                check=lambda r, u: u == self.ctx.author and r.emoji == "\U00002705" and r.message.id == msg.id,
-                timeout=60.0
-            )
-        except asyncio.TimeoutError:
-            return
+        if msg is not None:
+            await msg.add_reaction("\U00002705")
+            try:
+                await self.ctx.bot.wait_for(
+                    "reaction_add",
+                    check=lambda r, u: u == self.ctx.author and r.emoji == "\U00002705" and r.message.id == msg.id,
+                    timeout=60.0
+                )
+            except asyncio.TimeoutError:
+                return
 
         return True
 
