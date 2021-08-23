@@ -527,7 +527,7 @@ class Mastermind:
 
             await self.ctx.bot.db_pool.execute(
                 "INSERT INTO mastermind (user_id, wins, intro_opt_out) VALUES ($1, $2, 0) ON CONFLICT (user_id) DO "
-                "UPDATE SET wins = $2;", self.ctx.author.id, current_wins)
+                "UPDATE SET wins = $2;", self.ctx.author.id, current_wins + 1)
 
         await self.ctx.send(to_send)
 
