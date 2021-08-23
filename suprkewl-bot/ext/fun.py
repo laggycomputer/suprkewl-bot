@@ -168,7 +168,7 @@ L
         await ctx.send(random.choice(roasts).replace("{}", target.display_name))
 
     @commands.command(aliases=["card"], description="Draw from a standard, 52-card deck, no jokers.")
-    async def draw(self, ctx):
+    async def drawcard(self, ctx):
         """Draw a card"""
 
         suits = [":spades:", ":diamonds:", ":hearts:", ":clubs:"]
