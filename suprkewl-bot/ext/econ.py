@@ -334,7 +334,7 @@ class Economy(commands.Cog):
         except asyncio.TimeoutError:
             return await ctx.send("Out of time. Nobody gets money.")
 
-        payout = roll_XdY(len(eligible_emotes) + 1, 10)
+        payout = roll_XdY(min(len(eligible_emotes), 15) + 1, 10)
         await do_economy_give(ctx, correct_response.author, payout)
 
         dollar_sign = await get_money_prefix(ctx, ctx.guild.id)
