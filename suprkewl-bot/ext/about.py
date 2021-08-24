@@ -200,6 +200,8 @@ class BotMeta(commands.Cog, name="Bot Meta"):
     async def buildinfo(self, ctx):
         """Gets GitHub Actions info for the bot."""
 
+        transient = await ctx.send("Fetching...")
+
         status = await get_latest_build_status(ctx.bot.session)
         emb = ctx.default_embed()
 
@@ -213,7 +215,7 @@ class BotMeta(commands.Cog, name="Bot Meta"):
             desc += f"**10 most recent builds:** {''.join(past_status)}\n\n"
         emb.description = desc
 
-        await ctx.send(embed=emb)
+        await transient.edit(content=None, embed=emb)
 
     @commands.command()
     async def stats(self, ctx):
