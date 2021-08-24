@@ -49,3 +49,9 @@ CREATE TABLE IF NOT EXISTS mastermind (
     wins INTEGER NOT NULL DEFAULT (0),
     intro_opt_out INTEGER NOT NULL DEFAULT (0)
 );
+
+CREATE TABLE IF NOT EXISTS uno (
+    user_id BIGINT PRIMARY KEY UNIQUE NOT NULL,
+    uno_default_wins INTEGER NOT NULL DEFAULT (0),
+    autoready BOOLEAN NOT NULL DEFAULT (false)
+);

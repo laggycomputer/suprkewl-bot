@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import asyncio
+import collections
 import contextlib
 import io
 import math
@@ -32,7 +33,7 @@ from discord.ext import commands
 
 import config
 from .utils import C4, Fighter, ImageEmbedinator, IsCustomBlacklisted, Mastermind, purge_from_list, Plural, roll_XdY
-from .utils import use_potential_nickname
+from .utils import UnoDefault, use_potential_nickname
 
 
 def custom_inspire_blacklist(ctx):
@@ -51,6 +52,22 @@ class Fun(commands.Cog):
         self.uids_c4ing = []
         self.channelids_masterminding = []
         self.uids_masterminding = []
+
+        self.uids_unoing = []
+        self.uno_games = collections.defaultdict(dict)
+
+    @staticmethod
+    async def uno_autoready_status(ctx, member):
+        return bool(await ctx.bot.db_pool.fetchval("SELECT autoready FROM uno WHERE user_id = $1;", member.id))
+
+    def uno_game_in_channel(self, ctx):
+        games_in_guild = self.uno_games[ctx.guild]
+        return games_in_guild.get(ctx.channel, None)
+
+    def delete_uno_game_in_channel(self, ctx):
+        games_in_guild = self.uno_games[ctx.guild]
+        with contextlib.suppress(KeyError):
+            del games_in_guild[ctx.channel]
 
     @commands.command(
         description="A bunch of lenny faces."
@@ -1135,6 +1152,198 @@ L
             await ctx.send(f":ok_hand: Wiped {len(query)} entries from your favorites list.")
         except asyncio.TimeoutError:
             return
+
+    @commands.guild_only()
+    @commands.group(
+        invoke_without_command=True, description="Graph of earnings: https://www.desmos.com/calculator/jodlba5y8l")
+    @commands.bot_has_permissions(add_reactions=True)
+    async def uno(self, ctx):
+        """Play Uno with some friends. See the rules subcommand for info."""
+
+        if ctx.author.id in self.uids_unoing:
+            return await ctx.send(":x: You cannot play two Uno games at once.")
+
+        game = ctx.cog.uno_game_in_channel(ctx)
+
+        if game is not None:
+            if game.started:
+                return await ctx.send(f"{ctx.author.mention} the game here is in progress.", delete_after=5)
+            else:
+                if len(game.players) >= 10:
+                    return await ctx.send(f"{ctx.author.mention} that game is full.")
+                if await game.add_player(ctx.author):
+                    await ctx.send(f"{ctx.author.mention} joined the game.", delete_after=15)
+
+        else:
+            game = UnoDefault(ctx)
+            ctx.cog.uno_games[ctx.guild][ctx.channel] = game
+            await ctx.send("Uno game created.")
+
+            await game.add_player(ctx.author)
+            should_start = await game.await_players()
+            if not should_start:
+                await ctx.send("Uno game aborted.")
+                ctx.cog.delete_uno_game_in_channel(ctx)
+                return
+            else:
+                await ctx.send(" ".join(u.mention for u in game.players) + " **Your Uno game is starting.**")
+                await game.run()
+                ctx.cog.delete_uno_game_in_channel(ctx)
+
+    @uno.command(name="ready", aliases=["rdy", "f4", "r"])  # bad TF2 joke
+    @commands.guild_only()
+    async def uno_ready(self, ctx):
+        """Mark yourself as ready in this Uno game (if one exists). If everyone is ready, the game starts at once."""
+
+        game = ctx.cog.uno_game_in_channel(ctx)
+        if game is None:
+            if not ctx.cog.uno_autoready_status(ctx, ctx.author):
+                return await ctx.send(f"{ctx.author.mention} there is no Uno game here (yet).\n\n"
+                                      f"(If you wanted to toggle autoready, use `{ctx.prefix}uno autoready`).",
+                                      delete_after=15)
+            else:
+                return await ctx.send(f"{ctx.author.mention} there is no Uno game here (yet).")
+        else:
+            if ctx.author in game.players:
+                await ctx.send(
+                    f"{ctx.author.mention} you are now marked as ready. Unready with `{ctx.prefix}uno unready`.",
+                    delete_after=15
+                )
+                game.add_ready(ctx.author)
+            else:
+                await ctx.send(f"{ctx.author.mention} you are not in this Uno game. Join with `{ctx.prefix}uno`.")
+
+    @uno.command(name="unready", aliases=["urdy", "uf4", "u", "ur"])
+    @commands.guild_only()
+    async def uno_unready(self, ctx):
+        """Mark yourself as NOT ready in this Uno game (if one exists)."""
+
+        game = ctx.cog.uno_game_in_channel(ctx)
+        if game is None:
+            return await ctx.send(f"{ctx.author.mention} there is no Uno game here (yet).")
+        else:
+            if ctx.author in game.players:
+                await ctx.send(f"{ctx.author.mention} you are now marked as not ready. Ready up with "
+                               f"`{ctx.prefix}uno unready`.")
+                game.remove_ready(ctx.author)
+            else:
+                await ctx.send(f"{ctx.author.mention} you are not in this Uno game. Join with `{ctx.prefix}uno`.")
+
+    @uno.command(name="leave")
+    @commands.guild_only()
+    async def uno_leave(self, ctx):
+        """Leave an Uno game. This is only possible if you are in a game that has not started."""
+
+        game = ctx.cog.uno_game_in_channel(ctx)
+
+        if game is None:
+            await ctx.send(f"{ctx.author.mention} there is no game in this channel to leave.", delete_after=5)
+        else:
+            if ctx.author in game.players:
+                if game.started:
+                    await ctx.send(f"{ctx.author.mention} you cannot leave a game in progress. You may resign by "
+                                   f"failing to move twice in a row.")
+                else:
+                    game.remove_player(ctx.author)
+                    if len(game.players) > 0:
+                        await ctx.send(f"{ctx.author.mention} removed you from the game. Note that leaving "
+                                       f"the same game twice before it starts bans you from joining a third time.")
+            else:
+                await ctx.send(f"{ctx.author.mention} you are not in this Uno game.")
+
+    @uno.command(name="autoready", aliases=["ar", "aready"])
+    @commands.guild_only()
+    async def uno_autoready(self, ctx, status=None):
+        """Manage the autoready feature, where you are marked as ready the moment you join games."""
+
+        current_status = await ctx.cog.uno_autoready_status(ctx, ctx.author)
+        if status is None:
+            return await ctx.send(f"Autoready is currently {'on' if current_status else 'off'}. You may modify this "
+                                  f"setting with `{ctx.prefix}{ctx.command}`, followed by a setting or `toggle` to "
+                                  f"switch the setting.")
+        elif status.lower() == "toggle":
+            await ctx.bot.db_pool.execute("UPDATE uno SET autoready = NOT autoready WHERE user_id = $1;", ctx.author.id)
+            return await ctx.send(f"Autoready is now {'off' if current_status else 'on'}.")
+        else:
+            try:
+                status = commands.core._convert_to_bool(status)
+                await ctx.bot.db_pool.execute("UPDATE uno SET autoready = $1 WHERE user_id = $2;",
+                                              status, ctx.author.id)
+                return await ctx.send(f"Autoready is now {'on' if status else 'off'}.")
+            except commands.BadBoolArgument:
+                return await ctx.send(f"Autoready is currently {'on' if current_status else 'off'}. You may modify "
+                                      f"this setting with `{ctx.prefix}{ctx.command}`, followed by a setting or "
+                                      f"`toggle` to switch the setting.")
+
+    @uno.command(name="wins")
+    async def uno_wins(self, ctx, *, user: typing.Union[discord.Member, discord.User] = None):
+        """Check how many times someone has won Uno."""
+
+        user = user or ctx.author
+
+        if user.bot:
+            return await ctx.send("Bots don't play Uno...")
+
+        stored_wins = await ctx.bot.db_pool.fetchval("SELECT uno_default_wins FROM uno WHERE user_id = $1;", user.id)
+        wins = stored_wins if stored_wins is not None else 0
+
+        await ctx.send(f"{use_potential_nickname(user)} has {format(Plural(wins), 'win')}.")
+
+    @uno.command(name="leaderboard", aliases=["top", "leaderboards", "lb"])
+    async def uno_leaderboard(self, ctx):
+        """Show the lifetime Uno wins leaderboard"""
+
+        if not await ctx.bot.db_pool.fetchval("SELECT EXISTS(SELECT 1 FROM uno) AS exists;"):
+            return await ctx.send("Nobody seems to have Uno records...")
+
+        records = await ctx.bot.db_pool.fetch("SELECT user_id, uno_default_wins FROM uno ORDER BY wins DESC LIMIT 10;")
+        emb = ctx.default_embed()
+        emb.description = f"Showing (up to) top 10 players. Find you or another user's ranking with " \
+                          f"`{ctx.prefix}uno ranking <user>`."
+        for index, record in enumerate(records):
+            fetch = None
+            if ctx.guild:
+                try:
+                    fetch = await ctx.guild.fetch_member(record["user_id"])
+                except discord.NotFound:
+                    pass
+            if not ctx.guild or fetch is None:
+                try:
+                    fetch = use_potential_nickname(await ctx.bot.fetch_user(record["user_id"]))
+                except discord.NotFound:
+                    fetch = "<invalid user>"
+            emb.add_field(
+                name=f"`{index + 1}:` {fetch}",
+                value=f"{format(Plural(record[1]), 'win')}",
+                inline=False
+            )
+        await ctx.send(embed=emb)
+
+    @uno.command(name="ranking")
+    async def uno_ranking(self, ctx, *, user: typing.Union[discord.User, discord.Member, int]):
+        """Check the ranking of a user on the wins leaderboard."""
+
+        user = user or ctx.author
+        uid = user.id if not isinstance(user, int) else user
+
+        stored_wins = await ctx.bot.db_pool.fetchval("SELECT uno_default_wins FROM uno WHERE user_id = $1;", uid)
+        wins = stored_wins if stored_wins is not None else 0
+
+        if wins == 0:
+            await ctx.send("This user does not have any wins.")
+        else:
+            record_count = await ctx.bot.db_pool.fetchval("SELECT COUNT(user_id) FROM uno WHERE uno_default_wins > 0;")
+            async with ctx.bot.db_pool.acquire() as conn:
+                async with conn.transaction():
+                    async for record in conn.cursor(
+                            "SELECT uno_default_wins, RANK() OVER (ORDER BY uno_default_wins DESC) r FROM uno;"):
+                        db_wins, rank = record[0], record[1]
+                        if db_wins == wins:
+                            ranking = rank
+                            break
+
+            await ctx.send(f"{use_potential_nickname(user)} is #{ranking:,} out of "
+                           f"{format(Plural(record_count), 'total user')} on record.")
 
 
 def setup(bot):
