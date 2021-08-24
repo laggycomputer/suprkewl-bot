@@ -743,7 +743,7 @@ class UnoBase:
                 msg_content += "If noone joins or leaves in the next two minutes, and noone joins in the minute " \
                                "after, the game starts."
 
-            msg_content += "\n\n\n" + self.get_rules()
+            msg_content += "\n\n\n" + self.rules
 
             embed = self.ctx.default_embed()
             embed.add_field(name="Players in the lobby", value=" ".join([u.mention for u in self.players]) or "Nobody",
