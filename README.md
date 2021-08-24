@@ -5,12 +5,12 @@
 <img src="https://img.shields.io/github/repo-size/laggycomputer/suprkewl-bot">
 <img src="https://img.shields.io/github/last-commit/laggycomputer/suprkewl-bot">
 <a href="./LICENSE-agpl3.txt"><img src="https://img.shields.io/github/license/laggycomputer/suprkewl-bot.svg?style=popout"></a>
-<a href=https://travis-ci.com/laggycomputer/suprkewl-bot><img src=https://travis-ci.com/laggycomputer/suprkewl-bot.svg?branch=master></a>
+<a href=https://github.com/laggycomputer/suprkewl-bot/actions><img src=https://github.com/laggycomputer/suprkewl-bot/actions/workflows/actions.yml/badge.svg?branch=master></a>
 <br>
 <a href="https://top.gg/bot/408869071946514452"><img src="https://top.gg/api/widget/408869071946514452.png"></a>
 </p>
 
-An open-sourced Discord bot, written with `discord.py==1.7.1`. 
+An open-sourced Discord bot, written with `discord.py==1.7.3`. 
 
 If you want to host this bot:
 
