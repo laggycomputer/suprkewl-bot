@@ -198,7 +198,7 @@ class C4:
                 )
             except asyncio.TimeoutError:
                 await self.message.edit(content="Timed out due to inactivity.", embed=None)
-                break
+                return
             with contextlib.suppress(discord.HTTPException):
                 await reaction.remove(user)
 
@@ -216,6 +216,11 @@ class C4:
 
         with contextlib.suppress(discord.HTTPException):
             await self.message.clear_reactions()
+
+        await do_economy_give(self.ctx, self.current_player, 130)
+        await self.ctx.send(
+            f"{self.current_player.mention} has received {await get_money_prefix(self.ctx, self.ctx.guild.id)}130 for "
+            f"winning Connect 4.")
 
     @property
     def current_moves(self):
