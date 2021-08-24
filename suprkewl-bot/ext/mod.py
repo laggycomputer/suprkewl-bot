@@ -266,13 +266,6 @@ class Moderation(commands.Cog):
 
         await ctx.send(embed=emb)
 
-    @commands.command(description="You call, I leave. That's all.")
-    @commands.has_permissions(manage_guild=True)
-    async def leave(self, ctx):
-        """Use this command in place of kicking me."""
-
-        await ctx.guild.leave()
-
 
 def setup(bot):
     bot.add_cog(Moderation())
