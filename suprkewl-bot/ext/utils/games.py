@@ -648,17 +648,24 @@ class UnoBase:
 
         self.started = False
 
+        self.lobby_message = None
         self.times_joined = {}
-
         self.players = []
-        self.previous_player = None
         self.players_ready = []
-        self.starting_player_count = 0
-        self.starting_players = copy.copy(self.players)
+
+        self.previous_player = None
+        self.starting_players = []
         self.winning_players = []  # index 0 is #1, etc
+
+        self.game_message = None
 
         self.player_hands = {}
         self.times_skipped = {}
+
+        self.call_emoji = "\U0000203c\U0000fe0f"
+        self.last_player_called_on = None
+
+        self.notes = []  # a list of important things like eliminations
 
         self.turn_order = UnoTurnOrder.FORWARD
         self.play_pointer = 0
@@ -668,102 +675,7 @@ class UnoBase:
         self.discard_pile = []
         self.latest_wild_color = None
 
-        self.last_player_called_on = None
         # TODO: move references to UnoCard to a new StockUnoBase containing the rules for UNO but not variations
-
-        self.notes = []  # a list of important things like eliminations
-
-        self.call_emoji = "\U0000203c\U0000fe0f"
-
-        self.lobby_message = None
-        self.game_message = None
-
-        self.create_all_cards()
-        self.initialize_discard_pile()
-
-    def advance_play_pointer(self, direction, mock=False):
-        if not self.started:
-            return
-
-        new_pointer = self.play_pointer + direction
-
-        if new_pointer < 0:
-            new_pointer = len(self.players) - 1
-        elif new_pointer >= len(self.players):
-            new_pointer = 0
-
-        if not mock:
-            self.play_pointer = new_pointer
-
-        return new_pointer
-
-    async def update_lobby_message(self):
-        if len(self.players) < 1:
-            msg_content = "This Uno game has been aborted for some reason."
-            embed = None
-        else:
-            invocation = f"{self.ctx.prefix}{self.ctx.command}"
-            msg_content = "Please read the rules below. Joining and leaving more than twice will result in " \
-                          "exclusion from the game (though you can join the next one).\n\n"
-
-            if len(self.players) < 2:
-                msg_content += "Players have 5 minutes to join the game."
-            else:
-                msg_content += "If noone joins or leaves in the next two minutes, and noone joins in the minute " \
-                               "after, the game starts."
-
-            msg_content += "\n\n\n" + self.get_rules()
-
-            embed = self.ctx.default_embed()
-            embed.add_field(name="Players in the lobby", value=" ".join([u.mention for u in self.players]) or "Nobody",
-                            inline=False)
-
-            not_ready_mentions = " ".join(u.mention for u in tuple(set(self.players) - set(self.players_ready)))
-            embed.add_field(name="Ready players", value=" ".join(u.mention for u in self.players_ready) or "Nobody")
-            embed.add_field(name="Not ready players", value=not_ready_mentions or "Nobody")
-
-            embed.description = f"Type `{invocation}` to join the game.\nType `{invocation} leave` to leave the " \
-                                f"game.\nYou may also ready up with `{invocation} ready` or unready with " \
-                                f"`{invocation} unready`. If all players in a lobby are ready, the game begins with " \
-                                f"no warning.\n\nIf you want to automatically ready upon joining, look into " \
-                                f"`{invocation} autoready`."
-
-        if self.lobby_message is not None:
-            try:
-                await self.lobby_message.edit(content=msg_content, embed=embed)
-                return
-            except discord.HTTPException:
-                pass
-
-        try:
-            self.lobby_message = await self.ctx.send(msg_content, embed=embed)
-        except (discord.HTTPException, discord.Forbidden):
-            self.ctx.bot.dispatch("uno_game_destroy", self)
-
-    def create_all_cards(self):
-        for card in UnoCard:
-            _, _, count = card.value
-            self.draw_pile += [card] * count
-
-        random.shuffle(self.draw_pile)
-
-    def deal_to_players(self):
-        for player in self.players:
-            for _ in range(7):
-                self.draw_card_for(player)
-
-    def initialize_discard_pile(self):
-        # TODO: assume there is one draw pile, which is invalid for DOS
-
-        # continue drawing until we find a non-wild. place that on the discard pile, reshuffle the rest into the draw
-        # pile
-        popped = [self.draw_pile.pop()]
-        while popped[-1].value[0] is UnoColor.WILD:
-            popped.append(self.draw_pile.pop())
-        self.discard_pile.append(popped.pop())
-
-        self.draw_pile += popped
-        random.shuffle(self.draw_pile)
 
     async def add_player(self, member):
         if member in self.players:
@@ -812,8 +724,52 @@ class UnoBase:
 
             self.ctx.bot.dispatch("uno_player_ready_remove", self, member)
 
-    def render_card(self, card, only_type=False):
+    @property
+    def rules(self):
         raise NotImplementedError
+
+    async def update_lobby_message(self):
+        if len(self.players) < 1:
+            msg_content = "This Uno game has been aborted for some reason."
+            embed = None
+        else:
+            invocation = f"{self.ctx.prefix}{self.ctx.command}"
+            msg_content = "Please read the rules below. Joining and leaving more than twice will result in " \
+                          "exclusion from the game (though you can join the next one).\n\n"
+
+            if len(self.players) < 2:
+                msg_content += "Players have 5 minutes to join the game."
+            else:
+                msg_content += "If noone joins or leaves in the next two minutes, and noone joins in the minute " \
+                               "after, the game starts."
+
+            msg_content += "\n\n\n" + self.get_rules()
+
+            embed = self.ctx.default_embed()
+            embed.add_field(name="Players in the lobby", value=" ".join([u.mention for u in self.players]) or "Nobody",
+                            inline=False)
+
+            not_ready_mentions = " ".join(u.mention for u in tuple(set(self.players) - set(self.players_ready)))
+            embed.add_field(name="Ready players", value=" ".join(u.mention for u in self.players_ready) or "Nobody")
+            embed.add_field(name="Not ready players", value=not_ready_mentions or "Nobody")
+
+            embed.description = f"Type `{invocation}` to join the game.\nType `{invocation} leave` to leave the " \
+                                f"game.\nYou may also ready up with `{invocation} ready` or unready with " \
+                                f"`{invocation} unready`. If all players in a lobby are ready, the game begins with " \
+                                f"no warning.\n\nIf you want to automatically ready upon joining, look into " \
+                                f"`{invocation} autoready`."
+
+        if self.lobby_message is not None:
+            try:
+                await self.lobby_message.edit(content=msg_content, embed=embed)
+                return
+            except discord.HTTPException:
+                pass
+
+        try:
+            self.lobby_message = await self.ctx.send(msg_content, embed=embed)
+        except (discord.HTTPException, discord.Forbidden):
+            self.ctx.bot.dispatch("uno_game_destroy", self)
 
     def uno_event_check(self, game, *args):
         return game is self
@@ -879,17 +835,64 @@ class UnoBase:
                     # we have timed out waiting. start!
                     return True
 
-    async def update_game_message(self):
+    def render_card(self, card, only_type=False):
         raise NotImplementedError
 
-    async def request_play(self):
-        raise NotImplementedError
+    def advance_play_pointer(self, direction, mock=False):
+        if not self.started:
+            return
+
+        new_pointer = self.play_pointer + direction
+
+        if new_pointer < 0:
+            new_pointer = len(self.players) - 1
+        elif new_pointer >= len(self.players):
+            new_pointer = 0
+
+        if not mock:
+            self.play_pointer = new_pointer
+
+        return new_pointer
+
+    def create_all_cards(self):
+        for card in UnoCard:
+            _, _, count = card.value
+            self.draw_pile += [card] * count
+
+        random.shuffle(self.draw_pile)
+
+    def initialize_discard_pile(self):
+        # TODO: assume there is one draw pile, which is invalid for DOS
+
+        # continue drawing until we find a non-wild. place that on the discard pile, reshuffle the rest into the draw
+        # pile
+        popped = [self.draw_pile.pop()]
+        while popped[-1].value[0] is UnoColor.WILD:
+            popped.append(self.draw_pile.pop())
+        self.discard_pile.append(popped.pop())
+
+        self.draw_pile += popped
+        random.shuffle(self.draw_pile)
+
+    def deal_to_players(self):
+        for player in self.players:
+            for _ in range(7):
+                self.draw_card_for(player)
 
     def draw_card_for(self, player):
         # this is different in different variants
         raise NotImplementedError
 
+    async def update_game_message(self):
+        raise NotImplementedError
+
     async def play_card_and_process(self, player, card):
+        raise NotImplementedError
+
+    def is_playable(self, card, onto):
+        raise NotImplementedError
+
+    async def request_play(self):
         raise NotImplementedError
 
     @property
@@ -900,18 +903,23 @@ class UnoBase:
     def current_hand(self):
         return self.player_hands[self.current_player]
 
-    @staticmethod
-    def get_rules():
-        raise NotImplementedError
-
-    async def run(self):
-        raise NotImplementedError
-
-    def is_playable(self, card, onto):
-        raise NotImplementedError
-
     def check_call(self, reaction, user, as_check=True):
         """check UNO, DOS, etc. calls"""
+        raise NotImplementedError
+
+    def prepare_to_start(self):
+        self.create_all_cards()
+        self.initialize_discard_pile()
+        self.starting_players = copy.copy(self.players)
+
+        self.started = True
+
+        self.deal_to_players()
+        # Assume joining order is identical to seating order. Pick a random person to go first.
+        self.play_pointer = random.randrange(0, len(self.players))
+        self.notes.append(f"{self.current_player.mention} has been selected to play first.")
+
+    async def run(self):
         raise NotImplementedError
 
     async def do_payout(self, member):
@@ -920,8 +928,10 @@ class UnoBase:
         except IndexError:
             raise IndexError from None
 
-        initial = 75 * (1 / ranking) * (self.starting_player_count / 3)
-        linear_correction = 50 * (self.starting_player_count - ranking)
+        starting_player_count = len(self.starting_players)
+
+        initial = 75 * (1 / ranking) * (starting_player_count / 3)
+        linear_correction = 50 * (starting_player_count - ranking)
 
         ret = int(round(initial + linear_correction + 50))
 
@@ -930,8 +940,16 @@ class UnoBase:
 
 
 class UnoDefault(UnoBase):
-    def __init__(self, ctx):
-        super().__init__(ctx)
+    @property
+    def rules(self):
+        return "Rules are here: https://service.mattel.com/instruction_sheets/42001pr.pdf\n**The following " \
+               "modifications have been made to the winning conditions:**\n\nThe first player to run out " \
+               "of cards is first place. Play continues with the person who would have played next, skipping the " \
+               "player(s) who are already out of the game. The next player to run out is second place, and so on, " \
+               "until only one player remains. The last place player receives no money, and payouts increase with " \
+               "ranking.\n\nThis change is often made at tables to shorten the game, as under the original rules " \
+               "(which are still playable via <NOT IMPLEMENTED>) the game repeats itself up to several times to " \
+               "produce a winner."
 
     def render_card(self, card, only_type=False):
         color, type, _ = card.value
@@ -962,6 +980,19 @@ class UnoDefault(UnoBase):
 
         ret += (" " + resolved_type) if resolved_type else ""
         return ret
+
+    def draw_card_for(self, player):
+        if not self.draw_pile:
+            reshufflable_cards = self.discard_pile[:-1]  # everything but the top card
+            random.shuffle(reshufflable_cards)
+            self.draw_pile = reshufflable_cards
+
+            self.notes.append("The draw pile was exhausted and the discard pile was shuffled to become the new draw"
+                              "pile.")
+
+        drawn = self.draw_pile.pop()
+        self.player_hands[player].append(drawn)
+        return drawn
 
     async def update_game_message(self):
         msg_content = "On your turn, you will be privately messaged regarding your move.\n**You have two minutes to " \
@@ -1010,6 +1041,79 @@ class UnoDefault(UnoBase):
                 await self.game_message.delete()
         self.game_message = await self.ctx.send(msg_content, embed=emb)
         await self.game_message.add_reaction(self.call_emoji)
+
+    async def play_card_and_process(self, player, card):
+        if card.value[0] is UnoColor.WILD:
+            self.latest_wild_color = None
+            sent = await player.send("You have played a wild card, meaning you can choose its color. What color would "
+                                     "you like?")
+            reactions = {
+                "\U0001f7e6": UnoColor.BLUE,
+                "\U0001f7e9": UnoColor.GREEN,
+                "\U0001f7e5": UnoColor.RED,
+                "\U0001f7e8": UnoColor.YELLOW
+            }
+            for e in reactions.keys():
+                await sent.add_reaction(e)
+
+            def check_event(reaction, user):
+                if user != player:
+                    return False
+
+                if str(reaction.emoji) not in reactions.keys():
+                    return False
+
+                return True
+
+            reaction_out, _ = await self.ctx.bot.wait_for("reaction_add", check=check_event)
+            self.latest_wild_color = reactions[str(reaction_out)]
+            self.notes.append(f"Wild card played by {player.mention} is {reaction_out}.")
+        else:
+            self.latest_wild_color = None
+
+        if card.value[1] is UnoSpecialType.SKIP:
+            victim = self.players[self.advance_play_pointer(self.turn_order, mock=True)]
+            self.should_skip = True
+            self.notes.append(f"Skipped {victim.mention} because of {player.mention}'s skip card.")
+        elif card.value[1] is UnoSpecialType.DRAW_2:
+            victim = self.players[self.advance_play_pointer(self.turn_order, mock=True)]
+            for _ in range(2):
+                self.draw_card_for(victim)
+            self.notes.append(f"{victim.mention} drew two cards because of {player.mention}'s draw 2 card.")
+        elif card.value[1] is UnoSpecialType.WILD_4:
+            victim = self.players[self.advance_play_pointer(self.turn_order, mock=True)]
+            for _ in range(4):
+                self.draw_card_for(victim)
+            self.notes.append(f"{victim.mention} drew four cards because of {player.mention}'s draw 4 card.")
+        elif card.value[1] is UnoSpecialType.REVERSE:
+            if len(self.players) > 2:
+                self.turn_order = UnoTurnOrder.reverse_of(self.turn_order)
+
+                self.notes.append(f"Turn order has changed due to {player.mention}'s reverse card.")
+            else:
+                self.should_skip = True
+                self.notes.append(f"{player.mention}'s reverse acts as a skip card as there are 2 players left.")
+
+        try:
+            del self.player_hands[player][self.player_hands[player].index(card)]
+            self.discard_pile.append(card)
+            return True
+        except IndexError:
+            return False
+
+    def is_playable(self, card, onto):
+        if card.value[0] is UnoColor.WILD:
+            return True  # you can play a wild on anything
+
+        color = self.latest_wild_color or onto.value[0]
+
+        if card.value[0] == color:
+            return True
+
+        elif onto.value[1] == card.value[1]:
+            return True
+
+        return False
 
     async def request_play(self):
         hand = self.current_hand
@@ -1140,98 +1244,39 @@ class UnoDefault(UnoBase):
 
             return
 
-    def draw_card_for(self, player):
-        if not self.draw_pile:
-            reshufflable_cards = self.discard_pile[:-1]  # everything but the top card
-            random.shuffle(reshufflable_cards)
-            self.draw_pile = reshufflable_cards
+    def check_call(self, reaction, user, as_check=True):
+        if as_check:
+            if reaction.message != self.game_message:
+                return False
 
-            self.notes.append("The draw pile was exhausted and the discard pile was shuffled to become the new draw"
-                              "pile.")
+            if user not in self.players:
+                return False
 
-        drawn = self.draw_pile.pop()
-        self.player_hands[player].append(drawn)
-        return drawn
+            if str(reaction.emoji) != self.call_emoji:
+                return False
 
-    async def play_card_and_process(self, player, card):
-        if card.value[0] is UnoColor.WILD:
-            self.latest_wild_color = None
-            sent = await player.send("You have played a wild card, meaning you can choose its color. What color would "
-                                     "you like?")
-            reactions = {
-                "\U0001f7e6": UnoColor.BLUE,
-                "\U0001f7e9": UnoColor.GREEN,
-                "\U0001f7e5": UnoColor.RED,
-                "\U0001f7e8": UnoColor.YELLOW
-            }
-            for e in reactions.keys():
-                await sent.add_reaction(e)
-
-            def check_event(reaction, user):
-                if user != player:
-                    return False
-
-                if str(reaction.emoji) not in reactions.keys():
-                    return False
-
-                return True
-
-            reaction_out, _ = await self.ctx.bot.wait_for("reaction_add", check=check_event)
-            self.latest_wild_color = reactions[str(reaction_out)]
-            self.notes.append(f"Wild card played by {player.mention} is {reaction_out}.")
+        if self.previous_player is not None:
+            prev_hand_was_uno = len(self.player_hands[self.previous_player]) == 1
         else:
-            self.latest_wild_color = None
+            prev_hand_was_uno = False
 
-        if card.value[1] is UnoSpecialType.SKIP:
-            victim = self.players[self.advance_play_pointer(self.turn_order, mock=True)]
-            self.should_skip = True
-            self.notes.append(f"Skipped {victim.mention} because of {player.mention}'s skip card.")
-        elif card.value[1] is UnoSpecialType.DRAW_2:
-            victim = self.players[self.advance_play_pointer(self.turn_order, mock=True)]
-            for _ in range(2):
-                self.draw_card_for(victim)
-            self.notes.append(f"{victim.mention} drew two cards because of {player.mention}'s draw 2 card.")
-        elif card.value[1] is UnoSpecialType.WILD_4:
-            victim = self.players[self.advance_play_pointer(self.turn_order, mock=True)]
-            for _ in range(4):
-                self.draw_card_for(victim)
-            self.notes.append(f"{victim.mention} drew four cards because of {player.mention}'s draw 4 card.")
-        elif card.value[1] is UnoSpecialType.REVERSE:
-            if len(self.players) > 2:
-                self.turn_order = UnoTurnOrder.reverse_of(self.turn_order)
+        if as_check:
+            if not (len(self.current_hand) == 1 or prev_hand_was_uno):
+                return False
 
-                self.notes.append(f"Turn order has changed due to {player.mention}'s reverse card.")
+            return self.last_player_called_on is None
+        else:
+            if prev_hand_was_uno:
+                self.last_player_called_on = self.previous_player
+                return self.previous_player
+            elif len(self.current_hand) == 1:
+                self.last_player_called_on = self.current_player
+                return self.current_player
             else:
-                self.should_skip = True
-                self.notes.append(f"{player.mention}'s reverse acts as a skip card as there are 2 players left.")
-
-        try:
-            del self.player_hands[player][self.player_hands[player].index(card)]
-            self.discard_pile.append(card)
-            return True
-        except IndexError:
-            return False
-
-    @staticmethod
-    def get_rules():
-        return "Rules are here: https://service.mattel.com/instruction_sheets/42001pr.pdf\n**The following " \
-               "modifications have been made to the winning conditions:**\n\nThe first player to run out " \
-               "of cards is first place. Play continues with the person who would have played next, skipping the " \
-               "player(s) who are already out of the game. The next player to run out is second place, and so on, " \
-               "until only one player remains. The last place player receives no money, and payouts increase with " \
-               "ranking.\n\nThis change is often made at tables to shorten the game, as under the original rules " \
-               "(which are still playable via <NOT IMPLEMENTED>) the game repeats itself up to several times to " \
-               "produce a winner."
+                raise ValueError  # we should never be here but let's raise this in case we somehow end up here
 
     async def run(self):
-        self.started = True
-
-        self.deal_to_players()
-        # Assume joining order is identical to seating order. Pick a random person to go first.
-        self.play_pointer = random.randrange(0, len(self.players))
-        self.notes.append(f"{self.current_player.mention} has been selected to play first.")
-
-        self.starting_player_count = len(self.players)
+        self.prepare_to_start()
 
         while len(self.players) > 1:
             await self.update_game_message()
@@ -1329,51 +1374,6 @@ class UnoDefault(UnoBase):
                 "INSERT INTO uno (user_id, uno_default_wins) VALUES ($1, $2) "
                 "ON CONFLICT (user_id) DO UPDATE SET uno_default_wins = $2;",
                 winner.id, current_wins + 1)
-
-    def is_playable(self, card, onto):
-        if card.value[0] is UnoColor.WILD:
-            return True  # you can play a wild on anything
-
-        color = self.latest_wild_color or onto.value[0]
-
-        if card.value[0] == color:
-            return True
-
-        elif onto.value[1] == card.value[1]:
-            return True
-
-        return False
-
-    def check_call(self, reaction, user, as_check=True):
-        if as_check:
-            if reaction.message != self.game_message:
-                return False
-
-            if user not in self.players:
-                return False
-
-            if str(reaction.emoji) != self.call_emoji:
-                return False
-
-        if self.previous_player is not None:
-            prev_hand_was_uno = len(self.player_hands[self.previous_player]) == 1
-        else:
-            prev_hand_was_uno = False
-
-        if as_check:
-            if not (len(self.current_hand) == 1 or prev_hand_was_uno):
-                return False
-
-            return self.last_player_called_on is None
-        else:
-            if prev_hand_was_uno:
-                self.last_player_called_on = self.previous_player
-                return self.previous_player
-            elif len(self.current_hand) == 1:
-                self.last_player_called_on = self.current_player
-                return self.current_player
-            else:
-                raise ValueError  # we should never be here but let's raise this in case we somehow end up here
 
 
 def roll_XdY(x, y, *, return_rolls=False):
