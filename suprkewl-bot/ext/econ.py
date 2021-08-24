@@ -303,11 +303,11 @@ class Economy(commands.Cog):
 
     @commands.command(aliases=["ne"])
     @commands.cooldown(1, 20, commands.BucketType.user)
-    @commands.cooldown(1, 15, commands.BucketType.channel)
+    @commands.cooldown(1, 20, commands.BucketType.channel)
     @commands.cooldown(120, 60, commands.BucketType.guild)
     @commands.guild_only()
     async def nameemote(self, ctx):
-        """Name the emote for 9d20 coins."""
+        """Name the emote for some coins. Payout increases with more emojis."""
 
         eligible_emotes = [e for e in ctx.guild.emojis if not e.animated]
         if len(eligible_emotes) < 8:
@@ -334,7 +334,7 @@ class Economy(commands.Cog):
         except asyncio.TimeoutError:
             return await ctx.send("Out of time. Nobody gets money.")
 
-        payout = roll_XdY(9, 20)
+        payout = roll_XdY(len(eligible_emotes) + 1, 20)
         await do_economy_give(ctx, correct_response.author, payout)
 
         dollar_sign = await get_money_prefix(ctx, ctx.guild.id)
