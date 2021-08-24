@@ -1304,6 +1304,7 @@ class UnoDefault(UnoBase):
                 "There is only one player left and everyone else has been disqualified. Unfortunately, to prevent "
                 "illegitimate currency gains, nothing will be awarded.")
         else:
+            self.winning_players.append(self.players[0])
             if self.game_message:
                 with contextlib.suppress(discord.DiscordException):
                     await self.game_message.delete()
