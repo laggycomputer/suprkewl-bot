@@ -1362,14 +1362,15 @@ class UnoDefault(UnoBase):
 
             rankings_list = "This Uno game has concluded. Here are the standings and earnings:\n"
             rankings_list += "\n".join(rankings)
-            rankings_list += "\n\nThe following players were disqualified and receive nothing:\n" \
-                             + " ".join(f"{u.mention} ({u})" for u in disqualified_players)
+            if disqualified_players:
+                rankings_list += "\n\nThe following players were disqualified and receive nothing:\n" \
+                                 + " ".join(f"{u.mention} ({u})" for u in disqualified_players)
 
             await self.ctx.send(rankings_list)
 
             winner = self.winning_players[0]
             current_wins = (await self.ctx.bot.db_pool.fetchval(
-                "SELECT uno_default_wins FROM uno WHERE user_id == $1", winner.id)) or 0
+                "SELECT uno_default_wins FROM uno WHERE user_id = $1", winner.id)) or 0
             await self.ctx.bot.db_pool.execute(
                 "INSERT INTO uno (user_id, uno_default_wins) VALUES ($1, $2) "
                 "ON CONFLICT (user_id) DO UPDATE SET uno_default_wins = $2;",

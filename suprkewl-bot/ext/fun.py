@@ -1296,7 +1296,8 @@ L
         if not await ctx.bot.db_pool.fetchval("SELECT EXISTS(SELECT 1 FROM uno) AS exists;"):
             return await ctx.send("Nobody seems to have Uno records...")
 
-        records = await ctx.bot.db_pool.fetch("SELECT user_id, uno_default_wins FROM uno ORDER BY wins DESC LIMIT 10;")
+        records = await ctx.bot.db_pool.fetch("SELECT user_id, uno_default_wins FROM uno ORDER BY uno_default_wins "
+                                              "DESC LIMIT 10;")
         emb = ctx.default_embed()
         emb.description = f"Showing (up to) top 10 players. Find you or another user's ranking with " \
                           f"`{ctx.prefix}uno ranking <user>`."
