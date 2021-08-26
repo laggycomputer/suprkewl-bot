@@ -68,7 +68,7 @@ class SuprKewlBot(commands.Bot):
             "ext.img",
             "ext.markov",
             "ext.mod",
-            "ext.music",
+            # "ext.music",
             "ext.owner",
             "ext.settings",
             "ext.stats",
