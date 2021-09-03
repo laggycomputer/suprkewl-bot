@@ -2,6 +2,7 @@
 
 The following persistent data is logged when you use this bot:
 * `sk!mastermind`: When you play Mastermind, your total win count and whether you are opted out of the introductory message are stored with your user ID.
+* `sk!uno`: Your win count is stored with your user ID. Your autoready setting is also stored.
 * `sk!inspire`: When you favorite an image, your user ID and the ID of the image are stored. This data is deleted when you clear your favorites library.
 * `sk!snipe`: When you delete a message in a channel this bot can read, the user, message, channel, and guild IDs are stored with the message content. This is deleted when the bot is removed from the guild containing the message or overwritten when a new message is deleted.
 * `sk!editsnipe`: Similarly to deletion sniping, basic metadata about your message and its previous and current contents are stored. This data is also deleted when the bot leaves the guild and overwritten when another message edit occurs in the same channel.
