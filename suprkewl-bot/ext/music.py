@@ -117,7 +117,7 @@ class Music(commands.Cog):
             raise commands.NoPrivateMessage
 
         player = self.bot.lavalink.player_manager.create(
-            ctx.guild.id, endpoint=ctx.guild.region.value
+            ctx.guild.id, endpoint=ctx.guild.region
         )
 
         should_connect = ctx.command.name in [
