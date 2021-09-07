@@ -41,11 +41,13 @@ def requires_dj():
             return True
 
         player = ctx.bot.lavalink.player_manager.players.get(ctx.guild.id)
+        if not player:
+            return
 
         jammers = 0
         states = ctx.author.voice.channel.voice_states
         states.pop(ctx.bot.user.id)
-        for state in states:
+        for id, state in states.items():
             if not (state.deaf or state.self_deaf):
                 jammers += 1
 
@@ -116,8 +118,13 @@ class Music(commands.Cog):
         if not ctx.guild:
             raise commands.NoPrivateMessage
 
+        if (isinstance(ctx.guild.region, str)):
+            region = ctx.guild.region
+        else:
+            region = ctx.guild.region.value
+
         player = self.bot.lavalink.player_manager.create(
-            ctx.guild.id, endpoint=ctx.guild.region
+            ctx.guild.id, endpoint=region
         )
 
         should_connect = ctx.command.name in [
@@ -251,7 +258,7 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
         position = lavalink.utils.format_time(player.position)
-        if player.current.stream:
+        if player.current and player.current.stream:
             duration = "Live"
         else:
             duration = lavalink.utils.format_time(player.current.duration)
@@ -404,7 +411,7 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.players.get(ctx.guild.id)
 
         position = lavalink.utils.format_time(player.position)
-        if player.current.stream:
+        if player.current and player.current.stream:
             duration = "Live"
         else:
             duration = lavalink.utils.format_time(player.current.duration)
