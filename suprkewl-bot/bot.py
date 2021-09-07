@@ -227,6 +227,8 @@ class SuprKewlBot(commands.Bot):
                 message_type = 1
             if message.embeds:
                 content = message.embeds[0].description
+                if (content == discord.Embed.Empty):
+                    content = "<unknown>"
                 message_type = 2
 
             await self.db_pool.execute(
