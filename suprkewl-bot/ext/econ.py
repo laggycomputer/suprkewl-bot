@@ -168,7 +168,7 @@ class Economy(commands.Cog):
             async with ctx.bot.db_pool.acquire() as conn:
                 async with conn.transaction():
                     async for record in conn.cursor(
-                            "SELECT money, RANK() OVER (ORDER BY wins DESC) r FROM economy;"):
+                            "SELECT money, RANK() OVER (ORDER BY money DESC) r FROM economy;"):
                         db_money, rank = record[0], record[1]
                         if db_money == money:
                             ranking = rank
