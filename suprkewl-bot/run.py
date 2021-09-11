@@ -33,7 +33,7 @@ handler.setFormatter(logging.Formatter("%(asctime)s: %(levelname)s: %(name)s: %(
 logger.addHandler(handler)
 
 intents = discord.Intents.all()
-for attr in ("bans", "integrations", "webhooks", "invites", "typing"):
+for attr in ("bans", "integrations", "webhooks", "invites", "guild_typing", "dm_typing"):
     setattr(intents, attr, False)
 
 client = bot.SuprKewlBot(
