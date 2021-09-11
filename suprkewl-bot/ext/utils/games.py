@@ -1022,7 +1022,7 @@ class UnoDefault(UnoBase):
 
         small_hands = {}
         for u, hand in self.player_hands.items():
-            if len(hand) < 5:
+            if 0 < len(hand) < 5:
                 small_hands[u] = len(hand)
 
         if small_hands:
