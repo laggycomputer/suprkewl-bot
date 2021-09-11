@@ -407,6 +407,10 @@ class Economy(commands.Cog):
             if m.author.id in people_who_have_screwed_up:
                 return
             content = m.content.strip().upper()[0]
+
+            if content not in ("1", "2", "3", "4", "A", "B", "C", "D"):
+                return False
+
             if content != correct_letter and content != str(ord(correct_letter) - 65):
                 people_who_have_screwed_up.append(m.author.id)
             else:
