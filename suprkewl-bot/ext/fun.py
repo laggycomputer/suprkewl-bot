@@ -845,10 +845,13 @@ L
         if ctx.channel.id in self.channelids_masterminding:
             await ctx.message.add_reaction("\U0000203c")
             try:
-                return await ctx.author.send(
-                    ":x: There is already another game in that channel. You can also play Mastermind in this DM, "
-                    "if you'd like..."
-                )
+                if ctx.guild:
+                    return await ctx.author.send(
+                        ":x: There is already another game in that channel. You can also play Mastermind in this DM, "
+                        "if you'd like..."
+                    )
+                else:
+                    return await ctx.author.send(":x: You are already playing Mastermind here.")
             except discord.Forbidden:
                 return await ctx.send(
                     ":x: There is already another game in this channel. You can also play Mastermind in a DM, if "
