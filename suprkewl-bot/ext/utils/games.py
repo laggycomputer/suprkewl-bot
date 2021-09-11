@@ -365,6 +365,9 @@ class Mastermind:
         if message.author != self.ctx.author or message.channel != self.ctx.channel:
             return False
 
+        if len(message.content) > 5:
+            return False
+
         parsed = self.parse_message(message.content)
 
         return parsed and parsed not in self.guesses
