@@ -1249,7 +1249,7 @@ L
                 else:
                     game.remove_player(ctx.author)
                     if len(game.players) > 0:
-                        await ctx.send(f"{ctx.author.mention} removed you from the game. Note that leaving "
+                        await ctx.send(f"Removed {ctx.author.mention} you from the game. Note that leaving "
                                        f"the same game twice before it starts bans you from joining a third time.")
             else:
                 await ctx.send(f"{ctx.author.mention} you are not in this Uno game.")
