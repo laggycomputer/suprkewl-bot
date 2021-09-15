@@ -217,6 +217,8 @@ class C4:
         with contextlib.suppress(discord.HTTPException):
             await self.message.clear_reactions()
 
+        self.current_player = self.player_two if self.current_player == self.player_one else self.player_one
+
         await do_economy_give(self.ctx, self.current_player, 130)
         await self.ctx.send(
             f"{self.current_player.mention} has received {await get_money_prefix(self.ctx, self.ctx.guild.id)}130 for "
