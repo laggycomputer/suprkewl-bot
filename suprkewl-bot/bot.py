@@ -457,7 +457,7 @@ class SuprKewlBot(commands.Bot):
             emb = ctx.default_embed()
             emb.add_field(
                 name="Blacklisted command",
-                value=f":x: `{ctx.prefix}{ctx.command}` has bee disabled in this context. Have another user try again, "
+                value=f":x: `{ctx.prefix}{ctx.command}` has been disabled in this context. Have another user try again, "
                       f"or try again in another channel, server, or DM."
             )
 
