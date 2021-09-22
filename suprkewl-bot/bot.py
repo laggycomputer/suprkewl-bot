@@ -458,7 +458,7 @@ class SuprKewlBot(commands.Bot):
             emb.add_field(
                 name="Blacklisted command",
                 value=f":x: `{ctx.prefix}{ctx.command}` has been disabled in this context. Have another user try "
-                       "again, or try again in another channel, server, or DM."
+                      f"again, or try again in another channel, server, or DM."
             )
 
             return await ctx.send(embed=emb)
