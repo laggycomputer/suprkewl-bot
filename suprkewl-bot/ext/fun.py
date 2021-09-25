@@ -897,7 +897,7 @@ L
                 await ctx.send(f"You have the introductory message {'disabled' if is_opted_out else 'enabled'}.")
             else:
                 await ctx.bot.db_pool.execute("UPDATE mastermind SET intro_opt_out = $1 WHERE user_id = $2;",
-                                              int(not setting), ctx.author.id)
+                                              not setting, ctx.author.id)
                 await ctx.send(":white_check_mark: Done.")
 
     @mastermind.command(name="wins")

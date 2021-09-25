@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS inspire_favorites (
 CREATE TABLE IF NOT EXISTS mastermind (
     user_id BIGINT PRIMARY KEY UNIQUE NOT NULL,
     wins INTEGER NOT NULL DEFAULT (0),
-    intro_opt_out INTEGER NOT NULL DEFAULT (0)
+    intro_opt_out BOOLEAN NOT NULL DEFAULT (false)
 );
 
 CREATE TABLE IF NOT EXISTS uno (
