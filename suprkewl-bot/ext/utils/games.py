@@ -350,7 +350,6 @@ class Mastermind:
             return m1, m2
 
     def parse_message(self, content):
-        content = content.strip()
         ret = []
         for char in content.strip():
             if char in self.possible_emotes:
