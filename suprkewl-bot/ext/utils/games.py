@@ -990,6 +990,7 @@ class UnoDefault(UnoBase):
             reshufflable_cards = self.discard_pile[:-1]  # everything but the top card
             random.shuffle(reshufflable_cards)
             self.draw_pile = reshufflable_cards
+            self.discard_pile = [self.discard_pile[-1]]
 
             self.notes.append("The draw pile was exhausted and the discard pile was shuffled to become the new draw"
                               "pile.")
